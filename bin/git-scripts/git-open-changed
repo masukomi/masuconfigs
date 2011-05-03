@@ -1,0 +1,7 @@
+#!/bin/sh
+
+FILES=$(git diff --name-only HEAD | paste -sd " " -)
+if [ "$FILES" == "" ]; then
+	FILES=$(git diff --name-only HEAD~1 | paste -sd " " -)
+fi
+open -a MacVim $FILES

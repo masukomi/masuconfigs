@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+@tickets = Hash[*ARGF.map{|line| [line.chomp.upcase, false]}.flatten]
+def missing_tickets
+  x = []
+  @tickets.each do |key, val|
+    x.push(key) unless val
+  end
+  x
+end
+
+def line_matches_tickets(line, ticket)
+  if ticket.start_with? 'PT1-' or ticket.start_with? 'RM1-'
+    ticket = ticket[4..-1]
+  end
+  if line.upcase.include? ticket
+    return true
+  elsif m = /Merge pull request #(\d+) from/.match(line)
+    pr_number = m[1]
+    return line_matches_ticket(`pr_title #{pr_number}`.strip, ticket)
+  end
+  return false
+end
+
+log = `git log --pretty=%s%n%b`.split("\n")
+
+log.each do | line |
+  missing_tickets.each do |mt|
+    if line.upcase.include? mt
+      @tickets[mt] = true
+      break
+    end
+  end
+end
+
+missing_tickets = @tickets.select{|k,v| v == false}.keys.sort
+puts "there are #{missing_tickets.size} missing tickets"
+puts missing_tickets.join("\n")
+
+

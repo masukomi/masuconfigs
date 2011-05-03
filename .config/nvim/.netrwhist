@@ -1,0 +1,10 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =8
+let g:netrw_dirhist_1='/Users/krhodes/workspace/home_dir_configs/.config/nvim'
+let g:netrw_dirhist_2='/Users/krhodes/opensource/sendgrid-ruby'
+let g:netrw_dirhist_3='/Users/krhodes/workspace/vmm'
+let g:netrw_dirhist_4='/Users/krhodes/workspace/vmm_3/app/views/a_filters'
+let g:netrw_dirhist_5='/Users/krhodes/workspace/home_dir_configs/.config/nvim'
+let g:netrw_dirhist_6='/Users/krhodes/workspace/home_dir_configs/bin'
+let g:netrw_dirhist_7='/Users/krhodes/workspace/vmm_3/app/views/report'
+let g:netrw_dirhist_8='/Users/masukomi/Dropbox/projects/scuttlebutt/ssb_weekly/2019-02-21'

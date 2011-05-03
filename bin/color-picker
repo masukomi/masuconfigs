@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+# found here: https://github.com/KabbAmine/vCoolor.vim/blob/master/pickers/osx/color-picker
+# license: unknown
+# creator: https://kabbamine.github.io/
+
+color = ARGV[0]
+if color.nil? or color == ""
+	color = "#FFAABB"
+end
+
+red = color[1..2].to_i(16) * 257
+green = color[3..4].to_i(16) * 257
+blue = color[5..6].to_i(16) * 257
+
+red = red.to_s
+green = green.to_s
+blue = blue.to_s
+
+out = IO.popen [
+ 'osascript',
+ '-e', 'property my_color : {' + red + ',' + green + ',' + blue + '}',
+ '-e', 'set theApp to ((path to frontmost application) as text)',
+ '-e', 'tell application theApp',
+ '-e', '  activate',
+ '-e',%|  set Applescript's text item delimiters to {"\n"}|,
+ '-e', '  try',
+ '-e', '    set col to (choose color default color my_color) as text',
+ '-e', '  on error number -128 --',
+ '-e', '    set col to my_color as text',
+ '-e', '  end try',
+ '-e', 'end tell',
+]
+
+print ?#, *out.read.lines.map { |color| '%02x' % (color.to_i / 256) }
+

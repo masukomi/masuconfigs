@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+
+if ARGV.size < 2
+	puts "git-branchfiles: Lists the files touched in the commits on branch_b"
+	puts "\tthat are not present on branch_a"
+	puts "\nUsage: git branchfiles branch_a branchb"
+	exit(1)
+end
+from_branch = ARGV[0]
+to_branch = ARGV[1]
+raw_command="git  log --stat --name-only  --left-right --cherry-pick \\
+--pretty=\"format:\"  #{from_branch}..#{to_branch}| grep --color=none -v \"^$\""
+
+lines = `#{raw_command}`
+
+files = lines.split(/\n/).uniq.sort
+
+puts files

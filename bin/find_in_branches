@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+
+usage=<<EOU
+Usage: find_in_branches "something to grep for" some/file/to/grep/in [branch_name_regexp]
+
+It will then iterate over all your local branches and look for that phrase.
+
+OR
+if you say "-L something to grep for" it will tell the branches in which that 
+string was NOT found by grep (on the specified file.
+
+This will NOT bother to grep the file in branches where it does not exist.
+EOU
+
+grep_param = ARGV[0]
+file = ARGV[1]
+
+if grep_param.nil? or file.nil? or grep_param == '' or file == ''
+  puts usage
+  exit(1)
+end
+
+branch_name_regexp = ARGV.length > 1 ? ARGV[2] : '.*'
+branches = `git branch | cut -c 3-`
+
+branches = branches.split(/\n/)
+
+branches.each do |b|
+  next unless b.match(/#{branch_name_regexp}/)
+  `git checkout #{b}`
+#  `git pull origin #{b}`
+  if File.exist?(file)
+    response = `grep #{grep_param} #{file}`
+    if response and response != ''
+      puts "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+      puts "ON BRANCH: #{b}"
+      puts response
+      puts "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    end
+  end
+end

@@ -1,0 +1,60 @@
+#!/bin/sh
+
+SELF="${0##*/}"
+
+if [ -z "$TMPDIR" ]; then
+  TMPDIR=/tmp
+elif [ -d "${TMPDIR}/volatile" ]; then
+  TMPDIR="${TMPDIR}/volatile"
+fi
+export TMPDIR
+TMPDIR=$(mktemp -dp "$TMPDIR" mutt.XXXXXXXXXX)
+trap "rm -rf '$TMPDIR'" 1 2 3 4 5 6 7 8 10 11 12 13 14 15
+
+BASENAME="${1##*/}"
+TEMPFILE="${TMPDIR}/${BASENAME}"
+
+notify() {
+  if [ -x "$(command -v awesome-client)" ]; then
+    awesome-client <<-_eof
+	local naughty = require("naughty")
+	naughty.notify({ preset = naughty.config.presets.low,
+		title  = "$3",
+		text   = [[stdout:
+		$(sed -e 's,\",\\\",g' "$1")
+		stderr:
+		$(sed -e 's,\",\\\",g' "$2")]]
+		})
+	_eof
+  fi
+}
+
+case "$SELF" in
+  (bgrun)
+    # make a copy of the file, then launch a shell process in the background
+    # to divert to run-mailcap, after which the temporary directory gets
+    # cleaned up.
+    cp -a "$1" $TMPDIR
+    MIMETYPE="$2"
+    (
+      run-mailcap --action=view "$MIMETYPE":"$TEMPFILE"
+      rm -rf "$TMPDIR"
+      if [ -s "$TMPDIR/output.stdout" ] || [ -s "$TMPDIR/output.stderr" ]; then
+        notify $TMPDIR/output.stdout $TMPDIR/output.stderr \
+          "Output from mutt/$SELF on $BASENAME"
+      fi
+    ) &
+    trap - 1 2 3 4 5 6 7 8 10 11 12 13 14 15
+    ;;
+  (browserrun)
+    # hack to stay around until the browser has read the file: make a fifo and
+    # wait for the cat process to finish writing to it, which means that it
+    # must have been consumed on the other end.
+    mkfifo "$TEMPFILE"
+    INPUTFILE="$1"
+    cat "$INPUTFILE" > $TEMPFILE &
+    sensible-browser "$TEMPFILE" > $TMPDIR/output.stdout 2> $TMPDIR/output.stderr
+    wait
+    ;;
+esac
+

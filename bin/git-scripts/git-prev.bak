@@ -1,0 +1,29 @@
+#!/bin/sh
+
+if [ $# -eq 0 ]; then 
+	echo "Usage: git prev file_path [treeish]\n"
+	echo "Prints the contents of the previous version of the file to STDOUT\n"
+	echo "If a treeish is specified then it prints the version prior to "
+	echo "the specified treeish."
+	exit 2
+fi
+
+FILE=$1
+TREEISH=$(echo $2 | cut -c1-7)
+# the cut is because git's --format="%T" command returns...
+# I don't know WHAT it returns but it isn't anything you'll find in git log. 
+# so i have to use %h, and that's only 7 chars, so i need to make sure
+# that this'll work even if you've passed me the whole treeish
+
+if [ "$TREEISH" == "" ]; then
+	PREV_TREE=$(git log --format="%h" -n 2 $FILE | tail -n1)
+else
+	>&2 echo "got treeish: $TREEISH"
+	PREV_TREE=$(git log --format="%h" $FILE  | grep -A 1 --color=never $TREEISH | tail -n1)
+fi
+if [ "$PREV_TREE" != "" ]; then
+	git show $PREV_TREE:$FILE
+else
+	>&2 echo "unable to determine prior treeish"
+	exit 1
+fi

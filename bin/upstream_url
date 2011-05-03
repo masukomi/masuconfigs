@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# usage:
+# $ upstream_url relative/path/to/file/from/repo/root/foo.rb
+# 	gives you the url to the file on the master branch
+# OR
+# $ upstream_url -b relative/path/to/file/from/repo/root/foo.rb
+# 	gives you the url to the file on the current branch (assumes it has been pushed)
+
+# Assumes the common shared remote repo is named "upstream"
+# change to whatever convention you use.
+CENTRAL_REMOTE_NAME='upstream'
+
+UPSTREAM_BASE_URL=$(git config --get "remote.$CENTRAL_REMOTE_NAME.url" \
+	| sed -e "s/:/\//" \
+	-e "s/git@/https:\/\//" \
+	-e 's/\.git$/\//')
+
+CURRENT_BRANCH="master"
+
+
+if [ "$1" == "-b" ]; then
+	FILE_PATH=$(echo "$2" | gsed -r 's/:([0-9]+)$/#L\1/')
+	CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+else
+	FILE_PATH=$(echo "$1" | gsed -r 's/:([0-9]+)$/#L\1/')
+fi
+
+
+echo "$UPSTREAM_BASE_URL""blob/""$CURRENT_BRANCH""/"$FILE_PATH

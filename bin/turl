@@ -1,0 +1,15 @@
+#!/bin/bash
+# originally fonud %MjquRpkMa7bNmkEbZfV9UU0k2CpOt8WINSR63AejQPY=.sha256 on SSB
+# created by Kira 
+
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: turl <url>"
+	echo "Generates a human readable version of that url and pipes it to your \$PAGER."
+	exit 1
+fi
+
+if [ "$PAGER" == "" ]; then
+	PAGER=more
+fi
+w3m -dump $1 | $PAGER

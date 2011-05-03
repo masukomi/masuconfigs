@@ -1,0 +1,45 @@
+#!/bin/sh
+
+CURRENT_GIT_BRANCH=$(yadm rev-parse --abbrev-ref HEAD)
+REMOTE=$(yadm config --get "branch.$CURRENT_GIT_BRANCH.remote")
+if [ "$REMOTE" != "" ]; then
+	MERGE=$(yadm config --get "branch.$CURRENT_GIT_BRANCH.merge" | sed -e 's/.*\///g')
+	if [ "$REMOTE" != "origin" ]; then
+		echo "WARNING: this branch was pointing to the $REMOTE repo"
+		echo "         RECONFIGURING upstream repo to be on 'origin'"
+		echo "         using $CURRENT_GIT_BRANCH as remote branch name"
+		echo ""
+	fi
+
+	if [ "$MERGE" != "" ]; then
+		if [ $# -gt 0 ]; then
+			echo "running: yadm pull $@ origin $MERGE"
+			yadm pull $@ origin $MERGE
+		else
+			echo "running: yadm pull origin $MERGE"
+			yadm pull origin $MERGE
+		fi
+	else
+		echo "Umm... you've got a remote configured but not a merge. quitting"
+	fi
+
+	if [ "$REMOTE" != "origin" ]; then
+		# reset the remote to what it was
+		yadm branch $CURRENT_GIT_BRANCH -u $REMOTE/$MERGE
+	fi
+
+else
+	echo "No branch specific upstream. "
+	if [ "$RESPONSE" = "" ]; then
+		if [ $# -gt 0 ]; then
+			echo "running: yadm pull $@ origin $CURRENT_GIT_BRANCH"
+			yadm pull $@ origin $MERGE
+		else
+			echo "running: yadm pull origin $CURRENT_GIT_BRANCH"
+			yadm pull origin $CURRENT_GIT_BRANCH
+		fi
+	else
+		echo "quitting"
+	fi
+fi
+

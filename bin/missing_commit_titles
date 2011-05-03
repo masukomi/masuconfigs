@@ -1,0 +1,28 @@
+#!/bin/sh
+
+input=$(cat /dev/stdin)
+
+all_numbers=$(echo "$input" | grep "Merge pull request" \
+            | sed -e "s/.*Merge pull request #\([0-9]*\).*/\1/g" \
+            | sort -g)
+greppable=$(echo "$all_numbers" \
+            | tr '\n' '#' \
+            | sed "s/#/\|#/g" \
+            | rev | cut -c 3- | rev )
+
+echo "searching for these PRs: #$(echo "$greppable" | sed "s/\|/, /g")"
+
+found_numbers=$(git log --oneline  \
+            | egrep "#$greppable" \
+            | grep "Merge pull request" \
+            | sed -e "s/.*Merge pull request #\([0-9]*\).*/\1/g" \
+            | sort -g)
+file_a=$(mktemp missing_merges.XXXXXXX)
+file_b=$(mktemp missing_merges.XXXXXXX)
+echo "$all_numbers" > $file_a
+echo "$found_numbers"> $file_b
+
+echo "These PRs are missing from the current branch"
+comm -23 $file_a $file_b
+rm $file_a
+rm $file_b

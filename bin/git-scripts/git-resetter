@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Useful for undoing a git reset or for intentionally
+# resetting to a different point in time.
+
+
+# script to preserve colors
+# sed to strip out info about matching branches and such.
+script -q /dev/null git reflog -n20 | sed -e "s/ (.*)//g"
+
+echo "  Google for info on git-reflog if you don't"
+echo "  understand what that info is.👆🏽"
+echo "Which head would you like to reset to? [number|q]: "
+
+read HEAD_NUM
+
+if [ "$HEAD_NUM" == "" ] || [ "$HEAD_NUM" == "q" ]; then
+	echo "Ok. I won't touch it."
+	exit 0
+fi
+
+git reset 'HEAD@{'$HEAD_NUM'}'

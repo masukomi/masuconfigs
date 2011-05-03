@@ -1,0 +1,11 @@
+[twtxt]
+nick = masukomi
+twtfile = ~/Dropbox/apps/twtxt/twtxt.txt
+character_limit = 140
+post_tweet_hook = "scp {twtfile} masukomi.org:masukomi.org/"
+use_pager = True
+porcelean = False
+
+[following]
+twtxt = https://buckket.org/twtxt_news.txt
+

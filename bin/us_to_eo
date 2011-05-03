@@ -1,0 +1,3 @@
+#!/bin/sh
+
+open "http://www.ultralingua.com/onlinedictionary/dictionary#src_lang=English&dest_lang=Esperanto&query=$1"

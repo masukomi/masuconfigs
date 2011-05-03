@@ -1,0 +1,159 @@
+[user]
+	name = masukomi
+	email = masukomi@masukomi.org
+[includeIf "gitdir:~/workspace/apple/"]
+	path = ~/.gitconfig_apple
+[includeIf "gitdir:~/workspace/dockyard/"]
+	path = ~/.gitconfig_dockyard
+[include]
+	path = workspace/home_dir_configs/external_gitconfig
+[core]
+	excludesfile = ~/.gitignore_global
+	quotepath = false
+	editor = vim
+[color]
+	ui = auto
+	diff = auto
+	status = auto
+	branch = auto
+	interactive = auto
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+[alias]
+	# ball == branch + all
+	#branchdiff = !sh -c \"git diff `git oldest-ancestor`..\"
+	#tiny log
+	assume   = update-index --assume-unchanged
+	assumed  = "!git ls-files -v | grep ^h | cut -c 3-"
+	ball = !sh -c \"git branch -a | sed -e 's/^* //g' | sed -e 's/^  //g'\"
+	br = branch
+	#branchdiff=log --left-right --graph --cherry-pick --oneline
+	branchdiff=log --left-right --graph --cherry-pick --pretty=format:'%C(yellow)%h %Cred%ad %C(cyan)%an%Cgreen%d %Creset%s' --date=short
+	branchdiff-simple=log --left-right --cherry-pick --pretty=format:'%C(yellow)%h %Cred%ad %C(cyan)%an%Cgreen%d %Creset%s' --date=short
+	branchdiff-hashes=log --left-right --cherry-pick --pretty=format:'%h'
+	branchdiff-titles=log --left-right --cherry-pick --pretty=format:'%s'
+	bdl=log --stat --left-right --cherry-pick --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=short
+	branchlog = !sh -c \"git log `git oldest-ancestor`..\"
+	bdf = !sh -c \"git diff --name-status $2 $(git merge-base $2 $1)\"
+	cane = commit --amend --no-edit
+	current-branch = rev-parse --abbrev-ref HEAD
+	changed = status -uno
+	cherry-pick = cherry-pick -x
+	ci = commit
+	cia = commit --amend
+	ciaa = commit -a --amend
+	co = checkout
+	cpc = cherry-pick --continue
+	cpl = !"git --git-dir=$1.git format-patch -k -1 --stdout $2 | git am -3 -k"
+	default = current
+	df = diff
+	fshow = ! sh -c 'git show --pretty="format:" --name-only $1 | grep -v "^$" | uniq | sed -e "s#^#`git rev-parse --show-toplevel`/#"' -
+
+	graphviz = "!f() { echo 'digraph git {' ; git log --pretty='format:  %h -> { %p }' \"$@\" | sed 's/[0-9a-f][0-9a-f]*/\"&\"/g' ; echo '}'; }; f"
+	# take the output of ^^ and pipe it to dot. E.g.:
+	# git graphviz HEAD~100..HEAD~60 | dot -Txdot1.4 > graph.dot
+	# git graphviz HEAD~100..HEAD~60 | dot -Tpng > graph.png
+	grep-for = log --pretty=format:'%C(yellow)%h %Cred%ad %C(cyan)%an %Creset%s' --date=short --grep
+	grep-for-titles = log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=short --grep
+	kad = difftool --tool Kaleidoscope
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	lol = !git --no-pager loll
+	lola = !git --no-pager lolal
+	lolal = log --graph --decorate --pretty=oneline --abbrev-commit --all
+	loll = log --graph --decorate --pretty=oneline --abbrev-commit
+	ls = ls-files
+	master-sync = "!f() { echo Syncing $1 with master && git checkout master && git pull && git checkout $1 && git rebase master; }; f"
+	mergecommits = !bash git log $(git merge-base --octopus $(git log -1 -U $1 --pretty=format:%P)).. --boundary
+	# oldest ancestor takes 2 treeishes as params
+	oldest-ancestor = !zsh -c 'diff --old-line-format= --new-line-format= <(git rev-list --first-parent \"${1:-master}\") <(git rev-list --first-parent \"${2:-HEAD}\") | head -1'
+	pdiff = !git difftool $(git merge-base $1 $(git rev-parse --abbrev-ref HEAD))
+
+	## NOTE: These assume "upstream" central repo, and "origin" is your fork of it.
+	pum = !"git fetch origin -v; git fetch upstream -v; git merge upstream/master; echo '--Pushing to origin'; git push origin master"
+	pud = !"git fetch origin; git fetch upstream; git fetch -v --tags upstream; git merge upstream/development; echo '--Pushing to origin'; git push origin development"
+	pullme = !"git fetch --tags upstream; git stash; git reset --hard upstream/$(git rev-parse --abbrev-ref HEAD)"
+			# added the fetch because i keep wishing it had of fetch everything
+	## END NOTE
+	rook = !"~/workspace/git-rook/git-rook"
+	rhh = reset --hard HEAD
+	slog = log --pretty="'%C(yellow)%h %Cred%an %C(cyan)%aI %Creset%s'"
+	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
+	st = status -sb
+	sta  = "!function f { git stash apply stash@{$1}; }; f"
+	subup = submodule foreach git pull origin master
+	tl=log --name-status --pretty=format:'-----------------------------------------%n%h %an %ar %n %s'
+	unadd = reset HEAD
+	unassume = update-index --no-assume-unchanged
+	unstash = stash pop[push]
+	assume = update-index --assume-unchanged
+	cdiff = difftool --tool=cdiff
+	rand = !"git checkout $(git branch | shuf -n 1)"
+[difftool]
+	prompt = false
+[diff]
+	tool = Kaleidoscope
+	algorithm = patience
+#[diff]
+#	tool = cdiff
+#	algorithm = patience
+	# external = cdiff
+[difftool "cdiff"]
+	cmd = ~/workspace/cleandiff/cdiff \"$LOCAL\" \"$REMOTE\"
+[difftool "cdiff-f"]
+	cmd = cdiff --format=fenestro \"$LOCAL\" \"$REMOTE\"
+[difftool "cdiff-h"]
+	cmd = cdiff --format=html \"$LOCAL\" \"$REMOTE\"
+[difftool "diff"]
+	cmd = diff \"$LOCAL\" \"$REMOTE\"
+[difftool "Kaleidoscope"]
+	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[mergetool "Kaleidoscope"]
+	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
+	trustExitCode = true
+#[mergetool "sourcetree"]
+#	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+#	trustExitCode = true
+[mergetool]
+	prompt = false
+[merge]
+	tool = Kaleidoscope
+	summary = true
+#	ff = false
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path =
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[push]
+	default = simple
+[filter "media"]
+	clean = git-media-clean %f
+	smudge = git-media-smudge %f
+[filter "lfs"]
+	clean = git-lfs clean %f
+	smudge = git-lfs smudge %f
+	required = true
+[pull]
+	rebase = false
+	default = current
+[init]
+	templateDir = /Users/masukomi/.git_template
+[gpg]
+	program = gpg2
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+	# http://albertech.blogspot.com/2016/11/fix-git-error-could-not-read-username.html
+[checkout]
+	defaultRemote = upstream

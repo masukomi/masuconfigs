@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ $1 = "branch" ]; then
+  git branch -v \
+    | grep -v " [[:xdigit:]]\{7\} \[gone\]" \
+    | fzf \
+    | awk '{print $1}' \
+    | xargs git checkout
+
+elif [ $1 = "pr" ]; then
+
+  git branch -av \
+    | grep "pr/[[:digit:]]" \
+    | grep -v " [[:xdigit:]]\{7\} \[gone\]" \
+    | perl -pe "s/remotes\/\S+?\///g" \
+    | fzf \
+    | awk '{print $1}' \
+    | xargs git checkout
+
+else
+  echo "Unrecognized option"
+  echo "Usage: git pick [branch|pr]"
+  exit 1
+fi
+
+

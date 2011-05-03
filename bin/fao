@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# FILE=$(mdfind -onlyin . -name "$argv")
+FILE=$(find . -name "$1")
+echo "opening: $FILE"
+mvim $FILE

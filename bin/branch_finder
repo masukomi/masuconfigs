@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# branch_finder "grep string" search_type
+# search types
+if [[ "$#" -lt 2 ]]; then
+	echo "Usage: branch_finder <grep_string> <search_type>"
+	echo "search types: last_commit, codebase"
+	exit 0
+fi
+echo "WARNING: This will blow away all uncommitted changes. ok? [y/n]"
+read OK
+if [[ "$OK" == "y" ]]; then
+
+	LOOKING_FOR=$1
+	SEARCH_TYPE=$2
+
+	echo "LOOKING FOR: $LOOKING_FOR"
+	if [[ "$SEARCH_TYPE" == "last_commit" ]]; then
+		echo "in files touched in the last commit"
+	elif [[ "$SEARCH_TYPE" == "codebase" ]]; then
+		echo "in the entire codebase"
+	else
+		echo "unsupported search type: $SEARCH_TYPE"
+		exit 1
+	fi
+	BRANCHES=$(git for-each-ref --shell --format="%(refname)" \
+		| grep 'refs/heads' --color=never \
+		| sed "s/'//g" | sed "s/refs\/heads\///" )
+
+	for branch in $BRANCHES; do
+		echo "checking in $branch"
+		git clean --quiet -f
+		git reset --quiet --hard HEAD
+		git checkout --quiet $branch
+		#echo $(git log --stat -n 1 | grep user.rb)
+		if [[ "$SEARCH_TYPE" == "last_commit" ]]; then
+			git log --stat -n 1 | grep $LOOKING_FOR
+		elif [[ "$SEARCH_TYPE" == "codebase" ]]; then
+			grep -r $LOOKING_FOR *
+		fi
+		if [[ $? -eq 0 ]] ; then
+			echo '========================================'
+			echo "$branch matched"
+			git log --stat -n1
+			echo '========================================'
+		fi
+	done
+
+else
+	echo "Ok. No worries. Come again when you're ready"
+fi

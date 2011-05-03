@@ -1,0 +1,11 @@
+#!/bin/sh
+
+for var in "$@"
+do
+  echo $var
+  if [[ $var = *":"* ]]; then 
+    eval $(echo $var | sed 's/\([^:]*\):\(.*\)/mvim +\2 \1/g')
+  else
+    mvim $var
+  fi
+done

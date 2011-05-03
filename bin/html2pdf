@@ -1,0 +1,51 @@
+#!/bin/sh
+
+tempfile=$(mktemp /tmp/html2pdf.XXXXXX)
+
+# must end with .html or chrome will treat it
+# as if it were plain text
+
+while getopts ":ioh" opt; do
+  case ${opt} in
+    i )
+      INPUT=$OPTARG
+      ;;
+    o )
+      OUTPUT=$OPTARG
+      ;;
+    h )
+      echo "Usage: html2pdf [-i input_file.html | -o output_file.pdf | -h]"
+      echo "    -h Display this help message"
+      echo "    -i specify the path to a file to convert"
+      echo "    -o specify the name/path to the output file"
+      echo ""
+      echo "    If you don't specify an input file STDIN will be used."
+      echo "    If you don't specify an output file ./output.pdf will be created."
+      exit 0
+      ;;
+    \? )
+      echo "Invalid option $OPTARG" 1>&2
+      exit 1
+      ;;
+  esac
+done
+
+if [ "$INPUT" == "" ]; then
+  INPUT="-"
+fi
+
+cat $INPUT > $tempfile
+mv $tempfile $tempfile".html"
+# on linux everything before --headless can be replaced with just
+# chrome
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+  --headless \
+  --disable-gpu \
+  --no-margins \
+  --print-to-pdf $tempfile".html" 2>/dev/null
+
+rm $tempfile".html"
+
+if [ "$OUTPUT" != "" ]; then
+  mv output.pdf $OUTPUT
+fi

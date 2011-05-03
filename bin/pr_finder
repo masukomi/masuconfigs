@@ -1,0 +1,4 @@
+#!/bin/bash
+
+input="$(cat)";
+echo $input perl -lne '/pull\/(\d+)/ && print "\"#$1\""' | xargs -t -n 1 git grep-for

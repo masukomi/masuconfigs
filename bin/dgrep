@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Usage: dgrep <search_term> <2nd search term> <where>
+WHERE="*"
+if [[ "$3" != "" ]]; then
+	WHERE=$3
+fi
+grep -rn $1 $WHERE | grep $2

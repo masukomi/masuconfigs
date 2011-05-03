@@ -1,0 +1,6 @@
+#!/bin/sh
+
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome "$@"
+# RealBin="Google Chrome"
+# AppDir="/Applications"
+# exec "$AppDir/$RealBin" --ignore-certificate-errors "$@"

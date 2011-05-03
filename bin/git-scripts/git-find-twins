@@ -1,0 +1,11 @@
+#!/bin/sh
+# Finds other git branches whose HEADs point to the same 
+# treeish as this branch.
+
+# thanks to mockinterface on 
+# http://stackoverflow.com/a/20756047/13973
+# for showing how to do this.
+
+echo "Looking for branches pointing to: $(git rev-parse HEAD)"
+git for-each-ref --format="%(refname)" | xargs -I refname   sh -c '[[ $(git rev-parse HEAD^{tree}) == $(git rev-parse refname^{tree}) ]] && echo refname'
+echo "DONE"

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+read -d '' -u 0 stdin
+printf "$@" "$stdin" | sed '/^\s*$/d'
+

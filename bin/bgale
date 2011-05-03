@@ -1,0 +1,17 @@
+#!/bin/sh
+HISTFILE=~/.bash_history
+set -o history
+
+LAST_FILE=$(history \
+            | cut -c 8- \
+            | grep --color=none "^$EDITOR" \
+            | tail -n 1 | sed "s/$EDITOR //" \
+            | sed -E 's/[[:space:]]+$//')
+            
+git add $LAST_FILE
+
+if [ $? -eq 0 ]; then
+  echo "added $LAST_FILE"
+else
+  echo "problems encountered adding $LAST_FILE"
+fi

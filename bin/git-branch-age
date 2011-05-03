@@ -1,0 +1,3 @@
+#!/bin/sh
+
+git branch | gsed -E "s/^.*? (.*)/git log -n1 --format='\1 %cD' \1 /" | awk '{system($0)}' | column -s " " -t

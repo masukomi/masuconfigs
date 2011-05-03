@@ -1,0 +1,34 @@
+#!/bin/sh
+
+if [ $# -lt 2 ];then
+	echo "Usage: double_grep first_grep second_grep [file]"
+	echo "  * first_grep used to find files"
+	echo "  * second_grep is what you want to find IN those files"
+	echo "  * file is any file path/wildcard that grep would accept"
+	echo "    to limit where it looks."
+	echo "Note: dgrep stands for \"double grep\""
+	exit 1
+fi
+
+start_path=$3
+if [ "$start_path" == "" ]; then
+	start_path="*"
+fi
+echo "grepping for $1 in $start_path"
+
+first_grep_output_file=$(mktemp first_grep_output.XXXXXXXX)
+# echo "results in $first_grep_output_file"
+grep -rl $1 $start_path > $first_grep_output_file
+echo "found $(cat $first_grep_output_file | wc -l ) files matching $1"
+echo "================================================================================"
+
+
+while read item; do
+	subgrep=$(grep -n $2 $item)
+	if [ "$subgrep" != "" ]; then
+		echo "$item\n $subgrep\n----------"
+	fi
+done <$first_grep_output_file
+
+
+rm $first_grep_output_file

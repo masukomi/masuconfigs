@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# In GitHub when you click the name of a branch in a PR
+# it will copy <repo>:<branch_name> if it's from a forked repo.
+# but that's not useful for checking the thing out.
+#
+# git-cop lets you say
+# git cop <pasted-thing-from-github>
+# and it strips out the <repo>: if it exists
+
+if [ "$1" != "" ]; then
+  PR_BRANCH=$(echo "$1" | sed -e "s/^.*://")
+
+  git checkout $PR_BRANCH
+else
+  echo "please specify a github branch identifier"
+  echo "should look something like this:"
+  echo "    a_gh_username:branch_name_here"
+  exit 1
+fi
+exit 0
+

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# tells you how many lines were changed in a given commit range.
+
+START_COMMIT=$1
+END_COMMIT=$2
+if [[ "$END_COMMIT" == "" ]]; then
+	END_COMMIT=HEAD
+fi
+
+git log --numstat --pretty="%H" $1..$2 | awk 'NF==3 {plus+=$1; minus+=$2} END {printf("lines added:   %d\nlines removed: %d\n", plus, minus)}'

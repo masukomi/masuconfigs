@@ -1,0 +1,202 @@
+## COMPOSING EMAIL
+
+set editor      = "vim +/^$ ++1"
+set text_flowed = yes
+
+set sig_on_top = yes
+
+# see https://fastmail.blog/2016/12/17/format-flowed/
+set text_flowed = yes
+
+set signature = ~/.config/neomutt/signature
+# HTML Support via Markdown + Pandoc
+# I had this split over multiple lines with \ but it kept giving errors. 
+macro compose K "| pandoc -f gfm -o /tmp/neomutt-alternative.html<enter><attach-file>/tmp/neomutt-alternative.html<enter><tag-entry><previous-entry><tag-entry><group-alternatives>"
+
+# set ispell=/stop/trying/to/use/ispell/you/infernal/thing
+
+## END COMPOSING EMAIL 
+## READING EMAIL
+auto_view text/html                                      # view html automatically (we'll use w3m)
+alternative_order text/plain text/enriched text/html     # save html for last
+# add the following line to ~/.mailcap or any 
+# of the other locations listed here 
+# https://neomutt.org/guide/mimesupport.html#3-%C2%A0mime-viewer-configuration-with-mailcap
+# 
+# text/html; w3m -I %{charset} -T text/html; copiousoutput;
+macro index A "<tag-pattern>~U<enter><tag-prefix><clear-flag>O<untag-pattern>.<enter>" "mark all read"
+#macro index A "<tag-pattern>~N<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>" "mark all read"
+
+## END READING EMAIL
+
+
+
+### SORTING
+# reverse chronological. why 3? no clue
+#set sort = reverse-date-received
+set sort = threads
+set sort_browser=date
+#set sort_browser=reverse-date
+#set sort_aux=last-date-received
+set sort_aux=reverse-last-date-received
+# by thread
+set sort=threads
+set sort_re
+set collapse_unread
+### END SORTING
+### CHECKING EMAIL
+set timeout=30    # mutt 'presses' (like) a key for you (while you're idle) 
+                  # each x sec to trigger the thing below
+set mail_check=30  # mutt checks for new mails on every keystroke
+                  # but not more often then once in 5 seconds
+#set beep_new      # beep on new messages in the mailboxes
+# new_mail_command examples from https://neomutt.org/feature/new-mail#2-%C2%A0introduction
+# macos notification
+set new_mail_command="terminal-notifier -title '🧐 Neomutt' -subtitle '📩 New Mail' \
+-message '%n new messages, %u unread.' -activate 'com.apple.Terminal'"
+# linux notification (change path to png) 
+# set new_mail_command="notify-send --icon='/home/santiago/Pictures/neomutt.png' \
+# 'New Email' '%n new messages, %u unread.' &"
+
+# END CHECKING EMAIL
+
+
+# Configure Internet Message Access Protocol for reading mail
+# Username and password for your Gmail or G Suite account
+set from="Kay Rhodes <masukomi@masukomi.org>"
+set imap_user = "masukomi@gmail.com"
+set imap_pass=`security find-generic-password -g -j "neomutt-masukomi@gmail.com" 2>&1 | grep password: | sed -e 's/password: //' -e 's/"//g'`
+set smtp_pass=`security find-generic-password -g -j "neomutt-masukomi@gmail.com" 2>&1 | grep password: | sed -e 's/password: //' -e 's/"//g'`
+
+unset imap_passive
+# Specifies the default location of your mailboxes
+set folder = "imaps://imap.gmail.com:993"
+
+# Configure Simple Mail Transfer Protocol for sending mail
+set smtp_url = "smtp://masukomi@gmail.com@smtp.gmail.com:587"
+
+# spoolfile sets your default folder / view 
+# from the IMAP server
+#set spoolfile = "+INBOX"
+set spoolfile  = "+[Gmail]/All Mail"
+mailboxes =INBOX =[Gmail]/All\ Mail =[Gmail]/Sent\ Mail =[Gmail]/Drafts =[Gmail]/Spam =[Gmail]/Trash
+
+# Location of drafts
+set postponed = "+[GMail]/Drafts"
+
+# Disable saving outgoing mail since Gmail saves them by default.
+set record = ""
+
+#set smtp_authenticators = ""
+# gmail won't let you send or delete without setting 
+# the smtp_authenticators to plain. 
+# for some reason the defaults don't work.
+set smtp_authenticators = "plain"
+set ssl_force_tls = yes
+
+
+## VISUAL STYLING 
+set markers=no # don't put '+' at the beginning of wrapped lines
+## COLORS loaded by sourcing external file with colors
+source colorschemes/monokai
+
+## Layout
+# vvv Determines the number of lines of a mini-index 
+# which is shown when in the pager.
+set  pager_index_lines = 9
+## SIDEBAR
+set sidebar_visible=no
+# set sidebar_width=24
+# set sidebar_delim='|'
+# set sidebar_sort=no
+set sidebar_format="%B%?F? [%F]?%* %?N?%N/?%S"
+# mailboxes sets the list of folders (labels for gmail)
+# that will appear in your sidebar. If you don't add it there then mutt won't know about it.
+
+
+bind index,pager \cp sidebar-prev                 # Ctrl-n to select next folder
+bind index,pager \cn sidebar-next                 # Ctrl-p to select previous folder
+bind index,pager \ci sidebar-open                 # Ctrl-o to open selected folder
+bind index,pager \cb sidebar-toggle-visible # Ctrl-b to toggle visibility of the sidebar
+
+# If $mail_check_stats is set, NeoMutt will periodically
+# calculate the unread, flagged, and total message counts
+# for each mailbox watched by the mailboxes command. This
+# calculation takes place at the same time as new mail
+# polling, but is controlled by a separate timer:
+# $mail_check_stats_interval.
+#
+# The sidebar can display these message counts. See
+# $sidebar_format.
+set mail_check_stats
+
+## END SIDEBAR
+## END LAYOUT
+
+# NAVIGATION
+# You can add lines like the following to ensure your pager works the way you
+# think it will (up and down scrolling). I also added commands to go rapidly to
+# the next message. Be creative. - http://therandymon.com/woodnotes/mutt/node62.html
+
+bind pager <up> previous-line
+bind pager <down> next-line
+bind pager [ previous-unread
+bind pager ] next-unread
+
+## BEHAVIOR
+# vvv doesn't work for many people 
+# because backspace doesn't output backspace most of the time.
+#bind index <BackSpace> delete-thread
+
+## Infrastructural
+# store your email aliases
+source aliases
+
+# Activate caching, as it can greatly improve speed
+# set up a place to cache headers and bodies
+# be sure to create these directories
+set header_cache        = ~/.config/neomutt/headers
+set message_cachedir    = ~/.config/neomutt/bodies
+# run touch <path to cert file> to create a blank
+# file for mutt to store SMTP certificates in
+set certificate_file    = ~/.config/neomutt/certificates
+
+
+## END INFRASTRUCTURAL
+## MORE THAN PLAINTEXT
+
+## open urls in your browser
+# use urlscan https://github.com/firecat53/urlscan
+# (the successor to urlview) 
+macro index,pager \cu "<pipe-message> urlscan<Enter>" "call urlscan to extract URLs out of a message"
+
+macro attach,compose \cu "<pipe-entry> urlscan<Enter>" "call urlscan to extract URLs out of a message"
+
+## END MORE THAN PLAINTEXT
+
+## GMAIL SPECIFIC TWEAKS
+#
+set move                = no
+
+# because we want to use 2 letter bindings starting with g we must first make it explicit that g by itself is _not_ a thing. See 
+# https://neomutt.org/guide/configuration.html#bind-warnings
+bind index,pager g noop
+
+#macro index,pager I  O  "Mark as read"
+#macro index,pager U  N  "Mark as unread"
+macro index,pager ga "=[Gmail]/All Mail"  "Go to all mail"
+macro index,pager gs =[Gmail]/Starred "Go to 'Starred'"
+macro index,pager gd =[Gmail]/Drafts  "Go to 'Drafts'"
+macro index,pager gl ?       "Go to 'Label'"
+macro index,pager gi =INBOX     "Go to inbox"
+macro index,pager gt "=[Gmail]/Sent Mail" "Go to 'Sent Mail'"
+# macro index,pager d "=[Gmail]/Trash" "Trash"
+macro index,pager +  =[Gmail]/Important "Mark as important"
+macro index,pager !  =[Gmail]/Spam "Report spam"
+# macro index,pager e  "=[All]/Gmail Mail" "Archive conversation"
+
+folder-hook +INBOX 'macro index,pager y "=[Gmail]/All Mail" "Archive conversation"'
+folder-hook +[Gmail]/Trash macro index,pager y =INBOX "Move to inbox"
+set trash = "imaps://imap.gmail.com/[Gmail]/Trash"
+folder-hook +[Gmail]/Starred bind  index,pager y flag-message #"Toggle star"
+## END GMAIL SPECIFIC TWEAKS

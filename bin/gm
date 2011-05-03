@@ -1,0 +1,21 @@
+#!/bin/sh
+
+PORT_INFO=$(lsof -i -P -n | grep LISTEN | grep ":4567")
+PORT=4567
+if [ "$PORT_INFO" != "" ]; then
+	PORT=4568
+	echo "Normal port in use. Using 4568"
+fi
+echo "http://localhost:$PORT"
+if [[ -f authentication.rb ]]; then 
+	if [[ $OSTYPE == "darwin"* ]]; then
+		PASSWORD=$(security find-generic-password -g -j "gollum-wiki" 2>&1 | grep password: | sed -e 's/password: //' -e 's/"//g')
+	else
+		read -s -p "Enter Password for Gollumn Admin: "  PASSWORD
+	fi
+	echo "using authentication"
+	GOLLUM_PASSWORD=$PASSWORD gollum --css --emoji --allow-uploads=dir --template-dir=.templates --port=$PORT --config=authentication.rb &
+else
+	gollum --css --emoji --allow-uploads=dir --template-dir=.templates --port=$PORT &
+fi
+disown

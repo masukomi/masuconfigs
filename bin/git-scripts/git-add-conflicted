@@ -1,0 +1,8 @@
+#!/bin/sh
+
+unmerged=$(git conflicted)
+
+while read file; do
+  git add $file
+done <<< "$unmerged"
+

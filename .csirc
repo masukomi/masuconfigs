@@ -1,0 +1,9 @@
+;(require-library chicken-doc)
+(import linenoise)
+(current-input-port (make-linenoise-port))
+
+;(import readline)
+;(install-history-file)
+;(current-input-port (make-gnu-readline-port))
+;(gnu-history-install-file-manager
+; (string-append (or (get-environment-variable "HOME") ".") "/.csi.history"))

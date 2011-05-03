@@ -1,0 +1,15 @@
+#!/bin/sh
+# when run from a git repository, and passed the number 
+# for a pull request, it will generate an url for 
+# where to find it on Github. This assumes that
+# "origin" is pointing to the Github repo.
+# This will work with Github Enterprise too.
+
+if [ $# -eq 1 ]; then
+    ROOT_URL=$(git config --get remote.origin.url | sed s/.*@// |sed s/\.git// | sed s/\:/\\//)
+    PR_NUM=$1
+    echo "https://$ROOT_URL/pull/$1"
+else
+    echo "Please pass in a Pull Request number"
+    echo "Note that this should be run within a git repository"
+fi

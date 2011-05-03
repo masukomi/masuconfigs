@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# makes a backup of whatever file you pass in to it by copying it in the same location with the .bak extension
+
+if [[ "$1" == *.bak ]]; then
+	new=$(echo $1 | sed -e "s/\.bak$//g")
+	echo $1"->"$new
+	mv $1 $new
+else
+	echo $1".bak->"$1
+	mv $1.bak $1
+fi

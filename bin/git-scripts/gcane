@@ -1,0 +1,10 @@
+#!/bin/sh
+
+git commit --amend --no-edit
+if [ $? -eq 0 ]; then
+	terminal-notifier -message "Code Committed" -sound Blow
+else
+	terminal-notifier -message "Problem!" -sound Basso
+fi
+
+

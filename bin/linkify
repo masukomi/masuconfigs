@@ -1,0 +1,5 @@
+#!/bin/sh
+
+[ $# -ge 1 -a -f "$1" ] && input="$1" || input="-"
+cat $input | sed -E "s/(https*:\/\/[[:graph:]]*)([< ])/<a href='\1'>\1<\/a>\2/g"
+# sed -E "s/(https{0,1}:\/\/.*)$/<a href='\1'>\1<\/a>/g"

@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+
+require 'octokit'
+
+unless ENV['BRANCH_TAG_COMPARISON_OAUTH']
+	puts "missing required env variable: BRANCH_TAG_COMPARISON_OAUTH"
+	puts "this should contain an OAUTH key you've created for this app"
+	puts "the key should have access to the repo in question"
+end
+
+branch = ARGV[0]
+
+`git fetch upstream`
+upstream_branches = `git branch -a | grep upstream`.split("\n")
+upstream_branches = upstream_branches.map{|ub| ub.sub(/.*\//, '')}
+if ! upstream_branches.include? branch
+	puts "Error: #{branch} not found in upstream"
+	exit(1)
+end
+
+client = Octokit::Client.new(:access_token => ENV['BRANCH_TAG_COMPARISON_OAUTH'])
+# client.login
+# client.user.login
+
+#client.pull_requests('RBM-Technologies/vmm', {:base=>'development'})
+# the remote branch
+#client.pull_requests('RBM-Technologies/vmm', {:base=>'development'}).first["head"]["ref"]
+# the repo it came from
+#client.pull_requests('RBM-Technologies/vmm', {:base=>'development'}).first["head"]["repo"]["url"]
+
+repo = client.repo('RBM-Technologies/vmm')
+
+
+
+
+if File.exists?(".git/refs/remotes/upstream/#{branch}")
+	puts branch
+	open_prs = client.pull_requests(ENV['BRANCH_TAG_COMPARISON_REPO'], {:base=>branch})
+	if ! open_prs.nil? and open_prs.size > 0
+		puts "\topen PRs against this branch:"
+		open_prs.each do | opr |
+			puts "\t\t* #{opr.title}"
+			puts "\t\t  by #{opr["head"]["user"]["login"]}"
+			puts "\t\t  #{opr["html_url"]}"
+			
+		end
+	else
+		puts "\tNo Open PRs"
+	end
+else
+	puts "Error: Unable to find .git/refs/remotes/upstream/#{branch}"
+	puts "Did you run this in the repo root?"
+	exit(1)
+end
+
+

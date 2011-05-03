@@ -1,0 +1,243 @@
+#!/usr/bin/env ruby
+
+## README:
+# run git config --add github.repoWebUrl https://github.com/username/project
+# and it will make the treeishes into links :)
+
+require 'tempfile'
+def get_commits_for_author(author, file)
+	commits = `git log --follow --pretty=format:'%h %ad %d %s' --date=short --author "#{author}" #{file}`.split(/\n/)
+end
+
+def get_repo_url()
+	url = `git config --get github.repoWebUrl`
+	url.sub!(/\/$/, '')
+	url.size > 0 ? url : nil
+end
+
+def get_numbers_and_authors(lines)
+	numbers_and_authors = []
+	lines.each do | l |
+		cleaned = l.strip
+		next unless cleaned.length > 0
+		items = cleaned.split(/\s+/)
+		num = items[0].to_i
+		name = items[1..-1].join(' ')
+		numbers_and_authors.push( [num, name] )
+	end
+	numbers_and_authors
+end
+
+def load_commit_info(numbers_and_authors, file)
+	$stderr.puts("loading commits for #{numbers_and_authors.count} authors")
+	new_numbers_and_authors = []
+	numbers_and_authors.each_with_index do | arr, idx |
+		$stderr.putc('.')
+		commits = get_commits_for_author( arr[1], file )
+		new_numbers_and_authors.push([arr[0], arr[1], commits])
+	end
+	$stderr.puts("")
+	new_numbers_and_authors
+end
+
+def get_lines(file)
+	if File.exist?(file)
+		lines = `git log --follow #{file} | git shortlog -sn #{file}`.split("\n")
+	else
+		lines = []
+	end
+end
+
+def write_to_tempfile(output)
+	t = Tempfile.new("git_who_f")
+	t.write(output)
+	t.close()
+
+	`fenestro -p #{t.path} -n "git_who"`
+	t.unlink()
+end
+############################################################
+file=ARGV[0]
+stdout=ARGV[1].nil? ? false : true
+
+
+output = ""
+lines = get_lines(file)
+error_message = lines.count == 0 ? "-- <tt>#{file}</tt> does not exist" : nil
+numbers_and_authors = get_numbers_and_authors(lines)
+
+numbers_and_authors = load_commit_info(numbers_and_authors, file)
+sum = numbers_and_authors.map{|arr| arr[0]}.reduce(:+)
+
+header=<<EOL
+	<html>
+		<head>
+			<title>git who</title>
+			<style>
+*, *:before, *:after {
+  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+ }
+
+body {
+  background: #999;
+}
+
+h2, .heading {
+  margin: 0 0 20px 0;
+  padding: 0 0 5px 0;
+  border-bottom: 1px solid #999;
+  font-family: sans-serif;
+  font-weight: normal;
+  color: #050505;
+  padding-left: 1.5rem;
+}
+
+.container {
+  min-width: 500px;
+  margin: 1.5rem;
+  background: #fff;
+  padding: 20px;
+  overflow: hidden;
+  float: left;
+}
+
+.horizontal .progress-bar {
+  float: left;
+  height: 22px;
+  width: 100%;
+  padding: 12px 0;
+}
+
+.horizontal .progress-track {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  background: #ebebeb;
+}
+
+.horizontal .progress-fill {
+  position: relative;
+  background: #f4a261;
+  height: 20px;
+  width: 50%;
+  color: #343436;
+  font-weight: bold;
+  text-align: center;
+  font-family: "Lato","Verdana",sans-serif;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.rounded {
+  border-radius: 3px;
+}
+.rounded .progress-track,
+.rounded .progress-fill {
+  box-shadow: inset 0 0 5px rgba(0,0,0,.2);
+}
+
+.rounded .progress-track,
+.rounded .progress-fill {
+  box-shadow: inset 0 0 5px rgba(0,0,0,.2);
+}
+
+.lefty{
+  float: left;
+  padding-left: 1rem;
+}
+
+tt {
+	background: white;
+	padding: 0.2rem;
+	margin-top: 0.5rem;
+	display: inline-block;
+	border-radius: 0.25rem;
+}
+.author{
+	white-space: nowrap;
+	padding-left: 1rem;
+}
+.heading{
+	font-size: 2rem;
+	font-weight: bold;
+}
+.commits{
+	display: none;
+	font-family: monospace;
+}
+.commits ul {
+	margin-bottom: 0px;
+}
+.treeish{
+	white-space: pre;
+}
+input[type=checkbox] {
+	display: none;
+}
+input[type=checkbox]:checked ~ .commits {
+	display: inline-block;
+}
+			</style>
+
+		</head>
+		<body>
+			<div class="heading">
+				#{sum} Commits on
+				<br /><tt class="rounded">#{file}</tt>
+				#{error_message}
+			</div>
+			<div class="container horizontal rounded">
+EOL
+
+output += header
+
+numbers_and_authors.sort_by{|arr|arr[0]}.reverse.each do | arr |
+	num = arr[0]
+	percent = (100*num/sum)
+	id= "#{arr[0]}-#{arr[1].gsub(/\s+/, '_')}"
+bar=<<EOL
+  <div>
+  <input type="checkbox" id="#{id}">
+  <label for="#{id}">
+  <div class="progress-bar horizontal">
+    <div class="progress-track">
+      <div class='progress-fill' style='width: #{percent}%;'>
+        <span class="lefty"><span>#{num}</span><span
+        class='author'>#{arr[1]}</span></span>
+      </div>
+    </div>
+  </div>
+  </label>
+EOL
+	output += bar
+	commits = arr[2]
+	repo_url = get_repo_url()
+	if repo_url.nil?
+		commits = commits.map{|c|c.strip.sub(/^(\w+)/, "<span class='treeish'>\\1</span>")}
+	else
+		commits = commits.map{|c|c.strip.sub(/^(\w+)/, "<a class='treeish' href='#{repo_url}/commit/\\1'>\\1</a>")}
+	end
+	output +=<<EOL
+		<div class='commits'>
+			<ul>
+				<li>#{commits.join("</li><li>")[0..-5]}
+			</ul>
+		</div>
+	</div>
+EOL
+end
+$stderr.puts("\n")
+footer=<<EOL
+			</div>
+		</body>
+	</html>
+EOL
+
+output += footer
+
+if ! stdout 
+	write_to_tempfile(output)
+else
+	puts output
+end
+

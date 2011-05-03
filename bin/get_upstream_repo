@@ -1,0 +1,3 @@
+#!/bin/bash
+
+git remote -vv | grep upstream | head -n 1 | sed -e "s/.*://" -e "s/\.git.*//"

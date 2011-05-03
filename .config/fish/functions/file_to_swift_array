@@ -1,0 +1,10 @@
+function file_to_swift_array --description="converts a file to a swift array"
+	if test (count $argv) -gt 0
+		echo "["
+		cat $argv | sed -e 's/"/\\\"/g' -e 's/^/"/g' -e 's/$/",/g' -e '$ s/",$/"/g'
+		echo '].joinWithSeparator("\n");'
+	else
+		echo "please pass in a file path"
+	end
+end
+

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+time eval $1
+terminal-notifier -title "Terminal" -message "Done with task!"

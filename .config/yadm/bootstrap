@@ -1,0 +1,260 @@
+#!/bin/sh
+
+echo "have you run ssh-add ~/.github ? [y]"
+read github
+if [ "$github" != "y" ]; then
+	echo "Please load your ssh keys before proceeding."
+	echo "We'll need them to download some github repos."
+	exit 1
+fi
+GENERATE_SETUP_TASKS = 1
+if hash task 2>/dev/null; then
+	 GENERATE_SETUP_TASKS=0
+fi
+
+#system_type=$(uname -s)
+#if [ "$system_type" = "Darwin" ]; then
+
+
+
+function mayclone(){
+	#$1 = base dir
+	#$2 = repo
+	basedir=$1
+	subdir=$(basename $2 | sed -e "s/\.git//")
+	if [ ! -d "$basedir/$subdir" ]; then
+		git clone $2 $basedir/$subdir
+	fi
+}
+function is_installed(){
+	hash $1 >/dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		true
+	else
+		false
+	fi
+}
+
+if ! is_installed "brew"; then
+	/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
+
+if ! is_installed "mas"; then # mac app store cli
+	brew install mas
+	mas signin --dialog masukomi@masukomi.org
+fi
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+        # Mac OSX
+	source "$HOME/.config/yadm/brews.sh"
+else
+	echo "Hey! You should create a brews.sh equivalent for $OSTYPE"
+fi
+
+
+
+
+yadm submodule init
+yadm submodule update --init --recursive
+
+##########
+# GEMs
+gem install aws-sdk
+gem install uniscribe
+
+# gollum personal git backed wiki
+# https://github.com/gollum/gollum
+# https://www.youtube.com/watch?v=qbBElCn6C_w
+gem install charlock_holmes -- --with-icu-dir=/usr/local/opt
+gem install github-markup
+gem install gollum
+##########
+
+##########
+# PERL
+# perlbrew is a tool to manage multiple perl installations in your $HOME directory.
+# https://perlbrew.pl
+if ! is_installed "perlbrew"; then
+	curl -L https://install.perlbrew.pl | bash
+fi
+
+
+
+mkdir -p ~/workspace/reference
+mkdir -p ~/.vim-tmp
+mkdir -p ~/gocode/bin #because... fuck you go.
+
+mayclone "~/workspace" "git@github.com:masukomi/cleandiff.git"
+mayclone "~/workspace" "git@github.com:kerma/defaultbrowser.git"
+mayclone "~/workspace" "git@github.com:masukomi/gpup.git"
+# ^^ not linked because dir is added to path in fish
+mayclone "~/workspace" "git@github.com:masukomi/git-status-report.git"
+# ^^ not linked because dir is added to path in fish
+mayclone "~/workspace" "git@github.com:masukomi/git_accessories.git"
+#^^ requires secondary commands AFTER xcode is installed
+mayclone "~/workspace" "git://github.com/lloyd/yajl"
+mayclone "~/workspace" "git@github.com:masukomi/git-rook.git"
+
+# A fast streaming JSON parsing library in C. http://lloyd.github.com/yajl
+cd ~/workspace/yajl
+./configure && make install
+# set up git-rook
+# * lets me have multiple scripts executed per git hook
+# * gives me a post-init functionality that'll set up a file with
+#   a .vimrc that has just the plugins for this project
+mayclone "~/workspace" "git@github.com:masukomi/git-rook.git"
+if [ ! -h ~/bin/git-rook ];then
+	ln -s ~/workspace/git-rook/git-rook ~/bin/git-rook
+fi
+
+
+#^^^ json formatting library
+#    gives you json_reformat and json_verify
+
+
+## START MUTT
+#mu index --rebuild
+echo "Sync mutt contacts if needed: https://github.com/tgray/contacts"
+## END MUTT
+## START gcalcli (google calendar cli)
+if ! is_installed "gcalcli"; then
+	pip install gcalcli
+fi
+
+
+
+cp -r ~/workspace/home_dir_configs/Library/Fonts/* ~/Library/Fonts/
+
+echo "Setting iTerm preference folder"
+defaults write com.googlecode.iterm2 PrefsCustomFolder "$HOME/.iterm2"
+
+# setup CCL
+# mkdir -p /usr/local/src
+
+# fish shell config
+
+# twtxt
+mkdir -p ~/Library/Application\ Support/twtxt/config
+
+
+# command-t should already be installed via a vimball stored in the git repo
+# https://wincent.com/products/command-t
+
+# disable the @#$%@#$ back and forth swipe in chrome
+defaults write com.google.Chrome.plist AppleEnableSwipeNavigateWithScrolls -bool FALSE
+
+# install rust stuff
+cargo install broot
+
+# install chicken scheme stuff
+readline_version=$(brew list readline --versions)
+readline_version=${readline_version##* }
+export CSC_OPTIONS="-I/usr/local/Cellar/readline/$readline_version/include -L/usr/local/Cellar/readline/$readline_version/lib -Wl,-flat_namespace,-undefined,suppress"
+unset readline_version
+#chicken-install readline
+chicken-install chicken-doc
+chicken-install linenoise
+chicken-install simple-loops
+chicken-install directory-utils
+chicken-install regex
+chicken-install srfi-18
+chicken-install srfi-128
+chicken-install srfi-63
+chicken-install medea
+chicken-install filepath
+chicken-install spiffy spiffy-request-vars intarweb
+chicken-install shell
+chicken-install sha2 message-digest
+chicken-install http-client
+cd `csi -p '(import chicken.platform)(chicken-home)' | tail -n1`
+curl http://3e8.org/pub/chicken-doc/chicken-doc-repo.tgz | sudo tar zx
+# requires `chicken-install linenoise` to have been run first
+
+# RVM
+gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+curl -sSL https://get.rvm.io | bash -s stable
+
+# System Prefs
+# make the mouse go faster.... maybe I can't see a difference
+# defaults  read -g com.apple.mouse.scaling => 3
+defaults  write -g com.apple.mouse.scaling 5
+
+
+# install vim-anywhere
+# https://github.com/cknadler/vim-anywhere
+curl -fsSL https://raw.github.com/cknadler/vim-anywhere/master/install | bash
+
+
+#####
+if [ GENERATE_SETUP_TASKS -eq 1 ]; then
+	echo "setting up todo items for you"
+	task add project:setup priority:H "set ⌘^v as Vim Anywhere shortcut under services in window that just opened"
+	task add project:setup priority:H "download jq, add to path, make executable"
+	task annotate 2 "https://stedolan.github.io/jq/"
+	task add project:setup priority:H "add: /usr/local/bin/fish to /etc/shells"
+	task annotate 3 'echo "/usr/local/bin/fish" | sudo tee -a /etc/shells'
+	task annotate 3 "chsh -s /usr/local/bin/fish"
+	task add project:setup priority:H "add: your ssh keys (and load the github one)"
+	task add project:setup priority:H "download: Inconsolata (not -g or -gz)"
+	task annotate 4 "https://github.com/powerline/fonts"
+	task add project:setup priority:H "run: chsh -s /usr/local/bin/fish"
+	task add project:setup priority:H "run: fish shell integration commands"
+	task annotate 6 "https://rvm.io/integration/fish"
+	task add project:setup priority:H "install: taskopen"
+	task annotate 7 "https://github.com/ValiValpas/taskopen"
+
+	task add project:setup priority:H "run:sudo pip3 install -I urlscan"
+	task add project:setup priority:H "run: urlscan -g"
+	task add project:setup priority:H "run: notmuch setup"
+	task add project:setup priority:H "sync contacts & run  contacts -a --all > ~/.config/neomutt/aliases"
+
+	task add project:setup priority:H "download roboto mono"
+	task annotate 12 "https://fonts.google.com/specimen/Roboto+Mono"
+
+	# and now tasks for the apps you need to install manually
+	task add project:setup "Install Dropbox"
+	task add project:setup "Install Chrome"
+	task add project:setup "Install Firefox"
+	task add project:setup "Install Xcode"
+	task add project:setup "Accept Xcode license"
+	task add project:setup "after Xcode license, follow instructions https://github.com/kerma/defaultbrowser"
+	task add project:setup "Install Flux "
+	task annotate 14 "https://justgetflux.com/"
+	task add project:setup "Install Fantastical"
+	task add project:setup "Install Kaleidoscope"
+	task annotate 16 "https://www.kaleidoscopeapp.com/download"
+	task add project:setup "Install nvALT"
+	task add project:setup "Install OmniGraffle"
+	task add project:setup "Install Slack"
+	task add project:setup "Copy Scuttlebutt's gossip.json from the other box"
+	task add project:setup "Copy Scuttlebutt's gossip.json from the other box"
+	task add project:setup "Install Patchwork (Scuttlebutt)"
+	task add project:setup "boot Patchwork and let sync get started"
+	task add project:setup "Install Golang"
+	task add project:setup priority:L "Install Quiver"
+	task add project:setup priority:L "Install Skitch"
+	task add project:setup priority:L "Install Firefox"
+	task add project:setup priority:L "Install Marked 2"
+	task add project:setup priority:L "Install Monodraw"
+	task add project:setup priority:L "Install Noizio"
+	task add project:setup priority:L "Install Tweetbot"
+	task add project:setup priority:L "Install Deckset"
+	task add project:setup priority:L "Install Fenestro"
+	task add project:setup priority:L "Install Tad"
+	task add project:setup priority:L "run ln -s /Applications/Tad.app/Contents/Resources/tad.sh ~/bin/tad"
+	task add project:setup priority:L "Set Ascii font in iterm 2 to roboto mono 18"
+	task add project:setup priority:M "rvm default 2.6.3 (or whatever)"
+	task add project:setup priority:M "gem install solargraph"
+	task add project:setup priority:M "gem install reek"
+	task add project:setup priority:M "gem install bundler"
+
+
+	##########
+	# RUST
+	task add project:setup priority:M "curl https://sh.rustup.rs -sSf | sh"
+	task add project:setup priority:M "cargo install silicon"
+	##########
+
+	echo "I'M DONE. Here are your todo items"
+fi
+task

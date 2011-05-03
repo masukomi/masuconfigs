@@ -1,0 +1,3 @@
+#!/bin/sh
+
+git branch | xargs -I branch git log -n1 --format="%ai branch" branch 

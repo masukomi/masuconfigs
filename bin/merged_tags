@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+
+merged_tags = `git log --grep  "Merge tag " --oneline \
+| sed "s/.*Merge tag '//g" | sed "s/' into.*//g"`.split("\n")
+
+all_tags = `git tag`.split("\n").select{|x| x.match(/v(\d+\.)+\d+/)}
+
+# version_numbers = {}
+#/
+# all_tags.each do | tag | 
+# 	numbers = tag.split(".").map{|x| x.gsub(/\D+/, '')}.join('').to_i
+# 	version_numbers[numbers] = tag
+# end
+#
+#version_numbers.keys.sort_by{|a, b| a.to_i <=> b.to_i }.reverse.each do |key|
+all_tags.sort.reverse.each do |tag|
+	# puts "key: #{key}"
+	# tag = version_numbers[key]
+	print tag
+	if merged_tags.include? tag
+		print " - MERGED"
+	end
+	print "\n"
+end
+
+
+puts merged_tags.join("\n")

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+DASH=
+DASHP=
+
+case `uname` in
+	Darwin|*BSD) DASH=-; DASHP="-p " ;;
+esac
+
+APP=${1%\?}
+
+PIDS=$( ps ${DASH}axc -o pid= -o command= | awk /"$APP"/'{print $1}' )
+
+
+if ! [ "$PIDS" ]; then
+	echo "No $APP found" 1>&2
+	exit 1
+fi
+
+ps w ${DASHP}$PIDS

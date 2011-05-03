@@ -1,0 +1,9 @@
+#!/bin/sh
+
+echo "🛵 Initializing git repo"
+echo ""
+git init
+echo "🚀 Running git rook --init"
+echo ""
+git rook --init
+echo "😀 Done!"

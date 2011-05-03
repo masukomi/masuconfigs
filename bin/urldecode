@@ -1,0 +1,5 @@
+#!/bin/sh
+
+while read line; do
+  echo $line | sed "s@+@ @g;s@%@\\\\x@g" | xargs -0 printf "%b"
+done < "${1:-/dev/stdin}"

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Greps for the DEF of a Ruby / Crystal function
+
+WHAT=$1
+WHERE=$2
+if [ "$WHERE" = "" ]; then
+  WHERE="*"
+fi
+echo "Searching for definitions of: $WHAT"
+echo "Looking in: $WHERE"
+grep -rn $WHAT $WHERE | egrep --colour=never "[[:space:]]*def $WHAT|[[:space:]]*def self.$WHAT" \
+  | egrep -v "tags:" \
+  | grep -v ".js:" \
+  | grep -v ".log:" \
+  | grep --colour=auto $WHAT # last grep to add colour to results
+if [[ $? -ne 0 ]]; then
+	echo "none found 😕"
+fi

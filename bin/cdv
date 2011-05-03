@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+#echo "LOCAL: $1"
+#echo "REMOTE: $2"
+#echo "MERGED: $3"
+
+TEMP_FILE="$(mktemp /tmp/cleandifffapp.XXXXXX).cdiff"
+
+
+diff -u $1 $2 | dwdiff -A best -L -s -c -d "\x0A%,;/:._{}[]()|-=~>\"\\\\" \
+ --diff-input - | cat > $TEMP_FILE
+gvim -O $TEMP_FILE
+echo "output is here: $TEMP_FILE"
+echo "rm $TEMP_FILE; #kill it please"
+echo "CleanDiff should delete that after ingestion"
+
+exit 0

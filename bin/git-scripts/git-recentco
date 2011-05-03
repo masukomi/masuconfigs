@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+# Source:   https://gist.github.com/fritz-c/c1e528b09bc1c0827a3c
+# Original: https://gist.github.com/jordan-brough/48e2803c0ffa6dc2e0bd
+
+# Download this script as "git-recentco" (no extension), chmod it to be executable and put it in your
+# path somewhere (e.g. /usr/bin). You can then use it via `git recentco` from inside any git repo.
+
+# Example:
+#
+# $ git recentco -n 5
+# 1) master
+# 2) stable
+# 3) develop
+# 4) some-cool-feature
+# 5) feature/improve-everything
+# Choose a branch: 3
+# Switched to branch 'develop'
+
+usage()
+{
+  echo "usage: git recentco [-n lines]"
+}
+
+while getopts "hn:" opt; do
+  case $opt in
+    h)
+      usage
+      exit 1
+      ;;
+    n)
+      NUM=$OPTARG
+      ;;
+    \?)
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+NUM=${NUM-10} # default to 10 lines
+
+# This: `awk ' !x[$0]++'` removes duplicates.  See http://stackoverflow.com/questions/11532157
+UNIQUE_BRANCHES=$(git reflog | egrep -io "moving from ([^[:space:]]+)" | awk '{ print $3 }' | awk ' !x[$0]++')
+
+# Exclude branches that don't exist locally
+BRANCH_CHOICES=( $(echo "$UNIQUE_BRANCHES" | while read line; do
+  git rev-parse --verify "$line" &>/dev/null && echo "$line"
+done | head -n "$NUM") )
+
+PS3="Choose a branch: "
+select d in "${BRANCH_CHOICES[@]}"; do test -n "$d" && break; echo ">>> Invalid Selection"; done
+
+git checkout "$d"

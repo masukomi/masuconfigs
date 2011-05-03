@@ -1,0 +1,7 @@
+#!/bin/sh
+
+no_prefix_file_name=$(echo $2 | sed -e "s/^rel_//" -e "s/_rc$//")
+file_name=$no_prefix_file_name".pdf"
+gimme_tickets $1 $2 | tee "gimme_tickets_$no_prefix_file_name" | oho | html2pdf ; mv output.pdf $file_name ; open $file_name
+
+echo "gimme_tickets PDF generation complete" | alerter -sound default

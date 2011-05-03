@@ -1,0 +1,23 @@
+#!/bin/sh
+
+#!/usr/bin/env bash
+
+show_spinner()
+{
+  local -r pid="${1}"
+  local spinstr='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+  # local spinstr='spinstr='\|/-' # then just %4 below instead of %10
+  # mod num characters in spinstr
+
+  i=0
+  while kill -0 $pid 2>/dev/null
+  do
+    i=$(( (i+1) %10 ))
+    printf "\r${spinstr:$i:1}"
+    sleep .1
+  done
+}
+
+("$@") &
+show_spinner "$!"
+

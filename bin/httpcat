@@ -1,0 +1,26 @@
+#!/bin/sh
+
+if [ "$#" -ne 1 ];then
+	echo "🙀 You can giv status code?"
+	exit 1
+fi
+CODES=("100" "101" "102" "200" "201" "202" "203" "204" "205" "206" "226" "300" "301" "302" "303" "304" "305" "306" "400" "401" "402" "403" "404" "405" "406" "407" "408" "409" "410" "411" "412" "413" "414" "415" "416" "417" "418" "420" "422" "423" "424" "425" "426" "428" "429" "431" "444" "449" "450" "451" "499" "500" "501" "502" "503" "504" "505" "506" "507" "508" "509" "510" "511" "598" "599")
+
+function containsElement () {
+  local e match="$1"
+  shift
+  for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}
+
+containsElement "$1" "${CODES[@]}"
+if [ $? -ne 0 ];then
+	echo "🙀 no gud! Try 'gen"
+	exit 2
+fi
+
+
+
+curl https://http.cat/$1 2>/dev/null | imgcat
+
+echo "Details @ https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/$1"

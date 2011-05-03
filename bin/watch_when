@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# written by Pat Collins https://burned.com
+
+cmd=$1
+last=""
+output=""
+while [[ true ]]; do
+  output=$(eval $cmd)
+  if [[ $last != $output ]]; then
+    echo -n "$output"
+    echo -en "\t"
+    echo $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+    last=$output
+  fi
+  sleep 2
+done

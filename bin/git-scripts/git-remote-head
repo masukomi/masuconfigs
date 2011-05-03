@@ -1,0 +1,5 @@
+#!/bin/bash
+
+git ls-remote --quiet --symref \
+  | grep --colour=never "ref: refs/heads/" \
+  | sed -e "s/[[:space:]]HEAD//" -e "s/.*\///"

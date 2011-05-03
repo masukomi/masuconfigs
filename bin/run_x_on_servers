@@ -1,0 +1,12 @@
+#!/usr/local/bin/fish
+echo "what servers[space separated list]?"
+read -la boxes
+
+echo "what command?"
+read command
+
+for box in $boxes
+	echo "$box ---------------------------------------------"
+	echo "running: ssh app@$box $command"
+	ssh app@$box $command
+end

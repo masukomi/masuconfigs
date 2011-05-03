@@ -1,0 +1,10 @@
+# the RFC describing this format can be found here
+# https://tools.ietf.org/html/rfc1524
+
+text/html; fenestro --path %s &; needsterminal;
+# text/html; fenestro %s &; test=test -n "$DISPLAY"; needsterminal;
+text/html; w3m -I %{charset} -T text/html; copiousoutput;
+image/jpg; imgcat %s;
+image/jpeg; imgcat %s;
+image/png; imgcat %s;
+image/gif; imgcat %s;

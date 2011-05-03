@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+kill_list = ARGF.read.split("\n").map{|x| x.sub(/^\*?\s+/, '').rstrip}
+count = 0
+if kill_list.size > 0
+  kill_list.each do | branch |
+    `git branch -D #{branch} 2>/dev/null`
+    if $?.success?
+      putc '.'
+      count += 1
+    else
+      puts "\ncan't delete: #{branch}"
+    end
+  end
+  puts "\ndone. #{count} branches deleted"
+else
+  puts "no branches found in input."
+  exit 1
+end

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+unmerged=$(git conflicted)
+
+while read file; do
+  eval $EDITOR $file
+done <<< "$unmerged"
+

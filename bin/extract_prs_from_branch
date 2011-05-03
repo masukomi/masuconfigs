@@ -1,0 +1,116 @@
+#!/usr/bin/env ruby
+
+require 'octokit'
+
+branch = ARGV[0]
+status_modifier = ARGV.length > 1 ? ARGV[1] : nil
+closed_prs = status_modifier == 'closed' || status_modifier.nil?
+all_prs = status_modifier == 'all'
+open_prs = status_modifier == 'open'
+
+
+unless ENV['BRANCH_TAG_COMPARISON_OAUTH']
+  puts "missing required env variable: BRANCH_TAG_COMPARISON_OAUTH"
+  puts "this should contain an OAUTH key you've created for this app"
+  puts "the key should have access to the repo in question"
+end
+unless branch
+  puts "Please specify a branch to extract merged PR tickets from"
+  exit(1)
+end
+
+def extract_tickets_from_lines(lines)
+  found_tickets = []
+  lines.each do |line|
+    m = /\[#?(\w+-\d+)\]/.match(line)
+    m = / *\[?#?(([a-zA-Z]{2}[a-zA-Z0-9]{0,1})-?(\d{3,}))\]? +/.match(line) unless m
+    m = /Merge pull request #\d+ from \w+\/(([a-zA-Z]{2}[a-zA-Z0-9]{0,1})[_-]?(\d{3,}))[_-].*?/.match(line) unless m
+    m = /^(([a-zA-Z]{2}[a-zA-Z0-9]{0,1})[_-](\d{3,}))\W+/.match(line) unless m
+    if m
+      ticket = m[1].upcase
+      unless ticket.include? '-'
+        ticket = "#{m[2]}-#{m[3]}".upcase
+      end
+      found_tickets.push(ticket)
+      next
+    # else # for debugging
+    #   puts "no match: #{line}"
+    end
+  end
+  found_tickets.uniq.sort
+end
+
+def extract_tickets_from_prs(prs, only_merged=true)
+  lines = []
+  prs.each do |pr|
+    if !only_merged or (only_merged and !pr['merged_at'].nil?)
+      lines.push(pr.title)
+      body = pr['body']
+      lines += body.split("\n")
+    end
+  end
+  extract_tickets_from_lines(lines)
+end
+
+def puts_tickets(tickets)
+  tickets.each do |ticket|
+    puts ticket
+  end
+end
+
+def puts_pr_info(pr)
+  puts "\t\t* #{pr.title}"
+  puts "\t\t  by #{pr["head"]["user"]["login"]}"
+  puts "\t\t  #{pr["html_url"]}"
+end
+
+client = Octokit::Client.new(:access_token => ENV['BRANCH_TAG_COMPARISON_OAUTH'])
+# client.login
+# client.user.login
+
+#client.pull_requests('RBM-Technologies/vmm', {:base=>'development'})
+# the remote branch
+#client.pull_requests('RBM-Technologies/vmm', {:base=>'development'}).first["head"]["ref"]
+# the repo it came from
+#client.pull_requests('RBM-Technologies/vmm', {:base=>'development'}).first["head"]["repo"]["url"]
+
+# repo = client.repo('RBM-Technologies/vmm')
+
+
+# puts "Extracting tickets from #{branch}"
+
+prs = []
+if closed_prs or all_prs
+  # $stderr.puts("XXX closed")  if closed_prs
+  # $stderr.puts("XXX all") if all_prs
+  closed = client.pull_requests(ENV['BRANCH_TAG_COMPARISON_REPO'], 
+                                {:base=>branch,
+                                 :state=>'closed'})
+  closed.each do |cpr|
+    puts_pr_info(cpr)
+  end
+  prs += closed
+end
+if open_prs or all_prs
+  # $stderr.puts("XXX open") if open_prs
+  # $stderr.puts("XXX all") if all_prs
+  open = client.pull_requests(ENV['BRANCH_TAG_COMPARISON_REPO'], 
+                                {:base=>branch,
+                                 :state=>'open'})
+    $stderr.puts("XXX there are #{open.size} open prs")
+
+  open.each do | opr | 
+    puts_pr_info(opr)
+  end
+    prs += open
+end
+
+
+puts_tickets(extract_tickets_from_prs(prs))
+
+#
+# open_prs = client.pull_requests(ENV['BRANCH_TAG_COMPARISON_REPO'], 
+#                                 {:base=>branch,
+#                                  :state=>'open'})
+# puts_tickets("Open Tickets:", extract_tickets_from_prs(open_prs, false))
+#
