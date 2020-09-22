@@ -26,3 +26,4 @@ external_gitconfig
 .vim/plugged-coding/*
 tags
 .config/yadm/repo.git/*
+.ssh/*
