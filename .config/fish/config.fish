@@ -33,6 +33,8 @@ set -x DYLD_LIBRARY_PATH $LLVM_HOME/lib
 # set -x RUBY_CONFIGURE_OPTS "--with-openssl-dir="(brew --prefix openssl@1.1)
 
 # Abbreviations
+#
+abbr -a less "less -R"
 abbr -a gits "git status -uno"
 abbr -a top "top -o cpu"
 #Compensating for stupidity
@@ -82,6 +84,7 @@ abbr -a berd 'docker-compose exec bin/rspec --format=documentation'
 abbr -a sbw 'env SKIP=bad_words.sh'
 
 alias vimr /Applications/VimR.app/Contents/Resources/vimr
+abbr -a vfz "mvim (fzf)"
 alias :q exit
 
 alias lg lazygit
