@@ -1,8 +1,8 @@
 [user]
 	name = masukomi
 	email = masukomi@masukomi.org
-[includeIf "gitdir:~/workspace/apple/"]
-	path = ~/.gitconfig_apple
+[includeIf "gitdir:~/workspace/client_a/"]
+	path = ~/.config/work/gitconfig_client_a
 [includeIf "gitdir:~/workspace/dockyard/"]
 	path = ~/.gitconfig_dockyard
 [include]
@@ -11,6 +11,7 @@
 	excludesfile = ~/.gitignore_global
 	quotepath = false
 	editor = vim
+	attributesfile = /Users/masukomi/.gitattributes
 [color]
 	ui = auto
 	diff = auto
