@@ -29,7 +29,8 @@
 ;; `load-theme' function. These are the defaults.
 ;; (setq doom-theme 'doom-one)
 ;; (setq doom-theme 'darktooth)
-(setq doom-theme 'doom-snazzy)
+;; (setq doom-theme 'doom-snazzy)
+(setq doom-theme 'doom-spacegrey)
 
 ;; If you intend to use org, it is recommended you change this!
 (setq org-directory "~/.config/org/")
@@ -37,6 +38,11 @@
 ;; If you want to change the style of line numbers, change this to `relative' or
 ;; `nil' to disable it:
 (setq display-line-numbers-type t)
+
+; $ should go to the end of the actual line not
+; the visual line
+(setq evil-respect-visual-line-mode nil)
+
 
 
 ;; Here are some additional functions/macros that could help you configure Doom:
@@ -64,6 +70,19 @@
 ;; disable auto-save and auto-backup
 ; (setq auto-save-default nil)
 ; (setq make-backup-files nil)
+
+; kinda-sorta forcing initial window size because it seems incapable
+; of remembering
+(setq default-frame-alist '((left . 106) (width . 106) (fullscreen . fullheight)))
+; main monitor is currently 106 x 60 (characters)
+
+; automatically sync buffer with changes in the filesystem
+; Auto Revert will not revert a buffer if it has unsaved changes, or if its file
+; on disk is deleted or renamed.
+; When a buffer is auto-reverted, a message is generated. This can be suppressed
+; by setting auto-revert-verbose to nil.
+; https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Revert.html#Auto-Revert
+(global-auto-revert-mode t)
 
 
 (global-visual-line-mode t)
@@ -111,6 +130,25 @@
 (map! :nv "C-=" #'er/contract-region
       :nv "C-+" #'er/expand-region)
 
+
+;; ;------------
+;; ; customize the mode-line (think airline in vim)
+;; (set-face-attribute 'mode-line nil
+;;  :background "#6c6f31" ; actually gets used as the foreground
+;;  :foreground "#314d6f" ; actually....the background
+;;  :box nil
+;;  :overline nil
+;;  :underline nil
+;;  )
+
+;; (set-face-attribute 'mode-line-inactive nil
+;;                     :background "#4872a4"
+;;                     :foreground "#1a283a"
+;;                     :box nil    ; could do something like '(:line-width 8 :color "#565063")
+;;                     :overline nil
+;;                     :underline nil)
+(setq doom-modeline-height 25)
+
 ;------------
 ;; (straight-use-package 'rainbow-mode)
 ; auto-highlights css colors like #ffffff
@@ -138,5 +176,10 @@
 ;;       ("g t" . centaur-tabs-forward)
 ;;       ("g T" . centaur-tabs-backward))
 ;;   )
-;; (define-key evil-normal-state-map (kbd "g t") 'centaur-tabs-forward)
+;;(define-key evil-normal-state-map (kbd "g t") 'centaur-tabs-forward)
 ;; (define-key evil-normal-state-map (kbd "g T") 'centaur-tabs-backward)
+
+
+; tell yasnippet to expand on space too (because that's the way it worked in vim)
+; blows up if run here. i think something's not loaded yet
+;; (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
