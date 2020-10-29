@@ -1,8 +1,26 @@
 #!/bin/sh
 
 # Usage: dgrep <search_term> <2nd search term> <where>
-WHERE="*"
-if [[ "$3" != "" ]]; then
-	WHERE=$3
+#        or
+#        echo "foo bar baz" | dgrep <search_term> <2nd search term>
+if [ $# -eq 0 ]; then
+	echo "double grep"
+	echo ""
+	echo "Usage: dgrep <search_term> <2nd search term> <where>"
+	echo "       or"
+	echo "       echo "foo bar baz" | dgrep <search_term> <2nd search term>"
+	exit 1
 fi
-grep -rn $1 $WHERE | grep $2
+if [[ -t 0 ]]; then
+	WHERE="*"
+	if [[ "$3" != "" ]]; then
+		WHERE=$3
+	fi
+	# grep -rn "$1" $WHERE | grep "$2"
+	egrep -rn "$1.*$2|$2.*$1" $WHERE
+else
+	# read from stdin
+	while IFS= read -r line; do
+		echo "$line" | egrep "$1.*$2|$2.*$1"
+	done
+fi
