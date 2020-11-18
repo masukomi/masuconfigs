@@ -268,6 +268,8 @@ maybrew "msmtp"
 maybrew "gpgme"
 #
 #maybrew "khard"
+# Kubernetes (k8s) command line utility
+maybrew "kubectl"
 # SMTP client that can be used as an SMTP plugin for Mutt
 maybrew "msmtp"
 #
