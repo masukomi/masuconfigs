@@ -33,8 +33,9 @@
 	untracked = cyan
 [alias]
 	# ball == branch + all
-	#branchdiff = !sh -c \"git diff `git oldest-ancestor`..\"
-	#tiny log
+	# checkout a version of the repo at a specific point in time
+	# vv the # at the end is required. Date format is "May 21 2015"
+	at = !"git checkout $(git rev-list -1 --before=\"$1\" $(git rev-parse --abbrev-ref HEAD)) #"
 	assume   = update-index --assume-unchanged
 	assumed  = "!git ls-files -v | grep ^h | cut -c 3-"
 	ball = !sh -c \"git branch -a | sed -e 's/^* //g' | sed -e 's/^  //g'\"
@@ -48,6 +49,7 @@
 	branchlog = !sh -c \"git log `git oldest-ancestor`..\"
 	bdf = !sh -c \"git diff --name-status $2 $(git merge-base $2 $1)\"
 	cane = commit --amend --no-edit
+	contains = branch --contains
 	current-branch = rev-parse --abbrev-ref HEAD
 	changed = status -uno
 	cherry-pick = cherry-pick -x
