@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: sterr
+# uuid:
+# key: sterr
+# condition: t 
+# --
+STDERR.puts("$1")

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: RSpec.describe ...
+# key: rspec_d
+# --
+require 'rails_helper'
+
+RSpec.describe  ${1:ClassName} do
+
+end

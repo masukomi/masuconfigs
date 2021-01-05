@@ -49,3 +49,7 @@
 (package! nlinum-relative)
 
 (package! buffer-move)
+
+(package! visual-regexp-steroids)
+
+(package! ialign)

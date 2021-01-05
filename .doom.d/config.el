@@ -183,3 +183,10 @@
 ; tell yasnippet to expand on space too (because that's the way it worked in vim)
 ; blows up if run here. i think something's not loaded yet
 ;; (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
+
+;crosshairs.el
+;https://www.emacswiki.org/emacs/crosshairs.el
+;(cursor crosshair) requires hl-line+ which doesn't exist (anymore?)
+;there is hl-line-plus though so maybe crosshairs.el could be edited to use
+;that and it'd work.
+ ;; (straight-use-package 'hl-line-plus)
