@@ -184,9 +184,11 @@
 ; blows up if run here. i think something's not loaded yet
 ;; (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
 
-;crosshairs.el
-;https://www.emacswiki.org/emacs/crosshairs.el
-;(cursor crosshair) requires hl-line+ which doesn't exist (anymore?)
-;there is hl-line-plus though so maybe crosshairs.el could be edited to use
-;that and it'd work.
- ;; (straight-use-package 'hl-line-plus)
+
+; extends Vline Mode https://www.emacswiki.org/emacs/VlineMode
+(straight-use-package 'col-highlight)
+(column-highlight-mode 1) ; always highlighting
+; TODO change the color
+; list-faces-display
+; shows you a col-highlight face that controls the color of the highlight column
+; edit that face to change what it looks like.
