@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ $# -ne 2]; then
+	echo "Usage: mp4_to_mp3 <IN.mp4> <OUT.mp3>"
+	exit 1
+fi
+
+ffmpeg $2 -i $1 -codec:a libmp3lame -qscale:a 1

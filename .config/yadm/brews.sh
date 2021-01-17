@@ -41,6 +41,8 @@ maybrew "automake"
 maybrew "bat"
 # Clone of cat(1) with syntax highlighting and Git integration
 maybrew "cloc"
+# crystal programming language
+maybrew "crystal"
 # Tool for browsing source code
 maybrew "cscope"
 # universal ctags
@@ -170,6 +172,10 @@ else
 fi
 # psql postgres -c "create database $USER;"
 maybrew "rust"
+
+# used by Emacs for validating bash stuff
+maybrew "shellcheck"
+
 # Command-line interface for SQLite
 maybrew "sqlite"
 # File system client based on SSH File Transfer Protocol
