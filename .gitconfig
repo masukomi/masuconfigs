@@ -88,8 +88,9 @@
 	pullme = !"git fetch --tags upstream; git stash; git reset --hard upstream/$(git rev-parse --abbrev-ref HEAD)"
 			# added the fetch because i keep wishing it had of fetch everything
 	## END NOTE
-	rook = !"~/workspace/git-rook/git-rook"
 	rhh = reset --hard HEAD
+	rook = !"~/workspace/git-rook/git-rook"
+	root = rev-parse --show-toplevel
 	slog = log --pretty="'%C(yellow)%h %Cred%an %C(cyan)%aI %Creset%s'"
 	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
 	st = status -sb
