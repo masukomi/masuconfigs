@@ -61,6 +61,8 @@
 	cpl = !"git --git-dir=$1.git format-patch -k -1 --stdout $2 | git am -3 -k"
 	default = current
 	df = diff
+	exclude = "!function f { echo \"$1\" >> $(git rev-parse --show-toplevel)\"/.git/info/exclude\"; }; f"
+	sta  = "!function f { git stash apply stash@{$1}; }; f"
 	fshow = ! sh -c 'git show --pretty="format:" --name-only $1 | grep -v "^$" | uniq | sed -e "s#^#`git rev-parse --show-toplevel`/#"' -
 
 	graphviz = "!f() { echo 'digraph git {' ; git log --pretty='format:  %h -> { %p }' \"$@\" | sed 's/[0-9a-f][0-9a-f]*/\"&\"/g' ; echo '}'; }; f"
