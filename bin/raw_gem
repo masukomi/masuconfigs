@@ -1,0 +1,14 @@
+#!/bin/sh
+
+GEM=$1
+VERSION=$2
+UNPACK=$3
+if [ "$VERSION" == "" ] || [ "$GEM" == "" ]; then
+  echo "Usage: raw_gem <name> <version>"
+fi
+
+gem fetch $GEM -v $VERSION --source https://rubygems.org
+if [ $? -eq 0 ] && [ "$UNPACK" != "" ]; then
+	FILENAME=$GEM"-$VERSION".gem
+	gem unpack $FILENAME
+fi
