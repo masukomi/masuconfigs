@@ -158,3 +158,10 @@ set -x PERLLIB /usr/local/Cellar/perl/5.24.0_1/lib/perl5/site_perl/5.24.0 $PERLL
 eval (direnv hook fish)
 set -x PERLLIB /Users/krhodes/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0 $PERLLIB
 set -g fish_user_paths "/usr/local/opt/openssl@1.1/bin" $fish_user_paths
+
+set -x USE_FENESTRO true
+
+# setting desired time zones for the tz utility
+# https://github.com/oz/tz
+# full list of possible ones is here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+set -x TZ_LIST "US/Pacific,Europe/Paris"
