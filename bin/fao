@@ -1,6 +1,14 @@
 #!/bin/sh
 
+function opener {
+	FILE="$1"
+	echo "open $FILE ? [return / n]"
+	read OPEN
+	if [ "$OPEN" == "" ]; then
+		mvim "$FILE"
+	fi
+}
+export -f opener;
 # FILE=$(mdfind -onlyin . -name "$argv")
-FILE=$(find . -name "$1")
-echo "opening: $FILE"
-mvim $FILE
+find . -name "$1" -exec bash -c 'opener "$0"' '{}'  \;
+
