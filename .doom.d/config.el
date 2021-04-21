@@ -185,10 +185,6 @@
 ;; (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
 
 
-; extends Vline Mode https://www.emacswiki.org/emacs/VlineMode
-(straight-use-package 'col-highlight)
-(column-highlight-mode 1) ; always highlighting
-; TODO change the color
-; list-faces-display
-; shows you a col-highlight face that controls the color of the highlight column
-; edit that face to change what it looks like.
+; stop asking if i really want to quit,
+; and more importantly those horrible messages.
+(setq confirm-kill-emacs nil) ; 'y-or-n-p
