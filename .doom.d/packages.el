@@ -42,14 +42,20 @@
 ;; our package manager can't deal with; see raxod502/straight.el#279)
 ;(package! builtin-package :recipe (:branch "develop"))
 
-(package! darktooth-theme)
-
-(package! ruby-hash-syntax)
-
-(package! nlinum-relative)
 
 (package! buffer-move)
-
-(package! visual-regexp-steroids)
-
+(package! darktooth-theme)
 (package! ialign)
+(package! nlinum-relative)
+(package! ruby-hash-syntax)
+(package! ruby-tools)
+(package! visual-regexp-steroids)
+; extends Vline Mode https://www.emacswiki.org/emacs/VlineMode
+(package! col-highlight)
+;; (column-highlight-mode 0) ; 1 = highlighting, 0 = off
+; TODO re column-highlight change the color
+; list-faces-display
+; shows you a col-highlight face that controls the color of the highlight column
+; edit that face to change what it looks like.
+
+(package! sql-indent)
