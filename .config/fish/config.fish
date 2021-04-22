@@ -57,6 +57,7 @@ abbr -a bers 'bundle exec rails server'
 abbr -a berd 'bundle exec rails server --debugger'
 abbr -a build_tags "~/brew/bin/ctags -R --c++-kinds +p --fields +iaS --extra +q --exclude .rsync_cache ."
 abbr -a hgrep "history | grep"
+abbr -a sqlf "sqlformat --reindent --keywords upper --identifiers lower"
 
 if [ (uname) = "Darwin" ]
 	abbr -a ldd "otool -L"
@@ -97,6 +98,9 @@ alias gcurl /usr/local/opt/curl/bin/curl
 
 # PATH
 set -x PATH . $HOME/bin $HOME/bin/git-scripts /usr/local/bin $PATH
+# vvv make python 3 found before macOSs python 2.7
+# macOS one is at /usr/local/bin/python
+set -x PATH /usr/local/opt/python/libexec/bin $PATH
 set -x PATH $PATH /Applications
 set -x PATH $PATH /usr/local/opt/coreutils/libexec/gnubin
 set -x PATH $PATH $HOME/.iterm2/

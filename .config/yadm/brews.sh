@@ -226,6 +226,9 @@ maybrew "miller"
 
 maybrew "pandoc" # neomutt is using it if nothing else...
 # like ack but faster
+
+maybrew "python" # python 3 yo!
+
 maybrew "the_silver_searcher"
 # Simple GTD-style task management for the command-line
 maybrew "ultralist"
@@ -269,7 +272,7 @@ maybrew "gpgme"
 #
 #maybrew "khard"
 # Kubernetes (k8s) command line utility
-maybrew "kubectl"
+# maybrew "kubectl"
 # SMTP client that can be used as an SMTP plugin for Mutt
 maybrew "msmtp"
 #
