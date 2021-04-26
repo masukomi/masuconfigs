@@ -1,0 +1,13 @@
+#!/bin/sh
+
+if [[ -f "$1" ]]; then
+  TEMPFILE=$(mktemp -t "format_sql")
+  /usr/local/bin/sqlformat \
+          --reindent \
+          --keywords upper \
+          --identifiers lower $1 > $TEMPFILE
+  mv $TEMPFILE $1
+else
+  echo "USAGE: format_sql <file to format>"
+fi
+
