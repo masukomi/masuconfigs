@@ -1,7 +1,0 @@
-#!/bin/sh
-
-current_branch=$(git rev-parse --abbrev-ref HEAD)
-remote=$(git config --get-regexp "branch\.$current_branch\.remote" | sed -e "s/^.* //")
-remote_branch=$(git config --get-regexp "branch\.$current_branch\.merge" | \
-  sed -e "s/^.* //" -e "s/refs\/.*\///")
-echo "$current_branch -> \033[1m$remote\033[2m/$remote_branch"
