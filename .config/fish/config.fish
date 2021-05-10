@@ -83,6 +83,7 @@ abbr -a do "docker"
 abbr -a berd 'docker-compose exec bin/rspec --format=documentation'
 
 abbr -a sbw 'env SKIP=bad_words.sh'
+abbr -a sall 'env SKIP=bad_words.sh,x_rb_tester.rb'
 
 alias vimr /Applications/VimR.app/Contents/Resources/vimr
 abbr -a vfz "mvim (fzf)"
