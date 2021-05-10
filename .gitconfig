@@ -157,7 +157,7 @@
 [init]
 	templateDir = /Users/masukomi/.git_template
 [gpg]
-	program = gpg2
+	program = /usr/local/bin/gpg
 [url "git@github.com:"]
 	insteadOf = https://github.com/
 	# http://albertech.blogspot.com/2016/11/fix-git-error-could-not-read-username.html
