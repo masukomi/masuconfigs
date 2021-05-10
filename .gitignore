@@ -27,3 +27,8 @@ external_gitconfig
 tags
 .config/yadm/repo.git/*
 .ssh/*
+~/.config/work/*
+temp*
+foo.*
+test.*
+tester.*
