@@ -491,12 +491,12 @@ function fish_prompt -d 'bobthefish, a fish theme optimized for awesome'
   # Save the last status for later (do this before the `set` calls below)
   #
 
-  # stick the number of high priority  / total tasks at the
-  # start of the line
   echo ""
   days_progress
   echo ""
   # vvv TEMPORARILY COMMENTED OUT WHILE SYSTEM IS BORKED
+  # stick the number of high priority  / total tasks at the
+  # start of the line
   # echo -ns "["(task_warrior_status_string)"]"
   set_color $fish_color_autosuggestion[1]
   # __bobthefish_cmd_duration
