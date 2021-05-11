@@ -118,6 +118,8 @@
 ;; (global-set-key (kbd "<C-S-left>")   'buf-move-left)
 ;; (global-set-key (kbd "<C-S-right>")  'buf-move-right)
 
+;; disable the graphical toolbar
+(tool-bar-mode -1)
 
 (setq whitespace-display-mappings
   '((space-mark   ?\    [?\xB7]     [?.])	; space
