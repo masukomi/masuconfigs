@@ -155,7 +155,7 @@ set -g theme_display_ruby no
 # rvm invocation
 # rvm default
 # rbenv invocation
-status --is-interactive; and source (rbenv init -|psub)
+# status --is-interactive; and source (rbenv init -|psub)
 
 test -e {$HOME}/.iterm2_shell_integration.fish ; and source {$HOME}/.iterm2_shell_integration.fish
 

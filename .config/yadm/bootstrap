@@ -7,13 +7,25 @@ if [ "$github" != "y" ]; then
 	echo "We'll need them to download some github repos."
 	exit 1
 fi
-GENERATE_SETUP_TASKS = 1
+GENERATE_SETUP_TASKS=1
 if hash task 2>/dev/null; then
 	 GENERATE_SETUP_TASKS=0
 fi
 
 #system_type=$(uname -s)
 #if [ "$system_type" = "Darwin" ]; then
+
+# a couple things are loaded via submodules
+yadm submodule init
+yadm submodule update --init --recursive --remote
+# i installed spacemacs via submodule, but then
+# abandoned spacemacs, and don't know where the eff the
+# .gitmodule file is for yadm so i can't change it.
+# soooo...
+rm -rf ~/.emacs.d/
+git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
+~/.emacs.d/bin/doom install
+
 
 
 
@@ -41,7 +53,25 @@ fi
 
 if ! is_installed "mas"; then # mac app store cli
 	brew install mas
-	mas signin --dialog masukomi@masukomi.org
+	# mac app store
+	# signin functionality no longer a thing
+	# you need to be signed in manually via the GUI app
+	#mas signin --dialog masukomi@masukomi.org
+    echo "Run mas account in a separate terminal"
+    echo "It should return your email address"
+    echo "Install at least one app from the mac app store manually"
+    echo "run mas list" 
+    echo "If it doesn't show anything run mas reset"
+    echo "and run mas list again"
+    echo "Once mas list is showing you a list of installed apps"
+    echo "type \"y\" to continue with installing apps from the "
+    echo "mac app store."
+    echo "just hit enter to skip"
+    read MAS_LOGIN
+    if [ "$MAS_LOGIN" == "y" ];then
+		mas install 1384080005 # tweetbot
+
+    fi
 fi
 
 if [[ "$OSTYPE" == "darwin"* ]]; then

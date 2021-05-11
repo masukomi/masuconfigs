@@ -32,7 +32,8 @@ fi
 # Yet another dotfiles manager
 # maybrew "yadm"
 # Search tool like grep, but optimized for programmers
-maybrew "ack"
+# have switched to ripgrep (installed below)
+#maybrew "ack"
 # Automatic configure script builder
 maybrew "autoconf"
 # Tool for generating GNU Standards-compliant Makefiles
@@ -72,7 +73,13 @@ maybrew "fd"
 maybrew "fontforge"
 
 # A command-line fuzzy finder
-maybrew "fzf"
+if ! is_installed "fzf"; then
+    brew install fzf
+    y | $(brew --prefix)/opt/fzf/install
+else
+	echo "-- Skipping fzf (installed already)"
+fi
+
 
 # GNU internationalization (i18n) and localization (l10n) library
 maybrew "gettext"
@@ -169,6 +176,12 @@ else
 	echo "-- Skipping postgresql (installed already)"
 fi
 # psql postgres -c "create database $USER;"
+
+# rbenv ruby version manager
+# maybrew "rbenv"
+# ripgrep like ack but better
+maybrew "ripgrep"
+# the rust compiler & language
 maybrew "rust"
 # Command-line interface for SQLite
 maybrew "sqlite"
