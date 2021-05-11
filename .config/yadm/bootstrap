@@ -15,16 +15,11 @@ fi
 #system_type=$(uname -s)
 #if [ "$system_type" = "Darwin" ]; then
 
-# a couple things are loaded via submodules
+# doom is loaded via submodule
 yadm submodule init
 yadm submodule update --init --recursive --remote
-# i installed spacemacs via submodule, but then
-# abandoned spacemacs, and don't know where the eff the
-# .gitmodule file is for yadm so i can't change it.
-# soooo...
-rm -rf ~/.emacs.d/
-git clone --depth 1 https://github.com/hlissner/doom-emacs ~/.emacs.d
 ~/.emacs.d/bin/doom install
+~/.emacs.d/bin/doom sync
 
 
 
