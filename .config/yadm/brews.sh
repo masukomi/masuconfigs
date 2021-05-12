@@ -61,6 +61,8 @@ maybrew "days_progress"
 maybrew "direnv"
 # Diff that operates at the word level
 maybrew "dwdiff"
+# Elixir programming language
+maybrew "elixir"
 # Charset analyzer and converter
 maybrew "enca"
 # User-friendly command-line shell for UNIX-like operating systems
