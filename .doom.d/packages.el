@@ -59,3 +59,4 @@
 ; edit that face to change what it looks like.
 
 (package! sql-indent)
+(package! web-mode)
