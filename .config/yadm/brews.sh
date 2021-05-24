@@ -40,6 +40,8 @@ maybrew "autoconf"
 maybrew "automake"
 # Statistics utility to count lines of code
 maybrew "bat"
+# GNU core utilities. These will be prefixed with "g" (ls -> gls)
+maybrew "coreutils"
 # Clone of cat(1) with syntax highlighting and Git integration
 maybrew "cloc"
 # Tool for browsing source code

@@ -16,10 +16,15 @@ fi
 #if [ "$system_type" = "Darwin" ]; then
 
 # doom is loaded via submodule
-yadm submodule init
-yadm submodule update --init --recursive --remote
-~/.emacs.d/bin/doom install
-~/.emacs.d/bin/doom sync
+
+read -t 20 -p "init / update doom?" doom
+
+if [ "$doom" == "y" ]; then
+	yadm submodule init
+	yadm submodule update --init --recursive --remote
+	~/.emacs.d/bin/doom install
+	~/.emacs.d/bin/doom sync
+fi
 
 
 
@@ -55,7 +60,7 @@ if ! is_installed "mas"; then # mac app store cli
     echo "Run mas account in a separate terminal"
     echo "It should return your email address"
     echo "Install at least one app from the mac app store manually"
-    echo "run mas list" 
+    echo "run mas list"
     echo "If it doesn't show anything run mas reset"
     echo "and run mas list again"
     echo "Once mas list is showing you a list of installed apps"
