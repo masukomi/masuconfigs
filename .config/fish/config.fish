@@ -131,12 +131,15 @@ set -x PATH $PATH /Applications/Racket\ v7.7/bin
 
 ## BEGIN GO
 set -x GOPATH $HOME/workspace/gocode
-set -x GOROOT /usr/local/opt/go/libexec
+set -x GOROOT /usr/local/go
 set -x PATH  $PATH $GOROOT/bin
 ## END GO
 
 # RACKET
 set -x PATH $PATH /Applications/Racket\ v7.7/bin
+
+# RUST
+set -x PATH $PATH $HOME/.cargo/bin
 
 set -x GPG_TTY (tty)
 

@@ -186,7 +186,12 @@ fi
 # ripgrep like ack but better
 maybrew "ripgrep"
 # the rust compiler & language
-maybrew "rust"
+# Installed via bootstrap script now instead
+# maybrew "rust"
+
+# Static analysis and lint tool, for (ba)sh scripts
+maybrew "shellcheck"
+
 # Command-line interface for SQLite
 maybrew "sqlite"
 # File system client based on SSH File Transfer Protocol

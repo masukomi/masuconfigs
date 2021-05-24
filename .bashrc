@@ -7,7 +7,7 @@ export USERNAME=`id -nu`
 export ARCHFLAGS="-arch x86_64"
 export EDITOR='vim'
 export VISUAL='vim'
-export GOPATH=/Users/$USERNAME/workspace/gocode
+export GOPATH=/usr/local/go
 export CHICKEN_BUILD=~/workspace/reference/scheme/chicken-4.10.0
 #export CHICKEN_DOC_REPOSITORY=
 
@@ -472,3 +472,4 @@ armageddon() {
     docker rmi -f $(docker images -qa)
 }
 
+. "$HOME/.cargo/env"
