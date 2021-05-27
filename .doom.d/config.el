@@ -28,12 +28,15 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. These are the defaults.
 ;; (setq doom-theme 'doom-one)
-;; (setq doom-theme 'darktooth)
+(setq doom-theme 'darktooth)
 ;; (setq doom-theme 'doom-snazzy)
-(setq doom-theme 'doom-spacegrey)
+;; (setq doom-theme 'sanity-inc-tomorrow-night)
+;; (setq doom-theme 'doom-spacegrey)
 
 ;; If you intend to use org, it is recommended you change this!
 (setq org-directory "~/.config/org/")
+(setq org-hide-emphasis-markers t)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 ;; If you want to change the style of line numbers, change this to `relative' or
 ;; `nil' to disable it:
@@ -44,7 +47,6 @@
 ; $ should go to the end of the actual line not
 ; the visual line
 (setq evil-respect-visual-line-mode nil)
-
 
 
 ;; Here are some additional functions/macros that could help you configure Doom:
@@ -202,3 +204,44 @@
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.eex\\'" . web-mode))
+; vvv--- live eex
+(add-to-list 'auto-mode-alist '("\\.leex\\'" . web-mode))
+
+(defun my-web-mode-hook ()
+  "Hooks for Web mode."
+  (setq web-mode-markup-indent-offset 2)
+)
+(add-hook 'web-mode-hook  'my-web-mode-hook)
+
+;; (defun my-eshell-mode-faces ()
+;;     ;; (face-remap-add-relative 'default '((:foreground "#BD9700")))
+;;     ;; (face-remap-add-relative 'eshell-prompt '((:foreground "#BD9700" :weight bold)))
+;;     (interactive)
+;;     (setq buffer-face-mode-face '(:family "Courrier"))
+;;     (buffer-face-mode)
+;;     )
+
+;; (add-hook 'eshell-mode-hook 'my-eshell-mode-faces)
+
+;; Highlighting of Elixir's Inline LiveView templates
+;; https://blog.evalcode.com/phoenix-liveview-inline-syntax-highlighting-for-emacs/
+;; Assumes web-mode and elixir-mode are already set up
+;;
+(use-package polymode
+  :mode ("\.ex$" . poly-elixir-web-mode)
+  :config
+  (define-hostmode poly-elixir-hostmode :mode 'elixir-mode)
+  (define-innermode poly-liveview-expr-elixir-innermode
+    :mode 'web-mode
+    :head-matcher (rx line-start (* space) "~L" (= 3 (char "\"'")) line-end)
+    :tail-matcher (rx line-start (* space) (= 3 (char "\"'")) line-end)
+    :head-mode 'host
+    :tail-mode 'host
+    :allow-nested nil
+    :keep-in-mode 'host
+    :fallback-mode 'host)
+  (define-polymode poly-elixir-web-mode
+    :hostmode 'poly-elixir-hostmode
+    :innermodes '(poly-liveview-expr-elixir-innermode))
+  )
+(setq web-mode-engines-alist '(("elixir" . "\\.ex\\'")))

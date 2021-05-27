@@ -60,3 +60,6 @@
 
 (package! sql-indent)
 (package! web-mode)
+(package! rainbow-mode)
+(package! polymode)
+(package! org-bullets)
