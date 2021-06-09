@@ -36,6 +36,7 @@
 ;; If you intend to use org, it is recommended you change this!
 (setq org-directory "~/.config/org/")
 (setq org-hide-emphasis-markers t)
+;(straight-use-package 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 ;; If you want to change the style of line numbers, change this to `relative' or
