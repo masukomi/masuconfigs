@@ -156,6 +156,7 @@
 	default = current
 [init]
 	templateDir = /Users/masukomi/.git_template
+	defaultBranch = main
 [gpg]
 	program = /usr/local/bin/gpg
 [url "git@github.com:"]
