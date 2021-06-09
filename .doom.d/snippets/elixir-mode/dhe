@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: LiveView def handle_event
+# key: dhe
+# --
+def handle_event("${1:event}", ${2:_params}, socket) do
+  socket =
+    assign(socket,
+      ${3:key}: ${4:value}
+    )
+  $0
+  {:noreply, socket}
+end
