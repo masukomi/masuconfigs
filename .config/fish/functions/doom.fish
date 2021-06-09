@@ -1,8 +1,8 @@
 function doom
 	if test (count $argv) -gt 0
-		emacs "$argv" &
+		emacs "$argv"  > /dev/null 2>&1 &
 	else
-		emacs &
+		emacs > /dev/null 2>&1 &
 	end
 	disown
 end
