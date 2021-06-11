@@ -88,7 +88,7 @@ fi
 
 
 yadm submodule init
-yadm submodule update --init --recursive
+yadm submodule update --init --recursive --remote
 
 ##########
 # GEMs
@@ -130,11 +130,23 @@ mayclone "~/workspace" "git@github.com:masukomi/git-rook.git"
 
 mkdir -p $HOME/workspace/reference/crystal
 mayclone "~/workspace/reference/crystal" "git@github.com:crystal-community/icr.git"
+mkdir -p $HOME/workspace/reference/elixir
+# elixir language server protocol
+mayclone "~/workspace/reference/elixir" "git@github.com:elixir-lsp/elixir-ls.git"
+if [ ! -d "~/workspace/reference/elixir/elixir-ls/release" ]; then
+	cd ~/workspace/reference/elixir/elixir-ls
+	mix deps.get
+	mix compile
+	mix elixir_ls.release # creates the release directory
+	cd ~/
+fi
+
 
 if ! is_installed "icr"; then # Interactive Crystal Repl
 	cd ~/workspace/reference/crystal/icr
 	PREFIX=~/ make
 	PREFIX=~/ make install
+	cd ~/
 fi
 
 if is_installed "go"; then
