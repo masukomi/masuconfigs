@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# USAGE:
+# pipe a backtrace into this and it'll tell you what's on each of
+# those lines.
+# ASSUMPTIONS:
+# * assume's you're in macOS because searches for `/Users` to know it's
+#   the start of a file path
+# * assumes a backtrace format of .*<file>:<line number>:<ignorable crap>
+
+while read line
+do
+	if [[ "$line" = *"/Users/"* ]]; then
+		CODE=$(echo $line | sed -e "s/.*\/Users/FILE=\/Users/" \
+			| gsed -E "s/:([[:digit:]]*):.*/\necho \$FILE\":\1\"\ncat \$FILE | sed -n \1p/")
+		eval "$CODE"
+    fi
+done
