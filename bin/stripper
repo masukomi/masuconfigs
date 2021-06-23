@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# strips common ANSI color codes from text.
+# USAGE:
+# reads from Standard Input. for example
+# cat my_file.txt | stripper
+
+while read LINE
+do
+ echo "$LINE" | sed $'s,\x1b\\[[0-9;]*[a-zA-Z],,g'
+done
