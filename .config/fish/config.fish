@@ -146,6 +146,9 @@ set -x PATH $PATH /Applications/Racket\ v7.7/bin
 # RUST
 set -x PATH $PATH $HOME/.cargo/bin
 
+# Elixir / ERLANG
+set -x ERL_AFLAGS "-kernel shell_history enabled"
+
 set -x GPG_TTY (tty)
 
 # readline
