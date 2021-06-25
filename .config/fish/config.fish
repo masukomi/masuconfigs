@@ -42,6 +42,8 @@ abbr -a givm vimr
 abbr -a gvmi vimr
 #End stupidity...
 abbr -a be 'bundle exec'
+abbr -a doomd 'cd ~/.doom.d'
+abbr -a emacsd 'cd ~/.emacs.d'
 abbr -a ga 'git add'
 abbr -a gits 'git status -uno'
 abbr -a gbg 'git bisect good'
@@ -49,9 +51,12 @@ abbr -a gbb 'git bisect bad'
 abbr -a gb 'git branch'
 # abbr -a gcane 'git commit --amend --no-edit'
 abbr -a gcm 'git commit -m'
+abbr -a gvv 'git remote -vv'
 abbr -a epochtime "date +%s"
 abbr -a epochmillis "date +%s%N | cut -b1-13"
 abbr -a ber 'bundle exec rspec --format=documentation'
+abbr -a rt 'rake test'
+abbr -a rtnw 'env RUBYOPT=W0 rake test'
 abbr -a berc 'bundle exec rails console'
 abbr -a bers 'bundle exec rails server'
 abbr -a berd 'bundle exec rails server --debugger'
