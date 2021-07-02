@@ -5,6 +5,7 @@ VERSION=$2
 UNPACK=$3
 if [ "$VERSION" == "" ] || [ "$GEM" == "" ]; then
   echo "Usage: raw_gem <name> <version>"
+  exit 1
 fi
 
 gem fetch $GEM -v $VERSION --source https://rubygems.org
