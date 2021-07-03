@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: LiveView: def mount
+# key: defmount
+# --
+def mount(_params, _session, socket) do
+  socket =
+    assign(socket,
+      ${1:key}: ${2:value}
+    )
+  {:ok, socket}
+end

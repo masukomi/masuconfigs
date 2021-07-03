@@ -1,0 +1,28 @@
+#!/bin/sh
+
+GEM=$1
+VERSION=$2
+UNPACK=$3
+if [ "$VERSION" == "" ] || [ "$GEM" == "" ]; then
+  echo "Usage: raw_gem <name> <version> [unpack]"
+  exit 1
+fi
+GEM_FILE_NAME=$GEM"-"$VERSION".gem"
+if [ ! -f $GEM_FILE_NAME ]; then
+  gem fetch $GEM -v $VERSION --source https://rubygems.org
+else
+  echo "already downloaded..."
+fi
+
+if [ $? -eq 0 ] && [ "$UNPACK" != "" ]; then
+  if [ -f $GEM_FILE_NAME ]; then
+    GEM_DIR_NAME=$GEM"-"$VERSION
+    if [ ! -d $GEM_DIR_NAME ]; then
+      gem unpack $GEM_FILE_NAME
+    else
+      echo "ERROR: $GEM_DIR_NAME directory already exists"
+    fi
+  else
+    echo "ERROR: can't find $GEM_FILE_NAME"
+  fi
+fi

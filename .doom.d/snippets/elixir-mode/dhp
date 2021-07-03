@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: LiveView def handle_params
+# key: dhp
+# --
+def handle_params(${1:params}, ${2:_url}, socket) do
+  $0
+  {:noreply, socket}
+end

@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-git rev-list HEAD | while read sha1; do
-    tags=( "$(git tag -l --points-at $sha1 TAG_PREFIX*)" )
-    [[ ! -z ${tags[*]} ]] && echo "${tags[@]}" | sort -r
-done

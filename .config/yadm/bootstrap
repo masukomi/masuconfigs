@@ -7,13 +7,27 @@ if [ "$github" != "y" ]; then
 	echo "We'll need them to download some github repos."
 	exit 1
 fi
-GENERATE_SETUP_TASKS = 1
+GENERATE_SETUP_TASKS=1
 if hash task 2>/dev/null; then
 	 GENERATE_SETUP_TASKS=0
 fi
 
 #system_type=$(uname -s)
 #if [ "$system_type" = "Darwin" ]; then
+
+# doom is loaded via submodule
+
+read -t 20 -p "init / update doom?" doom
+
+if [ "$doom" == "y" ]; then
+	yadm submodule init
+	yadm submodule update --init --recursive --remote
+	~/.emacs.d/bin/doom install
+	~/.emacs.d/bin/doom sync
+fi
+
+
+
 
 
 
@@ -28,6 +42,7 @@ function mayclone(){
 }
 function is_installed(){
 	hash $1 >/dev/null 2>&1
+	# if [ $? -eq 0 ] && [ "$(which go)" != "" ]; then
 	if [ $? -eq 0 ]; then
 		true
 	else
@@ -41,7 +56,25 @@ fi
 
 if ! is_installed "mas"; then # mac app store cli
 	brew install mas
-	mas signin --dialog masukomi@masukomi.org
+	# mac app store
+	# signin functionality no longer a thing
+	# you need to be signed in manually via the GUI app
+	#mas signin --dialog masukomi@masukomi.org
+    echo "Run mas account in a separate terminal"
+    echo "It should return your email address"
+    echo "Install at least one app from the mac app store manually"
+    echo "run mas list"
+    echo "If it doesn't show anything run mas reset"
+    echo "and run mas list again"
+    echo "Once mas list is showing you a list of installed apps"
+    echo "type \"y\" to continue with installing apps from the "
+    echo "mac app store."
+    echo "just hit enter to skip"
+    read MAS_LOGIN
+    if [ "$MAS_LOGIN" == "y" ];then
+		mas install 1384080005 # tweetbot
+
+    fi
 fi
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -55,7 +88,7 @@ fi
 
 
 yadm submodule init
-yadm submodule update --init --recursive
+yadm submodule update --init --recursive --remote
 
 ##########
 # GEMs
@@ -95,6 +128,54 @@ mayclone "~/workspace" "git@github.com:masukomi/git_accessories.git"
 mayclone "~/workspace" "git://github.com/lloyd/yajl"
 mayclone "~/workspace" "git@github.com:masukomi/git-rook.git"
 
+mkdir -p $HOME/workspace/reference/crystal
+mayclone "~/workspace/reference/crystal" "git@github.com:crystal-community/icr.git"
+mkdir -p $HOME/workspace/reference/elixir
+# elixir language server protocol
+mayclone "~/workspace/reference/elixir" "git@github.com:elixir-lsp/elixir-ls.git"
+if [ ! -d "~/workspace/reference/elixir/elixir-ls/release" ]; then
+	cd ~/workspace/reference/elixir/elixir-ls
+	mix deps.get
+	mix compile
+	mix elixir_ls.release # creates the release directory
+	cd ~/
+fi
+
+
+if ! is_installed "icr"; then # Interactive Crystal Repl
+	cd ~/workspace/reference/crystal/icr
+	PREFIX=~/ make
+	PREFIX=~/ make install
+	cd ~/
+fi
+
+if is_installed "go"; then
+	# gomodify tags needs this for... shrug. reasons
+	sudo chmod 777 /usr/local/go/bin
+	sudo chmod 777 /usr/local/go/pkg
+
+	if ! is_installed "gomodifytags"; then
+		go get github.com/fatih/gomodifytags
+	fi
+
+	if ! is_installed "gotests"; then
+		go get -u github.com/cweill/gotests/...
+	fi
+
+	if ! is_installed "gore"; then
+		go get github.com/motemen/gore/cmd/gore
+	fi
+
+	if ! is_installed "guru"; then
+		go get golang.org/x/tools/cmd/guru
+	fi
+fi
+
+if is_installed "rustc"; then
+	if
+fi
+
+
 # A fast streaming JSON parsing library in C. http://lloyd.github.com/yajl
 cd ~/workspace/yajl
 ./configure && make install
@@ -116,14 +197,13 @@ fi
 #mu index --rebuild
 echo "Sync mutt contacts if needed: https://github.com/tgray/contacts"
 ## END MUTT
+
 ## START gcalcli (google calendar cli)
 if ! is_installed "gcalcli"; then
 	pip install gcalcli
 fi
 
-
-
-cp -r ~/workspace/home_dir_configs/Library/Fonts/* ~/Library/Fonts/
+# cp -r ~/workspace/home_dir_configs/Library/Fonts/* ~/Library/Fonts/
 
 echo "Setting iTerm preference folder"
 defaults write com.googlecode.iterm2 PrefsCustomFolder "$HOME/.iterm2"
@@ -134,7 +214,7 @@ defaults write com.googlecode.iterm2 PrefsCustomFolder "$HOME/.iterm2"
 # fish shell config
 
 # twtxt
-mkdir -p ~/Library/Application\ Support/twtxt/config
+# mkdir -p ~/Library/Application\ Support/twtxt/config
 
 
 # command-t should already be installed via a vimball stored in the git repo
@@ -144,6 +224,13 @@ mkdir -p ~/Library/Application\ Support/twtxt/config
 defaults write com.google.Chrome.plist AppleEnableSwipeNavigateWithScrolls -bool FALSE
 
 # install rust stuff
+if ! is_installed "rustc"; then
+	#install via rustup
+	yes | curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+	rustup toolchain add nightly
+	cargo +nightly install racer
+fi
+
 cargo install broot
 
 # install chicken scheme stuff
@@ -184,6 +271,7 @@ defaults  write -g com.apple.mouse.scaling 5
 # https://github.com/cknadler/vim-anywhere
 curl -fsSL https://raw.github.com/cknadler/vim-anywhere/master/install | bash
 
+if
 
 #####
 if [ GENERATE_SETUP_TASKS -eq 1 ]; then

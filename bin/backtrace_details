@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# USAGE:
+# pipe a backtrace into this and it'll tell you what's on each of
+# those lines.
+# ASSUMPTIONS:
+# * assume's you're in macOS because searches for `/Users` to know it's
+#   the start of a file path
+# * assumes a backtrace format of .*<file>:<line number>:<ignorable crap>
+YELLOW=$'\e[1;33m'
+RED=$'\e[0;31m'
+GREEN=$'\e[0;32m'
+RESET="\033[0m"
+while read LINE
+do
+	if [[ "$LINE" = *"/Users/"* ]]; then
+
+		FILE_TEXT=$(echo $LINE \
+			| sed -e "s/.*\/Users/FILE=\/Users/"\
+			| sed -e "s/:[[:digit:]].*$//")
+		# byebug output
+		if [[ "$LINE" =~ [:space:]*#[0-9]{1,4}.*/Users/ ]]; then
+			CODE="$FILE_TEXT; "$(echo $LINE \
+				| gsed -E "s/.*[[:space:]]*#[[:digit:]]* (.*) at (.*):([[:digit:]]*)/echo \${YELLOW}\"\$FILE:\3\"\${RESET}\necho \"in \1\"\ncat \$FILE | sed -n \3p/" \
+				|  tr '`' "'" )
+				#                          bs          message  path   line num
+			# echo "CODE1: $CODE"
+		else
+			CODE="$FILE_TEXT; "$(echo $LINE \
+				| gsed -E "s/.*:([[:digit:]]*):(.*)/echo \${YELLOW}\"\$FILE:\1\"\${RESET};\necho \"\2\"\ncat \$FILE | sed -n \1p/" \
+				|  tr '`' "'" )
+			# echo "LINE: $LINE"
+			# echo "CODE2: $CODE"
+		fi
+		eval "$CODE"
+		# echo "CODE: $CODE"
+	else
+		echo "${GREEN}$LINE${RESET}"
+    fi
+done

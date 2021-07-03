@@ -103,7 +103,7 @@ assert_equals() {
   local actual=$2
   local message=${3:-}
   [[ -z $message ]] || message="$message\n"
-
+  
   if [ "$expected" != "$actual" ]
   then
     fail "$message expected [$expected] but was [$actual]"
@@ -366,6 +366,13 @@ do
   (
     set -e # Ensure bash_unit with exit with failure
            # in case of syntax error.
+    if [[ "${STICK_TO_CWD}" != true ]]
+    then
+      cd "$(dirname "$test_file")"
+      source "$(basename "$test_file")"
+    else
+      source "$test_file"
+    fi
     set +e
     run_test_suite
   )

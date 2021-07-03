@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: STDERR.puts
+# key: sterr
+# --
+STDERR.puts("XXX $0")

@@ -1,0 +1,13 @@
+#!/bin/sh
+
+if [ "$1" == "" ]; then
+	echo "Usage: where_in_git <portion_of_file_path>"
+	exit 1
+fi
+
+for BRANCH in $(git branch | sed -e "s/* //" -e "s/+ //" -e "s/  //")
+do
+	echo "-------------------  $BRANCH"
+	git log $BRANCH --name-only --pretty="format:" \
+		| grep --color=always "$1";
+done

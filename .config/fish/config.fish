@@ -42,6 +42,8 @@ abbr -a givm vimr
 abbr -a gvmi vimr
 #End stupidity...
 abbr -a be 'bundle exec'
+abbr -a doomd 'cd ~/.doom.d'
+abbr -a emacsd 'cd ~/.emacs.d'
 abbr -a ga 'git add'
 abbr -a gits 'git status -uno'
 abbr -a gbg 'git bisect good'
@@ -49,14 +51,18 @@ abbr -a gbb 'git bisect bad'
 abbr -a gb 'git branch'
 # abbr -a gcane 'git commit --amend --no-edit'
 abbr -a gcm 'git commit -m'
+abbr -a gvv 'git remote -vv'
 abbr -a epochtime "date +%s"
 abbr -a epochmillis "date +%s%N | cut -b1-13"
 abbr -a ber 'bundle exec rspec --format=documentation'
+abbr -a rt 'rake test'
+abbr -a rtnw 'env RUBYOPT=W0 rake test'
 abbr -a berc 'bundle exec rails console'
 abbr -a bers 'bundle exec rails server'
 abbr -a berd 'bundle exec rails server --debugger'
 abbr -a build_tags "~/brew/bin/ctags -R --c++-kinds +p --fields +iaS --extra +q --exclude .rsync_cache ."
 abbr -a hgrep "history | grep"
+abbr -a sqlf "sqlformat --reindent --keywords upper --identifiers lower"
 
 if [ (uname) = "Darwin" ]
 	abbr -a ldd "otool -L"
@@ -82,6 +88,7 @@ abbr -a do "docker"
 abbr -a berd 'docker-compose exec bin/rspec --format=documentation'
 
 abbr -a sbw 'env SKIP=bad_words.sh'
+abbr -a sall 'env SKIP=bad_words.sh,x_rb_tester.rb'
 
 alias vimr /Applications/VimR.app/Contents/Resources/vimr
 abbr -a vfz "mvim (fzf)"
@@ -97,6 +104,9 @@ alias gcurl /usr/local/opt/curl/bin/curl
 
 # PATH
 set -x PATH . $HOME/bin $HOME/bin/git-scripts /usr/local/bin $PATH
+# vvv make python 3 found before macOSs python 2.7
+# macOS one is at /usr/local/bin/python
+set -x PATH /usr/local/opt/python/libexec/bin $PATH
 set -x PATH $PATH /Applications
 set -x PATH $PATH /usr/local/opt/coreutils/libexec/gnubin
 set -x PATH $PATH $HOME/.iterm2/
@@ -129,12 +139,18 @@ set -x PATH $PATH $HOME/.radicle/bin
 
 ## BEGIN GO
 set -x GOPATH $HOME/workspace/gocode
-set -x GOROOT /usr/local/opt/go/libexec
+set -x GOROOT /usr/local/go
 set -x PATH  $PATH $GOROOT/bin
 ## END GO
 
 # RACKET
 set -x PATH $PATH /Applications/Racket\ v7.7/bin
+
+# RUST
+set -x PATH $PATH $HOME/.cargo/bin
+
+# Elixir / ERLANG
+set -x ERL_AFLAGS "-kernel shell_history enabled"
 
 set -x GPG_TTY (tty)
 
@@ -161,3 +177,10 @@ set -x PERLLIB /usr/local/Cellar/perl/5.24.0_1/lib/perl5/site_perl/5.24.0 $PERLL
 eval (direnv hook fish)
 set -x PERLLIB /Users/krhodes/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0 $PERLLIB
 set -g fish_user_paths "/usr/local/opt/openssl@1.1/bin" $fish_user_paths
+
+set -x USE_FENESTRO true
+
+# setting desired time zones for the tz utility
+# https://github.com/oz/tz
+# full list of possible ones is here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+set -x TZ_LIST "US/Pacific,Europe/Paris"

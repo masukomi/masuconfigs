@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: debuging log file
+# key: dfile
+# expand-env: ((yas/indent-line 'auto) (yas/wrap-around-region 't))
+# --
+
+File.write("debugging.log", "XXX $0\n", mode: "a")

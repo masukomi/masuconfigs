@@ -1,0 +1,9 @@
+#!/bin/sh
+
+git remote -vv \
+	| sed -e 's/git@github.com:/https:\/\/github.com\//' \
+	-e 's/\.git//' \
+	| gsed -E "s/ (\S+)//" \
+	| sort \
+	| uniq \
+	| column -t
