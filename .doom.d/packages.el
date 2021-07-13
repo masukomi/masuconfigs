@@ -62,7 +62,7 @@
 (package! web-mode)
 (package! rainbow-mode)
 (package! polymode)
-; (package! org-bullets)
+(package! org-bullets)
 ; (package! alchemist) ; elixir support
 ; (package! ox-hugo) ; hugo file format for org mode
 (package! lsp-mode)

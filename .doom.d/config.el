@@ -34,10 +34,10 @@
 ;; (setq doom-theme 'doom-spacegrey)
 
 ;; If you intend to use org, it is recommended you change this!
-; (setq org-directory "~/.config/org/")
-; (setq org-hide-emphasis-markers t)
-; ;(straight-use-package 'org-bullets)
-; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+(setq org-directory "~/.config/org/")
+(setq org-hide-emphasis-markers t)
+;(straight-use-package 'org-bullets)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 ;; If you want to change the style of line numbers, change this to `relative' or
 ;; `nil' to disable it:
@@ -263,6 +263,8 @@
 ; (use-package! lsp-origami)
 ; (add-hook! 'lsp-after-open-hook #'lsp-origami-try-enable)
 
+; reformatter + elixir code found here:
+; https://medium.com/@victor.nascimento/elixir-development-on-emacs-9f6776265e4d
 (use-package reformatter
   :ensure t
   :config
