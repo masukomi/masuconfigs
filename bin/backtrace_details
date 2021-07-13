@@ -24,16 +24,12 @@ do
 				| gsed -E "s/.*[[:space:]]*#[[:digit:]]* (.*) at (.*):([[:digit:]]*)/echo \${YELLOW}\"\$FILE:\3\"\${RESET}\necho \"in \1\"\ncat \$FILE | sed -n \3p/" \
 				|  tr '`' "'" )
 				#                          bs          message  path   line num
-			# echo "CODE1: $CODE"
 		else
 			CODE="$FILE_TEXT; "$(echo $LINE \
 				| gsed -E "s/.*:([[:digit:]]*):(.*)/echo \${YELLOW}\"\$FILE:\1\"\${RESET};\necho \"\2\"\ncat \$FILE | sed -n \1p/" \
 				|  tr '`' "'" )
-			# echo "LINE: $LINE"
-			# echo "CODE2: $CODE"
 		fi
 		eval "$CODE"
-		# echo "CODE: $CODE"
 	else
 		echo "${GREEN}$LINE${RESET}"
     fi
