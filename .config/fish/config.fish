@@ -167,7 +167,7 @@ set -g theme_display_ruby no
 # END Bob the Fish
 
 # rvm invocation
-# rvm default
+rvm default
 # rbenv invocation
 # status --is-interactive; and source (rbenv init -|psub)
 
