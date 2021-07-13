@@ -126,6 +126,9 @@ set -x PATH $PATH /usr/local/Cellar/chicken/5.0.0/bin
 ## Racket
 set -x PATH $PATH /Applications/Racket\ v7.7/bin
 
+# Radicle.xyz
+set -x PATH $PATH $HOME/.radicle/bin
+
 ## BEGIN GERBIL
 # set -x PATH /usr/local/opt/gambit-scheme/current/bin $PATH
 # set -x PATH /usr/local/opt/gerbil-scheme/libexec/bin $PATH

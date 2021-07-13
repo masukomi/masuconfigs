@@ -17,13 +17,24 @@ fi
 
 # doom is loaded via submodule
 
-read -t 20 -p "init / update doom?" doom
+read -t 20 -p "init / update doom?
+" doom
 
 if [ "$doom" == "y" ]; then
 	yadm submodule init
 	yadm submodule update --init --recursive --remote
+	yadm submodule update --recursive ~/.emacs.d
 	~/.emacs.d/bin/doom install
+	~/.emacs.d/bin/doom refresh
 	~/.emacs.d/bin/doom sync
+	# install JetBrains Mono Font
+	cd ~/Downloads
+	curl -L https://download.jetbrains.com/fonts/JetBrainsMono-2.225.zip \
+		--output JetBrainsMono-2.225.zip
+	unzip JetBrainsMono-2.225.zip
+	cp fonts/ttf/*.ttf ~/Library/Fonts/
+	#also remind myself to install whatever font it is emacs uses
+	echo "RUN M-x all-the-icons-install-fonts"
 fi
 
 
@@ -171,10 +182,6 @@ if is_installed "go"; then
 	fi
 fi
 
-if is_installed "rustc"; then
-	if
-fi
-
 
 # A fast streaming JSON parsing library in C. http://lloyd.github.com/yajl
 cd ~/workspace/yajl
@@ -235,7 +242,6 @@ cargo install broot
 
 # install chicken scheme stuff
 readline_version=$(brew list readline --versions)
-readline_version=${readline_version##* }
 export CSC_OPTIONS="-I/usr/local/Cellar/readline/$readline_version/include -L/usr/local/Cellar/readline/$readline_version/lib -Wl,-flat_namespace,-undefined,suppress"
 unset readline_version
 #chicken-install readline
@@ -271,10 +277,8 @@ defaults  write -g com.apple.mouse.scaling 5
 # https://github.com/cknadler/vim-anywhere
 curl -fsSL https://raw.github.com/cknadler/vim-anywhere/master/install | bash
 
-if
-
 #####
-if [ GENERATE_SETUP_TASKS -eq 1 ]; then
+if [ $GENERATE_SETUP_TASKS -eq 1 ]; then
 	echo "setting up todo items for you"
 	task add project:setup priority:H "set ⌘^v as Vim Anywhere shortcut under services in window that just opened"
 	task add project:setup priority:H "download jq, add to path, make executable"
@@ -335,6 +339,7 @@ if [ GENERATE_SETUP_TASKS -eq 1 ]; then
 	task add project:setup priority:M "gem install solargraph"
 	task add project:setup priority:M "gem install reek"
 	task add project:setup priority:M "gem install bundler"
+	task add project:setup priority:H "doom: M-x all-the-icons-install-fonts"
 
 
 	##########
