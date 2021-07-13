@@ -84,9 +84,10 @@
        ;;gist              ; interacting with github gists
        (lookup           ; helps you navigate your code and documentation
         +docsets)        ; ...or in Dash docsets locally
-       ;;lsp
-       ;;macos             ; MacOS-specific commands
-       magit             ; a git porcelain for Emacs
+       lsp               ; Language Server Protocol support
+       ; macos             ; MacOS-specific commands
+       ; magit             ; a git porcelain for Emacs
+       ; magit-section
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
        ;;pdf               ; pdf enhancements
@@ -106,7 +107,8 @@
        crystal           ; ruby at the speed of c
        ;;csharp            ; unity, .NET, and mono shenanigans
        data              ; config/data formats
-       elixir            ; erlang done right
+       ; elixir
+       (elixir +lsp)            ; erlang done right
        ;;elm               ; care for a cup of TEA?
        emacs-lisp        ; drown in parentheses
        ;;erlang            ; an elegant language for a more civilized age
@@ -130,13 +132,13 @@
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org              ; organize your plain life in plain text
-        +dragndrop       ; drag & drop files/images into org buffers
-        ;;+hugo            ; use Emacs for hugo blogging
-        ;;+jupyter        ; ipython/jupyter support for babel
-        ;;+pandoc          ; export-with-pandoc support
-        ;;+pomodoro        ; be fruitful with the tomato technique
-        +present)        ; using org-mode for presentations
+       ; (org              ; organize your plain life in plain text
+       ;  +dragndrop       ; drag & drop files/images into org buffers
+       ;  ;;+hugo            ; use Emacs for hugo blogging
+       ;  ;;+jupyter        ; ipython/jupyter support for babel
+       ;  ;;+pandoc          ; export-with-pandoc support
+       ;  ;;+pomodoro        ; be fruitful with the tomato technique
+       ;  +present)        ; using org-mode for presentations
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
