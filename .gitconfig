@@ -1,17 +1,18 @@
 [user]
 	name = masukomi
 	email = masukomi@masukomi.org
-[includeIf "gitdir:~/workspace/client_a/"]
-	path = ~/.config/work/gitconfig_client_a
 [includeIf "gitdir:~/workspace/dockyard/"]
 	path = ~/.gitconfig_dockyard
-[include]
-	path = workspace/home_dir_configs/external_gitconfig
+[includeIf "gitdir:~/workspace/client_f/"]
+	path = ~/.gitconfig_client_f
+[init]
+	templatedir = ~/.git_template
+	defaultBranch = main
 [core]
 	excludesfile = ~/.gitignore_global
 	quotepath = false
 	editor = vim
-	attributesfile = /Users/masukomi/.gitattributes
+	attributesfile = ~/.gitattributes
 [color]
 	ui = auto
 	diff = auto
@@ -154,9 +155,6 @@
 [pull]
 	rebase = false
 	default = current
-[init]
-	templateDir = /Users/masukomi/.git_template
-	defaultBranch = main
 [gpg]
 	program = /usr/local/bin/gpg
 [url "git@github.com:"]
