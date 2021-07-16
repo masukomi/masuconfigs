@@ -1,0 +1,75 @@
+#!/bin/sh
+
+while getopts ":o:n:e:f" opt; do
+  case ${opt} in
+    o ) # old email address
+      INCORRECT_EMAIL=$OPTARG
+      ;;
+    n ) # name to use
+      CORRECT_NAME=$OPTARG
+      ;;
+    e ) # email to use
+      CORRECT_EMAIL=$OPTARG
+      ;;
+    f ) # USE FORCE
+      FORCE="--force"
+      ;;
+    : )
+      echo "Invalid option $OPTARG requires an argument"
+      exit 1
+      ;;
+    * )
+      echo "Invalid option $OPTARG"
+      exit 2
+      ;;
+  esac
+done
+
+if [ "$INCORRECT_EMAIL" == "" ] \
+  || [ "$CORRECT_EMAIL" == "" ] \
+  || [ "$CORRECT_NAME" == "" ]; then
+
+  echo "Usage: git alter-author -o <email to search for> -n <new name> -e <new email> [-f]"
+  echo "  git-alter-author looks for commits with the \"old\" email"
+  echo "  and updates them to have corrected author & committer info."
+  echo "  it works on the CURRENT BRANCH ONLY"
+  echo ""
+  echo "  Note: requires git-filter-repo to be installed:"
+  echo "       https://github.com/newren/git-filter-repo"
+  echo ""
+  echo "  WARNING: THIS WILL ALTER HISTORY AND CREATE MERGE PROBLEMS"
+  exit 3
+fi
+
+echo "Proceeding with the following changes"
+echo "commits with..."
+echo "  INCORRECT_EMAIL: $INCORRECT_EMAIL"
+echo "will be changed to..."
+echo "  CORRECT_EMAIL:   $CORRECT_EMAIL"
+echo "  CORRECT_NAME:    $CORRECT_NAME"
+if [ "$FORCE" != "" ]; then
+  echo ""
+  echo "WARNING: I WILL PROCEED WITH FORCE"
+fi
+echo ""
+echo "enter y to proceed, or n to cancel: "
+read OK
+if [ "$OK" != "y" ]; then
+  echo "exiting without making changes";
+  exit 4
+fi
+
+temp_file=$(mktemp /tmp/git-alter-author.XXXXXX)
+
+MAILMAP_FILE="$CORRECT_NAME <$CORRECT_EMAIL>
+<$CORRECT_EMAIL> <$INCORRECT_EMAIL>
+$CORRECT_NAME <$CORRECT_EMAIL> <$INCORRECT_EMAIL>"
+
+echo "$MAILMAP_FILE" > $temp_file
+
+echo "MAILMAP_FILE"
+cat $temp_file
+
+git filter-repo "$FORCE" --mailmap $temp_file --refs $(git rev-parse --abbrev-ref HEAD)
+
+rm $temp_file
