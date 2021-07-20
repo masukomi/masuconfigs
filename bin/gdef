@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Greps for the DEF of a Ruby / Crystal function
+# Greps for the DEF of a Ruby / Crystal / Elixir function
 # or a Rails scope definition
 
 WHAT=$1
@@ -10,7 +10,12 @@ if [ "$WHERE" = "" ]; then
 fi
 echo "Searching for definitions of: $WHAT"
 echo "Looking in: $WHERE"
-grep -rn $WHAT $WHERE | egrep --colour=never "[[:space:]]*def $WHAT|[[:space:]]*def self.$WHAT|[[:space:]]*scope :$WHAT" \
+# finds
+#   def foo      (elixir / ruby / crystal)
+#   def self.foo (ruby / crystal)
+#   defp foo     (elixir)
+#   defmacro     (elixir)
+grep -rn $WHAT $WHERE 2>/dev/null | egrep --colour=never "[[:space:]]*defp? $WHAT|[[:space:]]*def self.$WHAT|[[:space:]]*scope :$WHAT|[[:space:]]*defmacro $WHAT" \
   | egrep -v "tags:" \
   | grep -v ".js:" \
   | grep -v ".log:" \
