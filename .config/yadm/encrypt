@@ -1,2 +1,3 @@
 .ssh/*
 .config/neomutt/aliases
+.gnupg/*
