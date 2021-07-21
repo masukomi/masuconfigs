@@ -288,3 +288,8 @@
   ; So, every time we save an elixir file it will try to find a .formatter.exs and then run mix format from
   ; that file's directory
   (add-hook 'elixir-mode-hook #'+elixir-format-on-save-mode))
+
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))

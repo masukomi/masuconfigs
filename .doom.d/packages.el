@@ -70,3 +70,4 @@
 ;(package! haml-mode)
 (package! sass-mode)
 (package! reformatter)
+(package! evil-surround)
