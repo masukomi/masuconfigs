@@ -38,6 +38,10 @@
 (setq org-hide-emphasis-markers t)
 ;(straight-use-package 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+; prevent it from interpreting _ as subscript and ^ as superscript
+; and thus generating <sub> and <super> tags when exporting to markdown
+(setq org-export-with-sub-superscripts nil)
+
 
 ;; If you want to change the style of line numbers, change this to `relative' or
 ;; `nil' to disable it:
