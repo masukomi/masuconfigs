@@ -71,3 +71,4 @@
 (package! sass-mode)
 (package! reformatter)
 (package! evil-surround)
+(package! yaml-mode)
