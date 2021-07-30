@@ -63,6 +63,7 @@ abbr -a berd 'bundle exec rails server --debugger'
 abbr -a build_tags "~/brew/bin/ctags -R --c++-kinds +p --fields +iaS --extra +q --exclude .rsync_cache ."
 abbr -a hgrep "history | grep"
 abbr -a sqlf "sqlformat --reindent --keywords upper --identifiers lower"
+abbr -a tree "broot" # a tree replacement with funky capabilities
 
 if [ (uname) = "Darwin" ]
 	abbr -a ldd "otool -L"
@@ -152,6 +153,13 @@ set -x PATH $PATH $HOME/.cargo/bin
 # Elixir / ERLANG
 set -x ERL_AFLAGS "-kernel shell_history enabled"
 
+# these 2 found here
+# https://dev.to/andresdotsh/how-to-install-erlang-on-macos-with-asdf-3p1c
+set -x CFLAGS "-O2 -g -fno-stack-check"
+# set -x KERL_CONFIGURE_OPTIONS=(string join "--disable-hipe --without-javac --with-ssl=" (brew --prefix openssl))
+set -x KERL_CONFIGURE_OPTIONS "--disable-hipe --without-javac --with-ssl=/usr/local/opt/openssl@1.1"
+
+
 set -x GPG_TTY (tty)
 
 # readline
@@ -167,7 +175,7 @@ set -g theme_display_ruby no
 # END Bob the Fish
 
 # rvm invocation
-rvm default
+# rvm default
 # rbenv invocation
 # status --is-interactive; and source (rbenv init -|psub)
 
@@ -184,3 +192,12 @@ set -x USE_FENESTRO true
 # https://github.com/oz/tz
 # full list of possible ones is here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 set -x TZ_LIST "US/Pacific,Europe/Paris"
+
+source /usr/local/opt/asdf/asdf.fish
+if test -d (brew --prefix)"/share/fish/completions"
+    set -gx fish_complete_path $fish_complete_path (brew --prefix)/share/fish/completions
+end
+
+if test -d (brew --prefix)"/share/fish/vendor_completions.d"
+    set -gx fish_complete_path $fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
+end
