@@ -98,6 +98,8 @@ maybrew "gettext"
 maybrew "ghostscript"
 # Distributed revision control system
 maybrew "git"
+# mass rewrite commit history
+maybrew "git-filter-repo"
 # Find where a commit was merged in git
 maybrew "git-when-merged"
 # Core application library for C
@@ -249,6 +251,8 @@ maybrew "terminal-notifier"
 maybrew "the_silver_searcher"
 # Text interface for Git repositories
 maybrew "tig"
+# Command-line translator using Google Translate and more
+maybrew "translate-shell"
 # Display directories as trees (with optional color/HTML output)
 maybrew "tree"
 # Simple GTD-style task management for the command-line
