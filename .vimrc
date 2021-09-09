@@ -465,6 +465,7 @@ if ! filereadable(".vimrc") || len(split(getcwd(), "/")) == 2
 	"-------------------
 	" LANGUAGE PLUGINS...
 	"
+	Plug 'elixir-editors/vim-elixir'
 	Plug 'rhysd/vim-crystal', { 'for': 'crystal' }
 	" Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 	Plug 'dag/vim-fish', { 'for': 'fish' }
