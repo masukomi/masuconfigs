@@ -73,6 +73,9 @@
 	grep-for = log --pretty=format:'%C(yellow)%h %Cred%ad %C(cyan)%an %Creset%s' --date=short --grep
 	grep-for-titles = log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=short --grep
 	kad = difftool --tool Kaleidoscope
+	# list assumed as in list files that you've
+	# told git to --assume-unchanged (see assume alias)
+	la = !git ls-files -v | grep '^[[:lower:]]'
 	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 	lol = !git --no-pager loll
 	lola = !git --no-pager lolal
