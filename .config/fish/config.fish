@@ -64,6 +64,7 @@ abbr -a build_tags "~/brew/bin/ctags -R --c++-kinds +p --fields +iaS --extra +q 
 abbr -a hgrep "history | grep"
 abbr -a sqlf "sqlformat --reindent --keywords upper --identifiers lower"
 abbr -a tree "broot" # a tree replacement with funky capabilities
+abbr -a unset 'set --erase'
 
 if [ (uname) = "Darwin" ]
 	abbr -a ldd "otool -L"
