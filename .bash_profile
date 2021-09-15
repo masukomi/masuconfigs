@@ -45,4 +45,6 @@ fi
 #fi
 
 
-export PATH="$HOME/.cargo/bin:$PATH"
+. "$HOME/.cargo/env"
+
+source /Users/kayrhodes/.config/broot/launcher/bash/br
