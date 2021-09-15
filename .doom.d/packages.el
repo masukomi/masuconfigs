@@ -65,8 +65,13 @@
 (package! org-bullets)
 ; (package! alchemist) ; elixir support
 ; (package! ox-hugo) ; hugo file format for org mode
+
+; USE THIS FOR LSP vvv
 (package! lsp-mode)
+
+; DON'T NEED THIS vvv
 ; (package! lsp-origami)
+
 ;(package! haml-mode)
 (package! sass-mode)
 (package! reformatter)
