@@ -8,4 +8,8 @@ EMACS_SUB_VERSION=$( ls /usr/local/Cellar/$EMACS_VERSION \
         | tail -n1)
 EMACS_INSTALL_LOCATION=$(echo "/usr/local/Cellar/$EMACS_VERSION/$EMACS_SUB_VERSION/Emacs.app/Contents/MacOS/Emacs" )
 
+# echo "emacs version: $EMACS_VERSION"
+# echo "sub version: $EMACS_SUB_VERSION"
+# echo "install loc: $EMACS_INSTALL_LOCATION"
+
 $EMACS_INSTALL_LOCATION "$@"
