@@ -1,3 +1,5 @@
+IRB.conf[:SAVE_HISTORY] = 1000
+
 def require_dir(relative_dir_path)
   cleaned_relative_dir_path =relative_dir_path.sub(/\/$/, '')
   Dir["#{cleaned_relative_dir_path}/**/*.rb"].each do |file|
