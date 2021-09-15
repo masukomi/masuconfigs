@@ -86,8 +86,8 @@
         +docsets)        ; ...or in Dash docsets locally
        lsp               ; Language Server Protocol support
        ; macos             ; MacOS-specific commands
-       ; magit             ; a git porcelain for Emacs
-       ; magit-section
+       magit             ; a git porcelain for Emacs
+       magit-section
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
        ;;pdf               ; pdf enhancements
