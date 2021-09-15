@@ -22,7 +22,10 @@
 ; (setq doom-font (font-spec :family "monospace" :size 20)
 ;       doom-variable-pitch-font (font-spec :family "sans"))
 (setq doom-font (font-spec :family "JetBrains Mono Medium" :size 20)
-      doom-variable-pitch-font (font-spec :family "Monaco"))
+      doom-variable-pitch-font (font-spec :family "Monaco")
+      doom-big-font (font-spec :family "JetBrains Mono Medium"))
+;; RESET FONT TO DEFAULT `doom-font` with a call to
+;; doom/reset-font-size
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -253,6 +256,7 @@
 
 ; neotree enable auto-refresh
 (setq neo-autorefresh t)
+; NECESSARY LSP bits vvvv
 (use-package lsp-mode
       :commands lsp
       :ensure t
@@ -263,6 +267,7 @@
       (add-to-list 'exec-path "~/workspace/reference/elixir/elixir-ls/release"))
 
 
+; UNNECESSARY LSP bits vvvv
 ; (setq lsp-enable-folding t)
 ; (use-package! lsp-origami)
 ; (add-hook! 'lsp-after-open-hook #'lsp-origami-try-enable)
