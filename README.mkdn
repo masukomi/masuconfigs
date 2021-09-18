@@ -4,30 +4,24 @@ These are all my configuration files, and common scripts. Keeping them in git
 provides me with an easy way to keep all the computers I work on
 functioning in the same manner.
 
-## So what's here?
+## Installation Instructions (for me)
+(setting up a new computer from scratch)
 
-.bash_profile  
-.bashrc  
-.DS_Store  
-.irbrc  
-.js # for the [~/.js Chrome plugin][1]  
-This repo contains a collection of (primarily) hidden files.  
-.ssh # config only. no keys. Duh.  
-.vim # all the good stuff lives here  
-.vimrc # lots here too  
-bin # a handful of scripts I like to keep in my path
-
-- css_image # converts a binary image to Base64 encoded inline css
-- [formd][2] a markdown formatting tool
-- ftags.sh creates ctags for file names. Utilized via my FuzzyFinder plugin in Vim.
-- [git-wtf][3] a great tool for keeping your git repo in sync
-- [TTYtter][4] a command line twitter client written in perl. For when you're feeling ... something.
-
-Library/KeyBindings/ # I forget what I've shoved in this.
-
-
-[1]: https://github.com/defunkt/dotjs
-[2]: http://drbunsen.github.com/formd/
-[3]: https://github.com/michaelklishin/git-wtf
-[4]: http://www.floodgap.com/software/ttytter/
-
+1. Install 1Password (~5 min)
+2. Setup SSH Keys for Github 
+3. Install osx-developer tools (~15 min)
+4. Prep for [mas-cli](https://github.com/mas-cli/mas) (Mac App Store CLI)
+    * Log in to Mac App Store
+    * Install any one previously purchased app 
+    * 👆 is an annoying workaround because apple disabled logging in via the command line
+6. Place computer password onto clipboard because Homebrew is about to make you enter it 40 times. 
+7. Install [homebrew](https://brew.sh)
+8. Install [yadm](https://yadm.io)
+    * `brew install yadm`
+    * `yadm init`
+    * `yadm remote add origin git@github.com:masukomi/masuconfigs.git`
+    * `yadm pull origin master`
+    * `yadm bootstrap` 
+      * This will take ~30 minutes. Don't run it with `time`. It'll just hang.
+9. Run `task` and work through the todo items
+10. Update todo items in `bootstrap` script to reflect current reality.
