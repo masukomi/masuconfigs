@@ -6,10 +6,18 @@ EMACS_VERSION=$(ls /usr/local/Cellar/ \
 EMACS_SUB_VERSION=$( ls /usr/local/Cellar/$EMACS_VERSION \
         | sort \
         | tail -n1)
-EMACS_INSTALL_LOCATION=$(echo "/usr/local/Cellar/$EMACS_VERSION/$EMACS_SUB_VERSION/Emacs.app/Contents/MacOS/Emacs" )
+EMACS_APP_LOCATION=$(echo "/usr/local/Cellar/$EMACS_VERSION/$EMACS_SUB_VERSION/Emacs.app" )
+EMACS_INSTALL_LOCATION="$EMACS_APP_LOCATION/Contents/MacOS/Emacs"
+if [ "$1" == "--details" ]; then
+	echo "emacs version: $EMACS_VERSION"
+	echo "sub version: $EMACS_SUB_VERSION"
+	echo "binary loc: $EMACS_INSTALL_LOCATION"
+	exit 0
+fi
 
-# echo "emacs version: $EMACS_VERSION"
-# echo "sub version: $EMACS_SUB_VERSION"
-# echo "install loc: $EMACS_INSTALL_LOCATION"
+if [ "$1" == "--app" ]; then
+	echo $EMACS_APP_LOCATION
+	exit 0
+fi
 
 $EMACS_INSTALL_LOCATION "$@"
