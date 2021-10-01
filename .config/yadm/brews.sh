@@ -36,7 +36,12 @@ brew tap masukomi/homebrew-apps
 # maybrew "yadm"
 # Search tool like grep, but optimized for programmers
 # have switched to ripgrep (installed below)
-#maybrew "ack"
+if ! is_installed "asdf"; then
+	maybrew "asdf"
+	asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+	# sadly, can't avoid needing node...
+	asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+fi
 # Automatic configure script builder
 maybrew "autoconf"
 # Tool for generating GNU Standards-compliant Makefiles
