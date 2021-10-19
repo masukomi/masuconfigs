@@ -306,3 +306,7 @@
 (add-hook 'yaml-mode-hook
           (lambda ()
             (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+
+; to enable binding.pry and byebug when using rspec-mode
+; When you've hit the breakpoint, hit C-x C-q to enable inf-ruby.
+(add-hook 'after-init-hook 'inf-ruby-switch-setup)

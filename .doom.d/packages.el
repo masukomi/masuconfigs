@@ -77,3 +77,6 @@
 (package! reformatter)
 (package! evil-surround)
 (package! yaml-mode)
+; (package! editorconfig-mode)
+(package! rubocop)
+(package! rspec-mode)
