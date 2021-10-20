@@ -146,7 +146,7 @@ set -x PATH  $PATH $GOROOT/bin
 ## END GO
 
 # RACKET
-set -x PATH $PATH /Applications/Racket\ v7.7/bin
+set -x PATH $PATH /Applications/Racket\ v8.2/bin
 
 # RUST
 set -x PATH $PATH $HOME/.cargo/bin
