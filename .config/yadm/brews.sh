@@ -37,6 +37,11 @@ brew tap masukomi/homebrew-apps
 # Search tool like grep, but optimized for programmers
 # have switched to ripgrep (installed below)
 #maybrew "ack"
+# https://github.com/asdf-vm/asdf
+# Manage multiple runtime versions with a single CLI tool, extendable via plugins
+maybrew "asdf"
+asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+
 # Automatic configure script builder
 maybrew "autoconf"
 # Tool for generating GNU Standards-compliant Makefiles

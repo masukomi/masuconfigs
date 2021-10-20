@@ -77,3 +77,5 @@
 (package! reformatter)
 (package! evil-surround)
 (package! yaml-mode)
+(package! geiser-chicken)
+(package! scheme-complete)
