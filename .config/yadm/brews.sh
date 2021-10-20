@@ -39,9 +39,12 @@ brew tap masukomi/homebrew-apps
 #maybrew "ack"
 # https://github.com/asdf-vm/asdf
 # Manage multiple runtime versions with a single CLI tool, extendable via plugins
-maybrew "asdf"
-asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
-
+if ! is_installed "asdf"; then
+	maybrew "asdf"
+	asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+	# sadly, can't avoid needing node...
+	asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+fi
 # Automatic configure script builder
 maybrew "autoconf"
 # Tool for generating GNU Standards-compliant Makefiles

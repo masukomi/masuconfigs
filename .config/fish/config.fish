@@ -194,7 +194,7 @@ set -x USE_FENESTRO true
 # full list of possible ones is here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 set -x TZ_LIST "US/Pacific,Europe/Paris"
 
-source /usr/local/opt/asdf/asdf.fish
+source /usr/local/opt/asdf/libexec/asdf.fish
 if test -d (brew --prefix)"/share/fish/completions"
     set -gx fish_complete_path $fish_complete_path (brew --prefix)/share/fish/completions
 end

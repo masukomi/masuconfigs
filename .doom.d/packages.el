@@ -77,5 +77,8 @@
 (package! reformatter)
 (package! evil-surround)
 (package! yaml-mode)
+; (package! editorconfig-mode)
 (package! geiser-chicken)
 (package! scheme-complete)
+(package! rubocop)
+(package! rspec-mode)
