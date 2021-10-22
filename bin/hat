@@ -1,0 +1,5 @@
+#!/bin/sh
+
+filepath="$1"
+filename=$(basename $filepath)
+head $filepath | bat --file-name $filename
