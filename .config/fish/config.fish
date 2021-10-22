@@ -109,6 +109,8 @@ set -x PATH . $HOME/bin $HOME/bin/git-scripts /usr/local/bin $PATH
 # vvv make python 3 found before macOSs python 2.7
 # macOS one is at /usr/local/bin/python
 set -x PATH /usr/local/opt/python/libexec/bin $PATH
+set brewed_python_version (brew ls --versions python | sed -e "s/python@//" -e "s/ .*//")
+set -x PATH $PATH $HOME/Library/Python/$brewed_python_version/bin
 set -x PATH $PATH /Applications
 set -x PATH $PATH /usr/local/opt/coreutils/libexec/gnubin
 set -x PATH $PATH $HOME/.iterm2/
@@ -173,6 +175,8 @@ set -gx PKG_CONFIG_PATH "/usr/local/opt/readline/lib/pkgconfig"
 # START Bob The Fish prompt
 # ~/.config/fish/functions/fish_prompt.fish
 set -g theme_display_ruby no
+set -g theme_nerd_fonts no
+set -g theme_powerline_fonts yes
 # END Bob the Fish
 
 # rvm invocation
