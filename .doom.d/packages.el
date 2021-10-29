@@ -80,3 +80,4 @@
 ; (package! editorconfig-mode)
 (package! rubocop)
 (package! rspec-mode)
+(package! protobuf-mode)
