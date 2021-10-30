@@ -82,3 +82,4 @@
 (package! scheme-complete)
 (package! rubocop)
 (package! rspec-mode)
+(package! protobuf-mode)

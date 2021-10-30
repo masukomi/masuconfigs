@@ -17,30 +17,6 @@ fi
 
 # doom is loaded via submodule
 
-read -t 20 -p "init / update doom?
-" doom
-
-if [ "$doom" == "y" ]; then
-	yadm submodule init
-	yadm submodule update --init --recursive --remote
-	yadm submodule update --recursive ~/.emacs.d
-	~/.emacs.d/bin/doom install
-	~/.emacs.d/bin/doom refresh
-	~/.emacs.d/bin/doom sync
-	# install JetBrains Mono Font
-	cd ~/Downloads
-	curl -L https://download.jetbrains.com/fonts/JetBrainsMono-2.225.zip \
-		--output JetBrainsMono-2.225.zip
-	unzip JetBrainsMono-2.225.zip
-	cp fonts/ttf/*.ttf ~/Library/Fonts/
-	#also remind myself to install whatever font it is emacs uses
-	echo "RUN M-x all-the-icons-install-fonts"
-fi
-
-
-
-
-
 
 function mayclone(){
 	#$1 = base dir
@@ -60,6 +36,28 @@ function is_installed(){
 		false
 	fi
 }
+
+read -t 20 -p "init / update doom?
+" doom
+
+if [ "$doom" == "y" ]; then
+	yadm submodule init
+	yadm submodule update --init --recursive --remote
+	yadm submodule update --recursive ~/.emacs.d
+	~/.emacs.d/bin/doom install
+	~/.emacs.d/bin/doom refresh
+	~/.emacs.d/bin/doom sync
+	# install JetBrains Mono Font
+	cd ~/Downloads
+	curl -L https://download.jetbrains.com/fonts/JetBrainsMono-2.225.zip \
+		--output JetBrainsMono-2.225.zip
+	unzip JetBrainsMono-2.225.zip
+	cp fonts/ttf/*.ttf ~/Library/Fonts/
+	#also remind myself to install whatever font it is emacs uses
+	echo "RUN M-x all-the-icons-install-fonts"
+	ln -s $(emacs --app) /Applications/Emacs.app
+fi
+
 
 if ! is_installed "brew"; then
 	/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
@@ -95,6 +93,10 @@ else
 	echo "Hey! You should create a brews.sh equivalent for $OSTYPE"
 fi
 
+#####
+# HOMEBREW IS NOW AVAILABLE
+# and various homebrew tools have been installed
+#####
 
 
 
@@ -151,6 +153,14 @@ if [ ! -d "~/workspace/reference/elixir/elixir-ls/release" ]; then
 	mix elixir_ls.release # creates the release directory
 	cd ~/
 fi
+mkdir -p $HOME/workspace/reference/lua
+if [ ! -d "~/workspace/reference/lua/pandoc-confluence-writer" ]; then
+	# https://github.com/jpbarrette/pandoc-confluence-writer
+	mayclone "~/workspace/reference/lua" "git@github.com:jpbarrette/pandoc-confluence-writer.git"
+	mkdir -p $HOME/.local/share/pandoc
+	cp ~/workspace/reference/lua/pandoc-confluence-writer/confluence.lua ~/.local/share/pandoc/
+fi
+
 
 
 if ! is_installed "icr"; then # Interactive Crystal Repl
@@ -202,6 +212,9 @@ fi
 
 ## START MUTT
 #mu index --rebuild
+if ! is_installed "urlscan"; then
+	pip install --user urlscan
+fi
 echo "Sync mutt contacts if needed: https://github.com/tgray/contacts"
 ## END MUTT
 
@@ -219,6 +232,10 @@ defaults write com.googlecode.iterm2 PrefsCustomFolder "$HOME/.iterm2"
 # mkdir -p /usr/local/src
 
 # fish shell config
+if [ ! -d "~/.local/share/omf" ] && [ ! -d "~/.config/omf" ]; then
+	curl -L https://get.oh-my.fish > install
+	fish install --path=~/.local/share/omf --config=~/.config/omf
+fi
 
 # twtxt
 # mkdir -p ~/Library/Application\ Support/twtxt/config
@@ -233,7 +250,9 @@ defaults write com.google.Chrome.plist AppleEnableSwipeNavigateWithScrolls -bool
 # install rust stuff
 if ! is_installed "rustc"; then
 	#install via rustup
-	yes | curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+	# yes '' just sends an enter which we need to choose the default
+	# Install option
+	yes '' | curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 	rustup toolchain add nightly
 	cargo +nightly install racer
 fi
@@ -271,8 +290,8 @@ curl https://3e8.org/pub/chicken-doc/chicken-doc-repo-5.tgz | sudo tar zx
 # requires `chicken-install linenoise` to have been run first
 
 # RVM
-gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-curl -sSL https://get.rvm.io | bash -s stable
+# gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+# curl -sSL https://get.rvm.io | bash -s stable
 
 # System Prefs
 # make the mouse go faster.... maybe I can't see a difference
@@ -287,65 +306,108 @@ curl -fsSL https://raw.github.com/cknadler/vim-anywhere/master/install | bash
 #####
 if [ $GENERATE_SETUP_TASKS -eq 1 ]; then
 	echo "setting up todo items for you"
+	#Task number (for annotation purposes)
+	# 1
 	task add project:setup priority:H "set ⌘^v as Vim Anywhere shortcut under services in window that just opened"
+	# 2
 	task add project:setup priority:H "download jq, add to path, make executable"
 	task annotate 2 "https://stedolan.github.io/jq/"
+	# 3
 	task add project:setup priority:H "add: /usr/local/bin/fish to /etc/shells"
 	task annotate 3 'echo "/usr/local/bin/fish" | sudo tee -a /etc/shells'
 	task annotate 3 "chsh -s /usr/local/bin/fish"
+	# 4
 	task add project:setup priority:H "add: your ssh keys (and load the github one)"
+	# 5
 	task add project:setup priority:H "download: Inconsolata (not -g or -gz)"
-	task annotate 4 "https://github.com/powerline/fonts"
+	task annotate 5 "https://github.com/powerline/fonts"
+	# 6
 	task add project:setup priority:H "run: chsh -s /usr/local/bin/fish"
+	# 7
 	task add project:setup priority:H "run: fish shell integration commands"
-	task annotate 6 "https://rvm.io/integration/fish"
+	task annotate 7 "(in fish shell) omf install bobthefish"
+	# 8
 	task add project:setup priority:H "install: taskopen"
-	task annotate 7 "https://github.com/ValiValpas/taskopen"
-
+	task annotate 8 "https://github.com/ValiValpas/taskopen"
+	# 9
 	task add project:setup priority:H "run:sudo pip3 install -I urlscan"
+	# 10
 	task add project:setup priority:H "run: urlscan -g"
+	# 11
 	task add project:setup priority:H "run: notmuch setup"
+	# 12
 	task add project:setup priority:H "sync contacts & run  contacts -a --all > ~/.config/neomutt/aliases"
-
+	# 13
 	task add project:setup priority:H "download roboto mono"
-	task annotate 12 "https://fonts.google.com/specimen/Roboto+Mono"
+	task annotate 13 "https://fonts.google.com/specimen/Roboto+Mono"
 
 	# and now tasks for the apps you need to install manually
+	# 14
 	task add project:setup "Install Dropbox"
+	# 15
 	task add project:setup "Install Chrome"
+	# 16
 	task add project:setup "Install Firefox"
+	# 17
 	task add project:setup "Install Xcode"
+	# 18
 	task add project:setup "Accept Xcode license"
+	# 19
 	task add project:setup "after Xcode license, follow instructions https://github.com/kerma/defaultbrowser"
-	task add project:setup "Install Flux "
-	task annotate 14 "https://justgetflux.com/"
+	# 20
 	task add project:setup "Install Fantastical"
+	# 21
 	task add project:setup "Install Kaleidoscope"
 	task annotate 16 "https://www.kaleidoscopeapp.com/download"
+	# 22
 	task add project:setup "Install nvALT"
+	# 23
 	task add project:setup "Install OmniGraffle"
+	# 24
 	task add project:setup "Install Slack"
+	# 25
 	task add project:setup "Copy Scuttlebutt's gossip.json from the other box"
+	# 26
 	task add project:setup "Copy Scuttlebutt's gossip.json from the other box"
+	# 27
 	task add project:setup "Install Patchwork (Scuttlebutt)"
+	# 28
 	task add project:setup "boot Patchwork and let sync get started"
+	# 29
 	task add project:setup "Install Golang"
+	# 30
 	task add project:setup priority:L "Install Quiver"
+	# 31
 	task add project:setup priority:L "Install Skitch"
+	# 32
 	task add project:setup priority:L "Install Firefox"
+	# 33
 	task add project:setup priority:L "Install Marked 2"
+	# 34
 	task add project:setup priority:L "Install Monodraw"
+	# 35
 	task add project:setup priority:L "Install Noizio"
+	# 36
 	task add project:setup priority:L "Install Tweetbot"
+	# 37
 	task add project:setup priority:L "Install Deckset"
+	# 38
 	task add project:setup priority:L "Install Fenestro"
+	# 39
 	task add project:setup priority:L "Install Tad"
+	# 40
 	task add project:setup priority:L "run ln -s /Applications/Tad.app/Contents/Resources/tad.sh ~/bin/tad"
+	# 41
 	task add project:setup priority:L "Set Ascii font in iterm 2 to roboto mono 18"
+	# 42
 	task add project:setup priority:M "rvm default 2.6.3 (or whatever)"
+	# 43
 	task add project:setup priority:M "gem install solargraph"
+	# 44
 	task add project:setup priority:M "gem install reek"
+	# 45
 	task add project:setup priority:M "gem install bundler"
+	# 46
 	task add project:setup priority:H "doom: M-x all-the-icons-install-fonts"
 
 
