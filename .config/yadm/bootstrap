@@ -82,7 +82,10 @@ if ! is_installed "mas"; then # mac app store cli
     read MAS_LOGIN
     if [ "$MAS_LOGIN" == "y" ];then
 		mas install 1384080005 # tweetbot
-
+		mas install 409203825 # Numbers (10.3.5)
+		mas install 1464122853 # NextDNS (1.4.3)
+		mas install 419330170 # Moom (3.2.20)
+		mas install 1289583905 # Pixelmator Pro (2.0.1)
     fi
 fi
 
