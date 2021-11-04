@@ -74,6 +74,15 @@ fi
 
 # cli utility that shows your progress through the day
 maybrew "days_progress"
+brew install devutils
+if ! is_installed "devutils"; then
+	brew install devutils
+	# opening it just to get past the "are you sure" dialog
+	open /Applications/DevUtils.app
+else
+	echo "-- Skipping devutils (installed already)"
+fi
+
 # Load/unload environment variables based on $PWD
 maybrew "direnv"
 # Diff that operates at the word level

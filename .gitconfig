@@ -97,6 +97,7 @@
 	rhh = reset --hard HEAD
 	rook = !"~/workspace/git-rook/git-rook"
 	root = rev-parse --show-toplevel
+	sign-last = commit --amend --no-edit --no-verify -S
 	slog = log --pretty="'%C(yellow)%h %Cred%an %C(cyan)%aI %Creset%s'"
 	snapshot = !git stash save "snapshot: $(date)" && git stash apply "stash@{0}"
 	st = status -sb
@@ -128,24 +129,17 @@
 	cmd = diff \"$LOCAL\" \"$REMOTE\"
 [difftool "Kaleidoscope"]
 	cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
+[difftool]
+	prompt = false
+[mergetool]
+	prompt = false
 [mergetool "Kaleidoscope"]
 	cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
 	trustExitCode = true
-#[mergetool "sourcetree"]
-#	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-#	trustExitCode = true
-[mergetool]
-	prompt = false
 [merge]
-	tool = Kaleidoscope
 	summary = true
 #	ff = false
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path =
-[mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
+	tool = Kaleidoscope
 [push]
 	default = simple
 [filter "media"]
@@ -159,9 +153,11 @@
 	rebase = false
 	default = current
 [gpg]
-	program = /usr/local/bin/gpg
+	program = gpg
 [url "git@github.com:"]
 	insteadOf = https://github.com/
 	# http://albertech.blogspot.com/2016/11/fix-git-error-could-not-read-username.html
 [checkout]
 	defaultRemote = upstream
+[commit]
+	gpgsign = true
