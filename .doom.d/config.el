@@ -46,12 +46,6 @@
 (setq org-export-with-sub-superscripts nil)
 
 
-;; If you want to change the style of line numbers, change this to `relative' or
-;; `nil' to disable it:
-(setq display-line-numbers-type t)
-(display-line-numbers-mode)
-(nlinum-relative-on)
-
 ; $ should go to the end of the actual line not
 ; the visual line
 (setq evil-respect-visual-line-mode nil)
@@ -110,13 +104,17 @@
 ;; (add-to-list '+word-wrap-disabled-modes 'emacs-lisp-mode)
 
 
+;; If you want to change the style of line numbers, change this to `relative' or
+;; `nil' to disable it:
+(setq display-line-numbers-type t)
+(display-line-numbers-mode)
+(nlinum-relative-on)
+
 ; relative line numbers
 ; via the linum-relative package https://github.com/coldnew/linum-relative
 ; (require 'linum-relative)
 
 
-
-;; (require 'nlinum-relative)
 (nlinum-relative-setup-evil)               ;; setup for evil
 (add-hook 'prog-mode-hook 'nlinum-relative-mode)
 (setq nlinum-relative-redisplay-delay 0)   ;; delay
