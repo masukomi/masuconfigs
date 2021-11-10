@@ -143,8 +143,7 @@ set -x PATH $PATH $HOME/.radicle/bin
 
 ## BEGIN GO
 set -x GOPATH $HOME/workspace/gocode
-set -x GOROOT /usr/local/go
-set -x PATH  $PATH $GOROOT/bin
+set -x PATH  $PATH $GOPATH/bin
 ## END GO
 
 # RACKET

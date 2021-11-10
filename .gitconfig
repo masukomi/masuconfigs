@@ -1,10 +1,9 @@
 [user]
 	name = masukomi
 	email = masukomi@masukomi.org
-[includeIf "gitdir:~/workspace/dockyard/"]
-	path = ~/.gitconfig_dockyard
-[includeIf "gitdir:~/workspace/client_f/"]
-	path = ~/.gitconfig_client_f
+	signingkey = D4388455A3D25EEF5BD90DDC906B307DDE600AF9
+[includeIf "gitdir:~/workspace/dutchie/"]
+	path = ~/.gitconfig_dutchie
 [init]
 	templatedir = ~/.git_template
 	defaultBranch = main
@@ -110,15 +109,13 @@
 	assume = update-index --assume-unchanged
 	cdiff = difftool --tool=cdiff
 	rand = !"git checkout $(git branch | shuf -n 1)"
-[difftool]
-	prompt = false
 [diff]
-	tool = Kaleidoscope
 	algorithm = patience
 #[diff]
 #	tool = cdiff
 #	algorithm = patience
 	# external = cdiff
+	tool = Kaleidoscope
 [difftool "cdiff"]
 	cmd = ~/workspace/cleandiff/cdiff \"$LOCAL\" \"$REMOTE\"
 [difftool "cdiff-f"]

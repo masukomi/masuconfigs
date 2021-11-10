@@ -10,19 +10,19 @@ set text_flowed = yes
 
 set signature = ~/.config/neomutt/signature
 # HTML Support via Markdown + Pandoc
-# I had this split over multiple lines with \ but it kept giving errors. 
+# I had this split over multiple lines with \ but it kept giving errors.
 macro compose K "| pandoc -f gfm -o /tmp/neomutt-alternative.html<enter><attach-file>/tmp/neomutt-alternative.html<enter><tag-entry><previous-entry><tag-entry><group-alternatives>"
 
 # set ispell=/stop/trying/to/use/ispell/you/infernal/thing
 
-## END COMPOSING EMAIL 
+## END COMPOSING EMAIL
 ## READING EMAIL
 auto_view text/html                                      # view html automatically (we'll use w3m)
 alternative_order text/plain text/enriched text/html     # save html for last
-# add the following line to ~/.mailcap or any 
-# of the other locations listed here 
+# add the following line to ~/.mailcap or any
+# of the other locations listed here
 # https://neomutt.org/guide/mimesupport.html#3-%C2%A0mime-viewer-configuration-with-mailcap
-# 
+#
 # text/html; w3m -I %{charset} -T text/html; copiousoutput;
 macro index A "<tag-pattern>~U<enter><tag-prefix><clear-flag>O<untag-pattern>.<enter>" "mark all read"
 #macro index A "<tag-pattern>~N<enter><tag-prefix><clear-flag>N<untag-pattern>.<enter>" "mark all read"
@@ -45,7 +45,7 @@ set sort_re
 set collapse_unread
 ### END SORTING
 ### CHECKING EMAIL
-set timeout=30    # mutt 'presses' (like) a key for you (while you're idle) 
+set timeout=30    # mutt 'presses' (like) a key for you (while you're idle)
                   # each x sec to trigger the thing below
 set mail_check=30  # mutt checks for new mails on every keystroke
                   # but not more often then once in 5 seconds
@@ -54,7 +54,7 @@ set mail_check=30  # mutt checks for new mails on every keystroke
 # macos notification
 set new_mail_command="terminal-notifier -title '🧐 Neomutt' -subtitle '📩 New Mail' \
 -message '%n new messages, %u unread.' -activate 'com.apple.Terminal'"
-# linux notification (change path to png) 
+# linux notification (change path to png)
 # set new_mail_command="notify-send --icon='/home/santiago/Pictures/neomutt.png' \
 # 'New Email' '%n new messages, %u unread.' &"
 
@@ -63,10 +63,22 @@ set new_mail_command="terminal-notifier -title '🧐 Neomutt' -subtitle '📩 Ne
 
 # Configure Internet Message Access Protocol for reading mail
 # Username and password for your Gmail or G Suite account
-set from="Kay Rhodes <masukomi@masukomi.org>"
-set imap_user = "masukomi@gmail.com"
-set imap_pass=`security find-generic-password -g -j "neomutt-masukomi@gmail.com" 2>&1 | grep password: | sed -e 's/password: //' -e 's/"//g'`
-set smtp_pass=`security find-generic-password -g -j "neomutt-masukomi@gmail.com" 2>&1 | grep password: | sed -e 's/password: //' -e 's/"//g'`
+#
+# add a generic password with
+#   security add-generic-password -a $USER -s <service name> \
+#   -j "comment to search for" -w <the password>
+#
+#
+# set from="Kay Rhodes <masukomi@masukomi.org>"
+# set imap_user = "masukomi@gmail.com"
+# set imap_pass=`security find-generic-password -g -j "neomutt-masukomi@gmail.com" 2>&1 | grep password: | sed -e 's/password: //' -e 's/"//g'`
+# set smtp_pass=`security find-generic-password -g -j "neomutt-masukomi@gmail.com" 2>&1 | grep password: | sed -e 's/password: //' -e 's/"//g'`
+
+set from="Kay Rhodes <kay.rhodes@dutchie.com>"
+set imap_user = "kay.rhodes@dutchie.com"
+set imap_pass=`security find-generic-password -g -j "neomutt-kay.rhodes@dutchie.com" 2>&1 | grep password: | sed -e 's/password: //' -e 's/"//g'`
+set smtp_pass=`security find-generic-password -g -j "neomutt-kay.rhodes@dutchie.com" 2>&1 | grep password: | sed -e 's/password: //' -e 's/"//g'`
+
 
 unset imap_passive
 # Specifies the default location of your mailboxes
@@ -75,7 +87,7 @@ set folder = "imaps://imap.gmail.com:993"
 # Configure Simple Mail Transfer Protocol for sending mail
 set smtp_url = "smtp://masukomi@gmail.com@smtp.gmail.com:587"
 
-# spoolfile sets your default folder / view 
+# spoolfile sets your default folder / view
 # from the IMAP server
 #set spoolfile = "+INBOX"
 set spoolfile  = "+[Gmail]/All Mail"
@@ -88,20 +100,20 @@ set postponed = "+[GMail]/Drafts"
 set record = ""
 
 #set smtp_authenticators = ""
-# gmail won't let you send or delete without setting 
-# the smtp_authenticators to plain. 
+# gmail won't let you send or delete without setting
+# the smtp_authenticators to plain.
 # for some reason the defaults don't work.
 set smtp_authenticators = "plain"
 set ssl_force_tls = yes
 
 
-## VISUAL STYLING 
+## VISUAL STYLING
 set markers=no # don't put '+' at the beginning of wrapped lines
 ## COLORS loaded by sourcing external file with colors
 source colorschemes/monokai
 
 ## Layout
-# vvv Determines the number of lines of a mini-index 
+# vvv Determines the number of lines of a mini-index
 # which is shown when in the pager.
 set  pager_index_lines = 9
 ## SIDEBAR
@@ -114,8 +126,8 @@ set sidebar_format="%B%?F? [%F]?%* %?N?%N/?%S"
 # that will appear in your sidebar. If you don't add it there then mutt won't know about it.
 
 
-bind index,pager \cp sidebar-prev                 # Ctrl-n to select next folder
-bind index,pager \cn sidebar-next                 # Ctrl-p to select previous folder
+bind index,pager \cp sidebar-prev                 # Ctrl-p to select previous folder
+bind index,pager \cn sidebar-next                 # Ctrl-n to select next folder
 bind index,pager \ci sidebar-open                 # Ctrl-o to open selected folder
 bind index,pager \cb sidebar-toggle-visible # Ctrl-b to toggle visibility of the sidebar
 
@@ -144,7 +156,7 @@ bind pager [ previous-unread
 bind pager ] next-unread
 
 ## BEHAVIOR
-# vvv doesn't work for many people 
+# vvv doesn't work for many people
 # because backspace doesn't output backspace most of the time.
 #bind index <BackSpace> delete-thread
 
@@ -167,7 +179,7 @@ set certificate_file    = ~/.config/neomutt/certificates
 
 ## open urls in your browser
 # use urlscan https://github.com/firecat53/urlscan
-# (the successor to urlview) 
+# (the successor to urlview)
 macro index,pager \cu "<pipe-message> urlscan<Enter>" "call urlscan to extract URLs out of a message"
 
 macro attach,compose \cu "<pipe-entry> urlscan<Enter>" "call urlscan to extract URLs out of a message"
@@ -178,7 +190,7 @@ macro attach,compose \cu "<pipe-entry> urlscan<Enter>" "call urlscan to extract 
 #
 set move                = no
 
-# because we want to use 2 letter bindings starting with g we must first make it explicit that g by itself is _not_ a thing. See 
+# because we want to use 2 letter bindings starting with g we must first make it explicit that g by itself is _not_ a thing. See
 # https://neomutt.org/guide/configuration.html#bind-warnings
 bind index,pager g noop
 
