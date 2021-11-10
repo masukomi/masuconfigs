@@ -9,9 +9,10 @@ tested_files = Set.new
 # foo.rb and foo_spec.rb which would result in
 # foo_spec.rb being invoked twice.
 def get_spec_filename(file)
-  return file if file.end_with? '_spec.rb'
-
-  "spec/#{file.sub(%r{^app/}, '').sub(/\.rb$/, '_spec.rb')}"
+  unless file.end_with? '_spec.rb'
+    file = "spec/#{file.sub(%r{^app/}, '').sub(/\.rb$/, '_spec.rb')}"
+  end
+  file.sub(/engines\/\S+?\//, "")
 end
 
 files.each do |file|
@@ -22,6 +23,7 @@ files.each do |file|
   exit 2 unless valid_code
 
   filename = get_spec_filename(filename)
+  $stderr.puts("XXX PWD: #{Dir.pwd} & FILENAME: #{filename}")
   next unless File.exist?(filename) && !tested_files.include?(filename)
 
   tested_files.add filename
