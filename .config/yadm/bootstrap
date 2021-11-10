@@ -82,7 +82,10 @@ if ! is_installed "mas"; then # mac app store cli
     read MAS_LOGIN
     if [ "$MAS_LOGIN" == "y" ];then
 		mas install 1384080005 # tweetbot
-
+		mas install 409203825 # Numbers (10.3.5)
+		mas install 1464122853 # NextDNS (1.4.3)
+		mas install 419330170 # Moom (3.2.20)
+		mas install 1289583905 # Pixelmator Pro (2.0.1)
     fi
 fi
 
@@ -264,6 +267,7 @@ readline_version=$(brew list readline --versions)
 export CSC_OPTIONS="-I/usr/local/Cellar/readline/$readline_version/include -L/usr/local/Cellar/readline/$readline_version/lib -Wl,-flat_namespace,-undefined,suppress"
 unset readline_version
 #chicken-install readline
+chicken-install apropos
 chicken-install chicken-doc
 chicken-install linenoise
 chicken-install simple-loops
@@ -278,8 +282,14 @@ chicken-install spiffy spiffy-request-vars intarweb
 chicken-install shell
 chicken-install sha2 message-digest
 chicken-install http-client
-cd `csi -p '(import chicken.platform)(chicken-home)' | tail -n1`
-curl http://3e8.org/pub/chicken-doc/chicken-doc-repo.tgz | sudo tar zx
+# chicken < 5 instructions
+# cd `csi -p '(import chicken.platform)(chicken-home)' | tail -n1`
+# curl http://3e8.org/pub/chicken-doc/chicken-doc-repo.tgz | sudo tar zx
+# chicken > 5 instructions
+cd `csi -R chicken.platform -p '(chicken-home)'`
+curl https://3e8.org/pub/chicken-doc/chicken-doc-repo-5.tgz | sudo tar zx
+
+
 # requires `chicken-install linenoise` to have been run first
 
 # RVM

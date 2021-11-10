@@ -36,6 +36,9 @@ brew tap masukomi/homebrew-apps
 # maybrew "yadm"
 # Search tool like grep, but optimized for programmers
 # have switched to ripgrep (installed below)
+#maybrew "ack"
+# https://github.com/asdf-vm/asdf
+# Manage multiple runtime versions with a single CLI tool, extendable via plugins
 if ! is_installed "asdf"; then
 	maybrew "asdf"
 	asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git

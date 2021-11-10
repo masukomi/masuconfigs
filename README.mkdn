@@ -7,21 +7,24 @@ functioning in the same manner.
 ## Installation Instructions (for me)
 (setting up a new computer from scratch)
 
-1. Install 1Password (~5 min)
-2. Setup SSH Keys for Github 
-3. Install osx-developer tools (~15 min)
-4. Prep for [mas-cli](https://github.com/mas-cli/mas) (Mac App Store CLI)
-    * Log in to Mac App Store
-    * Install any one previously purchased app 
-    * 👆 is an annoying workaround because apple disabled logging in via the command line
-6. Place computer password onto clipboard because Homebrew is about to make you enter it 40 times. 
+1. Install Firefox
+2. Install 1Password (~5 min)
+3. Install 1Password Plugin for Firefox
+4. Install Alfred
+6. Setup SSH Keys for Github 
 7. Install [homebrew](https://brew.sh)
-8. Install [yadm](https://yadm.io)
-    * `brew install yadm`
-    * `yadm init`
-    * `yadm remote add origin git@github.com:masukomi/masuconfigs.git`
-    * `yadm pull origin master`
-    * `yadm bootstrap` 
-      * This will take ~30 minutes. Don't run it with `time`. It'll just hang.
-9. Run `task` and work through the todo items
-10. Update todo items in `bootstrap` script to reflect current reality.
+  * Place computer password onto clipboard because Homebrew is about to make you enter it 40 times.
+  * this will install Command Line Tools for Xcode (this will take like 15 mins)
+8. Log in to Mac App Store
+  * Install Moom
+9. Install [yadm](https://yadm.io)
+  * `brew install yadm`
+  * `yadm init`
+  * `yadm remote add origin git@github.com:masukomi/masuconfigs.git`
+  * `yadm pull origin master`
+  * `yadm bootstrap` 
+    * This will take ~30 minutes. Don't run it with `time`. It'll just hang.
+10. Install [Maestral](https://maestral.app/)
+  * connect to your account
+12. Run `task` and work through the todo items
+13. Update todo items in `bootstrap` script to reflect current reality.
