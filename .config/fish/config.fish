@@ -105,52 +105,52 @@ alias gcurl /usr/local/opt/curl/bin/curl
 # abbr -a task "clear; and task"
 
 # PATH
-set -x PATH . $HOME/bin $HOME/bin/git-scripts /usr/local/bin $PATH
+fish_add_path -g . $HOME/bin $HOME/bin/git-scripts /usr/local/bin $PATH
 # vvv make python 3 found before macOSs python 2.7
 # macOS one is at /usr/local/bin/python
 set -x PATH /usr/local/opt/python/libexec/bin $PATH
 set brewed_python_version (brew ls --versions python | sed -e "s/python@//" -e "s/ .*//")
-set -x PATH $PATH $HOME/Library/Python/$brewed_python_version/bin
-set -x PATH $PATH /Applications
-set -x PATH $PATH /usr/local/opt/coreutils/libexec/gnubin
-set -x PATH $PATH $HOME/.iterm2/
-# set -x PATH $PATH /usr/bin
-# set -x PATH $PATH /bin
-# set -x PATH $PATH /usr/sbin
-# set -x PATH $PATH /sbin
-set -x PATH $PATH $HOME/Applications
-set -x PATH $PATH $HOME/workspace/gpup
-set -x PATH $PATH $HOME/workspace/git_accessories
-set -x PATH $PATH $HOME/workspace/gocode/bin
-set -x PATH $PATH $HOME/.cargo/bin
-set -x PATH $PATH $HOME/.local/bin # haskell stuff installed with Stack
+fish_add_path -g $HOME/Library/Python/$brewed_python_version/bin
+fish_add_path -g /Applications
+fish_add_path -g /usr/local/opt/coreutils/libexec/gnubin
+fish_add_path -g $HOME/.iterm2/
+# fish_add_path -g /usr/bin
+# fish_add_path -g /bin
+# fish_add_path -g /usr/sbin
+# fish_add_path -g /sbin
+fish_add_path -g $HOME/Applications
+fish_add_path -g $HOME/workspace/gpup
+fish_add_path -g $HOME/workspace/git_accessories
+fish_add_path -g $HOME/workspace/gocode/bin
+fish_add_path -g $HOME/.cargo/bin
+fish_add_path -g $HOME/.local/bin # haskell stuff installed with Stack
 
-set -x PATH $PATH /usr/local/Cellar/chicken/5.0.0/bin
+fish_add_path -g /usr/local/Cellar/chicken/5.0.0/bin
 
 ## Racket
-set -x PATH $PATH /Applications/Racket\ v7.7/bin
+fish_add_path -g /Applications/Racket\ v7.7/bin
 
 # Radicle.xyz
-set -x PATH $PATH $HOME/.radicle/bin
+fish_add_path -g $HOME/.radicle/bin
 
 ## BEGIN GERBIL
 # set -x PATH /usr/local/opt/gambit-scheme/current/bin $PATH
 # set -x PATH /usr/local/opt/gerbil-scheme/libexec/bin $PATH
 #
 # set -x GERBIL_HOME /usr/local/opt/gerbil-scheme/libexec
-# set -x PATH $PATH $GERBIL_HOME/bin
+# fish_add_path -g $GERBIL_HOME/bin
 ## END GERBIL
 
 ## BEGIN GO
 set -x GOPATH $HOME/workspace/gocode
-set -x PATH  $PATH $GOPATH/bin
+fish_add_path -g $GOPATH/bin
 ## END GO
 
 # RACKET
-set -x PATH $PATH /Applications/Racket\ v8.2/bin
+fish_add_path -g /Applications/Racket\ v8.2/bin
 
 # RUST
-set -x PATH $PATH $HOME/.cargo/bin
+fish_add_path -g $HOME/.cargo/bin
 
 # Elixir / ERLANG
 set -x ERL_AFLAGS "-kernel shell_history enabled"
