@@ -1,0 +1,58 @@
+#!/bin/sh
+
+# lists the statuses of all your open PRs
+# requires gh to be installed https://cli.github.com/
+
+# CHANGE THIS TO YOUR USERNAME
+GH_USERNAME=my_gh_username
+# THE DIR WHERE ALL YOUR REPOS ARE STORED
+BASE="$HOME/where/you/store/your/git/repos"
+cd $BASE
+for DIR in */ ; do
+  # CHANGE / DELETE THIS IF AS NEEDED
+  if [ "$DIR" == "NotThisOne/" ]; then
+    continue
+  fi
+  echo
+  echo
+  echo "$DIR -----------------------------"
+
+  cd "$BASE/$DIR"
+  response=$(gh pr list -A $GH_USERNAME 2>/dev/null)
+
+  if [ "$response" != "" ]; then
+    echo "$response" | while read line ; do
+      echo "#$line" | awk -F "\t" '{print $1, $2}'
+      num=$(echo "$line" | sed -r "s/([0-9]+).*/\1/g")
+      gh pr view $num --json url \
+        | grep "url" \
+        | sed -e 's/.*"h/h/' \
+          -e 's/".*//'
+      # run it via script to maintain colors
+      script -q /dev/null gh pr checks $num | grep "X"
+      # Switch the end of that ☝️ to
+      # grep -v "✓"
+      # instead of
+      # grep "X"
+      # to see number of failures and successes
+
+      echo "REVIEWS: "
+      gh pr view $num \
+        --json reviews \
+        --jq ".reviews[] | [.author.login, .state] | @csv" \
+        | grep -v $GH_USERNAME \
+        | sed -e 's/"//g' -e "s/,/: /" \
+        | sort \
+        | uniq \
+        | while read REVIEW ; do
+        if [[ "$REVIEW" == *"APPROVED" ]]; then
+          echo "\x1b[32m$REVIEW\x1b[0m"
+        else
+          echo "\x1b[34m$REVIEW\x1b[0m"
+        fi
+      done
+    done
+  else
+    echo "No open PRs of yours"
+  fi
+done
