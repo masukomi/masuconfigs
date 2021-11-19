@@ -59,11 +59,13 @@ abbr -a rt 'rake test'
 abbr -a rtnw 'env RUBYOPT=W0 rake test'
 abbr -a berc 'bundle exec rails console'
 abbr -a bers 'bundle exec rails server'
+# how to generate the keys for ssl: https://gist.github.com/masukomi/937f65c9c42edaeac50a8676a0b8fa8e
+abbr -a berss "bundle exec rails server -u puma -b 'ssl://0.0.0.0:9292?key=$HOME/.ssh/server.key&cert=$HOME/.ssh/server.crt&verify_mode=none'"
 abbr -a berd 'bundle exec rails server --debugger'
 abbr -a build_tags "~/brew/bin/ctags -R --c++-kinds +p --fields +iaS --extra +q --exclude .rsync_cache ."
 abbr -a hgrep "history | grep"
 abbr -a sqlf "sqlformat --reindent --keywords upper --identifiers lower"
-abbr -a tree "broot" # a tree replacement with funky capabilities
+# abbr -a tree "broot" # a tree replacement with funky capabilities
 abbr -a unset 'set --erase'
 
 if [ (uname) = "Darwin" ]
@@ -89,8 +91,8 @@ abbr -a dcb "docker-compose build"
 abbr -a do "docker"
 abbr -a berd 'docker-compose exec bin/rspec --format=documentation'
 
-abbr -a sbw 'env SKIP=bad_words.sh'
-abbr -a sall 'env SKIP=bad_words.sh,x_rb_tester.rb'
+abbr -a sbw 'env SKIP=bad_words'
+abbr -a sall 'env SKIP=bad_words,rb_tester,rubocopper'
 
 alias vimr /Applications/VimR.app/Contents/Resources/vimr
 abbr -a vfz "mvim (fzf)"
