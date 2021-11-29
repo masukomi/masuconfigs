@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+if [ "$#" -eq 0 ]; then
+	echo "Usage: rebase <treeish | integer>"
+	echo "  Initiates an interactive git rebase"
+	echo "  If a number is passed in it'll rebase to HEAD~<number>"
+	echo "  If a treeish is passed in it'll use that directly."
+	exit 1
+fi
+
+if [[ $1 == ?(-)+([0-9]) ]]; then
+	git rebase -i HEAD~$1
+else
+	git rebase -i $1
+fi
