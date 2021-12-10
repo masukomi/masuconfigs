@@ -107,6 +107,8 @@ alias gcurl /usr/local/opt/curl/bin/curl
 # abbr -a task "clear; and task"
 
 # PATH
+fish_add_path -g /opt/homebrew/bin
+# (which fish | sed "s/\/fish//")
 fish_add_path -g . $HOME/bin $HOME/bin/git-scripts /usr/local/bin $PATH
 # vvv make python 3 found before macOSs python 2.7
 # macOS one is at /usr/local/bin/python
@@ -127,7 +129,7 @@ fish_add_path -g $HOME/workspace/gocode/bin
 fish_add_path -g $HOME/.cargo/bin
 fish_add_path -g $HOME/.local/bin # haskell stuff installed with Stack
 
-fish_add_path -g /usr/local/Cellar/chicken/5.0.0/bin
+fish_add_path -g $CELLAR/chicken/5.0.0/bin
 
 ## Racket
 fish_add_path -g /Applications/Racket\ v7.7/bin
@@ -154,6 +156,7 @@ fish_add_path -g /Applications/Racket\ v8.2/bin
 # RUST
 fish_add_path -g $HOME/.cargo/bin
 
+set CELLAR (brew --cellar)
 # Elixir / ERLANG
 set -x ERL_AFLAGS "-kernel shell_history enabled"
 
@@ -187,7 +190,7 @@ set -g theme_powerline_fonts yes
 
 test -e {$HOME}/.iterm2_shell_integration.fish ; and source {$HOME}/.iterm2_shell_integration.fish
 
-set -x PERLLIB /usr/local/Cellar/perl/5.24.0_1/lib/perl5/site_perl/5.24.0 $PERLLIB
+set -x PERLLIB $CELLAR/perl/5.24.0_1/lib/perl5/site_perl/5.24.0 $PERLLIB
 eval (direnv hook fish)
 set -x PERLLIB /Users/krhodes/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0 $PERLLIB
 set -g fish_user_paths "/usr/local/opt/openssl@1.1/bin" $fish_user_paths
@@ -199,7 +202,7 @@ set -x USE_FENESTRO true
 # full list of possible ones is here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 set -x TZ_LIST "US/Pacific,Europe/Paris"
 
-source /usr/local/opt/asdf/libexec/asdf.fish
+source /opt/homebrew/Cellar/asdf/0.8.1_1/asdf.fish
 if test -d (brew --prefix)"/share/fish/completions"
     set -gx fish_complete_path $fish_complete_path (brew --prefix)/share/fish/completions
 end
