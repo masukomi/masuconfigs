@@ -1,4 +1,12 @@
 #!/bin/sh
 
-TICKET=$(echo "$1" | tr [:lower:] [:upper:])
-open https://dutchie.atlassian.net/browse/$TICKET
+if [ "$1" == "-o" ]; then
+	TICKET=$(echo "$2" | tr [:lower:] [:upper:])
+	echo https://dutchie.atlassian.net/browse/$TICKET
+elif [ "$1" == "-m" ]; then
+	TICKET=$(echo "$2" | tr [:lower:] [:upper:])
+	echo "[$2](https://dutchie.atlassian.net/browse/$TICKET)"
+else
+	TICKET=$(echo "$1" | tr [:lower:] [:upper:])
+	open https://dutchie.atlassian.net/browse/$TICKET
+fi
