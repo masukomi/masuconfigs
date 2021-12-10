@@ -1,58 +1,117 @@
-#!/bin/sh
+#!/usr/bin/env ruby
+require 'json'
 
-# lists the statuses of all your open PRs
-# requires gh to be installed https://cli.github.com/
 
-# CHANGE THIS TO YOUR USERNAME
-GH_USERNAME=my_gh_username
-# THE DIR WHERE ALL YOUR REPOS ARE STORED
-BASE="$HOME/where/you/store/your/git/repos"
-cd $BASE
-for DIR in */ ; do
-  # CHANGE / DELETE THIS IF AS NEEDED
-  if [ "$DIR" == "NotThisOne/" ]; then
-    continue
-  fi
-  echo
-  echo
-  echo "$DIR -----------------------------"
+GH_USERNAME = "YOUR GITHUB USERNAME"
+BASE = "#{Dir.home}/root/dir/containing/projects".freeze
+IGNORABLE_DIRS = %w[dir names to be ignored].freeze
 
-  cd "$BASE/$DIR"
-  response=$(gh pr list -A $GH_USERNAME 2>/dev/null)
+def error_and_die(message)
+  STDERR.puts(message)
+  STDERR.puts("Exiting.")
 
-  if [ "$response" != "" ]; then
-    echo "$response" | while read line ; do
-      echo "#$line" | awk -F "\t" '{print $1, $2}'
-      num=$(echo "$line" | sed -r "s/([0-9]+).*/\1/g")
-      gh pr view $num --json url \
-        | grep "url" \
-        | sed -e 's/.*"h/h/' \
-          -e 's/".*//'
-      # run it via script to maintain colors
-      script -q /dev/null gh pr checks $num | grep "X"
-      # Switch the end of that ☝️ to
-      # grep -v "✓"
-      # instead of
-      # grep "X"
-      # to see number of failures and successes
+  exit 1
+end
+def output_approved_reviews(author, author_reviews)
+  puts "\e[32mApproved by #{author}\e[0m"
+  author_reviews.each do | ar |
+    if ar["state"]=="APPROVED" && ar["body"] != ""
+      puts ar["body"]
+    end
+  end
+end
 
-      echo "REVIEWS: "
-      gh pr view $num \
-        --json reviews \
-        --jq ".reviews[] | [.author.login, .state] | @csv" \
-        | grep -v $GH_USERNAME \
-        | sed -e 's/"//g' -e "s/,/: /" \
-        | sort \
-        | uniq \
-        | while read REVIEW ; do
-        if [[ "$REVIEW" == *"APPROVED" ]]; then
-          echo "\x1b[32m$REVIEW\x1b[0m"
-        else
-          echo "\x1b[34m$REVIEW\x1b[0m"
-        fi
-      done
-    done
-  else
-    echo "No open PRs of yours"
-  fi
-done
+def output_unapproved_reviews(author, author_reviews)
+  states = author_reviews.map{ |ar| ar["STATE"] }.uniq.compact
+  return if states.size == 0 # sometime's there's a nil state
+  puts "\e[34m#{author}: #{states.join(", ")} \e[0m"
+end
+
+def output_views_by_author(reviews_by_author, excluding_user)
+  reviews_by_author.delete(excluding_user)
+  if reviews_by_author.keys.size == 0
+    puts "No reviews yet"
+    return
+  end
+
+  reviews_by_author.each do | author, author_reviews|
+    approved = author_reviews.any?{ |ar| ar["state"] == 'APPROVED' }
+    output_approved_reviews(author, author_reviews) if approved
+    output_unapproved_reviews(author, author_reviews) unless approved
+  end
+end
+
+def extract_reviews_by_author(pr_num)
+  response = JSON.parse(`gh pr view #{pr_num} --json reviews`.strip)
+  reviews = response["reviews"]
+
+  reviews_by_author={}
+  reviews.each do | review |
+    author = review["author"]["login"]
+    reviews_by_author[author] ||= []
+    reviews_by_author[author] << review
+  end
+
+  reviews_by_author
+end
+
+def extract_failed_checks(pr_num)
+  checks = `gh pr checks #{pr_num}`.strip.split("\n")
+  return [] if checks.size == 0
+  failed_checks = []
+  checks.each do | check |
+    passed = check.include?("pass")
+    (failed_checks << check) unless passed
+  end
+  failed_checks
+end
+
+def output_failed_checks(failed_checks)
+  if failed_checks.size > 0
+    puts "Failed checks:"
+    failed_checks.each do | fc |
+      puts "\e[31m#{fc}\e[0m"
+    end
+  end
+end
+### ---- main loop
+
+checked_dirs = []
+
+Dir.chdir(BASE) do
+  Dir.each_child("./") do | child |
+    child = child.gsub(/[^a-zA-Z0-9_-]/, "")
+
+    next if IGNORABLE_DIRS.include? child
+    next if File.file? child
+
+    Dir.chdir(child) do
+
+      checked_dirs << child
+      response = `gh pr list -A #{GH_USERNAME} 2>/dev/null`.strip.split("\n")
+
+      next if response.size == 0
+
+      puts "#{child} ----------------------------------"
+
+      pr_num = response.first.match(/^(\d+).*/)[1] rescue nil
+      error_and_die("Unable to extract PR number from #{response.first}") unless pr_num
+      pr_title = response.first.split("\t")[1]
+
+
+      puts "#{pr_num}: #{pr_title}"
+      pr_details = `gh pr view #{pr_num} --json url`.strip
+
+      pr_url = JSON.parse(pr_details)["url"]
+      puts pr_url
+
+      output_failed_checks(extract_failed_checks(pr_num))
+
+      reviews_by_author = extract_reviews_by_author(pr_num)
+
+      output_views_by_author(reviews_by_author, GH_USERNAME)
+    end
+  end
+end
+
+puts "\n\nDone.\nchecked dirs: #{checked_dirs.join(", ")}"
