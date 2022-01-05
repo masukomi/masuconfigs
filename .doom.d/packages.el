@@ -64,7 +64,7 @@
 (package! polymode)
 (package! org-bullets)
 ; (package! alchemist) ; elixir support
-; (package! ox-hugo) ; hugo file format for org mode
+(package! ox-hugo) ; hugo file format for org mode
 
 ; USE THIS FOR LSP vvv
 (package! lsp-mode)

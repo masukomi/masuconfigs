@@ -6,8 +6,9 @@
 
 ;; These are used for a number of things, particularly for GPG configuration,
 ;; some email clients, file templates and snippets.
-(setq user-full-name "John Doe"
-      user-mail-address "john@doe.com")
+(setq user-full-name "Kay Rhodes"
+      user-mail-address "masukomi@masukomi.org"
+      org-export-default-language "en-US")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -323,3 +324,47 @@
 ; to enable binding.pry and byebug when using rspec-mode
 ; When you've hit the breakpoint, hit C-x C-q to enable inf-ruby.
 (add-hook 'after-init-hook 'inf-ruby-switch-setup)
+
+
+
+; convince projectile to create new files
+; not just find existing ones.
+; found here: https://www.reddit.com/r/emacs/comments/3m8i5r/helmprojectile_quickly_findcreate_new_file_in/
+(with-eval-after-load 'helm-projectile
+  (defvar helm-source-file-not-found
+    (helm-build-dummy-source
+        "Create file"
+      :action (lambda (cand) (find-file cand))))
+
+
+  (add-to-list 'helm-projectile-sources-list helm-source-file-not-found t))
+
+; rubocop
+; https://github.com/rubocop/rubocop-emacs
+; (add-hook 'ruby-mode-hook #'rubocop-mode)
+; (setq rubocop-autocorrect-on-save t)
+; ;(setq rubocop-autocorrect-command "rubocop -A --format emacs")
+; ☝️ that code would be good but we're using rubocop-flexport which is buggy
+;    and causes that to break
+;; (defun rubocop-format ()
+(defun rfmt ()
+  "rubocop-flexport is crap that breaks rubocop-autocorrect-command"
+  (when (eq major-mode 'ruby-mode)
+    (shell-command-to-string (format "rubocop -A %s" buffer-file-name))))
+
+; (add-hook 'after-save-hook #'rubocop-format)
+; (add-hook 'after-save-hook #'rfmt)
+
+;; paren mode (highlight all code in the current parens)
+(setq show-paren-delay 0)
+(setq show-paren-style 'expression)
+(set-face-attribute 'show-paren-match-expression nil :background "MediumPurple2")
+(show-paren-mode 1)
+
+(require 'ox-md)
+(require 'ox-clip-formatted-copy) ;format org mode and copy to clipboard
+(require 'ox-publish)
+(with-eval-after-load 'ox
+  (require 'ox-hugo))
+
+(evil-ex-define-cmd "clean" 'rubocop-format)
