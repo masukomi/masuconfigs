@@ -362,9 +362,11 @@
 (show-paren-mode 1)
 
 (require 'ox-md)
-(require 'ox-clip-formatted-copy) ;format org mode and copy to clipboard
+;;(require 'ox-clip) ;format org mode and copy to clipboard
 (require 'ox-publish)
 (with-eval-after-load 'ox
-  (require 'ox-hugo))
+  (require 'ox-hugo)
+  (require 'ox-clip))
+
 
 (evil-ex-define-cmd "clean" 'rubocop-format)

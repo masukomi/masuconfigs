@@ -83,3 +83,4 @@
 (package! rubocop)
 (package! rspec-mode)
 (package! protobuf-mode)
+(package! ox-clip)
