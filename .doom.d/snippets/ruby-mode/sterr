@@ -2,6 +2,6 @@
 # name: sterr
 # uuid:
 # key: sterr
-# condition: t 
+# condition: t
 # --
-STDERR.puts("$1")
+STDERR.puts("XXX $0")
