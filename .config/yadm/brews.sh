@@ -213,6 +213,9 @@ maybrew "oho"
 maybrew "openssl"
 # ISO-C API and CLI for generating UUIDs
 maybrew "ossp-uuid"
+# store secrets in your macOS keychain
+# useful for not making gpg ask you for your password constantly
+maybrew "pinentry-mac"
 # Manage compile and link flags for libraries
 maybrew "pkg-config"
 # Object-relational database system

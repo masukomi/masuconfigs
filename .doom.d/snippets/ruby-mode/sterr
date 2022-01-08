@@ -1,7 +1,5 @@
 # -*- mode: snippet -*-
-# name: sterr
-# uuid:
+# name: puts to standard error
 # key: sterr
-# condition: t
 # --
 STDERR.puts("XXX $0")
