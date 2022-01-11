@@ -625,8 +625,8 @@ if ! filereadable(".vimrc") || len(split(getcwd(), "/")) == 2
 	let g:ale_echo_msg_format = '[%linter%][%severity%] %s '
 	" Ack.vim should use the_silver_searcher
 	let g:ackprg = 'ag --nogroup --nocolor --column'
-	let g:ale_set_quickfix = 1
-	let g:ale_open_list = 1
+	let g:ale_set_quickfix = 0
+	let g:ale_open_list = 0
 
 	"-----------
 	" vim-side-search
