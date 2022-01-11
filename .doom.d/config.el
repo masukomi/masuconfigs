@@ -372,3 +372,35 @@
 
 
 (evil-ex-define-cmd "clean" 'rubocop-format)
+
+;; org-roam stuff
+
+;; (make-directory "~/Documents/org-roam")
+(setq org-roam-directory (file-truename "~/Documents/org-roam"))
+(org-roam-db-autosync-mode)
+
+; org-roam-ui stuff
+(use-package! websocket
+  :after org-roam)
+(use-package! org-roam-ui
+  :after org-roam ; or :after org
+;;         normally we'd recommend hooking orui after org-roam, but since
+;;         org-roam does not have a hookable mode anymore, you're advised to
+;;         pick something yourself if you don't care about startup time, use
+;;         :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
+
+;;
+;; because i want HTML & Javascript highlighting in the same file
+(require 'multi-web-mode)
+(setq mweb-default-major-mode 'html-mode)
+(setq mweb-tags
+  '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
+    (js-mode  "<script[^>]*>" "</script>")
+    (css-mode "<style[^>]*>" "</style>")))
+(setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5" "erb"))
+(multi-web-global-mode 1)
