@@ -372,4 +372,3 @@
 
 (evil-ex-define-cmd "clean" 'rubocop-format)
 
-; (require 'doxymacs-yard)

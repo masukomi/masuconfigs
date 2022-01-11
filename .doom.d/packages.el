@@ -84,6 +84,5 @@
 (package! rspec-mode)
 (package! protobuf-mode)
 (package! ox-clip)
-(package! yard-mode)
-(package! elmacro)
 (package! ox-slack)
+(package! elmacro)
