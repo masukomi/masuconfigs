@@ -2,27 +2,48 @@
 
 GEM=$1
 VERSION=$2
-UNPACK=$3
 if [ "$VERSION" == "" ] || [ "$GEM" == "" ]; then
-  echo "Usage: raw_gem <name> <version> [unpack]"
+  echo "Usage: raw_gem <name> <version>"
   exit 1
+fi
+echo "Download source:"
+echo "  hit enter for rubygems.org"
+echo "  enter an url for something else"
+read SOURCE
+if [ "$SOURCE" == "" ]; then
+	SOURCE=https://rubygems.org
 fi
 GEM_FILE_NAME=$GEM"-"$VERSION".gem"
 if [ ! -f $GEM_FILE_NAME ]; then
-  gem fetch $GEM -v $VERSION --source https://rubygems.org
+  gem fetch $GEM -v $VERSION --source $SOURCE 2>&1 | grep ERROR
+  SUCCESS=$?
+  if [ $SUCCESS -ne 0 ]; then
+    # this looks screwey. Lemme explain.
+    # gem fetch returns a SUCCESS exit code even when it fails
+    # to download, so i grep for ERROR, but
+    # grepping for ERROR will FAIL if there IS NOT an error
+    SUCCESS=0
+  fi
 else
   echo "already downloaded..."
+  SUCCESS=0
 fi
 
-if [ $? -eq 0 ] && [ "$UNPACK" != "" ]; then
-  if [ -f $GEM_FILE_NAME ]; then
-    GEM_DIR_NAME=$GEM"-"$VERSION
-    if [ ! -d $GEM_DIR_NAME ]; then
-      gem unpack $GEM_FILE_NAME
+if [ $SUCCESS -eq 0 ]; then
+  echo "Unpack it? [y/n]"
+  read UNPACK
+  if [ "$UNPACK" == "y" ] || [ "$UNPACK" == "Y" ]; then
+    if [ -f $GEM_FILE_NAME ]; then
+      GEM_DIR_NAME=$GEM"-"$VERSION
+      if [ ! -d $GEM_DIR_NAME ]; then
+        gem unpack $GEM_FILE_NAME
+      else
+        echo "ERROR: $GEM_DIR_NAME directory already exists"
+      fi
     else
-      echo "ERROR: $GEM_DIR_NAME directory already exists"
+      echo "ERROR: can't find $GEM_FILE_NAME"
     fi
-  else
-    echo "ERROR: can't find $GEM_FILE_NAME"
   fi
+else
+  echo "ERROR: download failed"
 fi
