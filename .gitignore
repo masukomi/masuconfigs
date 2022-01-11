@@ -22,6 +22,7 @@ external_gitconfig
 .config/neomutt/aliases
 .config/yadm/repo.git
 .config/private_comments/*
+.doom.d/custom.el
 .git/*
 .vim/plugged-coding/*
 tags
