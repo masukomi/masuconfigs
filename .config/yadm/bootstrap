@@ -61,33 +61,34 @@ fi
 
 if ! is_installed "brew"; then
 	/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+	sudo ln -s (brew --cellar) /usr/local/Cellar
 fi
 
-if ! is_installed "mas"; then # mac app store cli
-	brew install mas
-	# mac app store
-	# signin functionality no longer a thing
-	# you need to be signed in manually via the GUI app
-	#mas signin --dialog masukomi@masukomi.org
-    echo "Run mas account in a separate terminal"
-    echo "It should return your email address"
-    echo "Install at least one app from the mac app store manually"
-    echo "run mas list"
-    echo "If it doesn't show anything run mas reset"
-    echo "and run mas list again"
-    echo "Once mas list is showing you a list of installed apps"
-    echo "type \"y\" to continue with installing apps from the "
-    echo "mac app store."
-    echo "just hit enter to skip"
-    read MAS_LOGIN
-    if [ "$MAS_LOGIN" == "y" ];then
-		mas install 1384080005 # tweetbot
-		mas install 409203825 # Numbers (10.3.5)
-		mas install 1464122853 # NextDNS (1.4.3)
-		mas install 419330170 # Moom (3.2.20)
-		mas install 1289583905 # Pixelmator Pro (2.0.1)
-    fi
-fi
+# if ! is_installed "mas"; then # mac app store cli
+# 	brew install mas
+# 	# mac app store
+# 	# signin functionality no longer a thing
+# 	# you need to be signed in manually via the GUI app
+# 	#mas signin --dialog masukomi@masukomi.org
+#     echo "Run mas account in a separate terminal"
+#     echo "It should return your email address"
+#     echo "Install at least one app from the mac app store manually"
+#     echo "run mas list"
+#     echo "If it doesn't show anything run mas reset"
+#     echo "and run mas list again"
+#     echo "Once mas list is showing you a list of installed apps"
+#     echo "type \"y\" to continue with installing apps from the "
+#     echo "mac app store."
+#     echo "just hit enter to skip"
+#     read MAS_LOGIN
+#     if [ "$MAS_LOGIN" == "y" ];then
+# 		mas install 1384080005 # tweetbot
+# 		mas install 409203825 # Numbers (10.3.5)
+# 		mas install 1464122853 # NextDNS (1.4.3)
+# 		mas install 419330170 # Moom (3.2.20)
+# 		mas install 1289583905 # Pixelmator Pro (2.0.1)
+#     fi
+# fi
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
         # Mac OSX
