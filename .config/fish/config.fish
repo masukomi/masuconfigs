@@ -78,6 +78,7 @@ end
 abbr -a be 'bundle exec'
 abbr -a clojure "java -cp ~/workspace/clojure-1.5.1/clojure-1.5.1.jar clojure.main"
 #eval (thefuck --alias | tr '\n' ';')
+abbr -a gdh "git diff HEAD"
 abbr -a gcm "git commit -m"
 # because i keep typing too fast and saying its instead of gits
 abbr -a its "git status -uno"
