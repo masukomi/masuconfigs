@@ -42,46 +42,6 @@ module R # for rails
     end
   end
 end
-module RBM
-  class Tools
-    class << self
-      def generate_attr_columns(from, to)
-        (from..to).each do | n |
-          num = n < 100 ? "0#{n}" : "#{n}"
-          puts "add_column :contents, :attr#{num}, :text unless column_exists? :contents, :attr${num}"
-        end
-      end
-    end
-  end
-  class Debug
-    class << self
-      def get_spawned_report_file(id)
-        return SpawnedReport.find(id).binary_file.sha2_binary_path()
-      end
-
-      def display_attrs_for(klass, sort_by = :name) #name or :attr
-        map_display_name_to_column_name = klass.attribute_categories\
-          .map{|c|[c.name, c.props[:column]]}
-        if sort_by == :name
-          map_display_name_to_column_name.sort!{|a,b| a.first <=> b.first}
-        else :attr
-          map_display_name_to_column_name.sort!{|a,b| a.last <=> b.last}
-        end
-        max_display = map_display_name_to_column_name.map{|elt| elt.first}\
-          .max{|a, b| a.length <=> b.length}.length
-        map_display_name_to_column_name.each_with_index do |a,i|
-          puts "\n****************************************************************" if i == 0
-          answer = ' '*200
-          answer.insert(0,a.first.to_s.strip)
-          answer.insert(max_display+1, "<=>")
-          answer.insert(max_display + 5,a.last.to_s.strip)
-          puts "\t#{answer.strip}"
-        end;nil
-      end
-    end
-
-  end
-end
 
 def sql(myarg)
   ap ActiveRecord::Base.connection.execute(myarg).map{|x| x}
