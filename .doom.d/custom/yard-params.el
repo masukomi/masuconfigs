@@ -1,0 +1,57 @@
+;;; custom/yard-params.el -*- lexical-binding: t; -*-
+
+(defun visual-in-parens ()
+  (interactive)
+  (setq last-command-event 118)
+  (evil-visual-char nil nil 'inclusive t)
+  (setq last-command-event 40)
+  (evil-inner-paren nil 447 448 'inclusive)
+  (setq last-command-event 'f4))
+
+(defun next-end-paren ()
+  (interactive)
+  (setq last-command-event 13)
+  (evil-ex-search-forward nil)
+  (setq last-command-event 'f4))
+
+
+
+(defun yard-params ()
+  (interactive)
+  ;; (setq last-command-event 13)
+  ;; (evil-ex-search-forward nil)
+  (setq last-command-event 40)
+  (evil-inner-paren nil 685 686 'inclusive)
+  (setq last-command-event 121)
+  (evil-yank 636 686 'inclusive nil nil)
+  (setq last-command-event 'up)
+  (evil-previous-line nil)
+  (setq last-command-event 112)
+  (evil-paste-after nil nil)
+  (setq last-command-event 94)
+  (evil-first-non-blank)
+  (evil-insert 1 nil nil)
+  (insert "# @param [<Type>] ")
+  (setq last-command-event 'escape)
+  (evil-normal-state)
+  (setq last-command-event 86)
+  (evil-visual-line nil nil 'line t)
+  (setq last-command-event 'return)
+  (evil-ex-substitute 608 677
+                      `(": [^,\n]*" t
+                        (103 114))
+                      `(replace-eval-replacement . "")
+                      `(103 114))
+  (setq last-command-event 'return)
+  (evil-ex "'<,'>")
+  (setq last-command-event 86)
+  (evil-visual-line nil nil 'line t)
+  (setq last-command-event 'return)
+  (evil-ex-substitute 608 663
+                      `("," t
+                        (103 114))
+                      `(replace-eval-replacement . "\n# @param [<Type>]")
+                      `(47 103 114))
+  (setq last-command-event 'return)
+  (evil-ex "'<,'>")
+  (setq last-command-event 'f4))

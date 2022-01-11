@@ -3,6 +3,7 @@
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; refresh' after modifying this file!
 
+(add-to-list 'load-path "~/.doom.d/custom")
 
 ;; These are used for a number of things, particularly for GPG configuration,
 ;; some email clients, file templates and snippets.
@@ -370,3 +371,5 @@
 
 
 (evil-ex-define-cmd "clean" 'rubocop-format)
+
+; (require 'doxymacs-yard)
