@@ -77,41 +77,55 @@ end
 ### ---- main loop
 
 checked_dirs = []
+begin
+  Dir.chdir(BASE) do
+    Dir.each_child("./") do | child |
+      child = child.gsub(/[^a-zA-Z0-9_-]/, "")
 
-Dir.chdir(BASE) do
-  Dir.each_child("./") do | child |
-    child = child.gsub(/[^a-zA-Z0-9_-]/, "")
+      next if IGNORABLE_DIRS.include? child
+      next if File.file? child
 
-    next if IGNORABLE_DIRS.include? child
-    next if File.file? child
-
-    Dir.chdir(child) do
-
-      checked_dirs << child
-      response = `gh pr list -A #{GH_USERNAME} 2>/dev/null`.strip.split("\n")
-
-      next if response.size == 0
-
-      puts "#{child} ----------------------------------"
-
-      pr_num = response.first.match(/^(\d+).*/)[1] rescue nil
-      error_and_die("Unable to extract PR number from #{response.first}") unless pr_num
-      pr_title = response.first.split("\t")[1]
+      begin
+        Dir.chdir(child) do
+          # returns 128 if the dir is not part of a git repo
+          next unless system("git -C ./ rev-parse")
 
 
-      puts "#{pr_num}: #{pr_title}"
-      pr_details = `gh pr view #{pr_num} --json url`.strip
+          checked_dirs << child
+          response = `gh pr list -A #{GH_USERNAME} 2>/dev/null`.strip.split("\n")
 
-      pr_url = JSON.parse(pr_details)["url"]
-      puts pr_url
+          next if response.size == 0
 
-      output_failed_checks(extract_failed_checks(pr_num))
+          puts "#{child} ----------------------------------"
 
-      reviews_by_author = extract_reviews_by_author(pr_num)
+          pr_num = response.first.match(/^(\d+).*/)[1] rescue nil
+          error_and_die("Unable to extract PR number from #{response.first}") unless pr_num
+          pr_title = response.first.split("\t")[1]
 
-      output_views_by_author(reviews_by_author, GH_USERNAME)
+
+          puts "#{pr_num}: #{pr_title}"
+          pr_details = `gh pr view #{pr_num} --json url`.strip
+
+          pr_url = JSON.parse(pr_details)["url"]
+          puts pr_url
+
+          output_failed_checks(extract_failed_checks(pr_num))
+
+          reviews_by_author = extract_reviews_by_author(pr_num)
+
+          output_views_by_author(reviews_by_author, GH_USERNAME)
+        end
+      rescue NameError, Errno::ENOENT
+        unless child.end_with? "DS_Store"
+          STDERR.puts("Unable to cd to '#{child}' from #{Dir.pwd}")
+        end
+      end
     end
   end
+rescue NameError, Errno::ENOENT
+  STDERR.puts("Error switching into directories.")
+  STDERR.puts("Is your BASE variable correct? #{BASE}")
+  exit 78 #EX_CONFIG
 end
 
-puts "\n\nDone.\nchecked dirs: #{checked_dirs.join(", ")}"
+puts "\n\nDone.\nchecked dirs: #{checked_dirs.sort.join(", ")}"
