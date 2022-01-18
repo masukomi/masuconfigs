@@ -67,10 +67,7 @@
 (package! ox-hugo) ; hugo file format for org mode
 
 ; USE THIS FOR LSP vvv
-(package! lsp-mode)
-
-; DON'T NEED THIS vvv
-; (package! lsp-origami)
+; (package! lsp-mode)
 
 ;(package! haml-mode)
 (package! sass-mode)
@@ -78,7 +75,12 @@
 (package! evil-surround)
 (package! yaml-mode)
 ; (package! editorconfig-mode)
-(package! geiser-chicken)
+; geiser-chicken requires the following chicken libs to be installed
+; chicken-install apropos chicken-doc srfi-18 srfi-1
+; also installation of latest docs
+; cd (csi -R chicken.platform -p '(chicken-home)')
+; curl https://3e8.org/pub/chicken-doc/chicken-doc-repo-5.tgz | sudo tar zx
+(package! geiser-chicken
 (package! scheme-complete)
 (package! rubocop)
 (package! rspec-mode)
@@ -90,5 +92,5 @@
 (package! org-roam-ui) ; this likes danger
 
 ;; (package! jinja2-mode) ; Jinja2 templates (python and chicken scheme)
-(package! handlebars)
+(package! handlebars-mode)
 (package! multi-web-mode)

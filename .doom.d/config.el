@@ -365,7 +365,6 @@
 (show-paren-mode 1)
 
 (require 'ox-md)
-;;(require 'ox-clip) ;format org mode and copy to clipboard
 (require 'ox-publish)
 (with-eval-after-load 'ox
   (require 'ox-hugo)
@@ -376,7 +375,7 @@
 
 ;; org-roam stuff
 
-;; (make-directory "~/Documents/org-roam")
+; (make-directory "~/Documents/org-roam")
 (setq org-roam-directory (file-truename "~/Documents/org-roam"))
 (org-roam-db-autosync-mode)
 
@@ -395,8 +394,16 @@
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
 
-;;
-;; because i want HTML & Javascript highlighting in the same file
+(setq org-roam-dailies-directory "daily/")
+
+(setq org-roam-dailies-capture-templates
+      '(("d" "default" entry
+         "* %?"
+         :target (file+head "%<%Y-%m-%d>.org"
+                            "#+title: %<%Y-%m-%d>\n"))))
+
+;
+; because i want HTML & Javascript highlighting in the same file
 (require 'multi-web-mode)
 (setq mweb-default-major-mode 'html-mode)
 (setq mweb-tags
