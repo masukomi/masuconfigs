@@ -87,8 +87,9 @@
 (package! ox-slack)
 (package! elmacro)
 (unpin! org-roam) ; Danger Will Robinson!
+(package! org-roam)
 (package! org-roam-ui) ; this likes danger
 
 ;; (package! jinja2-mode) ; Jinja2 templates (python and chicken scheme)
-(package! handlebars)
+(package! handlebars-mode)
 (package! multi-web-mode)
