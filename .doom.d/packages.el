@@ -80,7 +80,7 @@
 ; also installation of latest docs
 ; cd (csi -R chicken.platform -p '(chicken-home)')
 ; curl https://3e8.org/pub/chicken-doc/chicken-doc-repo-5.tgz | sudo tar zx
-(package! geiser-chicken
+(package! geiser-chicken)
 (package! scheme-complete)
 (package! rubocop)
 (package! rspec-mode)
@@ -95,3 +95,4 @@
 ;; (package! jinja2-mode) ; Jinja2 templates (python and chicken scheme)
 (package! handlebars-mode)
 (package! multi-web-mode)
+
