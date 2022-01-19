@@ -13,6 +13,10 @@
 	quotepath = false
 	editor = vim
 	attributesfile = ~/.gitattributes
+	# handle line endings better...
+	# https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings
+	# https://stackoverflow.com/a/18875915/13973
+	autocrlf = input
 [color]
 	ui = auto
 	diff = auto
@@ -159,3 +163,10 @@
 	defaultRemote = upstream
 [commit]
 	gpgsign = true
+
+
+
+
+
+
+
