@@ -1,7 +1,8 @@
 [user]
 	name = masukomi
 	email = masukomi@masukomi.org
-	signingkey = D4388455A3D25EEF5BD90DDC906B307DDE600AF9
+[include]
+	path = ~/.gitconfig_personal
 [includeIf "gitdir:~/workspace/dutchie/"]
 	path = ~/.gitconfig_dutchie
 [init]
