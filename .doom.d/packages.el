@@ -96,3 +96,5 @@
 (package! handlebars-mode)
 (package! multi-web-mode)
 
+(package! plantuml-mode)
+(package! flycheck-plantuml)

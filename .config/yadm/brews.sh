@@ -191,6 +191,9 @@ maybrew "miller"
 # but for reasons I forget we'd rather have this one.
 #maybrew "parallel"
 
+# https://plantuml.com
+maybrew "plantuml"
+
 
 # Collection of tools that nobody wrote when UNIX was young
 # used to install with --without-parallel

@@ -402,6 +402,50 @@
          :target (file+head "%<%Y-%m-%d>.org"
                             "#+title: %<%Y-%m-%d>\n"))))
 
+;; Enable plantuml-mode for PlantUML files
+(add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
+(add-to-list
+  'org-src-lang-modes '("plantuml" . plantuml))
+; WARNING: previewing of files may result in info being sent to
+; plantuml.com. if execution mode is "server".
+; You can customize plantuml-default-exec-mode
+; or run plantuml-set-exec-mode
+; from a plantuml-mode buffer to switch modes.
+
+; To avoid this use executable mode or install the jar
+; (note) homebrew installs the jar
+; the plantuml-server-url defaults to
+; "https://www.plantuml.com/plantuml"
+; executable should work if you have run brew install plantuml
+; BUT it seems like babel wants jar. so :shrug:
+(setq plantuml-set-exec-mode
+      "executable"); because babel needs the jar i think
+
+; find this via
+; brew --prefix plantuml
+; then find . -name "*.jar"
+
+;; Sample jar configuration
+(setq plantuml-jar-path "/usr/local/opt/plantuml/libexec/plantuml.jar")
+(setq plantuml-default-exec-mode 'jar)
+;
+; ;; Sample executable configuration
+; (setq plantuml-executable-path "/path/to/your/copy/of/plantuml.bin")
+; (setq plantuml-default-exec-mode 'executable))
+
+
+;; active Org-babel languages
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '(;; other Babel languages
+   (plantuml . t)))
+
+; for Babel support http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
+(setq org-plantuml-jar-path
+  (expand-file-name "/usr/local/opt/plantuml/libexec/plantuml.jar"))
+
+
+
 ;
 ; because i want HTML & Javascript highlighting in the same file
 (require 'multi-web-mode)
