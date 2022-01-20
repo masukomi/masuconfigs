@@ -3,9 +3,16 @@ require 'json'
 
 
 GH_USERNAME = "YOUR GITHUB USERNAME"
+# BASE is a root developement directory that you keep your directories
+# under. For example: ~/workspace
 BASE = "#{Dir.home}/root/dir/containing/projects".freeze
+# directories directly under BASE that you wish to skip
 IGNORABLE_DIRS = %w[dir names to be ignored].freeze
-
+# string identifier of the check that you should ignore
+# For example if you wanted to ignore
+# ci/circleci: Build Error ...details here
+# you'd add ci/circleci to this list
+IGNORABLE_PR_CHECKS = %[].freeze
 def error_and_die(message)
   STDERR.puts(message)
   STDERR.puts("Exiting.")
@@ -61,6 +68,7 @@ def extract_failed_checks(pr_num)
   failed_checks = []
   checks.each do | check |
     passed = check.include?("pass")
+    next if IGNORABLE_PR_CHECKS.any?{|x|check.start_with? x }
     (failed_checks << check) unless passed
   end
   failed_checks
