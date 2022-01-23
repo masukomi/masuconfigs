@@ -98,3 +98,5 @@
 
 (package! plantuml-mode)
 (package! flycheck-plantuml)
+(package! racket-mode)
+(package! exec-path-from-shell)

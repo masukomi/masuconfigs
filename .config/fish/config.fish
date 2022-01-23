@@ -131,9 +131,11 @@ fish_add_path -g $HOME/.cargo/bin
 fish_add_path -g $HOME/.local/bin # haskell stuff installed with Stack
 
 fish_add_path -g $CELLAR/chicken/5.0.0/bin
+# OYYY WHEN IT COMPLAINS ABOUT libchicken.dylib being missing
+#ln -s (brew --prefix chicken)/lib/libchicken.dylib /usr/local/lib/libchicken.dylib
 
 ## Racket
-fish_add_path -g /Applications/Racket\ v7.7/bin
+fish_add_path -g /Applications/Racket*/bin
 
 # Radicle.xyz
 fish_add_path -g $HOME/.radicle/bin
