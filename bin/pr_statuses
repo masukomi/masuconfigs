@@ -37,7 +37,7 @@ end
 def output_views_by_author(reviews_by_author, excluding_user)
   reviews_by_author.delete(excluding_user)
   if reviews_by_author.keys.size == 0
-    puts "No reviews yet"
+    puts "\tNo reviews yet"
     return
   end
 
@@ -104,7 +104,7 @@ begin
           #STDERR.puts response.join("\n")
           next if response.size == 0
 
-          puts "#{child} ----------------------------------"
+          puts "\e[0;37;44m#{child} ----------------------------------\e[0m"
 
           response.each do | pr_line |
             pr_num = pr_line.match(/^(\d+).*/)[1] rescue nil
@@ -112,7 +112,8 @@ begin
             pr_title = pr_line.split("\t")[1]
 
 
-            puts "#{pr_num}: #{pr_title}"
+            # puts "\e[1;33;40m#{pr_num}: #{pr_title}\e[0m"
+            puts "\e[1;30;47m#{pr_num}: #{pr_title}\e[0m"
             pr_details = `gh pr view #{pr_num} --json url`.strip
 
             pr_url = JSON.parse(pr_details)["url"]
@@ -139,4 +140,4 @@ rescue NameError, Errno::ENOENT
   exit 78 #EX_CONFIG
 end
 
-puts "\n\nDone.\nchecked dirs: #{checked_dirs.sort.join(", ")}"
+puts "\n\n\e[1;32;40mDone.\e[0m\nchecked dirs: #{checked_dirs.sort.join(", ")}"
