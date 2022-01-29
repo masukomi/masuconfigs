@@ -42,6 +42,7 @@ abbr -a givm vimr
 abbr -a gvmi vimr
 #End stupidity...
 abbr -a be 'bundle exec'
+abbr -a colorsave "script -q /dev/null"
 abbr -a doomd 'cd ~/.doom.d'
 abbr -a emacsd 'cd ~/.emacs.d'
 abbr -a ga 'git add'
@@ -108,7 +109,8 @@ alias gcurl /usr/local/opt/curl/bin/curl
 # abbr -a task "clear; and task"
 
 # PATH
-fish_add_path -g /opt/homebrew/bin
+fish_add_path -p -g $HOME/.asdf/shims
+fish_add_path -g -p /opt/homebrew/bin
 # (which fish | sed "s/\/fish//")
 fish_add_path -g . $HOME/bin $HOME/bin/git-scripts /usr/local/bin $PATH
 # vvv make python 3 found before macOSs python 2.7
@@ -133,6 +135,8 @@ fish_add_path -g $HOME/.local/bin # haskell stuff installed with Stack
 fish_add_path -g $CELLAR/chicken/5.0.0/bin
 # OYYY WHEN IT COMPLAINS ABOUT libchicken.dylib being missing
 #ln -s (brew --prefix chicken)/lib/libchicken.dylib /usr/local/lib/libchicken.dylib
+set -x JAVA_HOME $CELLAR/openjdk/17.0.1_1/
+fish_add_path -g $JAVA_HOME/bin
 
 ## Racket
 fish_add_path -g /Applications/Racket*/bin
@@ -205,10 +209,13 @@ set -x USE_FENESTRO true
 # full list of possible ones is here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 set -x TZ_LIST "US/Pacific,Europe/Paris"
 
-source /opt/homebrew/Cellar/asdf/0.8.1_1/asdf.fish
-if test -d (brew --prefix)"/share/fish/completions"
-    set -gx fish_complete_path $fish_complete_path (brew --prefix)/share/fish/completions
-end
+
+# ASDF
+# if you have problems with this the docs are here
+# https://asdf-vm.com/guide/getting-started.html
+# search for Fish. 3 different ways of handling based on how installed
+#echo -e "\nsource "(brew --prefix asdf)"/libexec/asdf.fish" >> ~/.config/fish/config.fish
+source (brew --prefix asdf)/libexec/asdf.fish
 
 if test -d (brew --prefix)"/share/fish/vendor_completions.d"
     set -gx fish_complete_path $fish_complete_path (brew --prefix)/share/fish/vendor_completions.d

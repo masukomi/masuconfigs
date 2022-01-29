@@ -37,7 +37,7 @@ end
 def output_views_by_author(reviews_by_author, excluding_user)
   reviews_by_author.delete(excluding_user)
   if reviews_by_author.keys.size == 0
-    puts "No reviews yet"
+    puts "\tNo reviews yet"
     return
   end
 
@@ -101,31 +101,35 @@ begin
 
           checked_dirs << child
           response = `gh pr list -A #{GH_USERNAME} 2>/dev/null`.strip.split("\n")
-
+          #STDERR.puts response.join("\n")
           next if response.size == 0
 
-          puts "#{child} ----------------------------------"
+          puts "\e[0;37;44m#{child} ----------------------------------\e[0m"
 
-          pr_num = response.first.match(/^(\d+).*/)[1] rescue nil
-          error_and_die("Unable to extract PR number from #{response.first}") unless pr_num
-          pr_title = response.first.split("\t")[1]
+          response.each do | pr_line |
+            pr_num = pr_line.match(/^(\d+).*/)[1] rescue nil
+            error_and_die("Unable to extract PR number from\n\t#{pr_line.inspect}") unless pr_num
+            pr_title = pr_line.split("\t")[1]
 
 
-          puts "#{pr_num}: #{pr_title}"
-          pr_details = `gh pr view #{pr_num} --json url`.strip
+            # puts "\e[1;33;40m#{pr_num}: #{pr_title}\e[0m"
+            puts "\e[1;30;47m#{pr_num}: #{pr_title}\e[0m"
+            pr_details = `gh pr view #{pr_num} --json url`.strip
 
-          pr_url = JSON.parse(pr_details)["url"]
-          puts pr_url
+            pr_url = JSON.parse(pr_details)["url"]
+            puts pr_url
 
-          output_failed_checks(extract_failed_checks(pr_num))
+            output_failed_checks(extract_failed_checks(pr_num))
 
-          reviews_by_author = extract_reviews_by_author(pr_num)
+            reviews_by_author = extract_reviews_by_author(pr_num)
 
-          output_views_by_author(reviews_by_author, GH_USERNAME)
+            output_views_by_author(reviews_by_author, GH_USERNAME)
+          end
         end
-      rescue NameError, Errno::ENOENT
+      rescue NameError, Errno::ENOENT => e
         unless child.end_with? "DS_Store"
-          STDERR.puts("Unable to cd to '#{child}' from #{Dir.pwd}")
+          STDERR.puts("problem looking up PR data: #{e.message}")
+          # STDERR.puts("Unable to cd to '#{child}' from #{Dir.pwd}")
         end
       end
     end
@@ -136,4 +140,4 @@ rescue NameError, Errno::ENOENT
   exit 78 #EX_CONFIG
 end
 
-puts "\n\nDone.\nchecked dirs: #{checked_dirs.sort.join(", ")}"
+puts "\n\n\e[1;32;40mDone.\e[0m\nchecked dirs: #{checked_dirs.sort.join(", ")}"
