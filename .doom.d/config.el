@@ -396,11 +396,19 @@
 
 (setq org-roam-dailies-directory "daily/")
 
+;; see this link for how to create new templates (daily & otherwise)
+;; https://systemcrafters.net/build-a-second-brain-in-emacs/capturing-notes-efficiently/
 (setq org-roam-dailies-capture-templates
       '(("d" "default" entry
          "* %?"
          :target (file+head "%<%Y-%m-%d>.org"
-                            "#+title: %<%Y-%m-%d>\n"))))
+                            "#+title: %<%Y-%m-%d>\n"))
+        ("w" "work" plain
+         "\n* TODO \n- [ ] get a ticket to work on\n- [ ] check PR comments \n- [ ] see if there are PRs needing review\n\n%?"
+        :if-new (file+head "%<%Y-%m-%d>.org"
+                           "#+title: %<%Y-%m-%d>\n")
+        :unnarrowed t)
+                ))
 
 ;; Enable plantuml-mode for PlantUML files
 (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
@@ -445,6 +453,13 @@
   (expand-file-name "/usr/local/opt/plantuml/libexec/plantuml.jar"))
 
 
+; syntax highlighting within org blocks
+(setq org-src-fontify-natively t)
+; if that is too slow you can call
+;
+; org-src-fontify-buffer
+; org-src-fontify-block
+
 
 ;
 ; because i want HTML & Javascript highlighting in the same file
@@ -456,3 +471,12 @@
     (css-mode "<style[^>]*>" "</style>")))
 (setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5" "erb"))
 (multi-web-global-mode 1)
+
+
+; (defun halve-other-window-height ()
+;   "Expand current window to use half of the other window's lines."
+;   (interactive)
+;   (enlarge-window (/ (window-height (next-window)) 2)))
+;
+; (global-set-key (kbd "C-c v") 'halve-other-window-height)
+
