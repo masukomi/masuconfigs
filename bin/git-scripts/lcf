@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+# find the files from the last commit
+#
+
+git_root = `git rev-parse --show-toplevel`.strip
+
+changed_files = `git log --name-only --oneline HEAD^..HEAD`.split("\n")[1..]
+
+omittable_difference = `pwd`.strip.sub(git_root, "")
+
+changed_files.each do | file |
+  puts "." + ("/" + file).sub(omittable_difference, "")
+end
