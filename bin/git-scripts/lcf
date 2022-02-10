@@ -1,7 +1,9 @@
 #!/usr/bin/env ruby
 
-# find the files from the last commit
+# lcf: Last Commit's Files
 #
+# finds and lists the files from the last commit
+# altering paths to be relative to the current directory
 
 git_root = `git rev-parse --show-toplevel`.strip
 
