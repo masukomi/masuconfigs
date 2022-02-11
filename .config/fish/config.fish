@@ -65,6 +65,7 @@ abbr -a berss "bundle exec rails server -u puma -b 'ssl://0.0.0.0:9292?key=$HOME
 abbr -a berd 'bundle exec rails server --debugger'
 abbr -a build_tags "~/brew/bin/ctags -R --c++-kinds +p --fields +iaS --extra +q --exclude .rsync_cache ."
 abbr -a hgrep "history | grep"
+abbr -a rca "lcf -p | xargs -I{} sh -c \"echo checking {}; rubocop -A {}\""
 abbr -a sqlf "sqlformat --reindent --keywords upper --identifiers lower"
 # abbr -a tree "broot" # a tree replacement with funky capabilities
 abbr -a unset 'set --erase'
