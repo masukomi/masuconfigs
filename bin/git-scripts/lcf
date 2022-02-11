@@ -32,10 +32,11 @@ end.parse!
 
 git_root = `git rev-parse --show-toplevel`.strip
 
+# diff-filter ACMR = Added, Changed, Modified, Renamed
 if ! options[:pending]
-  changed_files = `git diff --name-only HEAD^..HEAD`.split("\n")
+  changed_files = `git diff --diff-filter=ACMR --name-only HEAD^..HEAD`.split("\n")
 else
-  changed_files = `git diff --name-only HEAD`.split("\n")
+  changed_files = `git diff --diff-filter=ACMR --name-only HEAD`.split("\n")
 end
 
 omittable_difference = `pwd`.strip.sub(git_root, "")
