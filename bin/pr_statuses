@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'json'
 
-
+GH_API_TOKEN = ENV['PR_STATUSES_API_TOKEN']
 GH_USERNAME = "YOUR GITHUB USERNAME"
 # BASE is a root developement directory that you keep your directories
 # under. For example: ~/workspace
@@ -13,12 +13,19 @@ IGNORABLE_DIRS = %w[dir names to be ignored].freeze
 # ci/circleci: Build Error ...details here
 # you'd add ci/circleci to this list
 IGNORABLE_PR_CHECKS = %[].freeze
+
 def error_and_die(message)
   STDERR.puts(message)
   STDERR.puts("Exiting.")
 
   exit 1
 end
+
+if GH_API_TOKEN.to_s == ''
+  error_and_die("Please define the PR_STATUSES_API_TOKEN environment variable.
+Docs here: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token")
+end
+
 def output_approved_reviews(author, author_reviews)
   puts "\e[32mApproved by #{author}\e[0m"
   author_reviews.each do | ar |
@@ -28,13 +35,60 @@ def output_approved_reviews(author, author_reviews)
   end
 end
 
+def get_remote_details(remote)
+  extract_remote_components(`git config --get remote.#{remote}.url`.strip)
+end
+def extract_remote_components(remote_url)
+  #git@github.com:Owner/Repo.git
+  match = remote_url.match(/.*?:(?<owner>\S+?)\/(?<repo>\S+?)\..*?/)
+  {
+    owner: match[:owner],
+    repo: match[:repo],
+    url: remote_url
+  }
+end
+def get_current_remote()
+  #TODO: make this support multiple remotes
+  #      I think we'll need to make some sort of git config
+  #      to store prefs
+  #      maybe git config --set pr-statuses.upstream-remote
+
+  stored_remote = `git config --get "pr-statuses.upstream-remote" 2>/dev/null`.strip
+  return stored_remote if stored_remote != ""
+  remotes = `git remote`.strip.split("\n")
+  if remotes.size == 1
+    store_upstream_remote(remotes.first)
+    return remotes.first
+  end
+  new_upstream = get_remote_from_user(remotes)
+  store_upstream_remote(new_upstream)
+  new_upsteream
+end
+
+def get_remote_from_user(remotes)
+  puts "Please enter the name of the remote where you make your PRs"
+  puts "* " + remotes.join("\n* ")
+  new_upstream = gets.chomp
+  if ! remotes.include new_upstream
+    puts "That wasn't one of the choices. Please try again"
+    get_remote_from_user(remotes)
+  end
+  new_upstream
+end
+
+def store_upstream_remote(upstream_remote)
+  `git config --add pr-statuses.upstream-remote #{upstream_remote}`
+  retrieved = `git config --get pr-statuses.upstream-remote`.strip
+  retrieved
+end
+
 def output_unapproved_reviews(author, author_reviews)
   states = author_reviews.map{ |ar| ar["STATE"] }.uniq.compact
   return if states.size == 0 # sometime's there's a nil state
   puts "\e[34m#{author}: #{states.join(", ")} \e[0m"
 end
 
-def output_views_by_author(reviews_by_author, excluding_user)
+def output_reviews_by_author(reviews_by_author, excluding_user)
   reviews_by_author.delete(excluding_user)
   if reviews_by_author.keys.size == 0
     puts "\tNo reviews yet"
@@ -42,20 +96,54 @@ def output_views_by_author(reviews_by_author, excluding_user)
   end
 
   reviews_by_author.each do | author, author_reviews|
+    next if author == excluding_user
     approved = author_reviews.any?{ |ar| ar["state"] == 'APPROVED' }
     output_approved_reviews(author, author_reviews) if approved
     output_unapproved_reviews(author, author_reviews) unless approved
   end
 end
 
-def extract_reviews_by_author(pr_num)
+def output_comments_by_author(comments_by_author, excluding_user)
+  count = 0
+  comments_by_author.each do | author, author_comments|
+    next if author == excluding_user
+    puts "- \e[1;33;40m#{author}\e[0m"
+    author_comments.each do | comment|
+      count += 1
+      puts "\t(#{comment[:id]}) #{comment[:html_url]}"
+      puts "\t#{comment[:body]}"
+    end
+  end
+  puts "\tNo comments yet"
+end
+
+def extract_comments_by_author(remote_details, pr_num)
+  # https://docs.github.com/en/rest/reference/pulls#get-a-pull-request
+  # get /repos/{owner}/{repo}/pulls/{pull_number}
+  # curl -s -u #{GH_USERNAME}:#{PR_STATUSES_API_TOKEN} https://api.github.com/repos/octocat/hello-world/pulls/2169/comments
+  curl_string = "curl -s -u #{GH_USERNAME}:#{GH_API_TOKEN} https://api.github.com/repos/#{remote_details[:owner]}/#{remote_details[:repo]}/pulls/#{pr_num}/comments"
+
+  full_response = JSON.parse(`#{curl_string}`.strip)
+  #    avatar_url: comment["user"]["avatar_url"],
+  comments_by_author = Hash.new{ |h,k| h[k] = [] }
+  full_response.each do |comment|
+    comments_by_author[comment["user"]["login"]] << {
+      body: comment["body"],
+      html_url: comment["html_url"],
+      id: comment["id"]
+    }
+  end
+  comments_by_author
+end
+
+def extract_reviews_by_author(remote_details, pr_num)
+
   response = JSON.parse(`gh pr view #{pr_num} --json reviews`.strip)
   reviews = response["reviews"]
 
-  reviews_by_author={}
+  reviews_by_author=Hash.new{ |h,k| h[k] = [] }
   reviews.each do | review |
     author = review["author"]["login"]
-    reviews_by_author[author] ||= []
     reviews_by_author[author] << review
   end
 
@@ -82,6 +170,36 @@ def output_failed_checks(failed_checks)
     end
   end
 end
+
+
+def get_pr_details(remote_details, pr_num)
+  # https://docs.github.com/en/rest/reference/pulls#get-a-pull-request
+  # get /repos/{owner}/{repo}/pulls/{pull_number}
+  # curl -s -u #{GH_USERNAME}:#{PR_STATUSES_API_TOKEN} https://api.github.com/repos/octocat/hello-world/pulls/2169/comments
+  curl_string = "curl -s -u #{GH_USERNAME}:#{GH_API_TOKEN} https://api.github.com/repos/#{remote_details[:owner]}/#{remote_details[:repo]}/pulls/#{pr_num}"
+
+  JSON.parse(`#{curl_string}`.strip)
+end
+
+def extract_requested_reviewers(pr_json)
+  pr_json["requested_reviewers"].map{|user|
+    user["login"]
+  }
+end
+
+def output_requested_reviewers(reviewers)
+  if reviewers.size > 0
+    puts "Requested reviewers:"
+    reviewers.each do | r |
+      puts "- #{r}"
+    end
+  else
+    puts "\t\e[31mNO REQUESTED REVIEWERS\e[0m"
+  end
+end
+
+
+
 ### ---- main loop
 
 checked_dirs = []
@@ -100,12 +218,15 @@ begin
 
 
           checked_dirs << child
+
           response = `gh pr list -A #{GH_USERNAME} 2>/dev/null`.strip.split("\n")
           #STDERR.puts response.join("\n")
           next if response.size == 0
-
           puts "\e[0;37;44m#{child} ----------------------------------\e[0m"
+          # new
+          remote_details = get_remote_details(get_current_remote())
 
+          # old
           response.each do | pr_line |
             pr_num = pr_line.match(/^(\d+).*/)[1] rescue nil
             error_and_die("Unable to extract PR number from\n\t#{pr_line.inspect}") unless pr_num
@@ -119,18 +240,29 @@ begin
             pr_url = JSON.parse(pr_details)["url"]
             puts pr_url
 
+            full_pr_details = get_pr_details(remote_details, pr_num)
+
             output_failed_checks(extract_failed_checks(pr_num))
 
-            reviews_by_author = extract_reviews_by_author(pr_num)
+            puts ""
 
-            output_views_by_author(reviews_by_author, GH_USERNAME)
+            output_requested_reviewers(extract_requested_reviewers(full_pr_details))
+
+            reviews_by_author = extract_reviews_by_author(remote_details, pr_num )
+            comments_by_author = extract_comments_by_author(remote_details, pr_num )
+
+            output_reviews_by_author(reviews_by_author, GH_USERNAME)
+            output_comments_by_author(comments_by_author, GH_USERNAME)
           end
+
         end
       rescue NameError, Errno::ENOENT => e
         unless child.end_with? "DS_Store"
-          STDERR.puts("problem looking up PR data: #{e.message}")
-          # STDERR.puts("Unable to cd to '#{child}' from #{Dir.pwd}")
+          STDERR.puts("problem looking up PR data for #{child}: #{e.message}")
         end
+      rescue StandardError => e
+        STDERR.puts("unexpected exception: #{e.message}")
+        exit(2)
       end
     end
   end
