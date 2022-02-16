@@ -198,6 +198,9 @@ def output_requested_reviewers(reviewers)
   end
 end
 
+def output_draft_status(pr_json)
+  puts "\e[1;30;43mTHIS IS A DRAFT\e[0m" if pr_json["draft"]
+end
 
 
 ### ---- main loop
@@ -241,6 +244,7 @@ begin
             puts pr_url
 
             full_pr_details = get_pr_details(remote_details, pr_num)
+            output_draft_status(full_pr_details)
 
             output_failed_checks(extract_failed_checks(pr_num))
 
