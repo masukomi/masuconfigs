@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# renames the current branch to archived_<current_branch_name>
+# IF you specify DEFAULT_BRANCH below it'll checkout that branch
+# after the rename.
+
+DEFAULT_BRANCH=""
+CURRENT_BRANCH=$(git branch --show-current)
+if [ $? -ne 0 ]; then
+  echo "Unable to determine name of current git branch"
+  exit 1
+fi
+
+git checkout -b "archived_$CURRENT_BRANCH"
+
+if [ $? -eq 0 ]; then
+  git branch -D "$CURRENT_BRANCH"
+  if [ "$DEFAULT_BRANCH" != "" ]; then
+    git checkout "$DEFAULT_BRANCH"
+  fi
+else
+  echo "Error creating branch archived_$CURRENT_BRANCH"
+  echo "Archiving aborted"
+fi

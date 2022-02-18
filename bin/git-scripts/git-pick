@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# Leverages FZF to let you find a local branch or pr
+# using "fuzzy" searching.
+#
+# Usage git pick <branch|pr>
+
+# The PR functionality assumes you've modified your
+# git config so that you can checkout PRs locally
+#
+# [remote "origin"]
+#    fetch = +refs/heads/*:refs/remotes/origin/*
+#    url = git@github.com:joyent/node.git
+#    fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
+#    # ^^^ that last line lets you `git checkout pr/1234`
+
 if [ $1 = "branch" ]; then
   git branch -v \
     | grep -v " [[:xdigit:]]\{7\} \[gone\]" \

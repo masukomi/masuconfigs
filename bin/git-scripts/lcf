@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+
+# lcf: Last Commit's Files
+# or
+# lcf: Locally Changed Files
+#
+# finds and lists the files from the last commit
+# OR
+# finds and lists the files you've changed since the last commit
+#
+# then alters the paths to be relative to the current directory
+# if you're in the same part of the tree.
+
+require 'optparse'
+options = {}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: lcf [options]
+  lcf -> Lists the last Commit's Files.
+  OR
+  lcf -> List the Changed Files since the last commit.
+
+"
+  opts.on("-p", "--pending", "Pending changes since last commit") do |p|
+    options[:pending] = true
+  end
+  opts.on("-h", "--help", "Prints this help") do
+    puts opts
+    exit
+  end
+end.parse!
+
+git_root = `git rev-parse --show-toplevel`.strip
+
+# diff-filter ACMR = Added, Changed, Modified, Renamed
+if ! options[:pending]
+  changed_files = `git diff --diff-filter=ACMR --name-only HEAD^..HEAD`.split("\n")
+else
+  changed_files = `git diff --diff-filter=ACMR --name-only HEAD`.split("\n")
+end
+
+omittable_difference = `pwd`.strip.sub(git_root, "")
+
+changed_files.each do | file |
+  puts "." + ("/" + file).sub(omittable_difference, "")
+end
