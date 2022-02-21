@@ -99,6 +99,7 @@ abbr -a sall 'env SKIP=bad_words,rb_tester,rubocopper'
 
 alias vimr /Applications/VimR.app/Contents/Resources/vimr
 abbr -a vfz "mvim (fzf)"
+abbr -a which "command -v"
 alias :q exit
 
 alias lg lazygit
@@ -111,6 +112,9 @@ alias gcurl /usr/local/opt/curl/bin/curl
 
 # PATH
 fish_add_path -p -g $HOME/.asdf/shims
+# by adding ./bin to the PATH
+# ruby developers can skip using "bundle exec"
+fish_add_path -g ./bin
 fish_add_path -g -p /opt/homebrew/bin
 # (which fish | sed "s/\/fish//")
 fish_add_path -g . $HOME/bin $HOME/bin/git-scripts /usr/local/bin $PATH
