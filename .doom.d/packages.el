@@ -99,4 +99,7 @@
 (package! plantuml-mode)
 (package! flycheck-plantuml)
 (package! racket-mode)
+(package! scribble-mode) ; racket documentation is "scribble"
 (package! exec-path-from-shell)
+(package! sqlite3)
+(package! htmlize)

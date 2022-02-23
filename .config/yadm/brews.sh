@@ -51,6 +51,8 @@ maybrew "autoconf"
 maybrew "automake"
 # Official Amazon AWS command-line interface
 maybrew "awscli"
+# because apple has issues with open source licenses
+maybrew "bash"
 # Statistics utility to count lines of code
 maybrew "bat"
 # Compiler for the Scheme programming language

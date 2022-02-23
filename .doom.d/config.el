@@ -376,8 +376,9 @@
 ;; org-roam stuff
 
 ; (make-directory "~/Documents/org-roam")
-(setq org-roam-directory (file-truename "~/Documents/org-roam"))
-(org-roam-db-autosync-mode)
+; (setq org-roam-directory (file-truename "~/Documents/org-roam"))
+; (org-roam-db-autosync-mode)
+;; (setq org-roam-database-connector 'sqlite3)
 
 ; org-roam-ui stuff
 (use-package! websocket
@@ -481,4 +482,17 @@
 ;   (enlarge-window (/ (window-height (next-window)) 2)))
 ;
 ; (global-set-key (kbd "C-c v") 'halve-other-window-height)
+
+(setq display-buffer-base-action '(display-buffer-in-tab))
+(setq projectile-track-known-projects-automatically nil)
+
+
+; racket
+; auto-format on save
+(defun raco-fmt ()
+  "format with raco fmt"
+  (when (eq major-mode 'racket-mode)
+    (shell-command-to-string (format "raco fmt -i %s" buffer-file-name))))
+
+(add-hook 'after-save-hook #'raco-fmt)
 
