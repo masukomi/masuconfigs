@@ -1,0 +1,156 @@
+#!/usr/bin/env ruby
+
+# USAGE:
+# tester
+#   provide info about failures from last run
+# tester all
+#   run all rspect tests
+# tester <n>
+#   re-run a specific failure from the last test
+#   as identified by its number
+# tester path_to/file_spec.rb
+#   run a specific spec.
+#   you can run it with the optional line number syntax too
+
+# input options
+# - no input
+#   - shows you numbered list of last test failures (if any)
+# - path
+#   - runs test command against path provided
+#   - captures failures (if any)
+# - number
+#   - loads list of last test failures
+#   - finds matching number. runs that failing test.
+
+require 'json'
+
+PAST_RUN_FILENAME=".specs.json"
+INPUT = ARGV.size > 0 ? ARGV[0].strip : nil
+past_run_data = {}
+# looks like
+# {
+#   failures: [
+#     {
+#       message: "",
+#       details: "",
+#       file: "",
+#       line_number: 123
+#       expected: ""
+#       got: ""
+#     }
+#   ]
+# }
+
+def display_failures(failures)
+  failures.each_with_index do | failure, idx |
+    puts "
+#{idx + 1}: #{failure["message"]}
+\t#{failure["file"]}:#{failure["line_number"]}
+\t\texpected: #{failure["expected"]}
+\t\tgot: #{failure["got"]}
+
+"
+  end
+end
+
+def process_rspec_output(output)
+  new_run_data = {"failures" => []}
+  output_lines = output.split("\n")
+  in_failure = false
+  current_failure = {}
+  output_lines.each_with_index do | line, idx |
+    if not in_failure
+      match_data =  /^  \d+\)\s+(.*)/.match(line)
+      if match_data
+        # starting a new failure
+        in_failure = true
+        new_run_data['failures'] << current_failure unless current_failure.empty?
+        current_failure = {}
+        current_failure["message"] = match_data[1]
+      # else, random crap we don't care about
+      end
+    else
+      # in a failure, and past the initial line
+      match_data = /^\s+Failure\/Error: (.*)/.match(line)
+      current_failure["details"] = match_data[1] if match_data
+
+      match_data = /^\s+expected\s+(.*)/.match(line)
+      current_failure["expected"] = match_data[1] if match_data
+
+      match_data = /^\s+got\s+(.*)/.match(line)
+      current_failure["got"] = match_data[1] if match_data
+
+      match_data = /^\s+#\s+(.*?\/(.*?_spec.rb)):(\d+):in /.match(line)
+      if match_data
+        current_failure["file"] = match_data[2]
+        current_failure["full_file_path"] = match_data[1]
+        current_failure["line_number"] = match_data[3]
+        in_failure = false
+      end
+
+    end
+  end
+  new_run_data['failures'] << current_failure unless current_failure.empty?
+  new_run_data
+end
+
+def run_this(spec, update_file)
+  run_line ="bundle exec rspec #{spec}"
+  output = `#{run_line}`
+  new_run_data = process_rspec_output(output)
+  update_record(new_run_data) if update_file
+  new_run_data
+end
+
+def update_record(new_run_data)
+  File.write(PAST_RUN_FILENAME, new_run_data.to_json)
+end
+
+def output_run_results(run_data)
+  if run_data['failures'].size > 0
+    display_failures(run_data['failures'])
+  else
+    puts "no failures"
+  end
+end
+
+# -------------------------
+
+past_run_data = {"failures" => []}
+if File.exist? PAST_RUN_FILENAME
+  begin
+  past_run_data = JSON.parse(File.read(PAST_RUN_FILENAME))
+  rescue StandardError => e
+    STDERR.puts("problem parsing #{PAST_RUN_FILENAME}: #{e.message}")
+  end
+end
+
+
+if INPUT.nil?
+  if past_run_data.fetch('failures', {}).size > 0
+    puts "Displaying failures"
+    display_failures(past_run_data['failures'])
+  else
+    puts "No past run data. Please run a spec through me."
+  end
+
+elsif /.*_spec.rb(:\d+)?$/.match(INPUT) || INPUT=="all"
+  if INPUT != "all"
+    updated_run_data = run_this(INPUT, true)
+  else
+    updated_run_data = run_this("", true)
+  end
+  output_run_results(updated_run_data)
+elsif /^\d+$/.match(INPUT)
+  idx = INPUT.to_i - 1
+  if past_run_data["failures"].size > 0 && past_run_data["failures"][idx]
+    line_num = past_run_data["failures"][idx]["line_number"]
+    spec = past_run_data["failures"][idx]["full_file_path"]
+    spec += ":#{line_num}" if line_num
+    puts "Running: #{spec}\n\n----------------------------\n"
+    output_run_results(run_this(spec, false))
+  else
+    STDERR.puts("I don't seem to have data on run #{idx}")
+  end
+end
+
