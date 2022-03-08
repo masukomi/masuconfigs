@@ -149,7 +149,9 @@ fish_add_path -g -a $JAVA_HOME/bin
 fish_add_path -g -p /opt/homebrew/opt/bash/bin
 
 ## Racket
-fish_add_path -g /Applications/Racket*/bin
+if test -e "/Applications/Racket*"
+	fish_add_path -g /Applications/Racket*/bin
+end
 
 # Radicle.xyz
 fish_add_path -g $HOME/.radicle/bin

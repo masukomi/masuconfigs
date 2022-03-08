@@ -54,6 +54,7 @@
 	branchlog = !sh -c \"git log `git oldest-ancestor`..\"
 	bdf = !sh -c \"git diff --name-status $2 $(git merge-base $2 $1)\"
 	cane = commit --amend --no-edit
+	cehckout = checkout
 	contains = branch --contains
 	current-branch = rev-parse --abbrev-ref HEAD
 	changed = status -uno
@@ -80,6 +81,7 @@
 	# list assumed as in list files that you've
 	# told git to --assume-unchanged (see assume alias)
 	la = !git ls-files -v | grep '^[[:lower:]]'
+	latest-tag = !git tag --sort=v:refname | tail -1
 	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 	lol = !git --no-pager loll
 	lola = !git --no-pager lolal

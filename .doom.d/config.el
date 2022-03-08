@@ -496,3 +496,17 @@
 
 (add-hook 'after-save-hook #'raco-fmt)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; undo tree mode                                                         ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;turn on everywhere
+(global-undo-tree-mode 1)
+(defalias 'redo 'undo-tree-redo)
+;; ;; make ctrl-z undo
+;; (global-set-key (kbd "C-z") 'undo)
+;; ;; make ctrl-Z redo
+;; (global-set-key (kbd "C-S-z") 'redo)
+;; make command-z undo
+(global-set-key (kbd "s-z") 'undo)
+;; make command-Z redo
+(global-set-key (kbd "s-S-z") 'redo)

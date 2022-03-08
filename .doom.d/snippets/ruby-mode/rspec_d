@@ -4,6 +4,6 @@
 # --
 require 'rails_helper'
 
-RSpec.describe  ${1:ClassName} do
-
+RSpec.describe  ${1:`(rspec-class-from-file-name)`} do
+  $0
 end
