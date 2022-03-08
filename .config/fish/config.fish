@@ -7,6 +7,8 @@
 # if test -f $OMF_PATH/init.fish
 # 	source $OMF_PATH/init.fish
 # end
+#
+
 set -g theme_nerd_fonts yes
 
 if test -f $HOME/.config/fish/config_work.fish
@@ -122,27 +124,32 @@ fish_add_path -g . $HOME/bin $HOME/bin/git-scripts /usr/local/bin $PATH
 # macOS one is at /usr/local/bin/python
 set -x PATH /usr/local/opt/python/libexec/bin $PATH
 set brewed_python_version (brew ls --versions python | sed -e "s/python@//" -e "s/ .*//")
-fish_add_path -g $HOME/Library/Python/$brewed_python_version/bin
-fish_add_path -g /Applications
-fish_add_path -g /usr/local/opt/coreutils/libexec/gnubin
-fish_add_path -g $HOME/.iterm2/
+fish_add_path -g -a $HOME/Library/Python/$brewed_python_version/bin
+fish_add_path -g -a /Applications
+fish_add_path -g -a /usr/local/opt/coreutils/libexec/gnubin
+fish_add_path -g -a $HOME/.iterm2/
 # fish_add_path -g /usr/bin
 # fish_add_path -g /bin
 # fish_add_path -g /usr/sbin
 # fish_add_path -g /sbin
-fish_add_path -g $HOME/Applications
-fish_add_path -g $HOME/workspace/gpup
-fish_add_path -g $HOME/workspace/git_accessories
-fish_add_path -g $HOME/workspace/gocode/bin
-fish_add_path -g $HOME/.cargo/bin
-fish_add_path -g $HOME/.local/bin # haskell stuff installed with Stack
+fish_add_path -g -a $HOME/Applications
+fish_add_path -g -a $HOME/workspace/gpup
+fish_add_path -g -a $HOME/workspace/git_accessories
+fish_add_path -g -a $HOME/workspace/gocode/bin
+fish_add_path -g -a $HOME/.cargo/bin
+fish_add_path -g -a $HOME/.local/bin # haskell stuff installed with Stack
 
-fish_add_path -g $CELLAR/chicken/5.0.0/bin
-set -x JAVA_HOME $CELLAR/openjdk/17.0.1_1/
-fish_add_path -g $JAVA_HOME/bin
+set CELLAR (brew --cellar)
+fish_add_path -g -a $CELLAR/chicken/5.0.0/bin
+# OYYY WHEN IT COMPLAINS ABOUT libchicken.dylib being missing
+#ln -s (brew --prefix chicken)/lib/libchicken.dylib /usr/local/lib/libchicken.dylib
+set -x -g JAVA_HOME $CELLAR/openjdk/17.0.2/
+fish_add_path -g -a $JAVA_HOME/bin
+# newer bash in path
+fish_add_path -g -p /opt/homebrew/opt/bash/bin
 
 ## Racket
-fish_add_path -g /Applications/Racket\ v7.7/bin
+fish_add_path -g /Applications/Racket*/bin
 
 # Radicle.xyz
 fish_add_path -g $HOME/.radicle/bin
@@ -166,7 +173,6 @@ fish_add_path -g /Applications/Racket\ v8.2/bin
 # RUST
 fish_add_path -g $HOME/.cargo/bin
 
-set CELLAR (brew --cellar)
 # Elixir / ERLANG
 set -x ERL_AFLAGS "-kernel shell_history enabled"
 
