@@ -45,11 +45,13 @@ def display_failures(failures)
   failures.each_with_index do | failure, idx |
     puts "
 #{idx + 1}: #{failure["message"]}
-\t#{failure["file"]}:#{failure["line_number"]}
-\t\texpected: #{failure["expected"]}
-\t\tgot: #{failure["got"]}
+\t#{failure["file"]}:#{failure["line_number"]}"
+    puts failure["details"] if failure.has_key? "details"
 
-"
+    puts "\t\texpected: #{failure["expected"]}" if failure.has_key? "expected"
+    puts "\t\tgot: #{failure["got"]}" if failure.has_key? "got"
+
+    # puts "XXX failure.inspect: #{failure.inspect}"
   end
 end
 
@@ -71,21 +73,33 @@ def process_rspec_output(output)
       end
     else
       # in a failure, and past the initial line
-      match_data = /^\s+Failure\/Error: (.*)/.match(line)
-      current_failure["details"] = match_data[1] if match_data
+      details_match = /^\s+Failure\/Error:\s*(.*)/.match(line)
 
-      match_data = /^\s+expected\s+(.*)/.match(line)
-      current_failure["expected"] = match_data[1] if match_data
+      expected_match = /^\s+expected\s+(.*)/.match(line)
 
-      match_data = /^\s+got\s+(.*)/.match(line)
-      current_failure["got"] = match_data[1] if match_data
+      got_match = /^\s+got\s+(.*)/.match(line)
 
-      match_data = /^\s+#\s+(.*?\/(.*?_spec.rb)):(\d+):in /.match(line)
-      if match_data
-        current_failure["file"] = match_data[2]
-        current_failure["full_file_path"] = match_data[1]
-        current_failure["line_number"] = match_data[3]
+      trace_match = /^\s+#\s+(.*?\/(.*?\.rb)):(\d+):in /.match(line)
+
+      if details_match
+        current_failure["details"] = details_match[1]
+      elsif expected_match
+        current_failure["expected"] = expected_match[1]
+      elsif got_match
+        current_failure["got"] = got_match[1]
+      elsif trace_match
+        current_failure["file"] = trace_match[2]
+        current_failure["full_file_path"] = trace_match[1]
+        current_failure["line_number"] = trace_match[3]
         in_failure = false
+        puts "XXX END TRACE_MATCH on: \"#{line}\""
+      elsif current_failure.has_key? "details"
+        # puts "XXX Interim detail line: #{line}"
+        #we're somewhere between the Failure/Error line
+        #and the stack trace
+        current_failure["details"] += "\n#{line}"
+      else
+        puts "XXX no match for: \"#{line}\""
       end
 
     end
