@@ -165,6 +165,18 @@ if [ ! -d "~/workspace/reference/lua/pandoc-confluence-writer" ]; then
 	cp ~/workspace/reference/lua/pandoc-confluence-writer/confluence.lua ~/.local/share/pandoc/
 fi
 
+# install Cask https://github.com/cask/cask
+# the Private Comments Mode bulid script needs this
+# Cask simplifies sandboxing for emacs developers
+if [ ! -d "~/workspace/reference/emacs/cask" ]; then
+	mkdir -p ~/workspace/reference/emacs
+	cd ~/workspace/reference/emacs
+	git clone https://github.com/cask/cask
+	cd cask
+	make install
+	cd ~/
+fi
+
 
 
 if ! is_installed "icr"; then # Interactive Crystal Repl
