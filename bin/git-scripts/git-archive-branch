@@ -4,21 +4,75 @@
 # IF you specify DEFAULT_BRANCH below it'll checkout that branch
 # after the rename.
 
-DEFAULT_BRANCH=""
+DEFAULT_BRANCH=$(git config --get repo.default-branch)
+if [ "$DEFAULT_BRANCH" == "" ]; then
+	echo "What's the default branch on this repo?"
+	read DEFAULT_BRANCH
+	git config repo.default-branch $DEFAULT_BRANCH
+else
+	echo "DEFAULT_BRANCH is $DEFAULT_BRANCH"
+fi
+
 CURRENT_BRANCH=$(git branch --show-current)
 if [ $? -ne 0 ]; then
   echo "Unable to determine name of current git branch"
   exit 1
 fi
+ALL="$1"
 
-git checkout -b "archived_$CURRENT_BRANCH"
 
-if [ $? -eq 0 ]; then
-  git branch -D "$CURRENT_BRANCH"
-  if [ "$DEFAULT_BRANCH" != "" ]; then
-    git checkout "$DEFAULT_BRANCH"
-  fi
+
+function archive_branch (){
+	BRANCH=$1
+	git checkout -b "archived_$BRANCH"
+
+	if [ $? -eq 0 ]; then
+	  git branch -D "$BRANCH"
+	  if [ "$DEFAULT_BRANCH" != "" ]; then
+		git checkout "$DEFAULT_BRANCH"
+	  fi
+	else
+	  echo "Error creating branch archived_$BRANCH"
+	  echo "Archiving aborted"
+	fi
+}
+function delete_branch () {
+	BRANCH=$1
+	git checkout $DEFAULT_BRANCH
+	if [ "$BRANCH" != "$DEFAULT_BRANCH" ]; then
+		git branch -D $BRANCH
+	else
+		"I refuse to delete the default branch: $DEFAULT_BRANCH"
+	fi
+}
+function ask_about_branch () {
+	BRANCH=$1
+	echo ""
+	echo "archive $b ? enter to skip [y|n|d|diff]"
+	echo "  y=yes, n=no, d=delete, diff=show commits not on $DEFAULT_BRANCH"
+	read archive_it
+	if [ "$archive_it" == "y" ]; then
+		archive_branch $BRANCH
+	elif [ "$archive_it" == "d" ]; then
+		delete_branch $BRANCH
+	elif [ "$archive_it" == "diff" ]; then
+		git branchdiff-simple $DEFAULT_BRANCH..$BRANCH
+		ask_about_branch $BRANCH
+	else
+		echo "skipping..."
+	fi
+}
+if [ "$ALL" == "all" ]; then
+	echo "Alrighty. Let's go through them all..."
+	branches=( $(git branch | grep -v "^+ " | grep -v "$DEFAULT_BRANCH" | sed -e "s/^[[:space:]]*//" -e "s/^\*[[:space:]]*//" ) )
+	for b in "${branches[@]}"; do
+		if [[ $b != "archive_"* ]]; then
+			ask_about_branch $b
+		else
+			echo "b: $b"
+		fi
+	done
 else
-  echo "Error creating branch archived_$CURRENT_BRANCH"
-  echo "Archiving aborted"
+	archive_branch $CURRENT_BRANCH
 fi
+echo "DONE"
