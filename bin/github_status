@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require 'json'
+require 'net/http'
+status_url = 'https://www.githubstatus.com/api/v2/status.json'
+uri = URI(status_url)
+res = Net::HTTP.get_response(uri)
+
+if res.is_a?(Net::HTTPSuccess)
+  json = JSON.parse(res.body)
+  indicator = json["status"]["indicator"]
+  # wanna tweak the colors?
+  # look at the 1st 3 columns of the table here
+  # https://en.wikipedia.org/wiki/ANSI_escape_code#3-bit_and_4-bit
+  # For green background and black text (for example)
+  # you'd change [32m below to [30;42m
+  color = "\e[32m"                         # green
+  color = "\e[33m" if indicator == "minor" # yellow
+  color = "\e[91m" if indicator == "major" # bright red
+  puts "#{color}status: #{json["status"]["description"]} as of #{json["page"]["updated_at"]}\e[0m"
+else
+  STDERR.puts "error retrieving: #{status_url}"
+  exit 74 # IO_ERR
+end
