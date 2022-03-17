@@ -1,5 +1,15 @@
 #!/usr/bin/env ruby
 
+# outputs a colorized line of text indicating the current github
+# status.
+#
+# USAGE: github_status
+#
+#
+# If you'd like something fancier, check out
+# https://github.com/abennett/ghok
+
+
 require 'json'
 require 'net/http'
 status_url = 'https://www.githubstatus.com/api/v2/status.json'
