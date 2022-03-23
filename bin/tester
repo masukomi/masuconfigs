@@ -5,6 +5,9 @@
 #   provide info about failures from last run
 # tester all
 #   run all rspect tests
+# tester last_file
+#   finds the last file that had a problem
+#   and runs all the tests in it.
 # tester <n>
 #   re-run a specific failure from the last test
 #   as identified by its number
@@ -36,7 +39,8 @@ past_run_data = {}
 #       file: "",
 #       line_number: 123
 #       expected: ""
-#       got: ""
+#       got: "",
+#       diff: ""
 #     }
 #   ]
 # }
@@ -45,12 +49,13 @@ def display_failures(failures)
   failures.each_with_index do | failure, idx |
     puts "
 #{idx + 1}: #{failure["message"]}
-\t#{failure["file"]}:#{failure["line_number"]}"
+\t\e[100;37m#{failure["file"]}\e[0m:\e[100;33m#{failure["line_number"]}\e[0m"
     puts failure["details"] if failure.has_key? "details"
 
-    puts "\t\texpected: #{failure["expected"]}" if failure.has_key? "expected"
-    puts "\t\tgot: #{failure["got"]}" if failure.has_key? "got"
+    puts "\t\t\e[32mexpected: #{failure["expected"]}\e[0m" if failure.has_key? "expected"
+    puts "\t\t\e[91mgot     : #{failure["got"]}\e[0m" if failure.has_key? "got"
 
+    puts "\n\t\tDiff:\n#{failure["diff"].join("\n\t\t")}" if failure.has_key? "diff"
     # puts "XXX failure.inspect: #{failure.inspect}"
   end
 end
@@ -59,6 +64,7 @@ def process_rspec_output(output)
   new_run_data = {"failures" => []}
   output_lines = output.split("\n")
   in_failure = false
+  in_diff = false
   current_failure = {}
   output_lines.each_with_index do | line, idx |
     if not in_failure
@@ -75,11 +81,13 @@ def process_rspec_output(output)
       # in a failure, and past the initial line
       details_match = /^\s+Failure\/Error:\s*(.*)/.match(line)
 
-      expected_match = /^\s+expected\s+(.*)/.match(line)
+      expected_match = /^\s+expected:\s+(.*)/.match(line)
 
-      got_match = /^\s+got\s+(.*)/.match(line)
+      got_match = /^\s+got:\s+(.*)/.match(line)
 
       trace_match = /^\s+#\s+(.*?\/(.*?\.rb)):(\d+):in /.match(line)
+
+      diff_match = /^\s+Diff:\s*/.match(line)
 
       if details_match
         current_failure["details"] = details_match[1]
@@ -88,18 +96,26 @@ def process_rspec_output(output)
       elsif got_match
         current_failure["got"] = got_match[1]
       elsif trace_match
+        in_diff = false
         current_failure["file"] = trace_match[2]
         current_failure["full_file_path"] = trace_match[1]
         current_failure["line_number"] = trace_match[3]
         in_failure = false
-        puts "XXX END TRACE_MATCH on: \"#{line}\""
+        # puts "XXX END TRACE_MATCH on: \"#{line}\""
+      elsif diff_match && ! in_diff
+        in_diff = true
+        current_failure["diff"] = []
+          # ends when we get to the trace_match
+          # don't want the first line since it's just "Diff:"
+      elsif in_diff
+        current_failure["diff"] << line.lstrip
       elsif current_failure.has_key? "details"
         # puts "XXX Interim detail line: #{line}"
         #we're somewhere between the Failure/Error line
         #and the stack trace
         current_failure["details"] += "\n#{line}"
-      else
-        puts "XXX no match for: \"#{line}\""
+      # else
+      #   puts "XXX no match for: \"#{line}\""
       end
 
     end
@@ -139,7 +155,6 @@ if File.exist? PAST_RUN_FILENAME
   end
 end
 
-
 if INPUT.nil?
   if past_run_data.fetch('failures', {}).size > 0
     puts "Displaying failures"
@@ -148,10 +163,20 @@ if INPUT.nil?
     puts "No past run data. Please run a spec through me."
   end
 
-elsif /.*_spec.rb(:\d+)?$/.match(INPUT) || INPUT=="all"
-  if INPUT != "all"
+elsif /.*_spec.rb(:\d+)?$/.match(INPUT) || INPUT=="all" || INPUT=="last_file"
+  if INPUT != "all" && INPUT != "last_file"
+    # must be a spec file
     updated_run_data = run_this(INPUT, true)
-  else
+  elsif INPUT == "last_file"
+    if past_run_data["failures"].empty?
+      puts "No file data from last run"
+      exit 64 # EX_USAGE
+    end
+    last_file = past_run_data["failures"].map{|f| f["file"]}.last
+    puts "Running #{last_file}...\n"
+    updated_run_data = run_this(last_file, true)
+  elsif INPUT == "all"
+    puts "Running ALL specs...\n"
     updated_run_data = run_this("", true)
   end
   output_run_results(updated_run_data)
