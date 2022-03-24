@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# diff a file across renames & commits.
+# especially useful when a file is renamed _and_ modified in the same
+# commit.
+#
+# USAGE: git diff-rename <old treeish> <old file path> <new file path>
+
+
+
+
+if [ $# -ne 3 ]; then
+	echo "USAGE: git diff-rename <old treeish> <old file path> <new file path>"
+	exit 64 #EX_USAGE
+fi
+
+OLD_COMMIT=$1
+OLD_FILE_PATH=$2
+NEW_FILE_PATH=$3
+
+OLD_FILE_NAME=$(basename $OLD_FILE_PATH)
+EXTENSION=${NEW_FILE_PATH##*.}
+
+OLD_VERSION=$(mktemp "/tmp/XXX_$OLD_FILE_NAME")
+
+git show $OLD_COMMIT":$OLD_FILE_PATH" > "$OLD_VERSION"
+EXIT_CODE=$?
+if [ $EXIT_CODE -ne 0 ]; then
+	rm -f "$OLD_VERSION"
+	echo ""
+	echo "👆 read that. "
+	if [ $EXIT_CODE -eq 128 ]; then
+		echo "Correct your path. try again."
+	fi
+	exit 64 # EX_USAGE
+fi
+
+ksdiff $OLD_VERSION $NEW_FILE_PATH
+rm $OLD_VERSION
