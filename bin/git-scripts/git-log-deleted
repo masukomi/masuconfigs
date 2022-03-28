@@ -1,0 +1,9 @@
+#!/bin/sh
+
+FILE=$1
+if [ "$FILE" == "" ]; then
+	echo "please supply a path to the delete file you want a log of"
+	exit 64
+fi
+
+git log --all --full-history -- "$FILE"
