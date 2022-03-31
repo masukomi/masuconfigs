@@ -56,6 +56,33 @@ if [ "$doom" == "y" ]; then
 	#also remind myself to install whatever font it is emacs uses
 	echo "RUN M-x all-the-icons-install-fonts"
 	ln -s $(emacs --app) /Applications/Emacs.app
+
+	# launch the emacs daemon at login
+	# instructions found here: http://www.rockhoppertech.com/blog/emacs-daemon-on-macos/
+	LAUNCH_DAEMON_PLIST="$HOME/Library/LaunchAgents/gnu.emacs.daemon.plist"
+	if [ ! -f "$LAUNCH_DAEMON_PLIST" ]; then
+		cat > "$LAUNCH_DAEMON_PLIST" <<- EOM
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>gnu.emacs.daemon</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Applications/Emacs.app/Contents/MacOS/Emacs</string>
+    <string>--daemon</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>UserName</key>
+  <string>$USER</string>
+</dict>
+</plist>
+EOM
+	fi
+
 fi
 
 

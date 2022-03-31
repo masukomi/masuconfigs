@@ -1,0 +1,25 @@
+#!/bin/zsh
+# original version found here
+#
+
+socket_file=$(lsof -c Emacs | grep server | tr -s " " | cut -d' ' -f8)
+# executable paths handled by homebrew
+# emacs=/Applications/Emacs.app/Contents/MacOS/Emacs
+# emacsclient=/Applications/Emacs.app/Contents/MacOS/bin/emacsclient
+
+# echo "socket file: $socket_file"
+
+if [[ $socket_file == "" ]]; then
+echo "starting Emacs server..."
+ emacs --chdir $PWD --execute "(server-start)" $@ > /dev/null 2>&1 &
+ disown
+else
+  echo "will use client"
+  if [[ "$1" == "new" ]]; then
+    shift
+    emacsclient --create-frame -n $@ --socket-name $socket_file > /dev/null 2>&1
+  else
+    emacsclient -n $@ --socket-name $socket_file > /dev/null 2>&1
+  fi
+fi
+
