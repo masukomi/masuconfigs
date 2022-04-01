@@ -171,6 +171,17 @@ def display_last_run(past_run_data)
   end
 end
 
+def display_files(past_run_data)
+  last_output = nil
+  past_run_data["failures"].each_with_index do | failure, idx |
+    this_output = printable_file_and_line_num(failure)
+    if this_output != last_output
+      puts "#{idx + 1}: #{this_output}"
+      last_output = this_output
+    end
+  end
+end
+
 # -------------------------
 
 past_run_data = {"failures" => []}
@@ -217,13 +228,31 @@ elsif /^\d+$/.match(INPUT)
   else
     STDERR.puts("I don't seem to have data on run #{idx + 1}")
   end
-elsif INPUT == "kill" &&  /^\d+$/.match(ARGV[1].to_s)
-  idx = ARGV[1].to_i - 1
-  puts "KILLING: "
-  display_failure(past_run_data["failures"][idx], idx)
+elsif INPUT == "kill" &&  /^\d+(-\d+)?$/.match(ARGV[1].to_s)
+  indexes = Array(ARGV[1].to_i - 1)
+  if /^\d+-\d+?$/.match(ARGV[1])
+    x, y = ARGV[1].split('-').map(&:to_i)
+    # If we work from highest to lowest we can
+    # avoid complications resulting
+    # from shortening an array while iterating over it
+
+    if x < y
+      indexes = ((x - 1)..(y - 1)).to_a.reverse
+    elsif x == y
+      indexes = [x]
+    else
+      indexes = ((x - 1)..(y - 1)).to_a
+    end
+
+  end
+
+  indexes.each do |idx|
+    puts "killing #{idx}: #{past_run_data["failures"][idx]["message"]}"
+    # display_failure(past_run_data["failures"][idx], idx)
+    past_run_data["failures"].slice!(idx)
+  end
   puts "-------------------------------------------------\n"
   puts "-------------------------------------------------\n"
-  past_run_data["failures"].slice!(idx)
   update_record(past_run_data)
   display_last_run(past_run_data)
 elsif INPUT == "file" &&  /^\d+$/.match(ARGV[1].to_s)
@@ -231,17 +260,9 @@ elsif INPUT == "file" &&  /^\d+$/.match(ARGV[1].to_s)
   if past_run_data.size > idx
     puts past_run_data["failures"][idx]["file"]
   else
-    $stderr.puts("Error: couldn't find that test number")
     exit 75 # EX_TEMPFAIL (user input)
   end
 elsif INPUT == "files"
-  last_output = nil
-  past_run_data["failures"].each_with_index do | failure, idx |
-    this_output = printable_file_and_line_num(failure)
-    if this_output != last_output
-      puts "#{idx + 1}: #{this_output}"
-      last_output = this_output
-    end
-  end
+  display_files(past_run_data)
 end
 
