@@ -147,10 +147,10 @@ end
 def run_this(spec, update_file)
   run_line ="bundle exec rspec #{spec}"
   output, standard_error, status = Open3.capture3( "#{run_line}")
-  if status.exitstatus != 0
+  if status.exitstatus != 0 && output.match(/^LoadError:/)
+    puts "problems encountered: \n\t#{output.split("\n").first(10).join("\n\t")}\n..."
     # for whatever reason rspec sends errors to standard out
     # not standard error
-    puts "problems encountered: \n\t#{output.split("\n").first(10).join("\n\t")}\n..."
     exit status.exitstatus
   end
   new_run_data = process_rspec_output(output)
