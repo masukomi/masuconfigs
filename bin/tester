@@ -181,12 +181,20 @@ end
 
 def display_files(past_run_data)
   last_output = nil
+  items_displayed = 0
   past_run_data["failures"].each_with_index do | failure, idx |
     this_output = printable_file_and_line_num(failure)
     if this_output != last_output
       puts "#{idx + 1}: #{this_output}"
+      items_displayed += 1
       last_output = this_output
     end
+  end
+  if items_displayed < past_run_data["failures"].size
+    puts "\n\n\tNOTE: some duplicate results excluded"
+    puts "\tThis just means some common problem is causing multiple"
+    puts "\ttests to fail in the same way."
+    puts "\n\trun `tester` with no args to see the full list."
   end
 end
 
