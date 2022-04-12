@@ -148,7 +148,7 @@ def run_this(spec, update_file, retries = 0)
   run_line ="bundle exec rspec #{spec}"
   output, standard_error, status = Open3.capture3( "#{run_line}")
   if status.exitstatus != 0
-    if output.match(/^LoadError:/)
+    if output.match(/^LoadError:/) || output.match(/^NameError:/)
       puts "problems encountered: \n\t#{output.split("\n").first(10).join("\n\t")}\n..."
       # for whatever reason rspec sends SOME errors to standard out
       # not standard error
