@@ -144,14 +144,31 @@ def process_rspec_output(output)
   new_run_data
 end
 
-def run_this(spec, update_file)
+def run_this(spec, update_file, retries = 0)
   run_line ="bundle exec rspec #{spec}"
   output, standard_error, status = Open3.capture3( "#{run_line}")
-  if status.exitstatus != 0 && output.match(/^LoadError:/)
-    puts "problems encountered: \n\t#{output.split("\n").first(10).join("\n\t")}\n..."
-    # for whatever reason rspec sends errors to standard out
-    # not standard error
-    exit status.exitstatus
+  if status.exitstatus != 0
+    if output.match(/^LoadError:/)
+      puts "problems encountered: \n\t#{output.split("\n").first(10).join("\n\t")}\n..."
+      # for whatever reason rspec sends SOME errors to standard out
+      # not standard error
+      exit status.exitstatus
+    elsif standard_error.match(/Bundler::GemNotFound/m)
+      puts "You need to bundle"
+      puts "I'll do that for you."
+      if retries == 0
+        bundle_output, bundle_standard_error, bundle_status = Open3.capture3( "bundle install")
+        if bundle_status.exitstatus == 0
+          run_this(spec, update_file, 1)
+        else
+          puts "Nope. I failed to bundle for you."
+          puts bundle_status_error
+          exit bundle_status.exitstatus
+        end
+      else
+        exit status.exitstatus
+      end
+    end
   end
   new_run_data = process_rspec_output(output)
   update_record(new_run_data) if update_file
