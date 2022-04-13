@@ -107,7 +107,8 @@ def process_rspec_output(output)
 
       expected_match = /^\s+expected:\s+(.*)/.match(line)
 
-      got_match = /^\s+got:\s+(.*)/.match(line)
+      # seriously RSpec? Why can't you be consistent?
+      got_match = /^\s+(?:got|received):\s+(.*)/.match(line)
 
       trace_match = /^\s+#\s+(.*?\/(.*?\.rb)):(\d+):in /.match(line)
 
