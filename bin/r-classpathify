@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+# takes all the module X, module Y, class Z
+# in a ruby file, converts them to
+# X::Y::Z
+# and prints them to STDOUT
+#
+# Usage: r-classpathify path/to/ruby/file
+
+
+
+def process_classpath_lines(classpath_lines)
+  new_lines = []
+  puts classpath_lines
+    .map{|line| line.sub(/^\s*(module|class) /, "")}
+    .join("::").sub(/ < \S+\s*$/, "")
+end
+
+lines = File.read(ARGV[0]).split("\n")
+classpath_lines = []
+lines.each do | line |
+  if /^\s*module /.match(line)
+    classpath_lines << line
+  elsif
+    /^\s*class /.match(line)
+    classpath_lines << line
+    process_classpath_lines(classpath_lines)
+    classpath_lines = []
+  end
+end
+
