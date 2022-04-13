@@ -1,9 +1,8 @@
 #!/usr/bin/env ruby
 
-# takes all the module X, module Y, class Z
+# takes all the module X, module Y, class Z lines
 # in a ruby file, converts them to
-# X::Y::Z
-# and prints them to STDOUT
+# X::Y::Z and prints them to STDOUT
 #
 # Usage: r-classpathify path/to/ruby/file
 
