@@ -70,7 +70,7 @@ def display_failures(failures)
 end
 
 def display_failure(failure, index)
-    puts "\n#{index + 1}: #{failure["message"]}\n"
+    puts "\n\e[31m#{index + 1}: #{failure["message"]}\e[0m\n"
     puts printable_file_and_line_num(failure)
     puts failure["details"] if failure.has_key? "details"
 
