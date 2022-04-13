@@ -260,6 +260,8 @@ maybrew "ripgrep"
 # Readline wrapper: adds readline support to tools that lack it
 maybrew "rlwrap"
 
+# Intuitive find & replace CLI
+maybrew "sd"
 # Static analysis and lint tool, for (ba)sh scripts
 maybrew "shellcheck"
 
