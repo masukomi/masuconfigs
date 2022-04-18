@@ -57,7 +57,7 @@ tester kill <number>-<number>
   removes the tests with numbers within the specified
   range of past failure numbers (inclusive).
 
-tester failures
+tester rerun
   runs all the past failures
   functionally identical to calling with just the
   number for each of the known failures.
@@ -291,7 +291,7 @@ elsif /.*_spec.rb(:\d+)?$/.match(INPUT) || INPUT=="all" || INPUT=="last_file"
 elsif /^\d+$/.match(INPUT)
   line_mod = ARGV.size > 1 ? ARGV[1].to_i : 0
   rerun_run_number(INPUT.to_i, line_mod, past_run_data)
-elsif INPUT == "failures"
+elsif INPUT == "rerun"
  (1..past_run_data["failures"].size).each do | num |
   rerun_run_number(num, 0, past_run_data)
  end
