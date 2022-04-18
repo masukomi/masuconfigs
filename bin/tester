@@ -3,6 +3,10 @@
 require 'json'
 require 'open3'
 
+# KNOWN ISSUES
+# - hangs waiting for input if you have a binding.pry / byebug in your code
+# - "tester rerun" doesn't show the output with the same numbers you'd see
+#   if you ran "tester" with no args.
 
 USAGE=<<~EOL
 tester is a convenience tool to make life easier when dealing with RSpec.
@@ -292,7 +296,8 @@ elsif /^\d+$/.match(INPUT)
   line_mod = ARGV.size > 1 ? ARGV[1].to_i : 0
   rerun_run_number(INPUT.to_i, line_mod, past_run_data)
 elsif INPUT == "rerun"
- (1..past_run_data["failures"].size).each do | num |
+ run_range = (1..past_run_data["failures"].size)
+ run_range.each do | num |
   rerun_run_number(num, 0, past_run_data)
  end
 elsif INPUT == "kill" &&  /^\d+(-\d+)?$/.match(ARGV[1].to_s)
