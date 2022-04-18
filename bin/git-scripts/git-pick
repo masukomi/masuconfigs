@@ -3,8 +3,12 @@
 # Leverages FZF to let you find a local branch or pr
 # using "fuzzy" searching.
 #
-# Usage git pick <branch|pr>
-
+# Usage git pick <branch|pr> [branch substring]
+#   If you supply a branch substring it'll
+#   restrict your results to branches that contain
+#   that substring.
+#   If there is only one, it will switch to it automatically
+#
 # The PR functionality assumes you've modified your
 # git config so that you can checkout PRs locally
 #
@@ -15,11 +19,33 @@
 #    # ^^^ that last line lets you `git checkout pr/1234`
 
 if [ $1 = "branch" ]; then
-  git branch -v \
-    | grep -v " [[:xdigit:]]\{7\} \[gone\]" \
-    | fzf \
-    | awk '{print $1}' \
-    | xargs git checkout
+  if [ $# -eq 2 ]; then
+    lines=$(
+    git branch -v \
+      | grep -v " [[:xdigit:]]\{7\} \[gone\]" \
+      | grep "$2"
+    )
+    line_count=$(echo -n "$lines" | grep -c '^')
+    if [ "$lines" == "" ]; then
+      echo "no branches contain $2"
+      exit 0
+    fi
+    if [ $line_count -ne 1 ]; then
+      echo "$lines" \
+      | fzf \
+      | awk '{print $1}' \
+      | xargs git checkout
+    else
+      git checkout $(echo "$lines" | awk '{print $1}')
+    fi
+
+  else
+    git branch -v \
+      | grep -v " [[:xdigit:]]\{7\} \[gone\]" \
+      | fzf \
+      | awk '{print $1}' \
+      | xargs git checkout
+  fi
 
 elif [ $1 = "pr" ]; then
 
