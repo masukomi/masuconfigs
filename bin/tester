@@ -1,56 +1,64 @@
 #!/usr/bin/env ruby
 
-# USAGE:
-# tester
-#   shows you numbered list of last test failures (if any)
-#
-# tester all
-#   run all rspect tests
-#
-# tester last_file
-#   finds the last file that had a problem
-#   and runs all the tests in it.
-#
-# tester <n>
-#   re-run a specific failure from the last test
-#   as identified by its number
-#
-# test <n> +/-<x>
-#   re-run a specific failure from the last test
-#   as identified by its number
-#   BUT offset the line number of the test +/- x
-#   (useful if you've added or removed lines above it)
-#
-#   Ex. tester 5 +2
-#   runs example number 5 but specifes a line number 2 greater
-#   than the initial failure reported.
-#
-# tester <path_to/file_spec.rb>
-#   run a specific spec and captures failures (if any)
-#   you can run it with the optional line number syntax too
-#   E.g. tester path_to/file_spec.rb
-#     or tester path_to/file_spec.rb:32
-#
-# tester kill <number>
-#   removes the test with the specified number from the
-#   list of past failures
-#
-# tester kill <number>-<number>
-#   removes the tests with numbers within the specified
-#   range of past failure numbers (inclusive).
-#
-# tester failures
-#   runs all the past failures
-#   functionally identical to calling with just the
-#   number for each of the known failures.
-#
-# tester file <number>
-#   outputs the file path from the test with that number
-#
-# tester files
-#   outputs a list of all the files+line numbers of failing tests
 require 'json'
 require 'open3'
+
+
+USAGE=<<~EOL
+USAGE:
+
+tester [-h | --help | help]
+  display these usage instructions
+
+tester
+  shows you numbered list of last test failures (if any)
+
+tester all
+  run all rspect tests
+
+tester last_file
+  finds the last file that had a problem
+  and runs all the tests in it.
+
+tester <n>
+  re-run a specific failure from the last test
+  as identified by its number
+
+test <n> +/-<x>
+  re-run a specific failure from the last test
+  as identified by its number
+  BUT offset the line number of the test +/- x
+  (useful if you've added or removed lines above it)
+
+  Ex. tester 5 +2
+  runs example number 5 but specifes a line number 2 greater
+  than the initial failure reported.
+
+tester <path_to/file_spec.rb>
+  run a specific spec and captures failures (if any)
+  you can run it with the optional line number syntax too
+  E.g. tester path_to/file_spec.rb
+    or tester path_to/file_spec.rb:32
+
+tester kill <number>
+  removes the test with the specified number from the
+  list of past failures
+
+tester kill <number>-<number>
+  removes the tests with numbers within the specified
+  range of past failure numbers (inclusive).
+
+tester failures
+  runs all the past failures
+  functionally identical to calling with just the
+  number for each of the known failures.
+
+tester file <number>
+  outputs the file path from the test with that number
+
+tester files
+  outputs a list of all the files+line numbers of failing tests
+EOL
 
 
 PAST_RUN_FILENAME=".specs.json"
@@ -314,5 +322,7 @@ elsif INPUT == "file" &&  /^\d+$/.match(ARGV[1].to_s)
   end
 elsif INPUT == "files"
   display_files(past_run_data)
+elsif /^-{0,2}h(?:elp)?$/.match(INPUT)
+  puts USAGE
 end
 
