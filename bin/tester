@@ -5,6 +5,15 @@ require 'open3'
 
 
 USAGE=<<~EOL
+tester is a convenience tool to make life easier when dealing with RSpec.
+
+Output is limited to actionable details about failing tests and
+just enough to get you to the right place to fix them.
+
+tester also has a number of options for making it trivial to rerun
+failing tests without needing to specify paths and line numbers.
+
+
 USAGE:
 
 tester [-h | --help | help]
@@ -14,7 +23,7 @@ tester
   shows you numbered list of last test failures (if any)
 
 tester all
-  run all rspect tests
+  run _all_ rspect tests
 
 tester last_file
   finds the last file that had a problem
