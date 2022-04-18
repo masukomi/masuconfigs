@@ -37,6 +37,13 @@
 # - kill number
 #   - removes the test with the specified number from the
 #     list of past failures
+# - kill number-number
+#   - removes the tests with numbers within the specified
+#     range of past failure numbers (inclusive).
+# - failures
+#   - runs all the past failures
+#     functionally identical to calling with just the
+#     number for each of the known failures.
 # - file number
 #   - outputs the file path from the test with that number
 # - files
@@ -216,6 +223,20 @@ def display_files(past_run_data)
   end
 end
 
+def rerun_run_number(num, line_mod, past_run_data)
+  idx = num - 1
+  if past_run_data["failures"].size > 0 && past_run_data["failures"][idx]
+    line_num = past_run_data["failures"][idx]["line_number"].to_i
+    line_num += line_mod
+    spec = past_run_data["failures"][idx]["full_file_path"]
+    spec += ":#{line_num}" if line_num
+    puts "Running: #{spec}\n#{past_run_data["failures"][idx]["message"]}\n\n----------------------------\n"
+    output_run_results(run_this(spec, false))
+  else
+    STDERR.puts("I don't seem to have data on run #{idx + 1}")
+  end
+end
+
 # -------------------------
 
 past_run_data = {"failures" => []}
@@ -250,18 +271,12 @@ elsif /.*_spec.rb(:\d+)?$/.match(INPUT) || INPUT=="all" || INPUT=="last_file"
   end
   output_run_results(updated_run_data)
 elsif /^\d+$/.match(INPUT)
-  idx = INPUT.to_i - 1
   line_mod = ARGV.size > 1 ? ARGV[1].to_i : 0
-  if past_run_data["failures"].size > 0 && past_run_data["failures"][idx]
-    line_num = past_run_data["failures"][idx]["line_number"].to_i
-    line_num += line_mod
-    spec = past_run_data["failures"][idx]["full_file_path"]
-    spec += ":#{line_num}" if line_num
-    puts "Running: #{spec}\n#{past_run_data["failures"][idx]["message"]}\n\n----------------------------\n"
-    output_run_results(run_this(spec, false))
-  else
-    STDERR.puts("I don't seem to have data on run #{idx + 1}")
-  end
+  rerun_run_number(INPUT.to_i, line_mod, past_run_data)
+elsif INPUT == "failures"
+ (1..past_run_data["failures"].size).each do | num |
+  rerun_run_number(num, 0, past_run_data)
+ end
 elsif INPUT == "kill" &&  /^\d+(-\d+)?$/.match(ARGV[1].to_s)
   indexes = Array(ARGV[1].to_i - 1)
   if /^\d+-\d+?$/.match(ARGV[1])
