@@ -111,11 +111,11 @@ def display_failure(failure, index)
 end
 def printable_file_and_line_num(failure)
   if failure["spec_file"]
-    line = "#{ failure["file"].nil? ? "\t" : ""}\e[100;37m#{failure["spec_file"]}\e[0m:\e[100;33m#{failure["spec_file_line_number"]}\e[0m"
+    line = "#{ failure["file"].nil? ? "\t" : ""}\e[100;37m#{failure["spec_file_full_path"]}\e[0m:\e[100;33m#{failure["spec_file_line_number"]}\e[0m"
 
     if failure["file"]
       line = "\tFAILED SPEC: " + line
-      line += "\n\tERROR HERE : \e[100;37m#{failure["file"]}\e[0m:\e[100;33m#{failure["line_number"]}\e[0m"
+      line += "\n\tERROR HERE : \e[100;37m#{failure["file_full_path"]}\e[0m:\e[100;33m#{failure["line_number"]}\e[0m"
     end
     line
   else
@@ -172,7 +172,7 @@ def process_rspec_output(output)
       elsif trace_match and current_failure["file"].nil?
         in_diff = false
         current_failure["file"] = trace_match[2]
-        current_failure["full_file_path"] = trace_match[1]
+        current_failure["file_full_path"] = trace_match[1]
         current_failure["line_number"] = trace_match[3]
         in_failure = false unless current_failure["spec_file"].nil?
       elsif diff_match && ! in_diff
@@ -274,7 +274,7 @@ def rerun_run_number(num, line_mod, past_run_data)
     line_num = past_run_data["failures"][idx]["line_number"].to_i
     line_num += line_mod
     if past_run_data["failures"][idx]["spec_file"].nil?
-      spec = past_run_data["failures"][idx]["full_file_path"]
+      spec = past_run_data["failures"][idx]["file_full_path"]
       spec += ":#{line_num}" if line_num
     else
       line_num = past_run_data["failures"][idx]["spec_file_line_number"].to_i
