@@ -206,7 +206,12 @@ def run_this(spec, update_file, retries = 0)
       # for whatever reason rspec sends SOME errors to standard out
       # not standard error
       exit status.exitstatus
-    elsif standard_error.match(/Bundler::GemNotFound/m)
+    elsif standard_error.match(/(Bundler::GemNotFound|Bundler could not find compatible versions)/m)
+      if standard_error.match(/could not find compatible versions/m)
+        puts "Bundler issue you'll have to address..."
+        puts standard_error.split("\n")[0..20].join("\n")+"\n..."
+        exit 1
+      end
       puts "You need to bundle"
       puts "I'll do that for you."
       if retries == 0
@@ -215,7 +220,7 @@ def run_this(spec, update_file, retries = 0)
           run_this(spec, update_file, 1)
         else
           puts "Nope. I failed to bundle for you."
-          puts bundle_status_error
+          puts bundle_standard_error
           exit bundle_status.exitstatus
         end
       else
