@@ -339,6 +339,10 @@ elsif /^\d+$/.match(INPUT)
   line_mod = ARGV.size > 1 ? ARGV[1].to_i : 0
   rerun_run_number(INPUT.to_i, line_mod, past_run_data)
 elsif INPUT == "rerun"
+ if past_run_data["failures"].size == 0
+   puts "No past failures found to rerun."
+   exit 0
+ end
  run_range = (1..past_run_data["failures"].size)
  run_range.each do | num |
   rerun_run_number(num, 0, past_run_data)
