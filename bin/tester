@@ -73,6 +73,7 @@ tester files
   outputs a list of all the files+line numbers of failing tests
 EOL
 
+NO_FAILURES_TEXT="✅ No failures."
 
 PAST_RUN_FILENAME=".specs.json"
 INPUT = ARGV.size > 0 ? ARGV[0].strip : nil
@@ -202,7 +203,7 @@ def run_this(spec, update_file, retries = 0)
   output, standard_error, status = Open3.capture3( "#{run_line}")
   if status.exitstatus != 0
     if output.match(/^[A-Z]+[a-z]+\w+Error:/)
-      puts "problems encountered: \n\t#{output.split("\n").first(10).join("\n\t")}\n..."
+      puts "⚠️ Problems encountered: \n\t#{output.split("\n").first(10).join("\n\t")}\n..."
       # for whatever reason rspec sends SOME errors to standard out
       # not standard error
       exit status.exitstatus
@@ -241,13 +242,14 @@ def output_run_results(run_data)
   if run_data['failures'].size > 0
     display_failures(run_data['failures'])
   else
-    puts "no failures"
+    puts NO_FAILURES_TEXT
   end
 end
 
 def display_last_run(past_run_data)
-  if past_run_data.fetch('failures', {}).size > 0
-    puts "Displaying failures"
+  failures_count = past_run_data.fetch('failures', {})
+  if failures_count.size > 0
+    puts "Displaying failures (#{failures_count})"
     display_failures(past_run_data['failures'])
   else
     puts "No past run data. Please run a spec through me."
@@ -291,7 +293,7 @@ def rerun_run_number(num, line_mod, past_run_data)
     puts "Running: #{spec}\n#{past_run_data["failures"][idx]["message"]}\n\n----------------------------\n"
     # output_run_results(run_this(spec, false))
     run_data = run_this(spec, false)
-    puts "no failures" if run_data['failures'].size == 0
+    puts NO_FAILURES_TEXT if run_data['failures'].size == 0
   else
     STDERR.puts("I don't seem to have data on run #{idx + 1}")
   end
@@ -334,7 +336,7 @@ elsif /.*_spec.rb(:\d+)?$/.match(INPUT) \
     updated_run_data = run_this("", true)
   end
   # output_run_results(updated_run_data)
-  puts "no failures" if updated_run_data['failures'].size == 0
+  puts NO_FAILURES_TEXT if updated_run_data['failures'].size == 0
 elsif /^\d+$/.match(INPUT)
   line_mod = ARGV.size > 1 ? ARGV[1].to_i : 0
   rerun_run_number(INPUT.to_i, line_mod, past_run_data)
