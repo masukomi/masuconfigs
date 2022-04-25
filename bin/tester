@@ -142,7 +142,7 @@ end
 def definite_debugger_line(line)
   return false unless line
   # puts "line.inspect: '#{line.inspect}'"
-  !! line.match(/^\(byebug\) $/)
+  !! line.match(/^\(byebug\) $|^\[\d+\] pry\(.*?\)> $/)
 end
 def potential_debugger_pause(line)
   !! line.match(/^\s*\d+:\s+/)
