@@ -29,6 +29,7 @@ if test -f /usr/local/share/fish/vendor_completions.d/task.fish
 end
 
 set -x EDITOR mvim
+set -x BAT_PAGER ""
 set -x vmm_use_secure_cookies false
 set -x LLVM_HOME /usr/local/opt/llvm
 set -x DYLD_LIBRARY_PATH $LLVM_HOME/lib
@@ -39,10 +40,6 @@ set -x DYLD_LIBRARY_PATH $LLVM_HOME/lib
 abbr -a less "less -R"
 abbr -a gits "git status -uno"
 abbr -a top "top -o cpu"
-#Compensating for stupidity
-abbr -a givm vimr
-abbr -a gvmi vimr
-#End stupidity...
 abbr -a be 'bundle exec'
 abbr -a colorsave "script -q /dev/null"
 abbr -a doomd 'cd ~/.doom.d'
@@ -54,6 +51,7 @@ abbr -a gbb 'git bisect bad'
 abbr -a gb 'git branch'
 # abbr -a gcane 'git commit --amend --no-edit'
 abbr -a gcm 'git commit -m'
+abbr -a gp 'git pick branch'
 abbr -a gvv 'git remote -vv'
 abbr -a epochtime "date +%s"
 abbr -a epochmillis "date +%s%N | cut -b1-13"
@@ -138,6 +136,8 @@ fish_add_path -g -a $HOME/workspace/git_accessories
 fish_add_path -g -a $HOME/workspace/gocode/bin
 fish_add_path -g -a $HOME/.cargo/bin
 fish_add_path -g -a $HOME/.local/bin # haskell stuff installed with Stack
+# we're prepending this in case the homebrew version is installed
+fish_add_path -g -p $HOME/workspace/private_comments/bin
 
 set CELLAR (brew --cellar)
 fish_add_path -g -a $CELLAR/chicken/5.0.0/bin
