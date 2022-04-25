@@ -1,5 +1,13 @@
 #!/usr/bin/env ruby
 
+# An RSpec wrapper that cuts down on the clutter
+# and makes it easier to re-run failing tests.
+#
+# run:
+#   tester --help
+# to see full usage options.
+#
+#
 require 'json'
 require 'open3'
 
@@ -9,12 +17,6 @@ require 'io/wait'
 require 'stringio'
 require 'expect'
 
-
-
-# KNOWN ISSUES
-# - hangs waiting for input if you have a binding.pry / byebug in your code
-# - "tester rerun" doesn't show the output with the same numbers you'd see
-#   if you ran "tester" with no args.
 
 USAGE=<<~EOL
 tester is a convenience tool to make life easier when dealing with RSpec.
