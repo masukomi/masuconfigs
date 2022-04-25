@@ -388,7 +388,7 @@ def display_last_run(past_run_data)
     puts "Displaying failures (#{failures_count})"
     display_failures(past_run_data['failures'])
   else
-    puts "No past run data. Please run a spec through me."
+    puts "No past failure data. Please run a spec through me."
   end
 end
 
