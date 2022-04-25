@@ -3,6 +3,14 @@
 require 'json'
 require 'open3'
 
+# in case you use byebug or binding.pry
+require 'pty'
+require 'io/wait'
+require 'stringio'
+require 'expect'
+
+
+
 # KNOWN ISSUES
 # - hangs waiting for input if you have a binding.pry / byebug in your code
 # - "tester rerun" doesn't show the output with the same numbers you'd see
@@ -72,6 +80,27 @@ tester file <number>
 tester files
   outputs a list of all the files+line numbers of failing tests
 EOL
+USAGE.freeze
+
+
+# The regex to match ANSI codes
+# from https://github.com/piotrmurach/strings-ansi
+ANSI_MATCHER = %r{
+  (?>\033(
+    \[[\[?>!]?\d*(;\d+)*[ ]?[a-zA-Z~@$^\]_\{\\] # graphics
+    |
+    \#?\d # cursor modes
+    |
+    [)(%+\-*/. ](\d|[a-zA-Z@=%]|) # character sets
+    |
+    O[p-xA-Z] # special keys
+    |
+    [a-zA-Z=><~\}|] # cursor movement
+    |
+    \]8;[^;]*;.*?(\033\\|\07) # hyperlink
+  ))
+}x.freeze
+
 
 NO_FAILURES_TEXT="✅ No failures."
 
@@ -92,6 +121,69 @@ past_run_data = {}
 #     }
 #   ]
 # }
+
+################
+# terminal interactivity stuff
+# in case you use binding.pry or byebug
+# type things
+def process_running?(pid)
+  Process.getpgid(pid)
+  true # or boom
+rescue
+  false
+end
+
+def buffer_last_line(buffer)
+  line = buffer.string.split("\n").last
+  return nil unless line
+  line.gsub(ANSI_MATCHER, "")
+end
+
+def definite_debugger_line(line)
+  return false unless line
+  # puts "line.inspect: '#{line.inspect}'"
+  !! line.match(/^\(byebug\) $/)
+end
+def potential_debugger_pause(line)
+  !! line.match(/^\s*\d+:\s+/)
+end
+
+def wait_for_read(reader, pid, last_line, counter = 0)
+  # counter is a count of times through this with
+  # potential debugger pause lines
+  running = process_running?(pid)
+  if running && ! reader.ready?
+    putc "."
+    return :debugger if definite_debugger_line(last_line)
+    if last_line && potential_debugger_pause(last_line)
+      counter += 1
+      return :debugger if counter > 4
+    # else
+    #   putc last_line.nil? ? "-" : "x"
+    #   puts "last_line: #{last_line}" unless last_line.nil?
+    end
+    sleep 0.2
+    wait_for_read(reader, pid, last_line, counter)
+  elsif running
+    :running
+  else
+    :ready
+  end
+end
+
+def read_into_buffer(reader, buffer)
+  loop do
+    break unless reader.ready?
+    char = reader.read(1)
+    break if char.nil?
+    buffer.putc(char)
+  end
+  buffer
+end
+
+################
+
+
 
 def display_failures(failures)
   failures.each_with_index do | failure, idx |
@@ -198,35 +290,79 @@ def process_rspec_output(output)
   new_run_data
 end
 
-def run_this(spec, update_file, retries = 0)
-  run_line ="bundle exec rspec #{spec}"
-  output, standard_error, status = Open3.capture3( "#{run_line}")
-  if status.exitstatus != 0
-    if output.match(/^[A-Z]+[a-z]+\w+Error:/)
-      puts "⚠️ Problems encountered: \n\t#{output.split("\n").first(10).join("\n\t")}\n..."
-      # for whatever reason rspec sends SOME errors to standard out
-      # not standard error
-      exit status.exitstatus
-    elsif standard_error.match(/(Bundler::GemNotFound|Bundler could not find compatible versions)/m)
-      if standard_error.match(/could not find compatible versions/m)
-        puts "Bundler issue you'll have to address..."
-        puts standard_error.split("\n")[0..20].join("\n")+"\n..."
-        exit 1
-      end
-      puts "You need to bundle"
-      puts "I'll do that for you."
-      if retries == 0
-        bundle_output, bundle_standard_error, bundle_status = Open3.capture3( "bundle install")
-        if bundle_status.exitstatus == 0
-          run_this(spec, update_file, 1)
-        else
-          puts "Nope. I failed to bundle for you."
-          puts bundle_standard_error
-          exit bundle_status.exitstatus
+
+def interactive_run_handler(run_line, output_buffer)
+  PTY.spawn(run_line) do |reader, writer, pid|
+    if process_running?(pid)
+      while process_running?(pid)
+        wait_response = wait_for_read(reader, pid, buffer_last_line(output_buffer))
+        if wait_response != :running # ready or debugger
+          read_into_buffer(reader, output_buffer)
+          # break unless process_running?(pid)
+          if ! process_running?(pid)
+            break
+          end
+          if wait_response == :debugger || reader.expect(/^\(byebug\) /, 0.2) #wait 0.2 sec for a match
+            puts "\n" + output_buffer.string.split("\n").reverse[0..10].reverse.join("\n")
+            user_input = STDIN.gets.chomp
+            writer.puts user_input
+            sleep 0.2 # give it a moment to exit if it wants to
+          else
+          #   # did not see ">" within 2 seconds
+          #   puts "foo.fail"
+          end
+          # break unless process_running?(pid)
         end
-      else
-        exit status.exitstatus
+
+         read_into_buffer(reader, output_buffer)
       end
+    else
+      read_into_buffer(reader, output_buffer)
+    end
+  end
+  output_buffer
+end
+
+def run_this(spec, update_file, retries = 0)
+  run_line ="bundle exec rspec #{spec} 2>&1"
+  # Redirecting STDERR to STDOUT because rspec is...
+  # They've made "interesting" choices about what goes where
+  output_buffer = interactive_run_handler(run_line, StringIO.new(""))
+
+
+  # Getting the exit code from PTY.spawn requires calling
+  # Process.wait(pid)
+  # but that just waits until it exits which will block,
+  # so... just gonna have to do without that unless
+  # you, my brilliant reader, know a workaround.
+
+  output = output_buffer.string
+
+
+  if output.match(/^[A-Z]+[a-z]+\w+Error:/)
+    puts "⚠️ Problems encountered: \n\t#{output.split("\n").first(10).join("\n\t")}\n..."
+    # for whatever reason rspec sends SOME errors to standard out
+    # not standard error
+    exit 1
+  elsif output.match(/(Bundler::GemNotFound|Bundler could not find compatible versions)/m)
+    if output.match(/could not find compatible versions/m)
+      puts "Bundler issue you'll have to address..."
+      puts standard_error.split("\n")[0..20].join("\n")+"\n..."
+      exit 1
+    end
+    puts "You need to bundle"
+    puts "I'll do that for you."
+    if retries == 0
+      bundle_output, bundle_standard_error, bundle_status = Open3.capture3( "bundle install")
+      if bundle_status.exitstatus == 0
+        run_this(spec, update_file, 1)
+      else
+        puts "Nope. I failed to bundle for you."
+        puts bundle_standard_error
+        exit bundle_status.exitstatus
+      end
+    else
+      exit 2
     end
   end
   new_run_data = process_rspec_output(output)
