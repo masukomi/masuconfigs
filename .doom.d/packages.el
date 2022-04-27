@@ -87,6 +87,7 @@
 (package! protobuf-mode)
 (package! ox-clip)
 (package! ox-slack)
+(package! ox-leanpub)
 (package! elmacro)
 (unpin! org-roam) ; Danger Will Robinson!
 (package! org-roam)
@@ -104,4 +105,4 @@
 (package! sqlite3)
 (package! htmlize)
 (package! org-attach-screenshot)
-(package! undo-tree)
+(package! org-wc)

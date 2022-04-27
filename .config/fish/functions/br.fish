@@ -1,1 +1,1 @@
-/Users/kayrhodes/Library/Application Support/org.dystroy.broot/launcher/fish/br.fish
+/Users/masukomi/Library/Application Support/org.dystroy.broot/launcher/fish/br.fish

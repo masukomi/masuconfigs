@@ -35,3 +35,4 @@ test.*
 tester.*
 .dir-locals.el
 ~/.gitconfig_personal
+*~
