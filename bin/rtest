@@ -4,7 +4,7 @@
 # and makes it easier to re-run failing tests.
 #
 # run:
-#   tester --help
+#   rtest --help
 # to see full usage options.
 #
 #
@@ -19,67 +19,67 @@ require 'expect'
 
 
 USAGE=<<~EOL
-tester is a convenience tool to make life easier when dealing with RSpec.
+rtest is a convenience tool to make life easier when dealing with RSpec.
 
 Output is limited to actionable details about failing tests and
 just enough to get you to the right place to fix them.
 
-tester also has a number of options for making it trivial to rerun
+rtest also has a number of options for making it trivial to rerun
 failing tests without needing to specify paths and line numbers.
 
 
 USAGE:
 
-tester [-h | --help | help]
+rtest [-h | --help | help]
   display these usage instructions
 
-tester
+rtest
   shows you numbered list of last test failures (if any)
 
-tester all
+rtest all
   run _all_ rspect tests
 
-tester last_file
+rtest last_file
   finds the last file that had a problem
   and runs all the tests in it.
 
-tester <n>
+rtest <n>
   re-run a specific failure from the last test
   as identified by its number
 
-test <n> +/-<x>
+rtest <n> +/-<x>
   re-run a specific failure from the last test
   as identified by its number
   BUT offset the line number of the test +/- x
   (useful if you've added or removed lines above it)
 
-  Ex. tester 5 +2
+  Ex. rtest 5 +2
   runs example number 5 but specifes a line number 2 greater
   than the initial failure reported.
 
-tester <path_to/file_spec.rb>
+rtest <path_to/file_spec.rb>
   run a specific spec and captures failures (if any)
   you can run it with the optional line number syntax too
-  E.g. tester path_to/file_spec.rb
-    or tester path_to/file_spec.rb:32
+  E.g. rtest path_to/file_spec.rb
+    or rtest path_to/file_spec.rb:32
 
-tester kill <number>
+rtest kill <number>
   removes the test with the specified number from the
   list of past failures
 
-tester kill <number>-<number>
+rtest kill <number>-<number>
   removes the tests with numbers within the specified
   range of past failure numbers (inclusive).
 
-tester rerun
+rtest rerun
   runs all the past failures
   functionally identical to calling with just the
   number for each of the known failures.
 
-tester file <number>
+rtest file <number>
   outputs the file path from the test with that number
 
-tester files
+rtest files
   outputs a list of all the files+line numbers of failing tests
 EOL
 USAGE.freeze
@@ -409,7 +409,7 @@ def display_files(past_run_data)
     puts "\n\n\tNOTE: some duplicate results excluded"
     puts "\tThis just means some common problem is causing multiple"
     puts "\ttests to fail in the same way."
-    puts "\n\trun `tester` with no args to see the full list."
+    puts "\n\trun `rtest` with no args to see the full list."
   end
 end
 
