@@ -1,4 +1,11 @@
 #!/bin/sh
+
+# in order to regenerate the list of installed packages with
+# descriptions run this
+# brew leaves | xargs -n1 brew desc
+# brew leaves --installed-on-request | xargs -n1 brew desc
+
+
 # maybrew == maybe brew (install)
 # $1 must be package to install
 #
@@ -31,6 +38,8 @@ fi
 
 # contains days_progress, hey, oho, and private_comments
 brew tap masukomi/homebrew-apps
+# contains pgcli
+brew tap dbcli/tap
 
 # Yet another dotfiles manager
 # maybrew "yadm"
@@ -53,10 +62,11 @@ maybrew "automake"
 maybrew "awscli"
 # because apple has issues with open source licenses
 maybrew "bash"
-# Statistics utility to count lines of code
+# bat: Clone of cat(1) with syntax highlighting and Git integration
 maybrew "bat"
 # Compiler for the Scheme programming language
 maybrew "chicken"
+# Statistics utility to count lines of code
 maybrew "cloc"
 # Cross-platform make
 maybrew "cmake" # used by yajl
@@ -97,7 +107,7 @@ maybrew "enca"
 maybrew "exa"
 # Simple, fast and user-friendly alternative to find
 maybrew "fd"
-
+# fish: User-friendly command-line shell for UNIX-like operating systems
 maybrew "fish"
 # Command-line outline and bitmap font editor/converter
 maybrew "fontforge"
@@ -188,11 +198,15 @@ maybrew "libyaml"
 maybrew "little-cms2"
 # Like sed, awk, cut, join & sort for name-indexed data such as CSV
 maybrew "miller"
+# pgcli: CLI for Postgres with auto-completion and syntax highlighting
+maybrew "pgcli"
+
 # Shell command parallelization utility
 # a version is included in moreutils
 # but for reasons I forget we'd rather have this one.
 #maybrew "parallel"
 
+# plantuml: Draw UML diagrams (and more)
 # https://plantuml.com
 maybrew "plantuml"
 
@@ -284,6 +298,7 @@ maybrew "translate-shell"
 maybrew "tree"
 # Simple GTD-style task management for the command-line
 maybrew "ultralist"
+# uudeview: Smart multi-file multi-part decoder
 maybrew "uudeview"
 # Pager/text based browser
 maybrew "w3m"
@@ -301,6 +316,7 @@ fi
 
 # maybrew "homebrew/dupes/expect" # gets you unbuffer
 
+# pandoc: Swiss-army knife of markup format conversion
 maybrew "pandoc" # neomutt is using it if nothing else...
 # CLI for Postgres with auto-completion and syntax highlighting
 maybrew "pgcli"
@@ -335,6 +351,8 @@ if ! is_installed "emacs-plus"; then
 else
 	echo "-- Skipping emacs-plus (installed already)"
 fi
+
+# ispell: International Ispell
 maybrew "ispell" #something in/via neomutt wants this
 # A command line interface to the macOS Address Book.
 if ! is_installed "https://raw.github.com/tgray/homebrew-tgbrew/master/contacts2.rb"; then
