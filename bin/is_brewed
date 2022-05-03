@@ -1,0 +1,18 @@
+#!/bin/sh
+
+if brew ls --versions $1 > /dev/null; then
+  # the package is installed
+  echo true
+  exit 0
+else
+  # the package is not installed
+  echo false
+
+  similar=$(brew ls | grep "$1@")
+  if [ "$similar" != "" ]; then
+    echo ""
+    echo "BUT there's this:"
+    echo "$similar"
+  fi
+  exit 1
+fi
