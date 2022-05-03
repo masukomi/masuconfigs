@@ -104,4 +104,9 @@
 (package! sqlite3)
 (package! htmlize)
 (package! org-attach-screenshot)
-(package! undo-tree)
+;; (package! undo-tree)
+
+(package! private-comments-mode)
+; (package! example
+;   :recipe (:host github :repo "masukomi/private-comments-mode"))
+;; (package! textmate)
