@@ -1,0 +1,11 @@
+#!/bin/sh
+
+git status -uno
+
+ASSUMED_UNCHANGED=$( git ls-files -v | grep --color '^[[:lower:]]')
+
+if [ "$ASSUMED_UNCHANGED" != "" ]; then
+	echo ""
+	echo "Git is assuming the following are unchanged:"
+	echo "$ASSUMED_UNCHANGED"
+fi

@@ -38,14 +38,16 @@ set -x DYLD_LIBRARY_PATH $LLVM_HOME/lib
 # Abbreviations
 #
 abbr -a less "less -R"
-abbr -a gits "git status -uno"
+# abbr -a gits "git status -uno"
 abbr -a top "top -o cpu"
 abbr -a be 'bundle exec'
+abbr -a brewed 'is_brewed'
+abbr -a "brewed?" "is_brewed"
 abbr -a colorsave "script -q /dev/null"
 abbr -a doomd 'cd ~/.doom.d'
 abbr -a emacsd 'cd ~/.emacs.d'
 abbr -a ga 'git add'
-abbr -a gits 'git status -uno'
+# abbr -a gits 'git status -uno'
 abbr -a gbg 'git bisect good'
 abbr -a gbb 'git bisect bad'
 abbr -a gb 'git branch'
@@ -138,6 +140,8 @@ fish_add_path -g -a $HOME/.cargo/bin
 fish_add_path -g -a $HOME/.local/bin # haskell stuff installed with Stack
 # we're prepending this in case the homebrew version is installed
 fish_add_path -g -p $HOME/workspace/private_comments/bin
+fish_add_path /usr/local/opt/mongodb-community@4.2/bin
+
 
 set CELLAR (brew --cellar)
 fish_add_path -g -a $CELLAR/chicken/5.0.0/bin
