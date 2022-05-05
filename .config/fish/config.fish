@@ -64,6 +64,7 @@ abbr -a gcm 'git commit -m'
 abbr -a gp 'git pick branch'
 abbr -a gvv 'git remote -vv'
 abbr -a hgrep "history | grep"
+abbr -a lagit "exa -lah --git" # la(h) git
 abbr -a less "less -R"
 abbr -a rca "lcf -p | xargs -I{} sh -c \"echo checking {}; rubocop -A {}\""
 abbr -a rt 'rake test'
