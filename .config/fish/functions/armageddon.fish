@@ -31,3 +31,25 @@ function kill_dangling_docker_volumes
 	end
 end
 
+function docker_info
+	echo "Processes: ----------------------------"
+	docker ps
+
+	echo ""
+	echo "Volumes: ------------------------------"
+	docker volume ls
+
+	echo ""
+	echo "Dangling volumes: ---------------------"
+	docker volume ls --filter dangling=true
+
+	echo ""
+	echo "Images:"
+	docker images
+
+	echo ""
+	echo "Dangling images: ----------------------"
+	docker images --filter dangling=true
+
+	echo "DONE"
+end
