@@ -51,5 +51,7 @@ function docker_info
 	echo "Dangling images: ----------------------"
 	docker images --filter dangling=true
 
+	echo ""
+	echo "---------------------------------------"
 	echo "DONE"
 end
