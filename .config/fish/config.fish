@@ -37,39 +37,39 @@ set -x DYLD_LIBRARY_PATH $LLVM_HOME/lib
 
 # Abbreviations
 #
-abbr -a less "less -R"
-# abbr -a gits "git status -uno"
-abbr -a top "top -o cpu"
-abbr -a be 'bundle exec'
-abbr -a brewed 'is_brewed'
-abbr -a "brewed?" "is_brewed"
-abbr -a colorsave "script -q /dev/null"
-abbr -a doomd 'cd ~/.doom.d'
-abbr -a emacsd 'cd ~/.emacs.d'
-abbr -a ga 'git add'
-# abbr -a gits 'git status -uno'
-abbr -a gbg 'git bisect good'
-abbr -a gbb 'git bisect bad'
-abbr -a gb 'git branch'
 # abbr -a gcane 'git commit --amend --no-edit'
-abbr -a gcm 'git commit -m'
-abbr -a gp 'git pick branch'
-abbr -a gvv 'git remote -vv'
-abbr -a epochtime "date +%s"
-abbr -a epochmillis "date +%s%N | cut -b1-13"
+# abbr -a gits "git status -uno"
+# abbr -a gits 'git status -uno'
+# abbr -a tree "broot" # a tree replacement with funky capabilities
+abbr -a "brewed?" "is_brewed"
+abbr -a be 'bundle exec'
 abbr -a ber 'bundle exec rspec --format=documentation'
-abbr -a rt 'rake test'
-abbr -a rtnw 'env RUBYOPT=W0 rake test'
 abbr -a berc 'bundle exec rails console'
+abbr -a berd 'bundle exec rails server --debugger'
 abbr -a bers 'bundle exec rails server'
 # how to generate the keys for ssl: https://gist.github.com/masukomi/937f65c9c42edaeac50a8676a0b8fa8e
 abbr -a berss "bundle exec rails server -u puma -b 'ssl://0.0.0.0:9292?key=$HOME/.ssh/server.key&cert=$HOME/.ssh/server.crt&verify_mode=none'"
-abbr -a berd 'bundle exec rails server --debugger'
+abbr -a brewed 'is_brewed'
 abbr -a build_tags "~/brew/bin/ctags -R --c++-kinds +p --fields +iaS --extra +q --exclude .rsync_cache ."
+abbr -a colorsave "script -q /dev/null"
+abbr -a doomd 'cd ~/.doom.d'
+abbr -a emacsd 'cd ~/.emacs.d'
+abbr -a epochmillis "date +%s%N | cut -b1-13"
+abbr -a epochtime "date +%s"
+abbr -a ga 'git add'
+abbr -a gb 'git branch'
+abbr -a gbb 'git bisect bad'
+abbr -a gbg 'git bisect good'
+abbr -a gcm 'git commit -m'
+abbr -a gp 'git pick branch'
+abbr -a gvv 'git remote -vv'
 abbr -a hgrep "history | grep"
+abbr -a less "less -R"
 abbr -a rca "lcf -p | xargs -I{} sh -c \"echo checking {}; rubocop -A {}\""
+abbr -a rt 'rake test'
+abbr -a rtnw 'env RUBYOPT=W0 rake test'
 abbr -a sqlf "sqlformat --reindent --keywords upper --identifiers lower"
-# abbr -a tree "broot" # a tree replacement with funky capabilities
+abbr -a top "top -o cpu"
 abbr -a unset 'set --erase'
 
 if [ (uname) = "Darwin" ]
