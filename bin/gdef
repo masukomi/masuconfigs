@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# Greps for the DEF of a Ruby / Crystal / Elixir function
+# uses ripgrep, and egrep to find the DEF
+# of a Ruby / Crystal / Elixir function
 # or a Rails scope definition
 
 WHAT=$1
@@ -15,7 +16,8 @@ echo "Looking in: $WHERE"
 #   def self.foo (ruby / crystal)
 #   defp foo     (elixir)
 #   defmacro     (elixir)
-grep -rn $WHAT $WHERE 2>/dev/null | egrep --colour=never "[[:space:]]*defp? $WHAT|[[:space:]]*def self.$WHAT|[[:space:]]*scope :$WHAT|[[:space:]]*defmacro $WHAT" \
+# grep -rn $WHAT $WHERE 2>/dev/null | egrep --colour=never "[[:space:]]*defp? $WHAT|[[:space:]]*def self.$WHAT|[[:space:]]*scope :$WHAT|[[:space:]]*defmacro $WHAT" \
+rg -n $WHAT $WHERE 2>/dev/null | egrep --colour=never "[[:space:]]*defp? $WHAT|[[:space:]]*def self.$WHAT|[[:space:]]*scope :$WHAT|[[:space:]]*defmacro $WHAT" \
   | egrep -v "tags:" \
   | grep -v ".js:" \
   | grep -v ".log:" \
