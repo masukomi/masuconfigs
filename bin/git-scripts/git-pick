@@ -31,20 +31,29 @@ if [ $1 = "branch" ]; then
       exit 0
     fi
     if [ $line_count -ne 1 ]; then
-      echo "$lines" \
-      | fzf \
-      | awk '{print $1}' \
-      | xargs git checkout
+      branch=$(
+        echo "$lines" \
+        | fzf \
+        | awk '{print $1}'
+      )
     else
-      git checkout $(echo "$lines" | awk '{print $1}')
+      branch=$(echo "$lines" | awk '{print $1}')
     fi
 
   else
-    git branch -v \
+    branch=$(git branch -v \
       | grep -v " [[:xdigit:]]\{7\} \[gone\]" \
       | fzf \
-      | awk '{print $1}' \
-      | xargs git checkout
+      | awk '{print $1}' )
+  fi
+
+  if [ "$branch" != "+" ]; then
+    git checkout $branch
+  else
+    echo "That brach is checked out in another worktree."
+    echo "For more info on worktrees go to:"
+    echo "  https://git-scm.com/docs/git-worktree"
+    exit 0
   fi
 
 elif [ $1 = "pr" ]; then
