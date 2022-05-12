@@ -539,3 +539,12 @@
 	  (if this-win-2nd (other-window 1))))))
 
 (define-key ctl-x-4-map "t" 'toggle-window-split)
+
+; MASTODON Stuff
+; current repo here: https://codeberg.org/martianh/mastodon.el
+(use-package mastodon
+  :ensure t)
+(setq mastodon-instance-url "https://connectified.com"
+      mastodon-active-user "masukomi")
+(use-package emojify
+  :hook (after-init . global-emojify-mode))
