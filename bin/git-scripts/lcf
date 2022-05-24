@@ -8,6 +8,10 @@
 # OR
 # finds and lists the files you've changed since the last commit
 #
+# Usage:
+#  lcf     list the files involved in the last commit
+#  lcf -p  list the pending changes since the last commit
+#
 # then alters the paths to be relative to the current directory
 # if you're in the same part of the tree.
 
