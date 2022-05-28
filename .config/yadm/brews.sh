@@ -42,6 +42,7 @@ brew tap masukomi/homebrew-apps
 brew tap dbcli/tap
 
 # Strip or convert ANSI codes into HTML, (La)Tex, RTF, or BBCode
+# http://www.andre-simon.de/doku/ansifilter/en/ansifilter.php
 maybrew "ansifilter"
 # Yet another dotfiles manager
 # maybrew "yadm"
