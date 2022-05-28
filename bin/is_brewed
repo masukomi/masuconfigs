@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# A simple script to tell you if something is installed
+# with homebrew or not. If not it'll also check if it
+# was maybe installed with a specific version.
+# eg mongodb-community might not be installed while
+# mongodb-community@4.2 may be.
+# exits with 0 or 1 for use in automations
+# but also has text output for humans.
+#
+# Usage: is_brewed <name of package to check for>
+
+
+
+if brew ls --versions $1 > /dev/null; then
+  # the package is installed
+  echo true
+  exit 0
+else
+  # the package is not installed
+  echo false
+
+  similar=$(brew ls | grep "$1@")
+  if [ "$similar" != "" ]; then
+    echo ""
+    echo "BUT there's this:"
+    echo "$similar"
+  fi
+  exit 1
+fi

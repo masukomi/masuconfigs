@@ -405,11 +405,24 @@
          :target (file+head "%<%Y-%m-%d>.org"
                             "#+title: %<%Y-%m-%d>\n"))
         ("w" "work" plain
-         "\n* TODO \n- [ ] get a ticket to work on\n- [ ] check PR comments \n- [ ] see if there are PRs needing review\n\n%?"
+         "\n\nprevious: \nnext: \n* TODO \n- [ ] get a ticket to work on\n- [ ] check PR comments \n- [ ] see if there are PRs needing review\n\n%?"
         :if-new (file+head "%<%Y-%m-%d>.org"
                            "#+title: %<%Y-%m-%d>\n")
         :unnarrowed t)
                 ))
+
+
+; for more on deft check out this video:
+; https://www.youtube.com/watch?v=mldoUx_wi10
+(use-package deft
+  :after org
+  :bind
+  ("C-c n d" . deft)
+  :custom
+  (deft-recursive t)
+  (deft-use-filter-string-for-filename t)
+  (deft-default-extension "org")
+  (deft-directory org-roam-directory))
 
 ;; Enable plantuml-mode for PlantUML files
 (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
@@ -527,7 +540,16 @@
 
 (define-key ctl-x-4-map "t" 'toggle-window-split)
 
-
 ;;;;;;;;;;;;;;;;
 ; stop cluttering my directories with foo.txt~ files
 (setq backup-directory-alist '(("." . "~/.emacs-tmp")))
+
+
+; MASTODON Stuff
+; current repo here: https://codeberg.org/martianh/mastodon.el
+(use-package mastodon
+  :ensure t)
+(setq mastodon-instance-url "https://connectified.com"
+      mastodon-active-user "masukomi")
+(use-package emojify
+  :hook (after-init . global-emojify-mode))

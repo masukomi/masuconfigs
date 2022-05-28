@@ -106,3 +106,11 @@
 (package! htmlize)
 (package! org-attach-screenshot)
 (package! org-wc)
+;; (package! undo-tree)
+
+; (package! private-comments-mode)
+; (package! example
+;   :recipe (:host github :repo "masukomi/private-comments-mode"))
+;; (package! textmate)
+(package! mastodon)
+(package! emojify)
