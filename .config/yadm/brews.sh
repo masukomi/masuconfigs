@@ -41,6 +41,8 @@ brew tap masukomi/homebrew-apps
 # contains pgcli
 brew tap dbcli/tap
 
+# Strip or convert ANSI codes into HTML, (La)Tex, RTF, or BBCode
+maybrew "ansifilter"
 # Yet another dotfiles manager
 # maybrew "yadm"
 # Search tool like grep, but optimized for programmers
