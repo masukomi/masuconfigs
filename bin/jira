@@ -6,6 +6,8 @@
 # current employer.
 #
 # You can prolly tweak this for your company without much work.
+# NOTE: reqires my `workspace` command, but you can just
+# hardcode the URL of your jira instance.
 
 
 function usage () {
