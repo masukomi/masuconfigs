@@ -11,21 +11,24 @@
 
 
 function usage () {
-	echo "Usage: $(basename $0) [-b] [-o [ticket]] [-m [ticket]]"
+	echo "Usage: $(basename $0) -[b|o|m|h] [ticket]"
 	echo " -b: extracts ticket from branch name."
-	echo "      can be combined with other flags."
+	echo "     saves you from typing it manually"
+	echo "     and inevitably fat-fingering it."
+	echo "     can be combined with other flags."
 	echo " -o: open in browser. If -b isn't specified"
 	echo "      this will expect you to pass in the ticket number"
 	echo " -m: generate markdown. If -b isn't specified"
 	echo "      this will expect you to pass in the ticket number."
+	echo " -h: output this help"
 	echo ""
 	echo " Example of combined usage: "
-	echo " -bom will:"
+	echo " jira -bom will:"
 	echo "      * extract the ticket name from the branch,"
 	echo "      * output the markdown link"
 	echo "      * open the url in your browser (macos only)"
 }
-VALID_ARGS=`getopt bom $*`
+VALID_ARGS=`getopt bomh? $*`
 if [[ $? -ne 0 ]]; then
 	usage
 	exit 1;
