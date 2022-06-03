@@ -505,7 +505,7 @@
 (defun raco-fmt ()
   "format with raco fmt"
   (when (eq major-mode 'racket-mode)
-    (shell-command-to-string (format "raco fmt -i %s" buffer-file-name))))
+    (shell-command-to-string (format "raco fmt -i --width 80 %s" buffer-file-name))))
 
 (add-hook 'after-save-hook #'raco-fmt)
 
@@ -539,6 +539,11 @@
 	  (if this-win-2nd (other-window 1))))))
 
 (define-key ctl-x-4-map "t" 'toggle-window-split)
+
+;;;;;;;;;;;;;;;;
+; stop cluttering my directories with foo.txt~ files
+(setq backup-directory-alist '(("." . "~/.emacs-tmp")))
+
 
 ; MASTODON Stuff
 ; current repo here: https://codeberg.org/martianh/mastodon.el

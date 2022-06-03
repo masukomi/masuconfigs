@@ -412,3 +412,5 @@ armageddon() {
 . "$HOME/.cargo/env"
 
 source /Users/kayrhodes/.config/broot/launcher/bash/br
+
+source /Users/masukomi/.config/broot/launcher/bash/br

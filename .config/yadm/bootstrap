@@ -201,6 +201,7 @@ if [ ! -d "~/workspace/reference/emacs/cask" ]; then
 	git clone https://github.com/cask/cask
 	cd cask
 	make install
+	make install # i don't understand why, but whatever
 	cd ~/
 fi
 
