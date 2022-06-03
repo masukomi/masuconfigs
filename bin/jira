@@ -8,6 +8,12 @@ function usage () {
 	echo "      this will expect you to pass in the ticket number"
 	echo " -m: generate markdown. If -b isn't specified"
 	echo "      this will expect you to pass in the ticket number."
+	echo ""
+	echo " Example of combined usage: "
+	echo " -bom will:"
+	echo "      * extract the ticket name from the branch,"
+	echo "      * output the markdown link"
+	echo "      * open the url in your browser (macos only)"
 }
 VALID_ARGS=`getopt bom $*`
 if [[ $? -ne 0 ]]; then
