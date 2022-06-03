@@ -1,5 +1,13 @@
 #!/usr/local/bin/bash
 
+# a tool for opening jira tickets
+# and outputting the markdown ticket link for them
+# based on the branch name conventions of my
+# current employer.
+#
+# You can prolly tweak this for your company without much work.
+
+
 function usage () {
 	echo "Usage: $(basename $0) [-b] [-o [ticket]] [-m [ticket]]"
 	echo " -b: extracts ticket from branch name."
