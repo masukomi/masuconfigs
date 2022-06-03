@@ -1,0 +1,7 @@
+#!/bin/sh
+# a personal tool to tell me what "workspace" i'm in
+# useful because i store code stuff under
+# ~/workspace/client|project/
+# this will return the name of the dir directly under "workspace"
+
+pwd | sed -e "s/.*workspace\///" -e "s/\/.*//"
