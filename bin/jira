@@ -1,12 +1,94 @@
-#!/bin/sh
+#!/usr/local/bin/bash
 
-if [ "$1" == "-o" ]; then
-	TICKET=$(echo "$2" | tr [:lower:] [:upper:])
-	echo https://dutchie.atlassian.net/browse/$TICKET
-elif [ "$1" == "-m" ]; then
-	TICKET=$(echo "$2" | tr [:lower:] [:upper:])
-	echo "[$2](https://dutchie.atlassian.net/browse/$TICKET)"
-else
-	TICKET=$(echo "$1" | tr [:lower:] [:upper:])
-	open https://dutchie.atlassian.net/browse/$TICKET
+function usage () {
+	echo "Usage: $(basename $0) [-b] [-o [ticket]] [-m [ticket]]"
+	echo " -b: extracts ticket from branch name."
+	echo "      can be combined with other flags."
+	echo " -o: open in browser. If -b isn't specified"
+	echo "      this will expect you to pass in the ticket number"
+	echo " -m: generate markdown. If -b isn't specified"
+	echo "      this will expect you to pass in the ticket number."
+}
+VALID_ARGS=`getopt bom $*`
+if [[ $? -ne 0 ]]; then
+	usage
+	exit 1;
 fi
+
+set -- $VALID_ARGS
+while :; do
+	case "$1" in
+		-b)
+			BRANCH=$(git current-branch)
+			FILTERED_BRANCH=$(echo "$BRANCH" | grep "/*-*/")
+			if [ "$FILTERED_BRANCH" != "" ]; then
+				TICKET=$(echo "$FILTERED_BRANCH" | sd "^.*?/(\S+)/.*" '$1')
+				if [ "$TICKET" == *"_"* ]; then
+					TICKET=$(echo "$FILTERED_BRANCH" | sd '^.*(ENG\S+)_.*$' '$1')
+				fi
+			fi
+			if [ "$TICKET" == "" ]; then
+				echo "UNABLE TO DETERMINE TICKET FROM BRANCH: $BRANCH"
+				echo ""
+				usage
+				exit 3
+			fi
+			shift
+			;;
+		-m)
+			MARKDOWN="true"
+			shift
+			;;
+		-o)
+			OPEN="true"
+			shift
+			;;
+		?|-h)
+			usage
+			exit 1
+			;;
+		--)
+			shift
+			break
+			;;
+		# *)
+		# 	echo "unknown arg '$1'"
+		# 	;;
+	esac
+done
+for var in "$@"
+do
+	var=$(echo "$var" | grep -v "^-")
+	#^^^ never managed to get regexp or substring matches
+	# to find things starting (or not starting) with a hyphen
+	if [ "$var" != "" ]; then
+		TICKET=$(echo $var | tr [:lower:] [:upper:])
+		break
+	fi
+done
+
+# echo "TICKET:   $TICKET"
+# echo "BRANCH:   $BRANCH"
+# echo "MARKDOWN: $MARKDOWN"
+# echo "OPEN:     $OPEN"
+
+if [ "$TICKET" == "" ]; then
+	echo "no ticket found / specified"
+	echo ""
+	usage
+	exit 2
+fi
+
+WORKSPACE=$(workspace)
+if [ "$MARKDOWN" == "true" ]; then
+	echo "[$TICKET](https://$WORKSPACE.atlassian.net/browse/$TICKET)"
+else
+	echo "https://$WORKSPACE.atlassian.net/browse/$TICKET"
+fi
+
+if [ "$OPEN" == "true" ]; then
+	open "https://$WORKSPACE.atlassian.net/browse/$TICKET"
+fi
+
+exit 0
+
