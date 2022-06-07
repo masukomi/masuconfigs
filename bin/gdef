@@ -7,7 +7,7 @@
 WHAT=$1
 WHERE=$2
 if [ "$WHERE" = "" ]; then
-  WHERE="*"
+  WHERE="."
 fi
 echo "Searching for definitions of: $WHAT"
 echo "Looking in: $WHERE"
