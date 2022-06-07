@@ -3,6 +3,11 @@
 # uses ripgrep, and egrep to find the DEF
 # of a Ruby / Crystal / Elixir function
 # or a Rails scope definition
+#
+# dependencies: egrep, ripgrep
+# egrep should be installed by default on macOS
+# ripgrep can be found here https://github.com/BurntSushi/ripgrep
+# and installed with homebrew
 
 WHAT=$1
 WHERE=$2
