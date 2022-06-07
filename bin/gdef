@@ -29,6 +29,7 @@ if [ "$WHERE" = "" ]; then
 fi
 echo "Searching for definitions of: $WHAT"
 echo "Looking in: $WHERE"
+echo ""
 # finds
 #   def foo      (elixir / ruby / crystal)
 #   def self.foo (ruby / crystal)
