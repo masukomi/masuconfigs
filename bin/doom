@@ -14,20 +14,20 @@ socket_file=$(lsof -c Emacs | grep server | tr -s " " | cut -d' ' -f8)
 # echo "socket file: $socket_file"
 
 while getopts "nf" opt; do
-	case ${opt} in
-		n)
-			NEW="true"
-			;;
-		f)
-			FORCE="true"
-			;;
-		h)
-			echo "Usage: doom [-n|-f] [path]"
-			echo "     -n open a new window"
-			echo "     -f force use of a new emacs server"
-			exit 0
-			;;
-	esac
+  case ${opt} in
+    n)
+      NEW="true"
+      ;;
+    f)
+      FORCE="true"
+      ;;
+    h)
+      echo "Usage: doom [-n|-f] [path]"
+      echo "     -n open a new window"
+      echo "     -f force use of a new emacs server"
+      exit 0
+      ;;
+  esac
 done
 shift $((OPTIND -1))
 
