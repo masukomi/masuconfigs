@@ -2,6 +2,10 @@
 # original version found here
 #
 
+# to see what's actually going on with lsof (List of Open Files)
+# run this
+# lsof -c Emacs | grep -E "COMMAND|server"
+
 socket_file=$(lsof -c Emacs | grep server | tr -s " " | cut -d' ' -f8)
 # executable paths handled by homebrew
 # emacs=/Applications/Emacs.app/Contents/MacOS/Emacs
@@ -9,14 +13,33 @@ socket_file=$(lsof -c Emacs | grep server | tr -s " " | cut -d' ' -f8)
 
 # echo "socket file: $socket_file"
 
-if [[ $socket_file == "" ]]; then
+while getopts "nf" opt; do
+	case ${opt} in
+		n)
+			NEW="true"
+			;;
+		f)
+			FORCE="true"
+			;;
+		h)
+			echo "Usage: doom [-n|-f] [path]"
+			echo "     -n open a new window"
+			echo "     -f force use of a new emacs server"
+			exit 0
+			;;
+	esac
+done
+shift $((OPTIND -1))
+
+if [[ $socket_file == "" ]] || [[ "$FORCE" == "true" ]]; then
 echo "starting Emacs server..."
+
  emacs --chdir $PWD --execute "(server-start)" $@ > /dev/null 2>&1 &
  disown
 else
   echo "will use client"
-  if [[ "$1" == "new" ]]; then
-    shift
+  if [[ "$NEW" == "true" ]]; then
+    echo "\t...with new frame"
     emacsclient --create-frame -n $@ --socket-name $socket_file > /dev/null 2>&1
   else
     emacsclient -n $@ --socket-name $socket_file > /dev/null 2>&1
