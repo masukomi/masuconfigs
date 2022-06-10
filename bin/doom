@@ -6,7 +6,10 @@
 # run this
 # lsof -c Emacs | grep -E "COMMAND|server"
 
-socket_file=$(lsof -c Emacs | grep server | tr -s " " | cut -d' ' -f8)
+socket_file=$(lsof -c Emacs | grep server | tr -s " " | cut -d' ' -f8 | tail -n1)
+# tail -n1 because you can sometimes get multiple lines back
+# and the last one is going to be the one with the most recent PID
+
 # executable paths handled by homebrew
 # emacs=/Applications/Emacs.app/Contents/MacOS/Emacs
 # emacsclient=/Applications/Emacs.app/Contents/MacOS/bin/emacsclient
@@ -32,10 +35,9 @@ done
 shift $((OPTIND -1))
 
 if [[ $socket_file == "" ]] || [[ "$FORCE" == "true" ]]; then
-echo "starting Emacs server..."
-
- emacs --chdir $PWD --execute "(server-start)" $@ > /dev/null 2>&1 &
- disown
+  echo "starting Emacs server..."
+  emacs --chdir $PWD --execute "(server-start)" $@ > /dev/null 2>&1 &
+  disown
 else
   echo "will use client"
   if [[ "$NEW" == "true" ]]; then
@@ -43,6 +45,11 @@ else
     emacsclient --create-frame -n $@ --socket-name $socket_file > /dev/null 2>&1
   else
     emacsclient -n $@ --socket-name $socket_file > /dev/null 2>&1
+  fi
+
+  if [ $? -ne 0 ]; then
+    echo "😰 um... that... didn't work. Sorry."
+    exit 1
   fi
 fi
 
