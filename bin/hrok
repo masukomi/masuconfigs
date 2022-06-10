@@ -1,8 +1,67 @@
 #!/bin/sh
 
-cat gh_status.json \
+# heroku status checker
+# this is completely unnecessary
+#
+# Usage hrok [-d <days worth of open incidents>]
+#
+# you can just use `heroku status` if you've
+# got the heroku command line client.
+# or just go to https://status.heroku.com/ in your browser
+#
+# This does NOT fetch details on incidents
+
+# based on https://devcenter.heroku.com/articles/heroku-status
+# inspired by
+# * jiok https://github.com/masukomi/jiok
+# * atok https://github.com/masukomi/atok
+# * and their parent
+#   https://github.com/abennett/ghok
+#
+# DEPENDENCIES
+# * jq https://stedolan.github.io/jq/
+
+
+while getopts "d:" opt; do
+	case ${opt} in
+		d)
+			DAYS_AGO=${OPTARG}
+			;;
+	esac
+done
+
+curl --silent "https://status.heroku.com/api/v4/current-status" \
 	| jq '.status[] | {system,status} | join(" ")' \
 	| sed -e 's/"//g' \
 		-e "s/green/✅/" \
 		-e "s/red/❌/" \
 		-e "s/^\(.*\) \(.*\)/\2 \1/g"
+
+if [ "$DAYS_AGO" == "" ]; then
+	DAYS_AGO=1
+fi
+
+
+DAYS_AGO_ARG="-$DAYS_AGO"d
+YESTERDAY=$(date -v $DAYS_AGO_ARG '+%Y-%m-%d')
+if [ $? -ne 0 ]; then
+	# ugh... ok so BSD vs GNU.. try the GNU form
+	YESTERDAY=$(date -d "$DAYS_AGO day ago" '+%Y-%m-%d')
+fi
+
+UNRESOLVED_TEXT=$(curl --silent "https://status.heroku.com/api/v4/incidents?since=$YESTERDAY" \
+	| jq '.[] | select( .resolved | contains(false)) | {title, resolved, full_url}' \
+	| sed -E "s/{|}//g" \
+	| sed -e 's/^ *"//g' \
+	| sed -E 's/": "|": /XXX/g' \
+	| sed -E 's/",$|"$//g' \
+	| awk -F "XXX" '{printf "%10s %s\n",$1,$2}')
+
+echo ""
+if [ "$UNRESOLVED_TEXT" != "" ]; then
+	echo "UNRESOLVED incidents in the past $DAYS_AGO day(s)"
+	echo "$UNRESOLVED_TEXT"
+else
+	echo "No unresolved incidents in the past $DAYS_AGO day(s)"
+fi
+
