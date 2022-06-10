@@ -8,7 +8,7 @@ function fbn --argument-names 'filename' 'path' -d "find by name. Looks for a fi
 	if test "$path" = ""
 		fd "$filename"
 	else
-		fd $path "$filename"
+		fd "$filename" $path
 	end
 end
 
