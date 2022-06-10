@@ -1,0 +1,8 @@
+#!/bin/sh
+
+cat gh_status.json \
+	| jq '.status[] | {system,status} | join(" ")' \
+	| sed -e 's/"//g' \
+		-e "s/green/✅/" \
+		-e "s/red/❌/" \
+		-e "s/^\(.*\) \(.*\)/\2 \1/g"
