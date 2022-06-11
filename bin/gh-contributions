@@ -1,0 +1,123 @@
+#!/bin/bash
+
+# finds and lists all the github repositories
+# you have committed to.
+#
+# REQUIREMENTS
+# gh command line client (must be installed AND authenticated)
+# jq to parse the GH output
+#
+# credit:
+# posted here to Stack Overflo
+#   https://stackoverflow.com/a/65578340/13973
+# by casper.dcl
+#    https://stackoverflow.com/users/3896283/casper-dcl
+# based on code found here:
+#   https://github.com/casperdcl/cdcl/
+# and cleaned up by masukomi
+#   https://masukom.org
+
+EXCLUDE_SELF="false"
+
+function usage () {
+    echo "Usage: gh-contributions [-e|-h|-u <username>]"
+    echo "       -h display this help"
+    echo "       -e exclude repos under the specified username"
+    echo "          NOTE: may cause this to appear hung mid-run"
+    echo "          if you have a lot of repos. Just let it run."
+    echo "       -u specify the username to search with"
+    echo "          ALTERNATELY you can set the GH_USERNAME"
+    echo "          environment variable. "
+}
+
+while getopts "heu:" opt; do
+  case ${opt} in
+    e)
+      EXCLUDE_SELF="true"
+      ;;
+    u)
+      GH_USERNAME=${OPTARG}
+      ;;
+    h)
+      usage
+      exit 0
+      ;;
+  esac
+done
+
+if [ "$GH_USERNAME" == "" ]; then
+  echo "username is not specified"
+  echo ""
+  usage
+  exit 1
+fi
+
+
+
+
+ghjq() { # <endpoint> <filter>
+  # filter all pages of authenticated requests to https://api.github.com
+
+  gh_response=$(gh api --paginate "$1" 2>&1)
+  echo "$gh_response" | grep "^gh: "
+  if [ $? -eq 0 ] ; then
+    echo "ERROR: problem with gh_response to $1"
+    echo "$gh_response"
+    exit 2
+  fi
+
+  jq_response=$(echo "$gh_response" | jq -r "$2" 2>&1)
+  if [ $? -ne 0 ]; then
+    echo "ERROR: trouble parsing gh_response"
+    echo "gh response from $1"
+    echo "$gh_response"
+    echo "------"
+    echo "jq response"
+    echo "$jq_response"
+    exit 3
+  fi
+  echo "$jq_response"
+}
+repos="$(
+  ghjq users/$GH_USERNAME/repos .[].full_name
+  if [ $? -ne 0 ]; then
+    echo "ERROR a"
+    exit 5
+  fi
+  ghjq "search/issues?q=is:pr+author:$GH_USERNAME+is:merged" \
+    '.items[].repository_url | sub(".*github.com/repos/"; "")'
+  if [ $? -ne 0 ]; then
+    echo "ERROR b"
+    exit 5
+  fi
+  ghjq users/$GH_USERNAME/subscriptions .[].full_name
+  if [ $? -ne 0 ]; then
+    echo "ERROR c"
+    exit 5
+  fi
+  for org in "$(ghjq users/$GH_USERNAME/orgs .[].login)"; do
+    ghjq orgs/$org/repos .[].full_name
+    if [ $? -ne 0 ]; then
+    echo "ERROR d"
+      exit 5
+    fi
+  done
+)"
+
+repos="$(echo "$repos" | sort --ignore-case -u)"
+# print repo if user is a contributor
+for repo in $repos; do
+  if [[ $(ghjq repos/$repo/contributors "[.[].login | test(\"$GH_USERNAME\")] | any") == "true" ]]; then
+    echo $repo | grep "^$GH_USERNAME" > /dev/null
+    if [ $? -eq 0 ]; then
+      yours="true"
+    else
+      yours="false"
+    fi
+    # echo "$repo is yours $yours && you're excluding self: $EXCLUDE_SELF"
+    # if it's not your repo OR you're not excluding yourself
+    if [ "$yours" == "false" ] || [ "$EXCLUDE_SELF" == "false" ]; then
+      echo $repo
+    fi
+  fi
+done
