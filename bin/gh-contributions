@@ -15,7 +15,7 @@
 # based on code found here:
 #   https://github.com/casperdcl/cdcl/
 # and cleaned up by masukomi
-#   https://masukom.org
+#   https://masukomi.org
 
 EXCLUDE_SELF="false"
 
