@@ -126,6 +126,8 @@ fi
 
 # GNU internationalization (i18n) and localization (l10n) library
 maybrew "gettext"
+# GitHub command-line tool
+maybrew "gh"
 # Interpreter for PostScript and PDF
 maybrew "ghostscript"
 # Distributed revision control system
