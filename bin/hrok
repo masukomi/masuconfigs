@@ -55,7 +55,13 @@ UNRESOLVED_TEXT=$(curl --silent "https://status.heroku.com/api/v4/incidents?sinc
 	| sed -e 's/^ *"//g' \
 	| sed -E 's/": "|": /XXX/g' \
 	| sed -E 's/",$|"$//g' \
-	| awk -F "XXX" '{printf "%10s %s\n",$1,$2}')
+	| awk -F "XXX" '{printf "%10s: %s\n",$1,$2}')
+
+# don't really understand why this doesn't work
+# as part of the stuff above, but it doesn't.
+# get rid of the 2 "  :  " lines.
+UNRESOLVED_TEXT=$(echo "$UNRESOLVED_TEXT" \
+	| sed -e 's/^[[:space:]]*:[[:space:]]*$//')
 
 echo ""
 if [ "$UNRESOLVED_TEXT" != "" ]; then
