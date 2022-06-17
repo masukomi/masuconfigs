@@ -152,7 +152,6 @@ set -x -g JAVA_HOME $CELLAR/openjdk/17.0.2/
 fish_add_path -g -a $JAVA_HOME/bin
 # newer bash in path
 fish_add_path -g -p /opt/homebrew/opt/bash/bin
-
 ## Racket
 fish_add_path -g /Applications/Racket*/bin
 
@@ -207,7 +206,8 @@ set -g theme_powerline_fonts yes
 # rvm invocation
 # rvm default
 # rbenv invocation
-# status --is-interactive; and source (rbenv init -|psub)
+status --is-interactive; and rbenv init - fish | source
+fish_add_path -g -p $HOME/.rbenv/shims
 
 test -e {$HOME}/.iterm2_shell_integration.fish ; and source {$HOME}/.iterm2_shell_integration.fish
 
@@ -229,7 +229,7 @@ set -x TZ_LIST "US/Pacific,Europe/Paris"
 # https://asdf-vm.com/guide/getting-started.html
 # search for Fish. 3 different ways of handling based on how installed
 #echo -e "\nsource "(brew --prefix asdf)"/libexec/asdf.fish" >> ~/.config/fish/config.fish
-source (brew --prefix asdf)/libexec/asdf.fish
+# source (brew --prefix asdf)/libexec/asdf.fish
 
 if test -d (brew --prefix)"/share/fish/vendor_completions.d"
     set -gx fish_complete_path $fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
