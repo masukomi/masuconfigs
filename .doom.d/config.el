@@ -553,3 +553,12 @@
       mastodon-active-user "masukomi")
 (use-package emojify
   :hook (after-init . global-emojify-mode))
+
+;;; lua mode
+(autoload 'lua-mode "lua-mode" "Lua editing mode." t
+(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
+
+;;; fennel mode
+(autoload 'fennel-mode "/path/to/fennel-mode/fennel-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.fnl\\'" . fennel-mode))

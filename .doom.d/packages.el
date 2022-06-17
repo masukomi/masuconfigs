@@ -114,3 +114,6 @@
 ;; (package! textmate)
 (package! mastodon)
 (package! emojify)
+(package! janet-mode)
+(package! lua-mode)
+(package! fennel-mode)
