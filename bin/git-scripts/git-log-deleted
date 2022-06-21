@@ -6,4 +6,4 @@ if [ "$FILE" == "" ]; then
 	exit 64
 fi
 
-git log --all --full-history -- "$FILE"
+git log --stat --all --full-history -- "$FILE"

@@ -553,6 +553,7 @@
       mastodon-active-user "masukomi")
 (use-package emojify
   :hook (after-init . global-emojify-mode))
+(require 'mastodon-async)
 
 ;;; lua mode
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t
@@ -562,3 +563,25 @@
 ;;; fennel mode
 (autoload 'fennel-mode "/path/to/fennel-mode/fennel-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.fnl\\'" . fennel-mode))
+
+
+
+;; magit stuff
+;; documentation for magit-blame-styles here
+;; https://github.com/magit/magit/blob/9b48dd7e3618ac3736f66ef964ae5e1fedd54f98/lisp/magit-blame.el#L39
+(setq magit-blame-styles
+           '((margin
+              (margin-width . 32)
+              (margin-format . ("%C %a %f"))
+              (margin-face . magit-blame-margin)
+              (margin-body-face . magit-blame-dimmed)
+              (show-message . t))))
+;; the cache is always wrong after switching branches
+;; use magit to switch and you can then auto-invalidate it.
+(defun run-projectile-invalidate-cache (&rest _args)
+  ;; We ignore the args to `magit-checkout'.
+  (projectile-invalidate-cache nil))
+(advice-add 'magit-checkout
+            :after #'run-projectile-invalidate-cache)
+(advice-add 'magit-branch-and-checkout ; This is `b c'.
+            :after #'run-projectile-invalidate-cache)

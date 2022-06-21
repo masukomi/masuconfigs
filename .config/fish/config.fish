@@ -236,3 +236,4 @@ if test -d (brew --prefix)"/share/fish/vendor_completions.d"
 end
 
 set -x NVM_DIR "$HOME/.nvm"
+set -gx RTEST_AUTO_VERBOSE "30"
