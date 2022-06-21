@@ -6,6 +6,7 @@ function tlf --description "Test Last Find"
 	set -l path (eval \
 					(history \
 					| grep "fbn " \
+					| grep "\_spec.rb" \
 					| grep -v "grep" \
 					| head -n1) \
 				| head -n1)
