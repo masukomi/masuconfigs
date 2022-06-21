@@ -46,14 +46,12 @@ if [ "$NEW" == "true" ]; then
     rubocop -A $path
     echo "----------------------------------"
   done
-  # lcf -p | xargs -I path sh -c "echo checking path; echo rubocop -A path; echo ''"
 else
   for path in $(lcf); do
     echo checking $path
     rubocop -A $path
     echo "----------------------------------"
   done
-  # lcf | xargs -I path sh -c "echo checking path; echo rubocop -A path; echo ''"
 fi
 
 
