@@ -12,8 +12,11 @@ function tlf --description "Test Last Find"
 				| head -n1)
 	argparse 'r/rspec' -- $argv
 	if set -q _flag_r || set -q _flag_rspec
+		echo "Running: bundle exec rspec --format=documentation \ "
+		echo "    $path"
 		bundle exec rspec --format=documentation $path
 	else
+		echo Running: rtest $path
 		rtest $path
 	end
 end
