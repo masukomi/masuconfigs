@@ -1,0 +1,59 @@
+#!/bin/sh
+
+# runs rubocop -A on files changed in the last commit
+# or since the last commit.
+#
+# Usage: copstop [-n|-l]
+#  -n files changed since the last commit
+#  -l files changed in the last commit
+#
+# requires lcf to be installed
+# https://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/lcf
+
+
+function usage(){
+    echo "Usage: copstop [-n|-l]"
+    echo " -n files changed since the last commit"
+    echo " -l files changed in the last commit"
+    exit 0
+}
+
+while getopts "ln" opt; do
+  case ${opt} in
+    n)
+      NEW="true"
+      ;;
+    l)
+      LAST="true"
+      ;;
+    h)
+      usage
+      ;;
+  esac
+done
+
+if [ "$NEW" == "" ] && [ "$LAST" == "" ]; then
+  echo "please specify -n or -l"
+  echo ""
+  usage
+fi
+
+
+
+if [ "$NEW" == "true" ]; then
+  for path in $(lcf -p); do
+    echo checking $path
+    rubocop -A $path
+    echo "----------------------------------"
+  done
+  # lcf -p | xargs -I path sh -c "echo checking path; echo rubocop -A path; echo ''"
+else
+  for path in $(lcf); do
+    echo checking $path
+    rubocop -A $path
+    echo "----------------------------------"
+  done
+  # lcf | xargs -I path sh -c "echo checking path; echo rubocop -A path; echo ''"
+fi
+
+
