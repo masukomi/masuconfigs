@@ -206,8 +206,10 @@ set -g theme_powerline_fonts yes
 # rvm invocation
 # rvm default
 # rbenv invocation
-status --is-interactive; and rbenv init - fish | source
-fish_add_path -g -p $HOME/.rbenv/shims
+if test (command -v rbenv)
+	status --is-interactive; and rbenv init - fish | source
+	fish_add_path -g -p $HOME/.rbenv/shims
+end
 
 test -e {$HOME}/.iterm2_shell_integration.fish ; and source {$HOME}/.iterm2_shell_integration.fish
 
@@ -228,8 +230,10 @@ set -x TZ_LIST "US/Pacific,Europe/Paris"
 # if you have problems with this the docs are here
 # https://asdf-vm.com/guide/getting-started.html
 # search for Fish. 3 different ways of handling based on how installed
-#echo -e "\nsource "(brew --prefix asdf)"/libexec/asdf.fish" >> ~/.config/fish/config.fish
-# source (brew --prefix asdf)/libexec/asdf.fish
+if test (command -v asdf)
+	echo -e "\nsource "(brew --prefix asdf)"/libexec/asdf.fish" >> ~/.config/fish/config.fish
+	source (brew --prefix asdf)/libexec/asdf.fish
+end
 
 if test -d (brew --prefix)"/share/fish/vendor_completions.d"
     set -gx fish_complete_path $fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
@@ -237,3 +241,7 @@ end
 
 set -x NVM_DIR "$HOME/.nvm"
 set -gx RTEST_AUTO_VERBOSE "30"
+
+source /usr/local/opt/asdf/libexec/asdf.fish
+
+source /usr/local/opt/asdf/libexec/asdf.fish
