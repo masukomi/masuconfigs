@@ -28,7 +28,7 @@ function fbn --argument-names 'filename' 'path' -d "find by name. Looks for a fi
 
 	if test "$path" = "" || test "--exec" = (echo "$path" | sd "(--exec)=.*" '$1')
 		if set -q _flag_exec
-			for file in (fd "$filename")
+			for file in (fd --hidden "$filename")
 				fbn_exec "$file" "$_flag_exec"
 			end
 		else
@@ -36,7 +36,7 @@ function fbn --argument-names 'filename' 'path' -d "find by name. Looks for a fi
 		end
 	else
 		if set -q _flag_exec
-			for file in (fd "$filename" "$path")
+			for file in (fd --hidden "$filename" "$path")
 				fbn_exec "$file" "$_flag_exec"
 			end
 		else
