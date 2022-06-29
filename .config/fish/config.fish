@@ -196,12 +196,12 @@ set -gx PKG_CONFIG_PATH "/usr/local/opt/readline/lib/pkgconfig"
 
 # END Enscripten
 
-# START Bob The Fish prompt
-# ~/.config/fish/functions/fish_prompt.fish
-set -g theme_display_ruby no
-set -g theme_nerd_fonts no
-set -g theme_powerline_fonts yes
-# END Bob the Fish
+# # START Bob The Fish prompt
+# # ~/.config/fish/functions/fish_prompt.fish
+# set -g theme_display_ruby no
+# set -g theme_nerd_fonts no
+# set -g theme_powerline_fonts yes
+# # END Bob the Fish
 
 # rvm invocation
 # rvm default
@@ -231,8 +231,11 @@ set -x TZ_LIST "US/Pacific,Europe/Paris"
 # https://asdf-vm.com/guide/getting-started.html
 # search for Fish. 3 different ways of handling based on how installed
 if test (command -v asdf)
-	echo -e "\nsource "(brew --prefix asdf)"/libexec/asdf.fish" >> ~/.config/fish/config.fish
-	source (brew --prefix asdf)/libexec/asdf.fish
+  grep "asdf.fish" ~/.config/fish/config.fish | grep -v grep | grep -v echo | grep -v brew >/dev/null
+  if test $status -ne 0
+    echo -e "\nsource "(brew --prefix asdf)"/libexec/asdf.fish" >> ~/.config/fish/config.fish
+    source (brew --prefix asdf)/libexec/asdf.fish
+  end
 end
 
 if test -d (brew --prefix)"/share/fish/vendor_completions.d"
@@ -242,6 +245,5 @@ end
 set -x NVM_DIR "$HOME/.nvm"
 set -gx RTEST_AUTO_VERBOSE "30"
 
-source /usr/local/opt/asdf/libexec/asdf.fish
 
 source /usr/local/opt/asdf/libexec/asdf.fish
