@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# list all the executables in your PATH
+
+
+# dark magic found here
+# https://unix.stackexchange.com/a/120870/124338
+
+{ set -f;
+ IFS=:;
+ for d in $PATH;
+ do set +f;
+ [ -n "$d" ] || d=.;
+ for f in "$d"/.[!.]* "$d"/..?* "$d"/*;
+   do [ -f "$f" ] && [ -x "$f" ] && printf '%s\n' "${f##*/}";
+   done;
+ done;
+} | sort
