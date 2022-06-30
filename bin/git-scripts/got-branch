@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ "$1" == "" ]; then
+  git rev-parse --abbrev-ref HEAD
+else
+  echo arg was $1
+  git pick branch "$1"
+fi
