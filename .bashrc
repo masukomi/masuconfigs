@@ -388,8 +388,12 @@ fi
 
 #source ~/.oh-my-git/prompt.sh
 # eval "$(thefuck --alias)"
-
-eval "$(rbenv init -)"
+if test $(command -v asdf); then
+	source $(brew --prefix asdf)"/libexec/asdf.sh"
+fi
+if test $(command -v rbenv); then
+	eval "$(rbenv init -)"
+fi
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export BASH_SILENCE_DEPRECATION_WARNING=1 # OMG SHUT UP Catalina!
@@ -410,7 +414,3 @@ armageddon() {
 }
 
 . "$HOME/.cargo/env"
-
-source /Users/kayrhodes/.config/broot/launcher/bash/br
-
-source /Users/masukomi/.config/broot/launcher/bash/br
