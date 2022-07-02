@@ -231,11 +231,7 @@ set -x TZ_LIST "US/Pacific,Europe/Paris"
 # https://asdf-vm.com/guide/getting-started.html
 # search for Fish. 3 different ways of handling based on how installed
 if test (command -v asdf)
-  grep "asdf.fish" ~/.config/fish/config.fish | grep -v grep | grep -v echo | grep -v brew >/dev/null
-  if test $status -ne 0
-    echo -e "\nsource "(brew --prefix asdf)"/libexec/asdf.fish" >> ~/.config/fish/config.fish
-    source (brew --prefix asdf)/libexec/asdf.fish
-  end
+  source (brew --prefix asdf)/libexec/asdf.fish
 end
 
 if test -d (brew --prefix)"/share/fish/vendor_completions.d"
@@ -246,4 +242,3 @@ set -x NVM_DIR "$HOME/.nvm"
 set -gx RTEST_AUTO_VERBOSE "30"
 
 
-source /usr/local/opt/asdf/libexec/asdf.fish
