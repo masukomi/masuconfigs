@@ -350,10 +350,10 @@
 ; ☝️ that code would be good but we're using rubocop-flexport which is buggy
 ;    and causes that to break
 ;; (defun rubocop-format ()
-(defun rfmt ()
-  "rubocop-flexport is crap that breaks rubocop-autocorrect-command"
-  (when (eq major-mode 'ruby-mode)
-    (shell-command-to-string (format "rubocop -A %s" buffer-file-name))))
+;; (defun rfmt ()
+;;   "rubocop-flexport is crap that breaks rubocop-autocorrect-command"
+;;   (when (eq major-mode 'ruby-mode)
+;;     (shell-command-to-string (format "rubocop -A %s" buffer-file-name))))
 
 ; (add-hook 'after-save-hook #'rubocop-format)
 ; (add-hook 'after-save-hook #'rfmt)
@@ -466,6 +466,7 @@
 (setq org-plantuml-jar-path
   (expand-file-name "/usr/local/opt/plantuml/libexec/plantuml.jar"))
 
+(setq auto-completion-delay 1)
 
 ; syntax highlighting within org blocks
 (setq org-src-fontify-natively t)
@@ -556,7 +557,7 @@
 (require 'mastodon-async)
 
 ;;; lua mode
-(autoload 'lua-mode "lua-mode" "Lua editing mode." t
+(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
 (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
 (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
 

@@ -82,7 +82,7 @@
 ; curl https://3e8.org/pub/chicken-doc/chicken-doc-repo-5.tgz | sudo tar zx
 (package! geiser-chicken)
 (package! scheme-complete)
-(package! rubocop)
+;; (package! rubocop)
 (package! rspec-mode)
 (package! protobuf-mode)
 (package! ox-clip)
