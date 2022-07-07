@@ -98,7 +98,7 @@ abbr -a do "docker"
 abbr -a berd 'docker-compose exec bin/rspec --format=documentation'
 
 abbr -a sbw 'env SKIP=bad_words'
-abbr -a sall 'env SKIP=bad_words,rb_tester,rubocopper'
+abbr -a sall 'env SKIP=bad_words,rb_tester,rubocopper,ruby_docs'
 
 alias vimr /Applications/VimR.app/Contents/Resources/vimr
 abbr -a vfz "mvim (fzf)"
@@ -120,7 +120,7 @@ fish_add_path -p -g $HOME/.asdf/shims
 fish_add_path -g ./bin
 fish_add_path -g -p /opt/homebrew/bin
 # (which fish | sed "s/\/fish//")
-fish_add_path -g . $HOME/bin $HOME/bin/git-scripts /usr/local/bin $PATH
+fish_add_path -g . $HOME/bin $HOME/bin/git-scripts $HOME/bin/git-scripts/hooks /usr/local/bin $PATH
 # vvv make python 3 found before macOSs python 2.7
 # macOS one is at /usr/local/bin/python
 set -x PATH /usr/local/opt/python/libexec/bin $PATH
