@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+
+# intended to be used as a pre-commit hook.
+# this script checks ruby files to make sure
+# every method has a preceeding comment
+
+
+
+# returns false if the prior line (index - 1)
+# is < 0
+def prior_line_is_doc?(lines, index)
+  if index > 0
+    prior_line = get_prior_line(lines, index)
+    return !! /^\s*#/.match(prior_line)
+  end
+  false
+end
+
+# indicates if the prior line contains a rubocop:disable/enable line
+def prior_line_is_rubocop?(lines, index)
+  prior_line = get_prior_line(lines, index)
+  !! /^\s*# rubocop:/.match(prior_line)
+end
+
+# returns prior line or empty string if index is <= 0
+# empty string is just going to make life easier
+def get_prior_line(lines, index)
+  index > 0 ? lines[index - 1] : ""
+end
+
+# get a list of all the files in the index
+files = `git diff --cached --name-only --diff-filter=ACM`.split("\n")
+output_lines=[]
+
+files.each do | filename |
+  if filename.end_with? '.rb'
+    def_lines= []
+    lines = File.readlines(filename)
+    lines.each_with_index do |line, index|
+      def_lines << index if /\s*def (self\.){0,1}\w+/.match(line)
+    end
+
+    commentless_lines=[]
+    def_lines.each do | index |
+      if index > 0
+        if ! prior_line_is_rubocop?(lines, index)
+          commentless_lines << index unless prior_line_is_doc?(lines, index - 1)
+        else
+          commentless_lines << index unless prior_line_is_doc?(lines, index)
+        end
+      else
+        # first line can't have a coment before it.
+        commentless_lines << index
+      end
+    end
+
+    if ! commentless_lines.empty?
+      output_lines <<  "#{File.basename(filename)} has methods missing docs:\n"
+      commentless_lines.each do | index |
+        output_lines << "#{(index + 1).to_s.rjust(4, ' ')}: #{lines[index].sub(/^\s+/, '')}"
+      end
+    end
+
+  end
+end
+exit 0 if output_lines.empty?
+puts output_lines.join("")
+exit 1
