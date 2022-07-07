@@ -3,6 +3,18 @@
 # intended to be used as a pre-commit hook.
 # this script checks ruby files to make sure
 # every method has a preceeding comment
+#
+# output looks like this
+# (first line is from git-rook commit hook manager)
+#
+#  ✗ (pre-commit) ruby_docs exit code 1, output:
+#    show.rb
+#    These methods are missing docs:
+#      13: def call
+#      22: def find_foo_by_id
+#      30: def assign_foo_to_customer(foo)
+#      37: def create_foo_struct(foo)
+
 
 
 
