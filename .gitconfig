@@ -100,6 +100,7 @@
 	pullme = !"git fetch --tags upstream; git stash; git reset --hard upstream/$(git rev-parse --abbrev-ref HEAD)"
 			# added the fetch because i keep wishing it had of fetch everything
 	## END NOTE
+	retemp = !"git branch -D temp > /dev/null 2>&1; git checkout -b temp"
 	rhh = reset --hard HEAD
 	rook = !"~/workspace/git-rook/git-rook"
 	root = rev-parse --show-toplevel
