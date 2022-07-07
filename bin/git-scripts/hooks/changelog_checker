@@ -1,0 +1,10 @@
+#!/bin/sh
+
+
+
+git diff --cached --name-only --diff-filter=ACM \
+  | grep --color=none "\.changelog_entries.*.json" > /dev/null
+
+# grep returns 0 if it found something
+exit $?
+
