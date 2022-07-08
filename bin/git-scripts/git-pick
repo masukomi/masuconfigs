@@ -18,11 +18,12 @@
 #    fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
 #    # ^^^ that last line lets you `git checkout pr/1234`
 
-if [ $1 = "branch" ]; then
+if [ "$1" == "branch" ]; then
   if [ $# -eq 2 ]; then
     lines=$(
-    git branch -v \
+    git branch \
       | grep -v " [[:xdigit:]]\{7\} \[gone\]" \
+      | sed -e "s/^*/ /" -e "s/^+/ /" \
       | grep "$2"
     )
     line_count=$(echo -n "$lines" | grep -c '^')
@@ -43,6 +44,7 @@ if [ $1 = "branch" ]; then
   else
     branch=$(git branch -v \
       | grep -v " [[:xdigit:]]\{7\} \[gone\]" \
+      | sed -e "s/^*/ /" -e "s/^+/ /" \
       | fzf \
       | awk '{print $1}' )
   fi
@@ -56,11 +58,12 @@ if [ $1 = "branch" ]; then
     exit 0
   fi
 
-elif [ $1 = "pr" ]; then
+elif [ "$1" == "pr" ]; then
 
   git branch -av \
     | grep "pr/[[:digit:]]" \
     | grep -v " [[:xdigit:]]\{7\} \[gone\]" \
+    | sed -e "s/^*/ /" -e "s/^+/ /" \
     | perl -pe "s/remotes\/\S+?\///g" \
     | fzf \
     | awk '{print $1}' \
