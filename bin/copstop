@@ -38,18 +38,19 @@ if [ "$NEW" == "" ] && [ "$LAST" == "" ]; then
   usage
 fi
 
-
+GIT_ROOT=$(git rev-parse --show-toplevel)
+echo "GIT_ROOT: $GIT_ROOT"
 
 if [ "$NEW" == "true" ]; then
-  for path in $(lcf -p); do
+  for path in $(git diff-index --name-only HEAD); do
     echo checking $path
-    rubocop -A $path
+    rubocop -A $GIT_ROOT"/"$path
     echo "----------------------------------"
   done
 else
   for path in $(lcf); do
     echo checking $path
-    rubocop -A $path
+    rubocop -A $GIT_ROOT"/"$path
     echo "----------------------------------"
   done
 fi
