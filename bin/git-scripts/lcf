@@ -19,7 +19,7 @@ require 'optparse'
 options = {}
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: lcf [options]
+  opts.banner = "Usage: lcf [-p|--pending]
   lcf -> Lists the last Commit's Files.
   OR
   lcf -> List the Changed Files since the last commit.
@@ -40,7 +40,7 @@ git_root = `git rev-parse --show-toplevel`.strip
 if ! options[:pending]
   changed_files = `git diff --diff-filter=ACMR --name-only HEAD^..HEAD`.split("\n")
 else
-  changed_files = `git diff --diff-filter=ACMR --name-only HEAD`.split("\n")
+  changed_files = `git diff-index --name-only HEAD`.split("\n")
 end
 
 omittable_difference = `pwd`.strip.sub(git_root, "")
