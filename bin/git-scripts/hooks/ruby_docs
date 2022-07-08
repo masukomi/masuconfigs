@@ -42,6 +42,7 @@ end
 
 # get a list of all the files in the index
 files = `git diff --cached --name-only --diff-filter=ACM`.split("\n")
+files = `git diff-index --name-only HEAD`.split("\n")
 output_lines=[]
 
 files.each do | filename |
