@@ -97,7 +97,7 @@ abbr -a dcb "docker-compose build"
 abbr -a do "docker"
 abbr -a berd 'docker-compose exec bin/rspec --format=documentation'
 
-abbr -a sbw 'env SKIP=bad_words'
+abbr -a sbw 'env SKIP=bad_words,ruby_docs'
 abbr -a sall 'env SKIP=bad_words,rb_tester,rubocopper,ruby_docs'
 
 alias vimr /Applications/VimR.app/Contents/Resources/vimr
