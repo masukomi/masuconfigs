@@ -586,3 +586,7 @@
             :after #'run-projectile-invalidate-cache)
 (advice-add 'magit-branch-and-checkout ; This is `b c'.
             :after #'run-projectile-invalidate-cache)
+
+; indentation guides
+; https://github.com/DarthFennec/highlight-indent-guides
+(setq highlight-indent-guides-method 'fill)
