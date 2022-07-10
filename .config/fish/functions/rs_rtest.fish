@@ -8,11 +8,11 @@ set -l rspectified (history \
 
 	if test "$rspectified"  != ""
 		set -l rspec_string (eval $rspectified)
-		set -l maybe_bundle (string sub --length 5 "$rspec_string")
+		set -l maybe_bundle (string sub --length 6 "$rspec_string")
 		if test "$maybe_bundle" = "bundle"
-			echo "status == 0: $rspec_string"
 			eval $rspec_string
 		else
+			# output the error message
 			echo $rspec_string
 			return 1
 		end
@@ -21,4 +21,4 @@ set -l rspectified (history \
 		return 1
 	end
 end
-
+alias rsrt=rs_rtest
