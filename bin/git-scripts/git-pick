@@ -18,7 +18,7 @@
 #    fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
 #    # ^^^ that last line lets you `git checkout pr/1234`
 
-if [ "$1" == "branch" ]; then
+if [ "$1" == "branch" ] || [ "$1" == "" ]; then
   if [ $# -eq 2 ]; then
     lines=$(
     git branch \
