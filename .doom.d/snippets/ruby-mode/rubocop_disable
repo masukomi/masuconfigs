@@ -1,0 +1,5 @@
+# key: rdisable
+# name: rubocop_disable
+# --
+# rubocop:disable ${1:cops}
+`yas-selected-text`# rubocop:enable $1
