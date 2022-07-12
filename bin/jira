@@ -99,6 +99,10 @@ if [ "$TICKET" == "" ]; then
 fi
 
 WORKSPACE=$(workspace)
+if [ "$WORKSPACE" == "" ]; then
+	echo "(Only because you didn't run from within ~/workspace/<client>)"
+	read -p "Specify Atlassian subdomain: " WORKSPACE
+fi
 if [ "$MARKDOWN" == "true" ]; then
 	echo "[$TICKET](https://$WORKSPACE.atlassian.net/browse/$TICKET)"
 else
