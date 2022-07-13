@@ -66,6 +66,7 @@ abbr -a gvv 'git remote -vv'
 abbr -a hgrep "history | grep"
 abbr -a lagit "exa -lah --git" # la(h) git
 abbr -a less "less -R"
+abbr -a raw "script -q /dev/null"
 abbr -a rca "lcf -p | xargs -I{} sh -c \"echo checking {}; rubocop -A {}\""
 abbr -a rt 'rake test'
 abbr -a rtnw 'env RUBYOPT=W0 rake test'
@@ -114,7 +115,6 @@ alias gcurl /usr/local/opt/curl/bin/curl
 # abbr -a task "clear; and task"
 
 # PATH
-fish_add_path -p -g $HOME/.asdf/shims
 # by adding ./bin to the PATH
 # ruby developers can skip using "bundle exec"
 fish_add_path -g ./bin
@@ -203,8 +203,6 @@ set -gx PKG_CONFIG_PATH "/usr/local/opt/readline/lib/pkgconfig"
 # set -g theme_powerline_fonts yes
 # # END Bob the Fish
 
-# rvm invocation
-# rvm default
 # rbenv invocation
 if test (command -v rbenv)
 	status --is-interactive; and rbenv init - fish | source
@@ -231,6 +229,7 @@ set -x TZ_LIST "US/Pacific,Europe/Paris"
 # https://asdf-vm.com/guide/getting-started.html
 # search for Fish. 3 different ways of handling based on how installed
 if test (command -v asdf)
+  fish_add_path -p -g $HOME/.asdf/shims
   source (brew --prefix asdf)/libexec/asdf.fish
 end
 
