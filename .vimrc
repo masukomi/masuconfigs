@@ -500,6 +500,7 @@ if ! filereadable(".vimrc") || len(split(getcwd(), "/")) == 2
 	Plug 'wlangstroth/vim-racket'
 	Plug 'ds26gte/scmindent'
 
+	Plug 'dylon/vim-antlr'
 
 
 	"-------------------
@@ -702,6 +703,11 @@ if ! filereadable(".vimrc") || len(split(getcwd(), "/")) == 2
 	:cabbr pcr :call private_comments#RecordComment()
 	:cabbr pcd :call private_comments#DeleteComment()
 	:cabbr pcc :call private_comments#ClosePCWindow()
+
+	"-------------------
+	" dylon/vim-antlr
+	au BufRead,BufNewFile *.g set filetype=antlr3
+	au BufRead,BufNewFile *.g4 set filetype=antlr4
 "
 "
 " 	"-------------------

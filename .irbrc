@@ -1,70 +1,20 @@
 require 'irb'
 
 ######################################
-# Temporary Crap
-def hello
-  puts "howdy"
+# m_lang development
+def lextest
+  require './lexer'
+  lexer = MLang.new()
+  lexer.load_file("spec/files/test.m")
+  lexer.tokenize
+end
+def show_tokens(tokens)
+  tokens.each{|t| puts t.inspect}
+  nil
 end
 
-def ets_stuff
-    puts "inner loop c"
-    puts "e_and_ts_by_source_id & ach_ids.map(&:source_id) intersection size"
-    puts e_and_ts_by_source_id.slice(*ach_entries.map(&:source_id)).size
-    puts "e_and_ts.. source_ids"
-    puts e_and_ts_by_source_id.keys.sort.inspect
-    puts "ach_entries source ids"
-    puts ach_entries.map(&:source_id).sort.inspect
-end
-def details
-  puts "not defined e_and_ts_by_source_id"
-  if defined? payment_entry_details
-    puts "payment_entry_details-----------"
-    puts "size"
-    puts [
-            payment_entry_details.entries_and_transactions.size,
-            payment_entry_details.ach_entry_ids.size
-        ].inspect
-    puts "nils?"
-    puts payment_entry_details.entries_and_transactions.map{|e_and_t|
-      e_and_t.entry_detail.nil?
-    }.inspect
-
-    puts "contents match:"
-    puts PaymentProcessing::ACHEntry
-      .where(id: payment_entry_details.ach_entry_ids)
-      .map{|a| a.source_id}
-      .sort == payment_entry_details
-                .entries_and_transactions
-                .map{|e|e.transaction.id}
-                .sort
-    puts "transaction class(es)"
-    puts payment_entry_details.entries_and_transactions.map{ |et| et.transaction.class.name }.uniq
-  end
-  if defined? settlement_entry_details
-    puts "settlement_entry_details-----------"
-    puts "size"
-    puts [
-            settlement_entry_details.entries_and_transactions.size,
-            settlement_entry_details.ach_entry_ids.size
-        ].inspect
-    puts "nils?"
-    puts settlement_entry_details.entries_and_transactions.map{|e_and_t|
-      e_and_t.entry_detail.nil?
-    }.inspect
-    puts "contents match:"
-    puts PaymentProcessing::ACHEntry
-      .where(id: settlement_entry_details.ach_entry_ids)
-      .map{|a| a.source_id}
-      .sort == settlement_entry_details
-                .entries_and_transactions
-                .map{|e|e.transaction.id}
-                .sort
-    puts "transaction class(es)"
-    puts settlement_entry_details.entries_and_transactions.map{ |et| et.transaction.class.name }.uniq
-  end
-  "DONE"
-
-end
+# end m_lang dev
+################
 # ######################################
 def backtrace_lines(exception, lines=5)
   git_root = `git rev-parse --show-toplevel`.strip

@@ -165,6 +165,13 @@ fish_add_path -g $HOME/.radicle/bin
 # set -x GERBIL_HOME /usr/local/opt/gerbil-scheme/libexec
 # fish_add_path -g $GERBIL_HOME/bin
 ## END GERBIL
+#
+# BEGIN JAVA &  Antlr
+set -l ANTLRPATH $HOME/workspace/reference/java/antlr/antlr-4.10.1-complete.jar
+set -x CLASSPATH ".:$ANTLRPATH:$CLASSPATH"
+alias antlr4 "java -Xmx500M -cp \"$ANTLRPATH:\$CLASSPATH\" org.antlr.v4.Tool"
+alias grun "java -Xmx500M -cp \"$ANTLRPATH:\$CLASSPATH\" org.antlr.v4.gui.TestRig"
+# END JAVA & Antlr
 
 ## BEGIN GO
 set -x GOPATH $HOME/workspace/gocode

@@ -136,11 +136,12 @@
 (tool-bar-mode -1)
 
 (setq whitespace-display-mappings
-  '((space-mark   ?\    [?\xB7]     [?.])	; space
-    (space-mark   ?\xA0 [?\xA4]     [?_])	; hard space
-    (newline-mark ?\n   [?\xB6 ?\n] [?$ ?\n])	; end-of-line
-    (tab-mark   ?\t   [?\xBB ?\t] [?\\ ?\t])	; tab
-    ))
+  '((space-mark   ?\    [?\xB7]     [?.])  ; space
+    (space-mark   ?\xA0 [?\xA4]     [?_])  ; hard space
+    (newline-mark ?\n   [?\xB6 ?\n] [?$ ?\n])  ; end-of-line
+    (tab-mark   ?\t   [?\xBB ?\t] [?\\ ?\t]))); tab
+
+(setq tab-width 4)
 
 ; Ctrl + =/+ contracts or expands visual selection
 (map! :nv "C-=" #'er/contract-region
@@ -448,7 +449,8 @@
 ; then find . -name "*.jar"
 
 ;; Sample jar configuration
-(setq plantuml-jar-path "/usr/local/opt/plantuml/libexec/plantuml.jar")
+;; (setq plantuml-jar-path "/usr/local/opt/plantuml/libexec/plantuml.jar")
+(setq plantuml-jar-path "/usr/local/Cellar/plantuml/1.2022.6/libexec/plantuml.jar" )
 (setq plantuml-default-exec-mode 'jar)
 ;
 ; ;; Sample executable configuration
@@ -463,8 +465,10 @@
    (plantuml . t)))
 
 ; for Babel support http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
+;; (setq org-plantuml-jar-path
+;;   (expand-file-name "/usr/local/opt/plantuml/libexec/plantuml.jar"))
 (setq org-plantuml-jar-path
-  (expand-file-name "/usr/local/opt/plantuml/libexec/plantuml.jar"))
+      (expand-file-name "/usr/local/Cellar/plantuml/1.2022.6/libexec/plantuml.jar" ))
 
 (setq auto-completion-delay 1)
 
