@@ -82,13 +82,13 @@ end
 
 #abbr -a git hub
 abbr -a be 'bundle exec'
-abbr -a clojure "java -cp ~/workspace/clojure-1.5.1/clojure-1.5.1.jar clojure.main"
+# abbr -a clojure "java -cp ~/workspace/clojure-1.5.1/clojure-1.5.1.jar clojure.main"
 #eval (thefuck --alias | tr '\n' ';')
 abbr -a gdh "git diff HEAD"
 abbr -a gcm "git commit -m"
 # because i keep typing too fast and saying its instead of gits
 abbr -a its "git status -uno"
-abbr -a ag "ag -p ~/.ignore"
+# abbr -a ag "ag -p ~/.ignore"
 
 abbr -a dc "docker-compose"
 abbr -a dce "docker-compose exec"
@@ -101,7 +101,7 @@ abbr -a berd 'docker-compose exec bin/rspec --format=documentation'
 abbr -a sbw 'env SKIP=bad_words,ruby_docs'
 abbr -a sall 'env SKIP=bad_words,rb_tester,rubocopper,ruby_docs'
 
-alias vimr /Applications/VimR.app/Contents/Resources/vimr
+# alias vimr /Applications/VimR.app/Contents/Resources/vimr
 abbr -a vfz "mvim (fzf)"
 abbr -a which "command -v"
 alias :q exit
@@ -123,9 +123,11 @@ fish_add_path -g -p /opt/homebrew/bin
 fish_add_path -g . $HOME/bin $HOME/bin/git-scripts $HOME/bin/git-scripts/hooks /usr/local/bin $PATH
 # vvv make python 3 found before macOSs python 2.7
 # macOS one is at /usr/local/bin/python
-set -x PATH /usr/local/opt/python/libexec/bin $PATH
 set brewed_python_version (brew ls --versions python | sed -e "s/python@//" -e "s/ .*//")
-fish_add_path -g -a $HOME/Library/Python/$brewed_python_version/bin
+if test "" != "$brewed_python_version"
+	set -x PATH /usr/local/opt/python/libexec/bin $PATH
+	fish_add_path -g -a $HOME/Library/Python/$brewed_python_version/bin
+end
 fish_add_path -g -a /Applications
 fish_add_path -g -a /usr/local/opt/coreutils/libexec/gnubin
 fish_add_path -g -a $HOME/.iterm2/
@@ -138,9 +140,10 @@ fish_add_path -g -a $HOME/workspace/gpup
 fish_add_path -g -a $HOME/workspace/git_accessories
 fish_add_path -g -a $HOME/workspace/gocode/bin
 fish_add_path -g -a $HOME/.cargo/bin
-fish_add_path -g -a $HOME/.local/bin # haskell stuff installed with Stack
+fish_add_path -g -p $HOME/.local/bin # haskell stuff installed with Stack
 # we're prepending this in case the homebrew version is installed
-fish_add_path -g -p $HOME/workspace/private_comments/bin
+fish_add_path -g -a $HOME/workspace/private_comments/bin
+fish_add_path -g -a $HOME/workspace/rtest
 fish_add_path /usr/local/opt/mongodb-community@4.2/bin
 
 
@@ -148,7 +151,7 @@ set CELLAR (brew --cellar)
 fish_add_path -g -a $CELLAR/chicken/5.0.0/bin
 # OYYY WHEN IT COMPLAINS ABOUT libchicken.dylib being missing
 #ln -s (brew --prefix chicken)/lib/libchicken.dylib /usr/local/lib/libchicken.dylib
-set -x -g JAVA_HOME $CELLAR/openjdk/17.0.2/
+set -x -g JAVA_HOME ($CELLAR/openjdk | sed -e "s/\///" | sort | tail -n 1)
 fish_add_path -g -a $JAVA_HOME/bin
 # newer bash in path
 fish_add_path -g -p /opt/homebrew/opt/bash/bin
@@ -167,12 +170,12 @@ fish_add_path -g $HOME/.radicle/bin
 ## END GERBIL
 
 ## BEGIN GO
-set -x GOPATH $HOME/workspace/gocode
-fish_add_path -g $GOPATH/bin
+# defaults to ~/go
+# set -x GOPATH $HOME/workspace/gocode
+# fish_add_path -g $GOPATH/bin
 ## END GO
 
 # RACKET
-fish_add_path -g /Applications/Racket\ v8.2/bin
 
 # RUST
 fish_add_path -g $HOME/.cargo/bin
@@ -216,7 +219,7 @@ eval (direnv hook fish)
 set -x PERLLIB /Users/krhodes/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0 $PERLLIB
 set -g fish_user_paths "/usr/local/opt/openssl@1.1/bin" $fish_user_paths
 
-set -x USE_FENESTRO true
+# set -x USE_FENESTRO true
 
 # setting desired time zones for the tz utility
 # https://github.com/oz/tz
@@ -238,6 +241,5 @@ if test -d (brew --prefix)"/share/fish/vendor_completions.d"
 end
 
 set -x NVM_DIR "$HOME/.nvm"
-set -gx RTEST_AUTO_VERBOSE "30"
 
 
