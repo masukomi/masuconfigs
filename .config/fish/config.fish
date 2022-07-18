@@ -151,7 +151,7 @@ set CELLAR (brew --cellar)
 fish_add_path -g -a $CELLAR/chicken/5.0.0/bin
 # OYYY WHEN IT COMPLAINS ABOUT libchicken.dylib being missing
 #ln -s (brew --prefix chicken)/lib/libchicken.dylib /usr/local/lib/libchicken.dylib
-set -x -g JAVA_HOME ($CELLAR/openjdk | sed -e "s/\///" | sort | tail -n 1)
+set -x -g JAVA_HOME (ls $CELLAR/openjdk | sed -e "s/\///" | sort | tail -n 1)
 fish_add_path -g -a $JAVA_HOME/bin
 # newer bash in path
 fish_add_path -g -p /opt/homebrew/opt/bash/bin
@@ -197,6 +197,8 @@ set -gx CPPFLAGS "-I/usr/local/opt/readline/include"
 set -gx PKG_CONFIG_PATH "/usr/local/opt/readline/lib/pkgconfig"
 
 # END Enscripten
+
+source ~/.config/fish/current_theme.fish
 
 # # START Bob The Fish prompt
 # # ~/.config/fish/functions/fish_prompt.fish
