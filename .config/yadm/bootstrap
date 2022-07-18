@@ -206,13 +206,13 @@ mayclone "~/workspace" "git@github.com:kerma/defaultbrowser.git"
 # MASUKOMI REPOS
 mayclone "~/workspace" "git@github.com:masukomi/cleandiff.git"
 mayclone "~/workspace" "git@github.com:masukomi/rtest.git"
-# ^^ not linked because dir is added to path in fish
-mayclone "~/workspcae" "git@github.com:masukomi/private_comments.git"
-# ^^ not linked because dir is added to path in fish
+ln -s ~/workspace/rtest/rtest ~/bin/rtest > /dev/null
+mayclone "~/workspace" "git@github.com:masukomi/private_comments.git"
+ln -s ~/workspace/private_comments/bin/private_comments ~/bin/private_comments > /dev/null
 mayclone "~/workspace" "git@github.com:masukomi/gpup.git"
-# ^^ not linked because dir is added to path in fish
+ln -s ~/workspace/gpup/gpup ~/bin/gpup > /dev/null
+ln -s ~/workspace/gpup/gpud ~/bin/gpud > /dev/null
 mayclone "~/workspace" "git@github.com:masukomi/git-status-report.git"
-# ^^ not linked because dir is added to path in fish
 mayclone "~/workspace" "git@github.com:masukomi/git_accessories.git"
 #^^ requires secondary commands AFTER xcode is installed
 mayclone "~/workspace" "git://github.com/lloyd/yajl"
