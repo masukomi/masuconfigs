@@ -381,6 +381,11 @@ curl https://3e8.org/pub/chicken-doc/chicken-doc-repo-5.tgz | sudo tar zx
 # gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 # curl -sSL https://get.rvm.io | bash -s stable
 
+# GPG CONFIG
+# based on tips here: https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e
+# killing agent to ensure new one is started based on new configs
+killall gpg-agent
+
 # RBENV
 command -v rbenv
 if [ $? -ne 0 ]; then
