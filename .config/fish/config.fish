@@ -175,7 +175,6 @@ fish_add_path -g $HOME/.radicle/bin
 # fish_add_path -g $GOPATH/bin
 ## END GO
 
-# RACKET
 
 # RUST
 fish_add_path -g $HOME/.cargo/bin
