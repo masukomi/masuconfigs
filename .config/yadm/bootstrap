@@ -22,6 +22,7 @@ function mayclone(){
 	#$1 = base dir
 	#$2 = repo
 	basedir=$1
+	mkdir -p $basedir
 	subdir=$(basename $2 | sed -e "s/\.git//")
 	if [ ! -d "$basedir/$subdir" ]; then
 		git clone $2 $basedir/$subdir
@@ -37,58 +38,34 @@ function is_installed(){
 	fi
 }
 
-read -t 20 -p "init / update doom?
-" doom
+read -p "install / update xcode commandline tools? [y/n]
+" command_line_tools
 
-if [ "$doom" == "y" ]; then
-	yadm submodule init
-	yadm submodule update --init --recursive --remote
-	yadm submodule update --recursive ~/.emacs.d
-	~/.emacs.d/bin/doom install
-	~/.emacs.d/bin/doom refresh
-	~/.emacs.d/bin/doom sync
-	# install JetBrains Mono Font
-	cd ~/Downloads
-	curl -L https://download.jetbrains.com/fonts/JetBrainsMono-2.225.zip \
-		--output JetBrainsMono-2.225.zip
-	unzip JetBrainsMono-2.225.zip
-	cp fonts/ttf/*.ttf ~/Library/Fonts/
-	#also remind myself to install whatever font it is emacs uses
-	echo "RUN M-x all-the-icons-install-fonts"
-	ln -s $(emacs --app) /Applications/Emacs.app
+if [ "$command_line_tools" == "y" ]; then
 
-	# launch the emacs daemon at login
-	# instructions found here: http://www.rockhoppertech.com/blog/emacs-daemon-on-macos/
-	LAUNCH_DAEMON_PLIST="$HOME/Library/LaunchAgents/gnu.emacs.daemon.plist"
-	if [ ! -f "$LAUNCH_DAEMON_PLIST" ]; then
-		cat > "$LAUNCH_DAEMON_PLIST" <<- EOM
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
-"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>Label</key>
-  <string>gnu.emacs.daemon</string>
-  <key>ProgramArguments</key>
-  <array>
-    <string>/Applications/Emacs.app/Contents/MacOS/Emacs</string>
-    <string>--daemon</string>
-  </array>
-  <key>RunAtLoad</key>
-  <true/>
-  <key>UserName</key>
-  <string>$USER</string>
-</dict>
-</plist>
-EOM
-	fi
+	softwareupdate --all --install --force
 
+	echo "If that didn't download Command Line Tools for Xcode, then run this:"
+	echo sudo rm -rf /Library/Developer/CommandLineTools
+	echo sudo xcode-select --install
+	read "Hit enter to continue"
 fi
 
 
+
+mkdir -p "~/workspace"
+# set up git-rook
+# * lets me have multiple scripts executed per git hook
+# * gives me a post-init functionality that'll set up a file with
+#   a .vimrc that has just the plugins for this project
+mayclone "~/workspace" "git@github.com:masukomi/git-rook.git"
+if [ ! -h ~/bin/git-rook ];then
+	ln -s ~/workspace/git-rook/git-rook ~/bin/git-rook
+fi
+
 if ! is_installed "brew"; then
 	/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-	sudo ln -s (brew --cellar) /usr/local/Cellar
+	sudo ln -s $(brew --cellar) /usr/local/Cellar
 fi
 
 # if ! is_installed "mas"; then # mac app store cli
@@ -118,8 +95,12 @@ fi
 # fi
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-        # Mac OSX
-	source "$HOME/.config/yadm/brews.sh"
+	# Mac OSX
+read -p "(re)run homebrew installs? [y/n]
+" rerun_homebrew
+	if [ "$rerun_homebrew" == "y" ]; then
+		source "$HOME/.config/yadm/brews.sh"
+	fi
 else
 	echo "Hey! You should create a brews.sh equivalent for $OSTYPE"
 fi
@@ -129,6 +110,66 @@ fi
 # and various homebrew tools have been installed
 #####
 
+
+read -t 20 -p "init / update doom? [y/n]
+" doom
+
+if [ "$doom" == "y" ]; then
+	if [ -d '~/.emacs.d' ]; then
+		yadm submodule init
+		yadm submodule update --init --recursive --remote
+		yadm submodule update --recursive ~/.emacs.d
+	else
+		git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
+	fi
+	~/.emacs.d/bin/doom install
+	~/.emacs.d/bin/doom refresh
+	~/.emacs.d/bin/doom sync
+	# install JetBrains Mono Font
+	cd ~/Downloads
+	curl -L https://download.jetbrains.com/fonts/JetBrainsMono-2.225.zip \
+		--output JetBrainsMono-2.225.zip
+	unzip JetBrainsMono-2.225.zip
+	cp fonts/ttf/*.ttf ~/Library/Fonts/
+	#also remind myself to install whatever font it is emacs uses
+	echo "RUN M-x all-the-icons-install-fonts"
+	ln -s $(emacs --app) /Applications/Emacs.app
+
+	echo "setting up the launch daemon manully should NOT be required"
+	echo "try this first: $(brew info emacs-plus | grep 'services start' | sed -e 's/^ //')"
+	echo ""
+	read -p "manually setup emacs launch daemon? [y/n]
+	" emacs_launch_daemon
+
+	if [ "$emacs_launch_daemon" == "y" ]; then
+		# launch the emacs daemon at login
+		# instructions found here: http://www.rockhoppertech.com/blog/emacs-daemon-on-macos/
+		LAUNCH_DAEMON_PLIST="$HOME/Library/LaunchAgents/gnu.emacs.daemon.plist"
+		if [ ! -f "$LAUNCH_DAEMON_PLIST" ]; then
+			cat > "$LAUNCH_DAEMON_PLIST" <<- EOM
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>gnu.emacs.daemon</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Applications/Emacs.app/Contents/MacOS/Emacs</string>
+    <string>--daemon</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>UserName</key>
+  <string>$USER</string>
+</dict>
+</plist>
+EOM
+	fi
+
+	fi # end if setup launch daemon manually
+fi
 
 
 yadm submodule init
@@ -142,27 +183,32 @@ gem install uniscribe
 # gollum personal git backed wiki
 # https://github.com/gollum/gollum
 # https://www.youtube.com/watch?v=qbBElCn6C_w
-gem install charlock_holmes -- --with-icu-dir=/usr/local/opt
-gem install github-markup
-gem install gollum
+# gem install charlock_holmes -- --with-icu-dir=/usr/local/opt
+# gem install github-markup
+# gem install gollum
 ##########
 
 ##########
 # PERL
 # perlbrew is a tool to manage multiple perl installations in your $HOME directory.
 # https://perlbrew.pl
-if ! is_installed "perlbrew"; then
-	curl -L https://install.perlbrew.pl | bash
-fi
+# if ! is_installed "perlbrew"; then
+# 	curl -L https://install.perlbrew.pl | bash
+# fi
 
 
 
 mkdir -p ~/workspace/reference
 mkdir -p ~/.vim-tmp
-mkdir -p ~/gocode/bin #because... fuck you go.
+mkdir -p ~/go/bin #because... fuck you go.
 
-mayclone "~/workspace" "git@github.com:masukomi/cleandiff.git"
 mayclone "~/workspace" "git@github.com:kerma/defaultbrowser.git"
+# MASUKOMI REPOS
+mayclone "~/workspace" "git@github.com:masukomi/cleandiff.git"
+mayclone "~/workspace" "git@github.com:masukomi/rtest.git"
+# ^^ not linked because dir is added to path in fish
+mayclone "~/workspcae" "git@github.com:masukomi/private_comments.git"
+# ^^ not linked because dir is added to path in fish
 mayclone "~/workspace" "git@github.com:masukomi/gpup.git"
 # ^^ not linked because dir is added to path in fish
 mayclone "~/workspace" "git@github.com:masukomi/git-status-report.git"
@@ -170,10 +216,21 @@ mayclone "~/workspace" "git@github.com:masukomi/git-status-report.git"
 mayclone "~/workspace" "git@github.com:masukomi/git_accessories.git"
 #^^ requires secondary commands AFTER xcode is installed
 mayclone "~/workspace" "git://github.com/lloyd/yajl"
-mayclone "~/workspace" "git@github.com:masukomi/git-rook.git"
+# A fast streaming JSON parsing library in C. http://lloyd.github.com/yajl
+cd ~/workspace/yajl
+./configure && make install
+cd ~/
+
 
 mkdir -p $HOME/workspace/reference/crystal
-mayclone "~/workspace/reference/crystal" "git@github.com:crystal-community/icr.git"
+# `make` doesn't work in icr currently so skip this.
+# mayclone "~/workspace/reference/crystal" "git@github.com:crystal-community/icr.git"
+# if ! is_installed "icr"; then # Interactive Crystal Repl
+# 	cd ~/workspace/reference/crystal/icr
+# 	PREFIX=~/ make
+# 	PREFIX=~/ make install
+# 	cd ~/
+# fi
 mkdir -p $HOME/workspace/reference/elixir
 # elixir language server protocol
 mayclone "~/workspace/reference/elixir" "git@github.com:elixir-lsp/elixir-ls.git"
@@ -206,16 +263,15 @@ if [ ! -d "~/workspace/reference/emacs/cask" ]; then
 fi
 
 
-
-if ! is_installed "icr"; then # Interactive Crystal Repl
-	cd ~/workspace/reference/crystal/icr
-	PREFIX=~/ make
-	PREFIX=~/ make install
-	cd ~/
-fi
-
 if is_installed "go"; then
 	# gomodify tags needs this for... shrug. reasons
+	echo "about to ask for sudo twice to change perms for:"
+	echo "  /usr/local/go/bin"
+	echo "  /usr/loca/go/pkg"
+	echo ""
+	echo "For something to do with gomodify tags"
+	echo " Go tool to modify/update field tags in structs."
+	echo " https://github.com/fatih/gomodifytags#readme"
 	sudo chmod 777 /usr/local/go/bin
 	sudo chmod 777 /usr/local/go/pkg
 
@@ -236,18 +292,6 @@ if is_installed "go"; then
 	fi
 fi
 
-
-# A fast streaming JSON parsing library in C. http://lloyd.github.com/yajl
-cd ~/workspace/yajl
-./configure && make install
-# set up git-rook
-# * lets me have multiple scripts executed per git hook
-# * gives me a post-init functionality that'll set up a file with
-#   a .vimrc that has just the plugins for this project
-mayclone "~/workspace" "git@github.com:masukomi/git-rook.git"
-if [ ! -h ~/bin/git-rook ];then
-	ln -s ~/workspace/git-rook/git-rook ~/bin/git-rook
-fi
 
 
 #^^^ json formatting library
@@ -336,6 +380,40 @@ curl https://3e8.org/pub/chicken-doc/chicken-doc-repo-5.tgz | sudo tar zx
 # RVM
 # gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
 # curl -sSL https://get.rvm.io | bash -s stable
+
+# RBENV
+command -v rbenv
+if [ $? -ne 0 ]; then
+	read -p "install rbenv? [y/n]
+	" rbenv_install
+	if [ "$rbenv_install" == "y" ]; then
+		brew install rbenv ruby-build
+		rbenv init
+		# test that it's working
+		curl -fsSL https://github.com/rbenv/rbenv-installer/raw/main/bin/rbenv-doctor | bash
+		# going to assume it's already set up in the corresponding shells
+		# fish
+		#  set -Ux fish_user_paths $HOME/.rbenv/bin $fish_user_paths
+		# bash
+		#  echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+		# zsh
+		#  echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
+		if [ $? -ne 0 ]; then
+			echo "something went wrong with rbenv install. exit bootstrap?  [y/n]"
+			read exit_bootstrap
+			if [ "$exit_bootstrap" == "y" ]; then
+				exit 1
+			fi
+		fi
+		latest_ruby=$(rbenv install --list | grep "^[[:digit:]]" | tail -n1)
+		read -p "install latest ruby ($latest_ruby)? [y/n]" install_latest_ruby
+		if [ "$install_latest_ruby" == "y" ]; then
+			rbenv install $latest_ruby
+			rbenv local $latest_ruby
+		fi
+	fi
+fi
+# TODO Same deal but for ASDF
 
 # System Prefs
 # make the mouse go faster.... maybe I can't see a difference
