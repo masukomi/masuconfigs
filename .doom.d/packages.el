@@ -45,6 +45,8 @@
 
 (package! buffer-move)
 (package! darktooth-theme)
+(package! powerline)
+(package! moe-theme)
 (package! ialign)
 (package! nlinum-relative)
 (package! ruby-hash-syntax)
