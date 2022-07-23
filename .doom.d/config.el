@@ -31,12 +31,17 @@
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. These are the defaults.
+;; `load-theme' function.
 ;; (setq doom-theme 'doom-one)
-(setq doom-theme 'darktooth)
+;; (setq doom-theme 'darktooth)
 ;; (setq doom-theme 'doom-snazzy)
-;; (setq doom-theme 'sanity-inc-tomorrow-night)
 ;; (setq doom-theme 'doom-spacegrey)
+(setq doom-theme 'doom-gruvbox)
+
+;; (setq doom-theme 'moe-theme)
+;;   (moe-dark)
+;; (load-theme 'moe-dark t) ; maybe?
+;; (setq doom-theme 'sanity-inc-tomorrow-night)
 
 ;; If you intend to use org, it is recommended you change this!
 (setq org-directory "~/.config/org/")
