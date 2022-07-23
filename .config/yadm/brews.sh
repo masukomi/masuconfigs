@@ -11,12 +11,22 @@
 #
 function maybrew() {
 	if ! is_installed $1; then
-		echo ""
-		echo ""
-		echo "-- Installing $1"
-		brew install $1
+		install_or_die "$1"
 	else
 		echo "-- Skipping $1 (installed already)"
+	fi
+}
+
+function install_or_die() {
+	brew install $1
+	echo ""
+	echo ""
+	echo "-- Installing $1"
+	brew install $1
+	if [ $? -ne 0 ]; then
+		echo "problem installing $1"
+		echo "exiting"
+		exit 1
 	fi
 }
 
@@ -82,6 +92,10 @@ maybrew "cscope"
 if ! is_installed "universal-ctags/universal-ctags/universal-ctags"; then
 	brew tap universal-ctags/universal-ctags
 	brew install --HEAD universal-ctags/universal-ctags/universal-ctags
+	if [ $? -ne 0 ]; then
+		echo "problem installing universal-ctags. exiting"
+		exit 1
+	fi
 else
 	echo "-- Skipping universal-ctags (installed already)"
 fi
@@ -89,8 +103,10 @@ fi
 
 # cli utility that shows your progress through the day
 maybrew "days_progress"
-brew install devutils
-if ! is_installed "devutils"; then
+ls /Applications/DevUtils.app > /dev/null
+# normal is_installed doesn't work for devutils For some reason
+# it just doesn't show up in brew ls --versions
+if [ $? -ne 0 ]; then
 	brew install devutils
 	# opening it just to get past the "are you sure" dialog
 	open /Applications/DevUtils.app
@@ -231,6 +247,11 @@ maybrew "ncurses"
 maybrew "neomutt"
 # Platform built on V8 to build network applications
 maybrew "npm"
+# custom shell prompt generator thing
+# https://ohmyposh.dev/
+if ! is_installed "oh-my-posh"; then
+	brew install jandedobbeleer/oh-my-posh/oh-my-posh
+fi
 # ANSI->HTML
 maybrew "oho"
 # SSL/TLS cryptography library
@@ -329,17 +350,23 @@ maybrew "pgcli"
 # https://github.com/syl20bnr/spacemacs
 brew tap d12frosted/emacs-plus
 if ! is_installed "emacs-plus"; then
-  brew install emacs-plus #--with-spacemacs-icon
-  EMACS_VERSION=$(ls /usr/local/Cellar/ \
-        | grep --color=never emacs-plus \
-        | sort \
-        | tail -n1 \
-        | sed -e "s/@/\\\@/g" )
-  EMACS_SUB_VERSION=$( ls /usr/local/Cellar/$VERSION \
-        | sort \
-        | tail -n1)
-  ln -s /usr/local/Cellar/$VERSION/$EMACS_SUB_VERSION/Emacs.app /Applications/
-
+	brew unlink gawk 2>&1 /dev/null
+	# it complaind about this vs awk
+	# so now we unlink gawk and relink later
+	install_or_die "emacs-plus"
+	# EMACS_VERSION=$(ls /usr/local/Cellar/ \
+	# 	| grep --color=never emacs-plus \
+	# 	| sort \
+	# 	| tail -n1 \
+	# 	| sed -e "s/@/\\\@/g" )
+    #
+	# EMACS_SUB_VERSION=$( ls /usr/local/Cellar/$EMACS_VERSION \
+	# 	| sort \
+	# 	| tail -n1)
+	# ln -s /usr/local/Cellar/$VERSION/$EMACS_SUB_VERSION/Emacs.app /Applications/
+	eval "$(brew info emacs-plus | grep 'ln -s' | sed -e 's/^ //')"
+	eval "$( brew info emacs-plus | grep 'services start' | sed -e 's/^ //')"
+	brew link gawk
 # 	--natural-title-bar option was removed from this formula, in order to
 # 	  duplicate its effect add following line to your init.el file
 # 	  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
@@ -360,8 +387,11 @@ fi
 # ispell: International Ispell
 maybrew "ispell" #something in/via neomutt wants this
 # A command line interface to the macOS Address Book.
-if ! is_installed "https://raw.github.com/tgray/homebrew-tgbrew/master/contacts2.rb"; then
-	brew install https://raw.github.com/tgray/homebrew-tgbrew/master/contacts2.rb
-else
-	echo "-- Skipping contacts2.rb (installed already)"
-fi
+# DEPRECATED INSTALL COMMAND. NO LONGER WORKS WITH ARBITRARY URL
+# Error: Non-checksummed download of contacts2 formula file from an arbitrary URL is unsupported!
+#  `brew extract` or `brew create` and `brew tap-new` to create a formula file in a tap on GitHub instead.
+# if ! is_installed "https://raw.github.com/tgray/homebrew-tgbrew/master/contacts2.rb"; then
+# 	brew install https://raw.github.com/tgray/homebrew-tgbrew/master/contacts2.rb
+# else
+# 	echo "-- Skipping contacts2.rb (installed already)"
+# fi
