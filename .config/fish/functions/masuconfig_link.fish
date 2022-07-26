@@ -8,7 +8,10 @@ function masuconfig_link --argument-names thing
 	if test -n "$thing_path"
 		set -l me (whoami)
 		set thing_path (echo $thing_path | sed -e "s/\/Users\/$me\///" )
-		echo "https://github.com/masukomi/masuconfigs/blob/master/$thing_path"
+		set url "https://github.com/masukomi/masuconfigs/blob/master/$thing_path"
+		echo $url
+		echo $url | pbcopy
+		echo "Copied to clipboard."
 	else
 		echo "Unable to find $thing in ~/bin or fish functions"
 	end
