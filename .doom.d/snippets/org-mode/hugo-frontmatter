@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: hugo-frontmatter
+# key: hfm
+# --
+#+title: $1
+#+slug: $2
+#+author: masukomi
+#+lastmod: 2022-07-26
+#+tags[]: $3
+#+draft: true
