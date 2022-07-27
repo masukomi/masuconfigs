@@ -1,13 +1,13 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
-SETUVAR __fish_initialized:3400
+SETUVAR __fish_initialized:3100
 SETUVAR _fish_abbr_ag:ag\x20\x2dp\x20\x7e/\x2eignore
 SETUVAR _fish_abbr_be:bundle\x20exec
 SETUVAR _fish_abbr_ber:bundle\x20exec\x20rspec\x20\x2d\x2dformat\x3ddocumentation
 SETUVAR _fish_abbr_berc:bundle\x20exec\x20rails\x20console
 SETUVAR _fish_abbr_berd:docker\x2dcompose\x20exec\x20bin/rspec\x20\x2d\x2dformat\x3ddocumentation
 SETUVAR _fish_abbr_bers:bundle\x20exec\x20rails\x20server
-SETUVAR _fish_abbr_berss:bundle\x20exec\x20rails\x20server\x20\x2du\x20puma\x20\x2db\x20\x27ssl\x3a//0\x2e0\x2e0\x2e0\x3a9292\x3fkey\x3d/Users/kayrhodes/\x2essh/server\x2ekey\x26cert\x3d/Users/kayrhodes/\x2essh/server\x2ecrt\x26verify_mode\x3dnone\x27
+SETUVAR _fish_abbr_berss:bundle\x20exec\x20rails\x20server\x20\x2du\x20puma\x20\x2db\x20\x27ssl\x3a//0\x2e0\x2e0\x2e0\x3a9292\x3fkey\x3d/Users/masukomi/\x2essh/server\x2ekey\x26cert\x3d/Users/masukomi/\x2essh/server\x2ecrt\x26verify_mode\x3dnone\x27
 SETUVAR _fish_abbr_brewed:is_brewed
 SETUVAR _fish_abbr_brewed_3F_:is_brewed
 SETUVAR _fish_abbr_build__tags:\x7e/brew/bin/ctags\x20\x2dR\x20\x2d\x2dc\x2b\x2b\x2dkinds\x20\x2bp\x20\x2d\x2dfields\x20\x2biaS\x20\x2d\x2dextra\x20\x2bq\x20\x2d\x2dexclude\x20\x2ersync_cache\x20\x2e
