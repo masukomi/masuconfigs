@@ -1,4 +1,4 @@
-set --export POSH_THEME '/usr/local/opt/oh-my-posh/themes/M365Princess.omp.json'
+set --export POSH_THEME '/Users/kayrhodes/.config/fish/current_prompt.omp.json'
 set --global POWERLINE_COMMAND "oh-my-posh"
 set --global CONDA_PROMPT_MODIFIER false
 set --global omp_tooltip_command ""
