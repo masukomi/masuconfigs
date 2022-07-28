@@ -62,10 +62,17 @@ maybrew "ansifilter"
 # https://github.com/asdf-vm/asdf
 # Manage multiple runtime versions with a single CLI tool, extendable via plugins
 if ! is_installed "asdf"; then
-	maybrew "asdf"
-	asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
-	# sadly, can't avoid needing node...
-	asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+	if ! is_installed "rbenv"; then
+		read -p "Do you want me to install asdf? [y/n]: " install_it
+		if [ "$install_it" == "y" ]; then
+			maybrew "asdf"
+			asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+			# sadly, can't avoid needing node...
+			asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+		fi
+	else
+		echo "WARNING: Won't install asdf because rbenv is installed"
+	fi
 fi
 # Automatic configure script builder
 maybrew "autoconf"
@@ -275,6 +282,20 @@ fi
 # allows you to comment on a file without commenting _in_ the file
 maybrew "private_comments"
 maybrew "python" # python 3 yo!
+
+
+if ! is_installed "rbenv"; then
+	if ! is_installed "asdf"; then
+		read -p "Do you want me to install rbenv? [y/n]: " install_it
+		if [ "$install_it" == "y" ]; then
+			maybrew "rbenv"
+			maybrew "ruby-build" # dunno why this is a thing, but it is
+		fi
+	else
+		echo "WARNING: Won't install rbenv because asdf is installed"
+	fi
+fi
+
 # Library for command-line editing
 maybrew "readline"
 #	set -gx LDFLAGS "-L/usr/local/opt/readline/lib"
