@@ -2,10 +2,13 @@
 
 git status -uno
 
-ASSUMED_UNCHANGED=$( git ls-files -v | grep --color '^[[:lower:]]')
+ASSUMED_UNCHANGED=$( git ls-files -v \
+	| grep --color '^[[:lower:]]'\
+	| sed -e "s/^/\x1b[1;33m⇨\x1b[0m /")
+			# ^^^ insert a bold yellow arrow
 
 if [ "$ASSUMED_UNCHANGED" != "" ]; then
 	echo ""
-	echo "Git is assuming the following are unchanged:"
+	echo "\x1b[1;37mGit is assuming the following are unchanged:\x1b[0m"
 	echo "$ASSUMED_UNCHANGED"
 fi
