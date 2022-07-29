@@ -20,7 +20,7 @@ SCOPE=$(gum input --placeholder "scope: a noun describing a section of the codeb
 echo "commit title: "
 SUMMARY=$(gum input --value "$TYPE$SCOPE: ")
 echo "commit details: "
-echo "(^c to end)"
+echo "(^d to end)"
 DESCRIPTION=$(gum write --placeholder "Details of this change")
 
 echo "Your commit message:"
