@@ -21,11 +21,11 @@ echo "(^c to end)"
 DESCRIPTION=$(gum write --placeholder "Details of this change")
 
 echo "Your commit message:"
-echo "-------------------------------------"
+echo "--------------------------------------------------"
 echo "$SUMMARY"
 echo ""
 echo "$DESCRIPTION"
-echo "-------------------------------------"
+echo "--------------------------------------------------"
 
 
 # Commit these changes
