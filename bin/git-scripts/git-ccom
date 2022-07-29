@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# an interactive cli tool to help you create commit messages
+# that adhere to the Conventional Commits standard
+# https://www.conventionalcommits.org/en/v1.0.0/#summary
+# from the wonderful makers of Charm and Gum
+# https://github.com/charmbracelet/gum
+
+
+TYPE=$(gum choose "fix" "feat" "docs" "style" "refactor" "test" "chore" "revert")
+SCOPE=$(gum input --placeholder "scope: a noun describing a section of the codebase")
+
+# Since the scope is optional, wrap it in parentheses if it has a value.
+[[ -n "$SCOPE" ]] && SCOPE="($SCOPE)"
+
+# Pre-populate the input with the type(scope): so that the user may change it
+echo "commit title: "
+SUMMARY=$(gum input --value "$TYPE$SCOPE: ")
+echo "commit details: "
+echo "(^c to end)"
+DESCRIPTION=$(gum write --placeholder "Details of this change")
+
+echo "Your commit message:"
+echo "-------------------------------------"
+echo "$SUMMARY"
+echo ""
+echo "$DESCRIPTION"
+echo "-------------------------------------"
+
+
+# Commit these changes
+gum confirm "Commit changes?" && git commit -m "$SUMMARY" -m "$DESCRIPTION"
