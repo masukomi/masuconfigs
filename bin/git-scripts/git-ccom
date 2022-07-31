@@ -11,7 +11,8 @@
 #        just follow the prompts after that.
 
 TYPE=$(gum choose "fix" "feat" "docs" "style" "refactor" "test" "chore" "revert")
-SCOPE=$(gum input --placeholder "scope: a noun describing a section of the codebase")
+SCOPE=$(gum input --placeholder "scope (optional): a noun describing a section of the codebase")
+TICKET=$(gum input --placeholder "ticket number (optional):")
 
 # Since the scope is optional, wrap it in parentheses if it has a value.
 [[ -n "$SCOPE" ]] && SCOPE="($SCOPE)"
@@ -22,6 +23,9 @@ SUMMARY=$(gum input --value "$TYPE$SCOPE: ")
 echo "commit details: "
 echo "(^d to end)"
 DESCRIPTION=$(gum write --placeholder "Details of this change")
+[[ -n "$TICKET" ]] && DESCRIPTION="$DESCRIPTION
+
+TICKET: $TICKET"
 
 echo "Your commit message:"
 echo "--------------------------------------------------"
