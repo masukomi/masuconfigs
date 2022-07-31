@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+oh-my-posh init fish --config ~/.config/fish/current_theme.omp.json \
+	| sed -e "s/'.*\/bin\/oh-my-posh'/PREFIX=\(brew --prefix\) \"\$PREFIX\/bin\/oh-my-posh\"/" \
+	> ~/.config/fish/current_theme.fish
