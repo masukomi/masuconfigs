@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# used for regereating my oh-my-posh themes in such a way
+# that they work on arm and intel macs
+#
+
 oh-my-posh init fish --config ~/.config/fish/current_theme.omp.json \
 	| sed -e "s/'.*\/bin\/oh-my-posh'/PREFIX=\(brew --prefix\) \"\$PREFIX\/bin\/oh-my-posh\"/" \
 	> ~/.config/fish/current_theme.fish
