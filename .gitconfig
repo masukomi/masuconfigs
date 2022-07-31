@@ -167,7 +167,7 @@
 [checkout]
 	defaultRemote = upstream
 [commit]
-	gpgsign = true
+	gpgsign = false
 
 
 

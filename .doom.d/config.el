@@ -376,6 +376,18 @@
   (require 'ox-hugo)
   (require 'ox-clip))
 
+;; org-hugo blogging things
+  (setq time-stamp-active t
+        time-stamp-start "#\\+lastmod:[ \t]*"
+        time-stamp-end "$"
+        time-stamp-format "%04Y-%02m-%02d")
+  (add-hook 'before-save-hook 'time-stamp nil)
+
+;; New link type for Org-Hugo internal links
+  (org-link-set-parameters "hugo"
+                           :complete (lambda ()
+                                       (concat "{{% ref "(file-name-nondirectory (read-file-name "File: "))" %}}")))
+;; end org-hugo
 
 (evil-ex-define-cmd "clean" 'rubocop-format)
 
@@ -411,13 +423,13 @@
          :target (file+head "%<%Y-%m-%d>.org"
                             "#+title: %<%Y-%m-%d>\n"))
         ("w" "work" plain
-         "\n\nprevious: \nnext: \n* TODO \n- [ ] get a ticket to work on\n- [ ] check PR comments \n- [ ] see if there are PRs needing review\n\n%?"
+         "\n\nprevious: \nnext: \n* TODO \n- [ ] get a ticket to work on\n- [ ] check PR comments \n- [ ] see if there are PRs needing review\n\n%?")
         :if-new (file+head "%<%Y-%m-%d>.org"
                            "#+title: %<%Y-%m-%d>\n")
-        :unnarrowed t)
-                ))
+        :unnarrowed t))
 
 
+; for searching org-roam stuff
 ; for more on deft check out this video:
 ; https://www.youtube.com/watch?v=mldoUx_wi10
 (use-package deft
@@ -455,7 +467,7 @@
 
 ;; Sample jar configuration
 ;; (setq plantuml-jar-path "/usr/local/opt/plantuml/libexec/plantuml.jar")
-(setq plantuml-jar-path "/usr/local/Cellar/plantuml/1.2022.6/libexec/plantuml.jar" )
+(setq plantuml-jar-path "/usr/local/Cellar/plantuml/1.2022.6/libexec/plantuml.jar")
 (setq plantuml-default-exec-mode 'jar)
 ;
 ; ;; Sample executable configuration
