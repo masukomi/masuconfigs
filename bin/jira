@@ -42,7 +42,7 @@ while :; do
 			FILTERED_BRANCH=$(echo "$BRANCH" | grep "/*-*/")
 			if [ "$FILTERED_BRANCH" != "" ]; then
 				TICKET=$(echo "$FILTERED_BRANCH" | sd "^.*?/(\S+)/.*" '$1')
-				if [ "$TICKET" == *"_"* ]; then
+				if [[ "$TICKET" == *"_"* ]]; then
 					TICKET=$(echo "$FILTERED_BRANCH" | sd '^.*(ENG\S+)_.*$' '$1')
 				fi
 			fi
