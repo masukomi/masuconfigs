@@ -28,29 +28,41 @@
 # LICENSE
 # https://github.com/charmbracelet/gum/blob/fb4a9e6320e6a52ace2979f87391d582c8d123f6/LICENSE
 
+STASHED_FILES=$(git diff --name-only --cached)
+if [ "$STASHED_FILES" == "" ]; then
+	echo "🛑  No staged files. Quitting"
+	exit 1
+fi
 
-TYPE=$(gum choose "fix" "feat" "docs" "tweak" "refactor" "test" "chore" "revert")
-SCOPE=$(gum input --placeholder "scope (optional): a noun describing a section of the codebase")
-TICKET=$(gum input --placeholder "ticket number (optional):")
 
 GIT_CCOM_TAGS=$(git config --get ccom.tags)
 if [ $? != 0 ]; then
 	GIT_CCOM_TAGS=""
 fi
-
 eval "TAG_CHOICES=($GIT_CCOM_TAGS)";
-TAG_PLACEHOLDER="tag (optional - no spaces):"
-if [[ ${#TAG_CHOICES[@]} -gt 0 ]]; then
-	TAG_PLACEHOLDER="tag (optional - no spaces):
-	(${TAG_CHOICES[@]})"
-fi
+
 
 # Since the scope is optional, wrap it in parentheses if it has a value.
-[[ -n "$SCOPE" ]] && SCOPE="($SCOPE)"
 
 # Pre-populate the input with the type(scope): so that the user may change it
+TYPE=$(gum choose "fix" "feat" "docs" "tweak" "refactor" "test" "chore" "revert")
+if [ "$TYPE" == "" ]; then
+	echo "⚠️  You must supply a type"
+	exit 1
+fi
+SCOPE=$(gum input --placeholder "scope (optional): a noun describing a section of the codebase")
+[[ -n "$SCOPE" ]] && SCOPE="($SCOPE)"
+TICKET=$(gum input --placeholder "ticket number (optional):")
+
+
 echo "commit title: "
 SUMMARY=$(gum input --value "$TYPE$SCOPE: ")
+if [ "$SUMMARY" == "" ]; then
+	echo "⚠️  You must supply a title"
+	exit 1
+fi
+echo -en "\e[1A\e[K" ;printf "\r"
+
 MAYBE_TAG=""
 echo "tags: "
 echo "(optional -- ENTER  to submit, SPACE to choose)"
@@ -65,6 +77,7 @@ if [[ ${#TAG_CHOICES[@]} -gt 0 ]]; then
 else
 	MAYBE_TAG=$(gum input --placeholder "tag (optional - no spaces):")
 fi
+echo -en "\e[1A\e[K\e[1A\K" ;printf "\r"
 if [ "$MAYBE_TAG" != "" ]; then
 	TAGS="$TAGS $MAYBE_TAG"
 fi
@@ -88,6 +101,8 @@ TICKET: $TICKET"
 [[ -n "$TAGS" ]] && DESCRIPTION="$DESCRIPTION
 
 TAGS: $TAGS"
+
+echo -en "\e[1A\e[K\e[1A\K" ;printf "\r"
 
 # TEMPLATE EVAL
 if [[ "$DESCRIPTION" == *"\`"* ]]; then
