@@ -13,9 +13,10 @@
 # Usage: git ccom
 #        just follow the prompts after that.
 
-TYPE=$(gum choose "fix" "feat" "docs" "style" "refactor" "test" "chore" "revert")
+TYPE=$(gum choose "fix" "feat" "docs" "tweak" "refactor" "test" "chore" "revert")
 SCOPE=$(gum input --placeholder "scope (optional): a noun describing a section of the codebase")
 TICKET=$(gum input --placeholder "ticket number (optional):")
+
 
 # Since the scope is optional, wrap it in parentheses if it has a value.
 [[ -n "$SCOPE" ]] && SCOPE="($SCOPE)"
@@ -23,12 +24,25 @@ TICKET=$(gum input --placeholder "ticket number (optional):")
 # Pre-populate the input with the type(scope): so that the user may change it
 echo "commit title: "
 SUMMARY=$(gum input --value "$TYPE$SCOPE: ")
+MAYBE_TAG=$(gum input --placeholder "tag (optional - no spaces):")
+while [ "$MAYBE_TAG" != "" ]
+do
+	TAGS="$TAGS $MAYBE_TAG"
+	MAYBE_TAG=$(gum input --placeholder "tag (optional):")
+done
+# uniquify and sort tags
+if [[ -n "$TAGS" ]]; then
+	TAGS=$(echo "$TAGS" | sd "\s+" "\n" | uniq | sort | tr "\n" " ")
+fi
 echo "commit details: "
-echo "(^d to end)"
+echo "(ESC to end)"
 DESCRIPTION=$(gum write --placeholder "Details of this change")
 [[ -n "$TICKET" ]] && DESCRIPTION="$DESCRIPTION
 
 TICKET: $TICKET"
+[[ -n "$TAGS" ]] && DESCRIPTION="$DESCRIPTION
+
+TAGS: $TAGS"
 
 # TEMPLATE EVAL
 if [[ "$DESCRIPTION" == *"\`"* ]]; then
