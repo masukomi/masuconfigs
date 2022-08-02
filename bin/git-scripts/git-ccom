@@ -2,21 +2,48 @@
 
 # an interactive cli tool to help you create commit messages
 # that adhere to the Conventional Commits standard
-# SUPPORTS SIMPLE TEMPLATING via backticks
-
-
-# https://www.conventionalcommits.org/en/v1.0.0/#summary
-# Based on code from makers of Charm and Gum
-# requires gum to be installed.
-# https://github.com/charmbracelet/gum
 #
 # Usage: git ccom
 #        just follow the prompts after that.
+#        NOTE: supports simple templating via backticks
+#              in the ticket, description, and tags field.
+
+# Conventional Commits details:
+# https://www.conventionalcommits.org/en/v1.0.0/#summary
+
+# NOTE: tags are stored under the ccom.tags key in your
+#       each git repo you use it in. This allows for
+#       different tags for each project
+
+
+
+
+# Based on code from makers of Charm and Gum
+# requires gum to be installed.
+# https://github.com/charmbracelet/gum
+# Distributed under the MIT License
+# MIT License
+#
+# Copyright (c) 2021 Charmbracelet, Inc & 2022 Kay Rhodes A.K.A. masukomi
+# LICENSE
+# https://github.com/charmbracelet/gum/blob/fb4a9e6320e6a52ace2979f87391d582c8d123f6/LICENSE
+
 
 TYPE=$(gum choose "fix" "feat" "docs" "tweak" "refactor" "test" "chore" "revert")
 SCOPE=$(gum input --placeholder "scope (optional): a noun describing a section of the codebase")
 TICKET=$(gum input --placeholder "ticket number (optional):")
 
+GIT_CCOM_TAGS=$(git config --get ccom.tags)
+if [ $? != 0 ]; then
+	GIT_CCOM_TAGS=""
+fi
+
+eval "TAG_CHOICES=($GIT_CCOM_TAGS)";
+TAG_PLACEHOLDER="tag (optional - no spaces):"
+if [[ ${#TAG_CHOICES[@]} -gt 0 ]]; then
+	TAG_PLACEHOLDER="tag (optional - no spaces):
+	(${TAG_CHOICES[@]})"
+fi
 
 # Since the scope is optional, wrap it in parentheses if it has a value.
 [[ -n "$SCOPE" ]] && SCOPE="($SCOPE)"
@@ -24,15 +51,33 @@ TICKET=$(gum input --placeholder "ticket number (optional):")
 # Pre-populate the input with the type(scope): so that the user may change it
 echo "commit title: "
 SUMMARY=$(gum input --value "$TYPE$SCOPE: ")
-MAYBE_TAG=$(gum input --placeholder "tag (optional - no spaces):")
-while [ "$MAYBE_TAG" != "" ]
-do
+MAYBE_TAG=""
+echo "tags: "
+echo "(optional -- ENTER  to submit, SPACE to choose)"
+
+if [[ ${#TAG_CHOICES[@]} -gt 0 ]]; then
+	# choose from list
+	MAYBE_TAG=$(gum choose --no-limit ${TAG_CHOICES[@]} ".new" | sort | tr "\n" " ")
+	if [[ "$MAYBE_TAG" == *".new"* ]]; then
+		MAYBE_TAG=$(echo "$MAYBE_TAG" | sed -e "s/\.new//" -e "s/  / /g")
+		MAYBE_TAG="$MAYBE_TAG $(gum input --placeholder "new tag (no spaces):")"
+	fi
+else
+	MAYBE_TAG=$(gum input --placeholder "tag (optional - no spaces):")
+fi
+if [ "$MAYBE_TAG" != "" ]; then
 	TAGS="$TAGS $MAYBE_TAG"
-	MAYBE_TAG=$(gum input --placeholder "tag (optional):")
-done
+fi
+
 # uniquify and sort tags
 if [[ -n "$TAGS" ]]; then
 	TAGS=$(echo "$TAGS" | sd "\s+" "\n" | uniq | sort | tr "\n" " ")
+	STORABLE_TAGS=$(echo "$TAGS ${TAG_CHOICES[@]}" \
+		| sd "\s+" "\n" \
+		| uniq \
+		| sort \
+		| tr "\n" " " )
+	git config ccom.tags "$STORABLE_TAGS"
 fi
 echo "commit details: "
 echo "(ESC to end)"
