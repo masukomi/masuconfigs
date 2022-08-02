@@ -10,7 +10,7 @@ function rtrs --description "rtestify (rt) last rspec (rs) command"
 		| sd "^.*rspec (-+\w+(=| )[0-9a-zA-Z-]+)* *" "rtest "
 		)
 
-	echo "running: $command"
+	echo "$command"
 	eval $command
 end
 
@@ -22,7 +22,7 @@ function rsrt --description "rspecify (rs) last rtest (rt) command"
 		| head -n1\
 		| sd "rtest" "rtest --rspec" )
 	set -l c2 (eval $command)
-	echo "running: $c2"
+	echo "$c2"
 	eval $c2
 end
 
