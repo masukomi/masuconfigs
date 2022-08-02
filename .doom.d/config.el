@@ -391,56 +391,168 @@
 
 (evil-ex-define-cmd "clean" 'rubocop-format)
 
-;; org-roam stuff
+;; ;; org-roam stuff
 
-;; (make-directory "~/Documents/org-roam")
-(setq org-roam-directory (file-truename "~/Documents/org-roam"))
-(org-roam-db-autosync-mode)
-;; (setq org-roam-database-connector 'sqlite3)
+;; ;; (make-directory "~/Documents/org-roam")
+;; (setq org-roam-directory (file-truename "~/Documents/org-roam"))
+;; (org-roam-db-autosync-mode)
+;; ;; (setq org-roam-database-connector 'sqlite3)
 
-; org-roam-ui stuff
-(use-package! websocket
-  :after org-roam)
-(use-package! org-roam-ui
-  :after org-roam ; or :after org
-;;         normally we'd recommend hooking orui after org-roam, but since
-;;         org-roam does not have a hookable mode anymore, you're advised to
-;;         pick something yourself if you don't care about startup time, use
-;;         :hook (after-init . org-roam-ui-mode)
-    :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
+;; ; org-roam-ui stuff
+;; (use-package! websocket
+;;   :after org-roam)
+;; (use-package! org-roam-ui
+;;   :after org-roam ; or :after org
+;; ;;         normally we'd recommend hooking orui after org-roam, but since
+;; ;;         org-roam does not have a hookable mode anymore, you're advised to
+;; ;;         pick something yourself if you don't care about startup time, use
+;; ;;         :hook (after-init . org-roam-ui-mode)
+;;     :config
+;;     (setq org-roam-ui-sync-theme t
+;;           org-roam-ui-follow t
+;;           org-roam-ui-update-on-save t
+;;           org-roam-ui-open-on-start t))
 
-(setq org-roam-dailies-directory "daily/")
+;; (setq org-roam-dailies-directory "daily/")
 
-;; see this link for how to create new templates (daily & otherwise)
-;; https://systemcrafters.net/build-a-second-brain-in-emacs/capturing-notes-efficiently/
-(setq org-roam-dailies-capture-templates
-      '(("d" "default" entry
-         "* %?"
-         :target (file+head "%<%Y-%m-%d>.org"
-                            "#+title: %<%Y-%m-%d>\n"))
-        ("w" "work" plain
-         "\n\nprevious: \nnext: \n* TODO \n- [ ] get a ticket to work on\n- [ ] check PR comments \n- [ ] see if there are PRs needing review\n\n%?")
-        :if-new (file+head "%<%Y-%m-%d>.org"
-                           "#+title: %<%Y-%m-%d>\n")
-        :unnarrowed t))
+;; ;; see this link for how to create new templates (daily & otherwise)
+;; ;; https://systemcrafters.net/build-a-second-brain-in-emacs/capturing-notes-efficiently/
+;; (setq org-roam-dailies-capture-templates
+;;       '(("d" "default" entry
+;;          "* %?"
+;;          :target (file+head "%<%Y-%m-%d>.org"
+;;                             "#+title: %<%Y-%m-%d>\n"))
+;;         ("w" "work" plain
+;;          "\n\nprevious: \nnext: \n* TODO \n- [ ] get a ticket to work on\n- [ ] check PR comments \n- [ ] see if there are PRs needing review\n\n%?")
+;;         :if-new (file+head "%<%Y-%m-%d>.org"
+;;                            "#+title: %<%Y-%m-%d>\n")
+;;         :unnarrowed t))
 
 
-; for searching org-roam stuff
-; for more on deft check out this video:
-; https://www.youtube.com/watch?v=mldoUx_wi10
-(use-package deft
-  :after org
-  :bind
-  ("C-c n d" . deft)
-  :custom
-  (deft-recursive t)
-  (deft-use-filter-string-for-filename t)
-  (deft-default-extension "org")
-  (deft-directory org-roam-directory))
+;; ; for searching org-roam stuff
+;; ; for more on deft check out this video:
+;; ; https://www.youtube.com/watch?v=mldoUx_wi10
+;; (use-package deft
+;;   :after org
+;;   :bind
+;;   ("C-c n d" . deft)
+;;   :custom
+;;   (deft-recursive t)
+;;   (deft-use-filter-string-for-filename t)
+;;   (deft-default-extension "org")
+;;   (deft-directory org-roam-directory))
+
+;; BEGIN DENOTE stuff
+(require 'denote)
+
+;; Remember to check the doc strings of those variables.
+(setq denote-directory (expand-file-name "~/Documents/notes/"))
+(setq denote-known-keywords '("daily" "todo" "project"))
+(setq denote-infer-keywords t)
+(setq denote-sort-keywords t)
+(setq denote-file-type nil) ; Org is the default, set others here
+(setq denote-prompts '(title keywords))
+
+;; We allow multi-word keywords by default.  The author's personal
+;; preference is for single-word keywords for a more rigid workflow.
+(setq denote-allow-multi-word-keywords nil)
+
+(setq denote-date-format nil) ; read doc string
+
+;; By default, we fontify backlinks in their bespoke buffer.
+(setq denote-link-fontify-backlinks t)
+
+;; Also see `denote-link-backlinks-display-buffer-action' which is a bit
+;; advanced.
+
+;; If you use Markdown or plain text files (Org renders links as buttons
+;; right away)
+(add-hook 'find-file-hook #'denote-link-buttonize-buffer)
+
+(setq denote-dired-rename-expert nil)
+
+;; We use different ways to specify a path for demo purposes.
+(setq denote-dired-directories
+      (list denote-directory
+            (thread-last denote-directory (expand-file-name "attachments"))
+            ; (expand-file-name "~/Documents/books")
+            ))
+
+;; Generic (great if you rename files Denote-style in lots of places):
+;; (add-hook 'dired-mode-hook #'denote-dired-mode)
+;;
+;; OR if only want it in `denote-dired-directories':
+(add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)
+
+;; Here is a custom, user-level command from one of the examples we
+;; showed in this manual.  We define it here and add it to a key binding
+;; below.
+;; (defun my-denote-journal ()
+;;   "Create an entry tagged 'journal', while prompting for a title."
+;;   (interactive)
+;;   (denote
+;;    (denote--title-prompt)
+;;    '("journal")))
+;;
+(defun denote-journal ()
+  "Create an entry tagged 'journal' with the date as its title."
+  (interactive)
+  (denote
+   (format-time-string "%A %e %B %Y") ; format like Tuesday 14 June 2022
+   '("journal"))) ; multiple keywords are a list of strings: '("one" "two")
+
+(defun show-denote-dir ()
+  "open an dired window on the default denote directory"
+  (interactive) ; required to make it accessible via keybdingings
+  (split-window-vertically)
+  (other-window 1)
+  (dired denote-directory))
+
+;; Denote DOES NOT define any key bindings.  This is for the user to
+;; decide.  For example:
+(let ((map global-map))
+  (define-key map (kbd "C-c n f") #'show-denote-dir)   ; custom
+  (define-key map (kbd "C-c n j") #'denote-journal) ; custom
+  (define-key map (kbd "C-c n n") #'denote)
+  (define-key map (kbd "C-c n N") #'denote-type)
+  (define-key map (kbd "C-c n d") #'denote-date)
+  (define-key map (kbd "C-c n s") #'denote-subdirectory)
+  ;; If you intend to use Denote with a variety of file types, it is
+  ;; easier to bind the link-related commands to the `global-map', as
+  ;; shown here.  Otherwise follow the same pattern for `org-mode-map',
+  ;; `markdown-mode-map', and/or `text-mode-map'.
+  (define-key map (kbd "C-c n i") #'denote-link) ; "insert" mnemonic
+  (define-key map (kbd "C-c n I") #'denote-link-add-links)
+  (define-key map (kbd "C-c n l") #'denote-link-find-file) ; "list" links
+  (define-key map (kbd "C-c n b") #'denote-link-backlinks)
+  ;; Note that `denote-dired-rename-file' can work from any context, not
+  ;; just Dired bufffers.  That is why we bind it here to the
+  ;; `global-map'.
+  (define-key map (kbd "C-c n r") #'denote-dired-rename-file)
+  (define-key map (kbd "C-c n R") #'denote-dired-rename-file-and-add-front-matter))
+
+;; Key bindings specifically for Dired.
+(let ((map dired-mode-map))
+  (define-key map (kbd "C-c C-d C-i") #'denote-link-dired-marked-notes)
+  (define-key map (kbd "C-c C-d C-r") #'denote-dired-rename-marked-files)
+  (define-key map (kbd "C-c C-d C-R") #'denote-dired-rename-marked-files-and-add-front-matters))
+
+(with-eval-after-load 'org-capture
+  (setq denote-org-capture-specifiers "%l\n%i\n%?")
+  (add-to-list 'org-capture-templates
+               '("n" "New note (with denote.el)" plain
+                 (file denote-last-path)
+                 #'denote-org-capture
+                 :no-save t
+                 :immediate-finish nil
+                 :kill-buffer t
+                 :jump-to-captured t)))
+
+
+;; END DENOTE stuff
+
+
+
 
 ;; Enable plantuml-mode for PlantUML files
 (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
@@ -611,3 +723,18 @@
 ; indentation guides
 ; https://github.com/DarthFennec/highlight-indent-guides
 (setq highlight-indent-guides-method 'fill)
+
+;;
+; ediff stuff
+; for making M-x ediff-files and M-x ediff-current-file
+; experience better
+; found here: https://pragmaticemacs.wordpress.com/2015/06/13/visualise-and-copy-differences-between-files/
+(require 'ediff)
+;; don't start another frame
+;; this is done by default in preluse
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+;; put windows side by side
+(setq ediff-split-window-function (quote split-window-horizontally))
+;;revert windows on exit - needs winner mode
+(winner-mode)
+(add-hook 'ediff-after-quit-hook-internal 'winner-undo)

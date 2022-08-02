@@ -91,9 +91,10 @@
 (package! ox-slack)
 (package! ox-leanpub)
 (package! elmacro)
-(unpin! org-roam) ; Danger Will Robinson!
-(package! org-roam)
-(package! org-roam-ui) ; this likes danger
+;; (unpin! org-roam) ; Danger Will Robinson!
+;; (package! org-roam)
+;; (package! org-roam-ui) ; this likes danger
+(package! denote)
 
 ;; (package! jinja2-mode) ; Jinja2 templates (python and chicken scheme)
 (package! handlebars-mode)
