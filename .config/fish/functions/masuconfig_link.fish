@@ -1,5 +1,5 @@
 function masuconfig_link --argument-names thing
-	set -l thing_path (fbn $thing ~/bin/ | head -n1)
+	set -l thing_path (find ~/bin -name "$thing" | head -n1)
 	if not test -n "$thing_path"
 		set thing_path (fbn $thing ~/.config/fish/functions/)
 	end
