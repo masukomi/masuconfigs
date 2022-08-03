@@ -40,14 +40,6 @@ function is_installed() {
 	fi
 }
 
-function input_or_default () {
-	local default="$1"
-	local input=$(gum input --placeholder "$default")
-	[ -n "$input" ] || input="$default"
-	echo "$input"
-}
-
-
 # install homebrew if we don't have it already
 if ! command -v brew >/dev/null 2>&1; then
 	echo "Installing homebrew"
@@ -83,12 +75,20 @@ if ! is_installed "asdf"; then
 		if [ $? -eq 0 ]; then
 			maybrew "asdf"
 			asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
+			asdf plugin add janet https://github.com/Jakski/asdf-janet.git
 			# sadly, can't avoid needing node...
 			asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-			gum confirm "Do you want me to install a ruby?"
+			gum confirm "Do you want me to install a Ruby?"
 			if [ $? -eq 0 ]; then
-				version=input_or_default "latest"
+				version=$(gum input --value="latest")
 				asdf install ruby $version
+				asdf global ruby $version
+			fi
+			gum confirm "Do you want me to install a Janet?"
+			if [ $? -eq 0 ]; then
+				version=$(gum input --value="latest")
+				asdf install janet latest
+				asdf global janet $version
 			fi
 		fi
 	else
@@ -314,7 +314,7 @@ if ! is_installed "rbenv"; then
 			gum confirm "Do you want me to install a ruby?"
 			if [ $? -eq 0 ]; then
 				latest=$( rbenv install -l 2>/dev/null | grep "^[[:digit:]]" | tail -n1)
-				version=input_or_default "$latest"
+				version=$(gum input --value="$latest")
 				# there's an issue with open-ssl-1.1.1q
 				# which means you need to set this CFLAGS option
 				# I don't know which versions use a different version
