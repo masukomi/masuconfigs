@@ -3,6 +3,10 @@
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; refresh' after modifying this file!
 
+; image courtesy of eccentric-j in this GitHub issue
+; https://github.com/doomemacs/doomemacs/issues/3382
+(setq fancy-splash-image "~/.doom.d/images/doom_icon_256x256.png")
+
 (add-to-list 'load-path "~/.doom.d/custom")
 
 ;; These are used for a number of things, particularly for GPG configuration,
