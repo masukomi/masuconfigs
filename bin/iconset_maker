@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# creates a .icns icon file from a 1024x1024 PNG images
+# USAGE: iconset_maker <source_image> <iconset_name>
+
+
+USAGE="USAGE: iconset_maker <source_image> <iconset_name>"
+SOURCE_IMAGE=$1
+ICONSET_NAME=$2
+
+if [ "$SOURCE_IMAGE" == "" ] || [ "$ICONSET_NAME" == "" ]; then
+	echo USAGE
+	exit 1
+fi
+
+
+FILE_INFO=$(file $1)
+ERROR_MESSAGE="Source image must bea 1024x1024 PNG file"
+if [[ "$FILE_INFO" != *"PNG image data"* ]]; then
+	echo $ERROR_MESSAGE
+	exit 1
+fi
+
+if [[ "$FILE_INFO" != *"1024 x 1024"* ]]; then
+	echo $ERROR_MESSAGE
+	exit 1
+fi
+
+
+
+
+mkdir $ICONSET_NAME.iconset
+sips -z 16 16     $SOURCE_IMAGE --out $ICONSET_NAME.iconset/icon_16x16.png
+sips -z 32 32     $SOURCE_IMAGE --out $ICONSET_NAME.iconset/icon_16x16@2x.png
+sips -z 32 32     $SOURCE_IMAGE --out $ICONSET_NAME.iconset/icon_32x32.png
+sips -z 64 64     $SOURCE_IMAGE --out $ICONSET_NAME.iconset/icon_32x32@2x.png
+sips -z 128 128   $SOURCE_IMAGE --out $ICONSET_NAME.iconset/icon_128x128.png
+sips -z 256 256   $SOURCE_IMAGE --out $ICONSET_NAME.iconset/icon_128x128@2x.png
+sips -z 256 256   $SOURCE_IMAGE --out $ICONSET_NAME.iconset/icon_256x256.png
+sips -z 512 512   $SOURCE_IMAGE --out $ICONSET_NAME.iconset/icon_256x256@2x.png
+sips -z 512 512   $SOURCE_IMAGE --out $ICONSET_NAME.iconset/icon_512x512.png
+cp $SOURCE_IMAGE $ICONSET_NAME.iconset/icon_512x512@2x.png
+iconutil -c icns $ICONSET_NAME.iconset
+rm -R $ICONSET_NAME.iconset
