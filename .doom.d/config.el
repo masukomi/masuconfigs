@@ -269,7 +269,26 @@
 ; org-src-fontify-buffer
 ; org-src-fontify-block
 
+; found here: https://github.com/bgutter/dotemacs/blob/master/my-init.org
+(defun my:emojify-inhibit-fix-org-drawers (text beg end)
+  "Since org-mode now uses lower-case :begin:, :end:, etc tags, some of them are
+now being rendered as Emojis. Filter this case out."
+  (and (equal major-mode 'org-mode) (member (downcase text) '(":begin:" ":end:"))))
 
+; made by me
+(defun my:emojify-inhibit-no-inline-escape-emoji (text beg end)
+  "I never create emojis that start with the equals sign, but i do use org mode's equals
+sign to escape inline text"
+  (and (equal major-mode 'org-mode)
+       (or
+	(string-prefix-p "=" (downcase text))
+	(string-prefix-p "~" (downcase text))
+	)
+       )
+  )
+
+(add-to-list 'emojify-inhibit-functions 'my:emojify-inhibit-fix-org-drawers)
+(add-to-list 'emojify-inhibit-functions 'my:emojify-inhibit-no-inline-escape-emoji)
 
 ;; org-hugo blogging things
   (setq time-stamp-active t
@@ -470,6 +489,14 @@
 
 ;;---------------------------------
 ;; LANGUAGE SPECIFIC STUFF
+;;------------- Raku
+;; see raku-mode https://github.com/Raku/raku-mode
+(define-auto-insert
+	'("\\.rakumod\\'" . "Raku module skeleton")
+	'raku-module-skeleton)
+(define-auto-insert
+	'("\\.raku\\'" . "Raku script skeleton")
+	'raku-script-skeleton)
 ;;------------- HTML
 
 (require 'web-mode)
@@ -647,6 +674,7 @@
 (use-package emojify
   :hook (after-init . global-emojify-mode))
 (require 'mastodon-async)
+
 
 
 
