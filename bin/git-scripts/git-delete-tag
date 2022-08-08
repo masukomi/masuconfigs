@@ -7,7 +7,7 @@
 # requires Charm's Gum
 # https://github.com/charmbracelet/gum
 
-git fetch --all
+git fetch --tags --all
 TAG="$1"
 
 git tag -d "$TAG"
