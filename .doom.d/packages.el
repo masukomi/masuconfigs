@@ -123,3 +123,4 @@
 (package! xterm-color)
 (package! ialign)
 (package! pcre2el)
+(package! raku-mode)
