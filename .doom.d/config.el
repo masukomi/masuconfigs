@@ -67,6 +67,9 @@
 ;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
 ;; they are implemented.
 
+
+
+
 ;;---------------------------------
 ;; UI CONFIG
 ; kinda-sorta forcing initial window size because it seems incapable
@@ -248,6 +251,12 @@
   (insert "\t"))
 
 (global-set-key (kbd "TAB") 'my-insert-tab-char)
+
+
+;;---------------------------------
+;; UTILITY CONFIG
+;; ialign (interatvie alignment)
+(global-set-key (kbd "C-x l") #'ialign)
 
 
 ;;---------------------------------
@@ -665,6 +674,7 @@ sign to escape inline text"
 (winner-mode)
 (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
 
+<<<<<<< Updated upstream
 ;;------------- MASTODON
 ; current repo here: https://codeberg.org/martianh/mastodon.el
 (use-package mastodon
@@ -811,6 +821,7 @@ sign to escape inline text"
 
 
 ;
+
 
 
 

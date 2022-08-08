@@ -39,3 +39,4 @@ tester.*
 *~
 .config/fish/fish_variables
 .iterm2/com.googlecode.iterm2.plist
+.rtest.json

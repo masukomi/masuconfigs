@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+
+# requires Charm's Gum
+# https://github.com/charmbracelet/gum
+
+git fetch --all
+TAG="$1"
+
+git tag -d "$TAG"
+if [ $? -ne 0 ]; then
+	exit 1
+fi
+
+echo "Delete from remote repo too?"
+CHOICE=$(gum choose "yes" "no")
+if [ "$CHOICE" == "yes" ]; then
+	echo "Which remote?"
+	REMOTE=$(gum choose $(git remote))
+	git push --delete "$REMOTE" "$TAG"
+else
+	echo "Ok. Stopping here."
+fi
+
+exit 0

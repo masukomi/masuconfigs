@@ -1,4 +1,4 @@
-set --export POSH_THEME '/Users/masukomi/.config/fish/current_theme.omp.json'
+set --export POSH_THEME '/Users/kayrhodes/.config/fish/current_theme.omp.json'
 set --global POWERLINE_COMMAND "oh-my-posh"
 set --global CONDA_PROMPT_MODIFIER false
 set --global omp_tooltip_command ""
@@ -39,7 +39,7 @@ function fish_right_prompt
       return
     end
     if test -n "$omp_tooltip_command"
-      set omp_tooltip_prompt (PREFIX=(brew --prefix) "$PREFIX/bin/oh-my-posh" print tooltip --config $POSH_THEME --shell fish --error $omp_status_cache --shell-version $FISH_VERSION --command $omp_tooltip_command)
+      set omp_tooltip_prompt (PREFIX=(brew --prefix) "$PREFIX/bin/oh-my-posh" print tooltip --config $POSH_THEME --shell fish --shell-version $FISH_VERSION --command $omp_tooltip_command)
       if test -n "$omp_tooltip_prompt"
         echo -n $omp_tooltip_prompt
         set omp_tooltip_command ""
