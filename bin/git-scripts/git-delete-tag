@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# deletes a git tag locally and (optionally) in a
+# remote chosen from the list of known remotes.
+# Usage: git delete-tag
 
 # requires Charm's Gum
 # https://github.com/charmbracelet/gum
