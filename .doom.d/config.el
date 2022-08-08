@@ -251,7 +251,9 @@
   (insert "\t"))
 
 (global-set-key (kbd "TAB") 'my-insert-tab-char)
-
+(add-hook 'after-init-hook #'global-emojify-mode)
+;; (use-package emojify
+;;   :hook (after-init . global-emojify-mode))
 
 ;;---------------------------------
 ;; UTILITY CONFIG
@@ -286,43 +288,48 @@ now being rendered as Emojis. Filter this case out."
 
 ; made by me
 (defun my:emojify-inhibit-no-inline-escape-emoji (text beg end)
-  "I never create emojis that start with the equals sign, but i do use org mode's equals
-sign to escape inline text"
+  "disable creation of emojis starting with = or ~ in org-mode"
   (and (equal major-mode 'org-mode)
-       (or
-	(string-prefix-p "=" (downcase text))
-	(string-prefix-p "~" (downcase text))
-	)
-       )
+       (or))
+  (string-prefix-p "=" (downcase te))
+  (string-prefix-p "~" (downcase te)))
+
+
+
+(with-eval-after-load "emojify"
+	(add-to-list 'emojify-inhibit-functions 'my:emojify-inhibit-fix-org-drawers)
+	(add-to-list 'emojify-inhibit-functions 'my:emojify-inhibit-no-inline-escape-emoji)
+)
+
+(with-eval-after-load 'ox
+	(require 'ox-hugo)
+	(require 'ox-clip)
+	(require 'ox-md)
+	(require 'ox-publish)
+
+
+  )
+(with-eval-after-load 'org
+	;; org-hugo blogging things
+	(setq time-stamp-active t
+		time-stamp-start "#\\+lastmod:[ \t]*"
+		time-stamp-end "$"
+		time-stamp-format "%04Y-%02m-%02d")
+	(add-hook 'before-save-hook 'time-stamp nil)
+	(add-to-list
+		'org-src-lang-modes '("plantuml" . plantuml))
   )
 
-(add-to-list 'emojify-inhibit-functions 'my:emojify-inhibit-fix-org-drawers)
-(add-to-list 'emojify-inhibit-functions 'my:emojify-inhibit-no-inline-escape-emoji)
-
-;; org-hugo blogging things
-  (setq time-stamp-active t
-        time-stamp-start "#\\+lastmod:[ \t]*"
-        time-stamp-end "$"
-        time-stamp-format "%04Y-%02m-%02d")
-  (add-hook 'before-save-hook 'time-stamp nil)
-
 ;; New link type for Org-Hugo internal links
-  (org-link-set-parameters "hugo"
-                           :complete (lambda ()
-                                       (concat "{{% ref "(file-name-nondirectory (read-file-name "File: "))" %}}")))
+(with-eval-after-load 'ox-hugo
+	(org-link-set-parameters "hugo"
+		:complete (lambda ()
+			(concat "{{% ref "(file-name-nondirectory (read-file-name "File: "))" %}}"))))
 ;; end org-hugo
-
-(require 'ox-md)
-(require 'ox-publish)
-(with-eval-after-load 'ox
-  (require 'ox-hugo)
-  (require 'ox-clip))
 
 ; sticking this under org because it's the only place i use PlantUML
 ;; Enable plantuml-mode for PlantUML files
 (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
-(add-to-list
-  'org-src-lang-modes '("plantuml" . plantuml))
 ; WARNING: previewing of files may result in info being sent to
 ; plantuml.com. if execution mode is "server".
 ; You can customize plantuml-default-exec-mode
@@ -674,15 +681,12 @@ sign to escape inline text"
 (winner-mode)
 (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
 
-<<<<<<< Updated upstream
 ;;------------- MASTODON
 ; current repo here: https://codeberg.org/martianh/mastodon.el
 (use-package mastodon
   :ensure t)
 (setq mastodon-instance-url "https://connectified.com"
       mastodon-active-user "masukomi")
-(use-package emojify
-  :hook (after-init . global-emojify-mode))
 (require 'mastodon-async)
 
 
