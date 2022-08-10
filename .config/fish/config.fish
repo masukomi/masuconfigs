@@ -146,6 +146,17 @@ fish_add_path /usr/local/opt/mongodb-community@4.2/bin
 
 
 set CELLAR (brew --cellar)
+
+# BEGIN RAKU
+# /opt/homebrew/Cellar/rakudo-star/2022.06/share/perl6/site/bin
+brew ls --versions rakudo-star > /dev/null
+if test $status -eq 0
+	for dir in (  find  $CELLAR/rakudo-star/**/*/bin -name bin )
+		fish_add_path -g -a $dir
+	end
+end
+
+
 fish_add_path -g -a $CELLAR/chicken/5.0.0/bin
 # OYYY WHEN IT COMPLAINS ABOUT libchicken.dylib being missing
 #ln -s (brew --prefix chicken)/lib/libchicken.dylib /usr/local/lib/libchicken.dylib
