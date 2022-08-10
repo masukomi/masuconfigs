@@ -88,7 +88,9 @@
 (package! rspec-mode)
 (package! protobuf-mode)
 (package! ox-clip)
-(package! ox-slack)
+;; (package! ox-slack)
+(package! ox-slack
+  :recipe (:host github :repo "masukomi/ox-slack" :branch "community"))
 (package! ox-leanpub)
 (package! elmacro)
 ;; (unpin! org-roam) ; Danger Will Robinson!
@@ -116,10 +118,17 @@
 ;   :recipe (:host github :repo "masukomi/private-comments-mode"))
 ;; (package! textmate)
 (package! mastodon)
+
+; because .... emoji!
 (package! emojify)
+
 (package! janet-mode)
 ;; (package! lua-mode)
 ;; (package! fennel-mode)
 (package! xterm-color)
+
+; interactive align
 (package! ialign)
+
+; use sane regexp (PCRE) in emacs
 (package! pcre2el)
