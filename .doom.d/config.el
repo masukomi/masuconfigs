@@ -216,6 +216,11 @@
 (use-package rainbow-mode
   :hook (prog-mode . rainbow-mode ))
 
+; topsy: keeps function signatures pinned to the top as you scroll
+; https://github.com/alphapapa/topsy.el#readme
+(add-hook 'prog-mode-hook #'topsy-mode)
+
+
 ;; ---- Doom Word Wrap
 ;; see https://github.com/hlissner/doom-emacs/blob/3614109c7a0cdd5bc474f095beebe9c126ae8f01/modules/editor/word-wrap/README.org
 ;
@@ -252,6 +257,12 @@
 
 (global-set-key (kbd "TAB") 'my-insert-tab-char)
 (add-hook 'after-init-hook #'global-emojify-mode)
+(add-hook 'prog-mode-hook
+          (lambda ()
+            (unless (derived-mode-p 'ruby-mode)
+              (add-hook 'after-init-hook
+		(lambda () (local-set-key (kbd "TAB") #'my-insert-tab-char))
+			))))
 ;; (use-package emojify
 ;;   :hook (after-init . global-emojify-mode))
 
@@ -279,7 +290,27 @@
 ;
 ; org-src-fontify-buffer
 ; org-src-fontify-block
+;
+; TODO KEYWORDS
+(setq org-todo-keywords
+	'((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
+	(sequence "[ ](T)" "|" "[X](D)")
+	(sequence "|" "OKAY(o)" "YES(y)" "NO(n)"))
+      org-todo-keyword-faces
+      '(
+	("TODO"		:foreground "#7c7c75" :weight normal :underline t)
+	("WAITING"	:foreground "#9f7efe" :weight normal :underline t)
+	("INPROGRESS"	:foreground "#0098dd" :weight normal :underline t)
+	("DONE"		:foreground "#50a14f" :weight normal :underline t)
+	("CANCELLED"	:foreground "#ff6480" :weight normal :underline t)
 
+	)
+      org-agenda-files (list "~/Documents/notes/")
+
+      )
+
+
+; EMOJIFY things
 ; found here: https://github.com/bgutter/dotemacs/blob/master/my-init.org
 (defun my:emojify-inhibit-fix-org-drawers (text beg end)
   "Since org-mode now uses lower-case :begin:, :end:, etc tags, some of them are

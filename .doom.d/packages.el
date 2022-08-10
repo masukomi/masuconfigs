@@ -132,3 +132,9 @@
 
 ; use sane regexp (PCRE) in emacs
 (package! pcre2el)
+
+; pins the current function signature to the top of
+; the window
+; https://github.com/alphapapa/topsy.el#readme
+(package! topsy
+  :recipe (:host github :repo "alphapapa/topsy.el"))
