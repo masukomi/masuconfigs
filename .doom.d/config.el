@@ -245,7 +245,6 @@
   (add-to-list 'helm-projectile-sources-list helm-source-file-not-found t))
 
 
-
 ; TODO: make this toggleable
 ; tab mode
 (setq-default indent-tabs-mode t)
@@ -265,12 +264,19 @@
 			))))
 ;; (use-package emojify
 ;;   :hook (after-init . global-emojify-mode))
+;;
+
 
 ;;---------------------------------
 ;; UTILITY CONFIG
 ;; ialign (interatvie alignment)
 (global-set-key (kbd "C-x l") #'ialign)
 
+;; dired
+(defun masu-dired-mode-setup ()
+	"hook for 'dired-mode'"
+	(dired-hide-details-mode 1))
+(add-hook 'dired-mode-hook 'masu-dired-mode-setup)
 
 ;;---------------------------------
 ;; ORG Configs

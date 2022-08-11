@@ -138,3 +138,6 @@
 ; https://github.com/alphapapa/topsy.el#readme
 (package! topsy
   :recipe (:host github :repo "alphapapa/topsy.el"))
+
+
+(package! raku-mode)
