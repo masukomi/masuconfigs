@@ -152,6 +152,7 @@
 ;; (package! ox-slack)
 (package! ox-slack
   :recipe (:host github :repo "masukomi/ox-slack" :branch "community"))
+(package! ox-bb)
 (package! ox-leanpub)
 (package! sqlite3)
 (package! mastodon)
