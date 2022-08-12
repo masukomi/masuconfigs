@@ -273,6 +273,7 @@
 (global-set-key (kbd "C-x l") #'ialign)
 
 ;; dired
+;; found here:: https://wilkesley.org/~ian/xah/emacs/emacs_dired_tips.html
 (defun masu-dired-mode-setup ()
 	"hook for 'dired-mode'"
 	(dired-hide-details-mode 1))
