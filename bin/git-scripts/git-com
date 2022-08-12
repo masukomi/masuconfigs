@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+
+# an interactive cli tool to help you create commit messages
+#
+#
+# Usage: git com
+#        Just follow the prompts after that.
+#        NOTE: supports simple templating via backticks
+#              in the ticket, description, and tags field.
+#        SIDE NOTE: "com" is short for commit. ;)
+
+# NOTE: tags are stored under the com.tags key in your
+#       each git repo you use it in. This allows for
+#       different tags for each project
+#       types are stored under the com.types key
+#
+# Inspired by Conventional Commits Standard
+# Alas, as an English speaker
+# it felt backwards to me to have a guaranteed verb with an
+# optional noun in parens to describe the commit.
+# E.g. "fix"?! Fix WHAT?!!?
+#
+# And yes... https://xkcd.com/927/
+
+
+
+# Based on code from makers of Charm and Gum
+# requires gum to be installed.
+# https://github.com/charmbracelet/gum
+# Distributed under the MIT License
+# MIT License
+#
+# Copyright (c) 2021 Charmbracelet, Inc & 2022 Kay Rhodes A.K.A. masukomi
+# LICENSE
+# https://github.com/charmbracelet/gum/blob/fb4a9e6320e6a52ace2979f87391d582c8d123f6/LICENSE
+
+function clear_last_line () {
+	echo -en "\e[1A\e[K" ;printf "\r"
+}
+function clear_last_2_lines () {
+	echo -en "\e[1A\e[K\e[1A[K" ;printf "\r"
+}
+
+STASHED_FILES=$(git diff --name-only --cached)
+if [ "$STASHED_FILES" == "" ]; then
+	echo "🛑  No staged files. Quitting"
+	exit 1
+fi
+
+
+GIT_CCOM_TAGS=$(git config --get ccom.tags)
+if [ $? != 0 ]; then
+	GIT_CCOM_TAGS=""
+fi
+eval "TAG_CHOICES=($GIT_CCOM_TAGS)";
+
+GIT_CCOM_TYPES=$(git config --get ccom.types)
+if [ $? != 0 ]; then
+	GIT_CCOM_TYPES="fix feat add docs test refactor cleanup"
+fi
+eval "TYPE_CHOICES=($GIT_CCOM_TYPES)";
+
+echo "Specify a change type"
+# choose from list
+MAYBE_TYPE=$(gum choose ${TYPE_CHOICES[@]} ".new" | sort | tr "\n" " ")
+if [[ "$MAYBE_TYPE" == *".new"* ]]; then
+	MAYBE_TYPE=$(echo "$MAYBE_TYPE" | sed -e "s/\.new//" -e "s/  / /g")
+	MAYBE_TYPE="$MAYBE_TYPE $(gum input --placeholder "new type (no spaces):")"
+fi
+clear_last_line
+# echo -en "\e[1A\e[K\e[1A\K" ;printf "\r"
+
+if [ "$MAYBE_TYPE" != "" ]; then
+	TYPES="$GIT_CCOM_TYPES $MAYBE_TYPE"
+	TYPE=$(echo $MAYBE_TYPE | sed -e "s/ //g")
+else
+	echo "⚠️  You must supply a type"
+	exit 1
+fi
+# uniquify and sort types
+# if [[ -n "$TYPES" ]]; then
+	STORABLE_TYPES=$(echo "$TYPES" \
+		| sd "\s+" "\n" \
+		| uniq \
+		| sort \
+		| tr "\n" " " )
+	git config com.types "$STORABLE_TYPES"
+# fi
+clear_last_line
+
+
+SCOPE=$(gum input --placeholder "scope: a noun describing a section of the codebase")
+if [ "$SCOPE" == "" ]; then
+	echo "⚠️  You must supply a scope"
+	exit 1
+fi
+
+TICKET=$(gum input --placeholder "ticket number (optional):")
+
+
+echo "commit title: "
+SUMMARY=$(gum input --value "[$SCOPE] $TYPE: ")
+if [ "$SUMMARY" == "" ]; then
+	echo "⚠️  You must supply a title"
+	exit 1
+fi
+clear_last_line
+
+MAYBE_TAG=""
+echo "tags: "
+echo "(optional -- ENTER  to submit, SPACE to choose)"
+
+if [[ ${#TAG_CHOICES[@]} -gt 0 ]]; then
+	# choose from list
+	MAYBE_TAG=$(gum choose --no-limit ${TAG_CHOICES[@]} ".new" | sort | tr "\n" " ")
+	if [[ "$MAYBE_TAG" == *".new"* ]]; then
+		MAYBE_TAG=$(echo "$MAYBE_TAG" | sed -e "s/\.new//" -e "s/  / /g")
+		MAYBE_TAG="$MAYBE_TAG $(gum input --placeholder "new tag (no spaces):")"
+	fi
+else
+	MAYBE_TAG=$(gum input --placeholder "tag (optional - no spaces):")
+fi
+clear_last_2_lines
+if [ "$MAYBE_TAG" != "" ]; then
+	TAGS="$TAGS $MAYBE_TAG"
+fi
+
+# uniquify and sort tags
+if [[ -n "$TAGS" ]]; then
+	STORABLE_TAGS=$(echo "$TAGS" \
+		| sd "\s+" "\n" \
+		| uniq \
+		| sort \
+		| tr "\n" " " )
+	git config com.tags "$STORABLE_TAGS"
+fi
+echo "commit details: "
+echo "(ESC to end)"
+DESCRIPTION=$(gum write --placeholder "Details of this change" \
+	| fold -w 50 -s)
+[[ -n "$TICKET" ]] && DESCRIPTION="$DESCRIPTION
+
+TICKET: $TICKET"
+[[ -n "$TAGS" ]] && DESCRIPTION="$DESCRIPTION
+
+TAGS: $TAGS"
+
+clear_last_2_lines
+
+# TEMPLATE EVAL
+if [[ "$DESCRIPTION" == *"\`"* ]]; then
+	NEW_DESC=""
+	while IFS= read -r line; do
+		NEW_DESC="$NEW_DESC
+$(eval "echo $line")"
+	done <<< "$DESCRIPTION"
+
+	DESCRIPTION="$NEW_DESC"
+fi
+
+echo "Your commit message:"
+echo "--------------------------------------------------"
+echo "$SUMMARY"
+echo ""
+echo "$DESCRIPTION"
+echo "--------------------------------------------------"
+
+
+# Commit these changes
+gum confirm "Commit changes?" && git commit -m "$SUMMARY" -m "$DESCRIPTION"
