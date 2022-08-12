@@ -164,6 +164,22 @@
 [url "git@github.com:"]
 	insteadOf = https://github.com/
 	# http://albertech.blogspot.com/2016/11/fix-git-error-could-not-read-username.html
+	#
+	# much thanks to @integralist for figuring out the following
+	# stuff to fix rust's cargo installer
+	# https://github.com/rust-lang/cargo/issues/3381#issuecomment-1193730972
+	# avoid issues where the cargo-edit tool tries to clone from a repo you do not have WRITE access to.
+	# we already use SSH for every github repo, and so this puts the clone back to using HTTPS.
+[url "https://github.com/rust-lang/crates.io-index"]
+	insteadOf = https://github.com/rust-lang/crates.io-index
+
+	# avoid issues where the `cargo audit` command tries to clone from a repo you do not have WRITE access to.
+	# we already use SSH for every github repo, and so this puts the clone back to using HTTPS.
+[url "https://github.com/RustSec/advisory-db"]
+  insteadOf = https://github.com/RustSec/advisory-db
+
+[credential]
+	helper = store
 [checkout]
 	defaultRemote = upstream
 [commit]
