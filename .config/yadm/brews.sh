@@ -1,4 +1,4 @@
-#!/bin/sh
+G
 
 # in order to regenerate the list of installed packages with
 # descriptions run this
@@ -303,7 +303,10 @@ fi
 # allows you to comment on a file without commenting _in_ the file
 maybrew "private_comments"
 maybrew "python" # python 3 yo!
-
+if ! is_installed "rakudo-star"; then
+	brew install rakudo-star
+	zef install fez
+fi
 
 if ! is_installed "rbenv"; then
 	if ! is_installed "asdf"; then
