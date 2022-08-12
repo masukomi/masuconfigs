@@ -43,14 +43,22 @@
 ;(package! builtin-package :recipe (:branch "develop"))
 
 
+; INTERACTION STUFF
+(package! evil-surround)
 (package! buffer-move)
+(package! reformatter)
+; Shows keyboard macros or latest interactive commands as emacs lisp.
+(package! elmacro)
+; A GNU Emacs library to ensure environment variables inside Emacs look the same as in the user's shell.
+(package! exec-path-from-shell)
+; use sane regexp (PCRE) in emacs
+(package! pcre2el)
+
+; UI STUFF
+
 (package! darktooth-theme)
 (package! powerline)
-(package! moe-theme)
-(package! ialign)
 (package! nlinum-relative)
-(package! ruby-hash-syntax)
-(package! ruby-tools)
 (package! visual-regexp-steroids)
 ; extends Vline Mode https://www.emacswiki.org/emacs/VlineMode
 (package! col-highlight)
@@ -59,68 +67,95 @@
 ; list-faces-display
 ; shows you a col-highlight face that controls the color of the highlight column
 ; edit that face to change what it looks like.
-
-(package! sql-indent)
-(package! web-mode)
 (package! rainbow-mode)
+(package! xterm-color)
+(package! emojify)
+; Pins the most recent method signature to the top of the window
+; https://github.com/alphapapa/topsy.el#readme
+(package! topsy
+  :recipe (:host github :repo "alphapapa/topsy.el"))
+
+; LANGUAGES
+
+; HTML, JavaScript, CSS
+(package! handlebars-mode)
+(package! htmlize)
+(package! multi-web-mode)
 (package! polymode)
-(package! org-bullets)
-; (package! alchemist) ; elixir support
-(package! ox-hugo) ; hugo file format for org mode
-
-; USE THIS FOR LSP vvv
-; (package! lsp-mode)
-
-;(package! haml-mode)
 (package! sass-mode)
-(package! reformatter)
-(package! evil-surround)
+(package! web-mode)
+
+; -- protobuffers
+(package! protobuf-mode)
+
+; -- Raku
+(package! raku-mode)
+
+; -- Ruby
+(package! rspec-mode)
+(package! ruby-hash-syntax)
+(package! ruby-tools)
+
+; -- Schemes
+(package! geiser-chicken)
+(package! racket-mode)
+(package! scheme-complete)
+(package! scribble-mode) ; racket documentation is "scribble"
+
+; -- SQL
+(package! sql-indent)
+
+; -- Yaml
 (package! yaml-mode)
-; (package! editorconfig-mode)
+
+; CURRENTLY UNUSED LANGUAGES
+; -- Elixir
+; -- Schemes
+; (package! geiser-chicken)
+;; (package! jinja2-mode) ; Jinja2 templates (python and chicken scheme)
+; -- HTML & Friends
+; (package! haml-mode)
+; -- Lua
+; (package! lua-mode)
+; -- Janet
+; (package! janet-mode)
+; -- Schemes
+; (package! fennel-mode)
+; (package! geiser-chicken)
 ; geiser-chicken requires the following chicken libs to be installed
 ; chicken-install apropos chicken-doc srfi-18 srfi-1
 ; also installation of latest docs
 ; cd (csi -R chicken.platform -p '(chicken-home)')
 ; curl https://3e8.org/pub/chicken-doc/chicken-doc-repo-5.tgz | sudo tar zx
-(package! geiser-chicken)
-(package! scheme-complete)
-;; (package! rubocop)
-(package! rspec-mode)
-(package! protobuf-mode)
+
+
+
+
+; -- Org-Mode
+; pretty bullets
+(package! org-bullets)
 (package! ox-clip)
-(package! ox-slack)
-(package! ox-leanpub)
-(package! elmacro)
-;; (unpin! org-roam) ; Danger Will Robinson!
-;; (package! org-roam)
-;; (package! org-roam-ui) ; this likes danger
 (package! denote)
-
-;; (package! jinja2-mode) ; Jinja2 templates (python and chicken scheme)
-(package! handlebars-mode)
-(package! multi-web-mode)
-
 (package! plantuml-mode)
 (package! flycheck-plantuml)
-(package! racket-mode)
-(package! scribble-mode) ; racket documentation is "scribble"
-(package! exec-path-from-shell)
-(package! sqlite3)
-(package! htmlize)
 (package! org-attach-screenshot)
 (package! org-wc)
-;; (package! undo-tree)
 
-; (package! private-comments-mode)
+
+; UTILITIES
+
+; interactive align
+(package! ialign)
+
+; APP Support
+(package! ox-hugo) ; hugo file format for org mode
+;; (package! ox-slack)
+(package! ox-slack
+  :recipe (:host github :repo "masukomi/ox-slack" :branch "community"))
+(package! ox-bb)
+(package! ox-leanpub)
+(package! sqlite3)
+(package! mastodon)
+(package! private-comments-mode)
 ; (package! example
 ;   :recipe (:host github :repo "masukomi/private-comments-mode"))
-;; (package! textmate)
-(package! mastodon)
-(package! emojify)
-(package! janet-mode)
-;; (package! lua-mode)
-;; (package! fennel-mode)
-(package! xterm-color)
-(package! ialign)
-(package! pcre2el)
-(package! raku-mode)
