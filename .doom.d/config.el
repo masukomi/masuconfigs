@@ -249,22 +249,18 @@
 ; tab mode
 (setq-default indent-tabs-mode t)
 (setq-default tab-width 4)
-(defun my-insert-tab-char ()
+(defun masu-insert-tab-char ()
   "Insert a tab char. (ASCII 9, \t)"
   (interactive)
   (insert "\t"))
 
-(global-set-key (kbd "TAB") 'my-insert-tab-char)
-(add-hook 'after-init-hook #'global-emojify-mode)
+;; (global-set-key (kbd "TAB") 'masu-insert-tab-char)
 (add-hook 'prog-mode-hook
           (lambda ()
             (unless (derived-mode-p 'ruby-mode)
               (add-hook 'after-init-hook
-		(lambda () (local-set-key (kbd "TAB") #'my-insert-tab-char))
+		(lambda () (local-set-key (kbd "TAB") #'masu-insert-tab-char))
 			))))
-;; (use-package emojify
-;;   :hook (after-init . global-emojify-mode))
-;;
 
 
 ;;---------------------------------
@@ -318,6 +314,7 @@
 
 
 ; EMOJIFY things
+(add-hook 'after-init-hook #'global-emojify-mode)
 ; found here: https://github.com/bgutter/dotemacs/blob/master/my-init.org
 (defun my:emojify-inhibit-fix-org-drawers (text beg end)
   "Since org-mode now uses lower-case :begin:, :end:, etc tags, some of them are
