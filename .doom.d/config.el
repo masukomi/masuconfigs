@@ -143,6 +143,20 @@
 (setq nlinum-relative-current-symbol "->") ;; or "" for display current line number
 (setq nlinum-relative-offset 0)            ;; 1 if you want 0, 2, 3...
 
+; display the git gutter
+; this is configured in doom via vc-gutter (see init.el)
+; https://github.com/doomemacs/doomemacs/tree/develop/modules/ui/vc-gutter
+; to display colored bars put this in init.el (vc-gutter +pretty)
+; to display characters like +/- on changed lines replace that with just vc-gutter
+;
+; ; -- doom uses git-gutter and git-gutter-fringe
+; ; git-gutter repo
+; https://github.com/emacsorphanage/git-gutter#readme
+; ; git-gutter-fringe repo
+; https://github.com/emacsorphanage/git-gutter-fringe#readme
+(global-git-gutter-mode t)
+
+
 ; buffer-move stuff
 ; https://github.com/lukhas/buffer-move
 ;; (global-set-key (kbd "<C-S-up>")     'buf-move-up)

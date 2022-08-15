@@ -40,7 +40,8 @@
        ;;tabs              ; an tab bar for Emacs
        ;;treemacs          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
-       vc-gutter         ; vcs diff in the fringe
+       ; vc-gutter         ; vcs diff in the fringe (symbols in gutter)
+       (vc-gutter +pretty) ; to have full color bars instead of symbols
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        window-select     ; visually switch windows
        workspaces        ; tab emulation, persistence & separate workspaces
@@ -140,9 +141,9 @@
         ;;+jupyter        ; ipython/jupyter support for babel
         ;;+pandoc          ; export-with-pandoc support
         ;;+pomodoro        ; be fruitful with the tomato technique
-        +present           ; using org-mode for presentations
+        +present)           ; using org-mode for presentations
         ;;+roam2
-        )              ; zettlekasten & more
+                      ; zettlekasten & more
 
        ;;perl              ; write code no one else can comprehend
        ;;php               ; perl's insecure younger brother

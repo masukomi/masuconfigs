@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+
+# Generate a link to the specified file in GitHub,
+# and optionally open that link in your browser.
+#
+# Expects you to call it from within a repo.
+# Expects you to pass it a relative url from
+# wherever you are under the repo's root dir.
+#
+# DEPENDENCIES:
+# needs "gum" to be installed.
+# https://github.com/charmbracelet/gum
+#
+function usage () {
+	echo "USAGE: gh-url [-o | -l line-num] path/to/file/in/repo
+       -o open in browser
+       -l line number to link directly to
+";
+}
+function clear_last_line () {
+	echo -en "\e[1A\e[K" ;printf "\r"
+}
+
+if [ $# -eq 0 ]; then
+	usage
+	exit 1;
+fi
+
+command -v gum > /dev/null
+if [ $? -ne 0 ]; then
+	echo "This script requires \"gum\".
+Please install it and try again.
+
+https://github.com/charmbracelet/gum"
+	exit 1;
+fi
+
+LINE=""
+while getopts "hol:" opt; do
+  case $opt in
+    h)
+      usage
+      exit 1
+      ;;
+	o)
+	  OPEN="true"
+	  ;;
+    l)
+      LINE=$OPTARG
+      ;;
+    \?)
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+LOCAL_PATH=${@: -1}
+if [ "$LOCAL_PATH" == "" ]; then
+	usage
+	exit 1
+fi
+
+REMOTES=$(git remote)
+if [ $? -ne 0 ]; then
+	echo "Run me from within a git repo."
+	exit 1
+fi
+
+NUM_REMOTES=$(echo "$REMOTES" | wc -l)
+if [ $NUM_REMOTES -gt 1 ]; then
+	echo "choose a remote: "
+	REMOTE=$(gum choose $(git remote))
+	clear_last_line
+else
+	REMOTE=$(git remote)
+fi
+
+REMOTE_URL=$(git config --get remote.$REMOTE.url)
+
+if [[ "$REMOTE_URL" == *"git@"* ]]; then
+	REMOTE_URL=$(echo "$REMOTE_URL" | sed -e "s/.*:/https:\/\/github.com\//")
+fi
+
+# strip the trailing .git & replace with /blob/
+REMOTE_URL=$(echo $REMOTE_URL | sed -e 's/\.git$/\/blob\//')
+
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# https://github.com/blob/<current_branch>/<path_to_file>
+
+# we need the _full_ path to the file, but we may be in a subdirectory of the repo
+# so, step one get the repo root.
+REPO_ROOT=$(git rev-parse --show-toplevel)
+
+# now the current directory
+CURRENT_DIR=$(pwd)
+
+if [ "$CURRENT_DIR" == "$REPO_ROOT" ]; then
+	# we're in the root, so the path they gave us is the full path
+	FULL_URL="$REMOTE_URL"$CURRENT_BRANCH"/"$LOCAL_PATH;
+else
+	# we need the dirs between REPO_ROOT & CURRENT_DIR
+	# REPO_ROOT: /Users/foo/bar
+	# CURRENT_DIR      : /Users/foo/bar/baz/beedle
+	# NEEDED                   /baz/beedle
+	#
+	# NOTE: this will start with a slash
+    MISSING_DIRS=${CURRENT_DIR#"$REPO_ROOT"}
+	FULL_URL="$REMOTE_URL"$CURRENT_BRANCH"$MISSING_DIRS/"$LOCAL_PATH;
+fi
+
+if [ "$LINE" != "" ]; then
+	# let's make sure the file has that many lines
+	LINE_COUNT=$(wc -l < $LOCAL_PATH | sed -e "s/ //g")
+	if [ $LINE_COUNT -lt $LINE ]; then
+		echo "That file only has $LINE_COUNT lines."
+		echo "You indicated I should linke to line $LINE."
+		INSTRUCTIONS=$(gum choose "continue" "don't specify line" "exit")
+		clear_last_line
+		clear_last_line
+		if [ "$INSTRUCTIONS" == "exit" ]; then
+			exit 0;
+		elif [ "$INSTRUCTIONS" == "continue" ]; then
+			FULL_URL="$FULL_URL#L$LINE";
+		# else don't alter the url
+		fi
+	else
+		FULL_URL="$FULL_URL#L$LINE"
+	fi
+
+fi
+
+echo $FULL_URL
+
+if [[ -n "$OPEN" ]]; then
+	open $FULL_URL
+fi
