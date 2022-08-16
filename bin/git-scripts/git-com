@@ -81,6 +81,7 @@ fi
 # if [[ -n "$TYPES" ]]; then
 	STORABLE_TYPES=$(echo "$TYPES" \
 		| sd "\s+" "\n" \
+		| sed -e "s/ //g" \
 		| uniq \
 		| sort \
 		| tr "\n" " " )
@@ -129,6 +130,7 @@ fi
 if [[ -n "$TAGS" ]]; then
 	STORABLE_TAGS=$(echo "$TAGS" \
 		| sd "\s+" "\n" \
+		| sed -e "s/ //g" \
 		| uniq \
 		| sort \
 		| tr "\n" " " )
