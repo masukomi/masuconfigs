@@ -1,13 +1,21 @@
 #!/usr/local/bin/bash
 
-# a tool for opening jira tickets
+# A tool for opening jira tickets
 # and outputting the markdown ticket link for them
 # based on the branch name conventions of my
 # current employer.
 #
-# You can prolly tweak this for your company without much work.
-# NOTE: reqires my `workspace` command, but you can just
-# hardcode the URL of your jira instance.
+# Alter the regexp in the -b option to match your team's
+# convention for encoding ticket IDs in branches.
+
+# DEPENEDNCIES:
+# * reqires my `workspace` command, but you can just
+#   hardcode the URL of your jira instance in the WORKSPACE variable
+#   below.
+#   https://github.com/masukomi/masuconfigs/blob/master/bin/workspace
+# * sd - a better sed
+#   https://github.com/chmln/sd
+
 
 
 function usage () {
@@ -28,7 +36,7 @@ function usage () {
 	echo "      * output the markdown link"
 	echo "      * open the url in your browser (macos only)"
 }
-VALID_ARGS=`getopt bomh? $*`
+VALID_ARGS=`getopt tbomh? $*`
 if [[ $? -ne 0 ]]; then
 	usage
 	exit 1;
@@ -38,14 +46,7 @@ set -- $VALID_ARGS
 while :; do
 	case "$1" in
 		-b)
-			BRANCH=$(git current-branch)
-			FILTERED_BRANCH=$(echo "$BRANCH" | grep "/*-*/")
-			if [ "$FILTERED_BRANCH" != "" ]; then
-				TICKET=$(echo "$FILTERED_BRANCH" | sd "^.*?/(\S+)/.*" '$1')
-				if [[ "$TICKET" == *"_"* ]]; then
-					TICKET=$(echo "$FILTERED_BRANCH" | sd '^.*(ENG\S+)_.*$' '$1')
-				fi
-			fi
+			TICKET=$(git current-branch | sd '.*?(?P<ticket>(eng|ENG)-\d+).*' '$ticket')
 			if [ "$TICKET" == "" ]; then
 				echo "UNABLE TO DETERMINE TICKET FROM BRANCH: $BRANCH"
 				echo ""
@@ -61,6 +62,10 @@ while :; do
 		-o)
 			OPEN="true"
 			shift
+			;;
+		-t)
+			TICKET_ID="true"
+			shift;
 			;;
 		?|-h)
 			usage
@@ -86,6 +91,7 @@ do
 	fi
 done
 
+
 # echo "TICKET:   $TICKET"
 # echo "BRANCH:   $BRANCH"
 # echo "MARKDOWN: $MARKDOWN"
@@ -96,6 +102,11 @@ if [ "$TICKET" == "" ]; then
 	echo ""
 	usage
 	exit 2
+fi
+
+if [[ -n "$TICKET_ID" ]]; then
+	echo $TICKET
+	exit 0
 fi
 
 WORKSPACE=$(workspace)

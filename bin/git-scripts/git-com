@@ -8,7 +8,13 @@
 #        NOTE: supports simple templating via backticks
 #              in the ticket, description, and tags field.
 #        SIDE NOTE: "com" is short for commit. ;)
-
+# Configuration:
+#        ticket numbers can be auto-inserted if you have
+#        an executable tool that can provide it when called.
+#        If you do: store the command to execute in your
+#        git config under
+#        com.ticket-command
+#
 # NOTE: tags are stored under the com.tags key in your
 #       each git repo you use it in. This allows for
 #       different tags for each project
@@ -41,6 +47,20 @@ function clear_last_2_lines () {
 	echo -en "\e[1A\e[K\e[1A[K" ;printf "\r"
 }
 
+function request_ticket_number () {
+	TICKET=""
+	if [ $# -gt 0 ]; then
+		TICKET="$1"
+	fi
+
+	if [ "$TICKET" == "" ]; then
+		gum input --placeholder "ticket number(s) (optional):"
+	else
+		gum input --value "$TICKET"
+	fi
+
+}
+
 STASHED_FILES=$(git diff --name-only --cached)
 if [ "$STASHED_FILES" == "" ]; then
 	echo "🛑  No staged files. Quitting"
@@ -48,17 +68,17 @@ if [ "$STASHED_FILES" == "" ]; then
 fi
 
 
-GIT_CCOM_TAGS=$(git config --get ccom.tags)
+GIT_COM_TAGS=$(git config --get com.tags)
 if [ $? != 0 ]; then
-	GIT_CCOM_TAGS=""
+	GIT_COM_TAGS=""
 fi
-eval "TAG_CHOICES=($GIT_CCOM_TAGS)";
+eval "TAG_CHOICES=($GIT_COM_TAGS)";
 
-GIT_CCOM_TYPES=$(git config --get ccom.types)
+GIT_COM_TYPES=$(git config --get com.types)
 if [ $? != 0 ]; then
-	GIT_CCOM_TYPES="fix feat add docs test refactor cleanup"
+	GIT_COM_TYPES="fix feat add docs test refactor cleanup"
 fi
-eval "TYPE_CHOICES=($GIT_CCOM_TYPES)";
+eval "TYPE_CHOICES=($GIT_COM_TYPES)";
 
 echo "Specify a change type"
 # choose from list
@@ -71,7 +91,7 @@ clear_last_line
 # echo -en "\e[1A\e[K\e[1A\K" ;printf "\r"
 
 if [ "$MAYBE_TYPE" != "" ]; then
-	TYPES="$GIT_CCOM_TYPES $MAYBE_TYPE"
+	TYPES="$GIT_COM_TYPES $MAYBE_TYPE"
 	TYPE=$(echo $MAYBE_TYPE | sed -e "s/ //g")
 else
 	echo "⚠️  You must supply a type"
@@ -81,6 +101,7 @@ fi
 # if [[ -n "$TYPES" ]]; then
 	STORABLE_TYPES=$(echo "$TYPES" \
 		| sd "\s+" "\n" \
+		| sed -e "s/ //g" \
 		| uniq \
 		| sort \
 		| tr "\n" " " )
@@ -95,7 +116,12 @@ if [ "$SCOPE" == "" ]; then
 	exit 1
 fi
 
-TICKET=$(gum input --placeholder "ticket number (optional):")
+TICKET_COMMAND=$(git config --get com.ticket-command)
+if [ $? -ne 0 ] || [ "$TICKET_COMMAND" == "" ]; then
+	TICKET=$(request_ticket_number)
+else
+	TICKET=$(request_ticket_number "$(eval "TICKET_COMMAND")")
+fi
 
 
 echo "commit title: "
@@ -129,6 +155,7 @@ fi
 if [[ -n "$TAGS" ]]; then
 	STORABLE_TAGS=$(echo "$TAGS" \
 		| sd "\s+" "\n" \
+		| sed -e "s/ //g" \
 		| uniq \
 		| sort \
 		| tr "\n" " " )
