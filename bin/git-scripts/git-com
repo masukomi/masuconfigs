@@ -68,13 +68,13 @@ if [ "$STASHED_FILES" == "" ]; then
 fi
 
 
-GIT_COM_TAGS=$(git config --get com.tags)
+GIT_COM_TAGS=$(git config --get com.tags | xargs -n1 | sort -u | xargs)
 if [ $? != 0 ]; then
 	GIT_COM_TAGS=""
 fi
 eval "TAG_CHOICES=($GIT_COM_TAGS)";
 
-GIT_COM_TYPES=$(git config --get com.types)
+GIT_COM_TYPES=$(git config --get com.types | xargs -n1 | sort -u | xargs)
 if [ $? != 0 ]; then
 	GIT_COM_TYPES="fix feat add docs test refactor cleanup"
 fi
@@ -82,7 +82,7 @@ eval "TYPE_CHOICES=($GIT_COM_TYPES)";
 
 echo "Specify a change type"
 # choose from list
-MAYBE_TYPE=$(gum choose ${TYPE_CHOICES[@]} ".new" | sort | tr "\n" " ")
+MAYBE_TYPE=$(gum choose ${TYPE_CHOICES[@]} ".new" )
 if [[ "$MAYBE_TYPE" == *".new"* ]]; then
 	MAYBE_TYPE=$(echo "$MAYBE_TYPE" | sed -e "s/\.new//" -e "s/  / /g")
 	MAYBE_TYPE="$MAYBE_TYPE $(gum input --placeholder "new type (no spaces):")"
@@ -138,10 +138,15 @@ echo "(optional -- ENTER  to submit, SPACE to choose)"
 
 if [[ ${#TAG_CHOICES[@]} -gt 0 ]]; then
 	# choose from list
-	MAYBE_TAG=$(gum choose --no-limit ${TAG_CHOICES[@]} ".new" | sort | tr "\n" " ")
+	MAYBE_TAG=$(gum choose --no-limit ${TAG_CHOICES[@]} ".new" ".none")
 	if [[ "$MAYBE_TAG" == *".new"* ]]; then
-		MAYBE_TAG=$(echo "$MAYBE_TAG" | sed -e "s/\.new//" -e "s/  / /g")
+		MAYBE_TAG=$(echo "$MAYBE_TAG" \
+			| sed -e "s/\.new//" \
+			  -e "s/\.none//" \
+			  -e "s/  / /g")
 		MAYBE_TAG="$MAYBE_TAG $(gum input --placeholder "new tag (no spaces):")"
+	elif [[ "$MAYBE_TAG" == *".none"* ]]; then
+		MAYBE_TAG=""
 	fi
 else
 	MAYBE_TAG=$(gum input --placeholder "tag (optional - no spaces):")
@@ -153,12 +158,7 @@ fi
 
 # uniquify and sort tags
 if [[ -n "$TAGS" ]]; then
-	STORABLE_TAGS=$(echo "$TAGS" \
-		| sd "\s+" "\n" \
-		| sed -e "s/ //g" \
-		| uniq \
-		| sort \
-		| tr "\n" " " )
+	STORABLE_TAGS=$(echo "$TAGS" | xargs -n1 | sort -u | xargs )
 	git config com.tags "$STORABLE_TAGS"
 fi
 echo "commit details: "
