@@ -253,14 +253,14 @@ maybrew "miller"
 
 # touchid signing of gpg keys
 if ! is_installed "pinentry-touchid"; then
-    brew install pinentry-touchid
-    # Ensure that pinentry-mac is the default pinentry program:
-    pinentry-touchid -fix
-    # something like this is assumed to be in the
-    # ~/.gnupg/gpg-agent.conf
-    #       pinentry-program /usr/local/opt/pinentry-touchid/bin/pinentry-touchid
-    gpg-connect-agent reloadagent /bye
-    defaults write org.gpgtools.common DisableKeychain -bool yes
+  brew install pinentry-touchid
+  # Ensure that pinentry-mac is the default pinentry program:
+  pinentry-touchid -fix
+  # something like this is assumed to be in the
+  # ~/.gnupg/gpg-agent.conf
+  #       pinentry-program /usr/local/opt/pinentry-touchid/bin/pinentry-touchid
+  gpg-connect-agent reloadagent /bye
+  defaults write org.gpgtools.common DisableKeychain -bool yes
 else
     echo "-- Skipping pinentry-touchid (installed already)"
 fi
