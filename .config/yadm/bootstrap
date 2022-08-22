@@ -345,7 +345,10 @@ if ! is_installed "rustc"; then
 	cargo +nightly install racer
 fi
 
+# broot is an interactive form of tree
 cargo install broot
+# ruut also you to easily generate tree diagrams
+cargo install ruut
 
 # install chicken scheme stuff
 readline_version=$(brew list readline --versions)
