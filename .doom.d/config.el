@@ -318,6 +318,19 @@
 	(dired-hide-details-mode 1))
 (add-hook 'dired-mode-hook 'masu-dired-mode-setup)
 
+(require 'rg)
+
+; NOT lazy loaded.
+; TODO: read the docs to figure out
+; how to load this lazily:
+; https://rgel.readthedocs.io/en/2.2.1/
+;; (rg-enable-default-bindings)
+(global-set-key (kbd "C-c s") #'rg-menu)
+;; (with-eval-after-load 'rg
+;;    ;; Your settings goes here.
+;; )
+
+
 ;;---------------------------------
 ;; ORG Configs
 
