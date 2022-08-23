@@ -300,7 +300,7 @@
   "Type characters with option as in other Mac applications."
   :global t
   :lighter " mac-opt-chars"
-  :keymap mac-opt-keymapp
+  :keymap mac-opt-keymap
   (mac-toggle-ns-alt-modifier))
 ; toggle it on and off with C-c m o
 (define-key mac-opt-keymap (kbd "C-c m o") 'mac-opt-chars-mode)
