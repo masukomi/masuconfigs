@@ -287,6 +287,35 @@
 			))))
 
 
+
+; a macOS specific tweak to allow you to use the option key to
+; type special characters like
+; - an accent grave á <option-e a>
+; - a degree sign ° <option-shift-8>
+;
+; toggle it with C-c m o
+; found here: https://www.reddit.com/r/emacs/comments/mpbgx7/comment/gu9opv1/
+(setq mac-opt-keymap (make-sparse-keymap))
+
+;; equivalent to C-M-x with mac-opt-chars-mode on
+(define-key mac-opt-keymap (kbd "C-≈") 'execute-extended-command)
+
+
+(defun mac-toggle-ns-alt-modifier ()
+  (if (not mac-opt-chars-mode)
+      (setq ns-alternate-modifier 'meta)
+    (setq ns-alternate-modifier nil)))
+
+(define-minor-mode mac-opt-chars-mode
+  "Type characters with option as in other Mac applications."
+  :global t
+  :lighter " mac-opt-chars"
+  :keymap mac-opt-keymap
+  (mac-toggle-ns-alt-modifier))
+; toggle it on and off with C-c m o
+(define-key mac-opt-keymap (kbd "C-c m o") 'mac-opt-chars-mode)
+(define-key global-map (kbd "C-c m o") 'mac-opt-chars-mode)
+
 ;;---------------------------------
 ;; UTILITY CONFIG
 ;; ialign (interatvie alignment)
@@ -298,6 +327,19 @@
 	"hook for 'dired-mode'"
 	(dired-hide-details-mode 1))
 (add-hook 'dired-mode-hook 'masu-dired-mode-setup)
+
+(require 'rg)
+
+; NOT lazy loaded.
+; TODO: read the docs to figure out
+; how to load this lazily:
+; https://rgel.readthedocs.io/en/2.2.1/
+;; (rg-enable-default-bindings)
+(global-set-key (kbd "C-c s") #'rg-menu)
+;; (with-eval-after-load 'rg
+;;    ;; Your settings goes here.
+;; )
+
 
 ;;---------------------------------
 ;; ORG Configs

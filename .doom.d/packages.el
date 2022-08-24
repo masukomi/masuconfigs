@@ -154,6 +154,8 @@
   :recipe (:host github :repo "masukomi/ox-slack" :branch "community"))
 (package! ox-bb)
 (package! ox-leanpub)
+; ripgrep (rg)
+(package! rg)
 (package! sqlite3)
 (package! mastodon)
 (package! private-comments-mode)

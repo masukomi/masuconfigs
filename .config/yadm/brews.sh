@@ -1,4 +1,4 @@
-G
+#!/usr/bin/env bash
 
 # in order to regenerate the list of installed packages with
 # descriptions run this
@@ -52,6 +52,9 @@ brew tap charmbracelet/tap
 brew tap masukomi/homebrew-apps
 # contains pgcli
 brew tap dbcli/tap
+# contains pinentry-touchid ( use touchid for gpg signing )
+brew tap jorgelbg/tap
+
 
 # do gum first because this script uses it.
 maybrew "charmbracelet/tap/gum"
@@ -247,6 +250,23 @@ maybrew "libyaml"
 maybrew "little-cms2"
 # Like sed, awk, cut, join & sort for name-indexed data such as CSV
 maybrew "miller"
+
+# touchid signing of gpg keys
+if ! is_installed "pinentry-touchid"; then
+  brew install pinentry-touchid
+  # Ensure that pinentry-mac is the default pinentry program:
+  pinentry-touchid -fix
+  # something like this is assumed to be in the
+  # ~/.gnupg/gpg-agent.conf
+  #       pinentry-program /usr/local/opt/pinentry-touchid/bin/pinentry-touchid
+  gpg-connect-agent reloadagent /bye
+  defaults write org.gpgtools.common DisableKeychain -bool yes
+else
+    echo "-- Skipping pinentry-touchid (installed already)"
+fi
+
+
+
 # pgcli: CLI for Postgres with auto-completion and syntax highlighting
 maybrew "pgcli"
 
