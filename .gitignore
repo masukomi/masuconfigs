@@ -41,3 +41,4 @@ tester.*
 .iterm2/com.googlecode.iterm2.plist
 .rtest.json
 sdist
+.yas-compiled-snippets.el
