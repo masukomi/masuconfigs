@@ -42,6 +42,16 @@
 
 (setq auto-completion-delay 1)
 
+
+; if custom snippets aren't loading:
+; first run this and restart doom.
+; cd ~/.doom.d/snippets; find . -name ".yas-compiled-snippets.el" -exec rm -f '{}' \;
+;
+; if THAT doesn't work, you've got other problems but maybe disabling this will
+; work as a stopgap:
+;; (add-hook 'emacs-startup-hook (lambda () (yas-load-directory "~/doom.d/snippets")))
+
+
 ; https://melpa.org/#/exec-path-from-shell
 (exec-path-from-shell-initialize)
 ;;---------------------------------
@@ -906,27 +916,3 @@ now being rendered as Emojis. Filter this case out."
 ;;   (deft-use-filter-string-for-filename t)
 ;;   (deft-default-extension "org")
 ;;   (deft-directory org-roam-directory))
-
-
-
-
-
-
-
-
-
-;
-
-
-
-
-
-
-
-
-
-
-
-
-
-

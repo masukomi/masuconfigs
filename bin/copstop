@@ -43,15 +43,19 @@ echo "GIT_ROOT: $GIT_ROOT"
 
 if [ "$NEW" == "true" ]; then
   for path in $(git diff-index --name-only HEAD); do
-    echo checking $path
-    rubocop -A $GIT_ROOT"/"$path
-    echo "----------------------------------"
+    if [[ "$path" != *"Gemfile.lock" ]]; then
+      echo checking $path
+      rubocop -A $GIT_ROOT"/"$path
+      echo "----------------------------------"
+    fi
   done
 else
   for path in $(lcf); do
     echo checking $path
-    rubocop -A $GIT_ROOT"/"$path
-    echo "----------------------------------"
+    if [[ "$path" != *"Gemfile.lock" ]]; then
+      rubocop -A $GIT_ROOT"/"$path
+      echo "----------------------------------"
+    fi
   done
 fi
 
