@@ -140,6 +140,7 @@
 (package! flycheck-plantuml)
 (package! org-attach-screenshot)
 (package! org-wc)
+(package! toc-org) ; table of contents generator
 
 
 ; UTILITIES

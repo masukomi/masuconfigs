@@ -580,8 +580,24 @@ now being rendered as Emojis. Filter this case out."
 
 
 ;; END DENOTE stuff
+; - toc-org - insert a table of contents in your org & markdown files WITHOUT exporting
+; https://github.com/snosov1/toc-org
+;
+; Usage
+; 1. create a heading for your table of contents to live under
+; 2. with the cursor on that heading, run
+;    <SPACE m q> or <org-set-tags-command>
+; 3. set the TOC tag.
+; 4. save ( this and all future saves update the TOC )
+; 5. profit!
+(if (require 'toc-org nil t)
+    (progn
+      (add-hook 'org-mode-hook 'toc-org-mode)
 
-
+      ;; enable in markdown, too
+      (add-hook 'markdown-mode-hook 'toc-org-mode)
+      (define-key markdown-mode-map (kbd "\C-c\C-o") 'toc-org-markdown-follow-thing-at-point))
+  (warn "toc-org not found"))
 
 
 
