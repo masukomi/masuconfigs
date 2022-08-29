@@ -85,6 +85,13 @@
 (package! sass-mode)
 (package! web-mode)
 
+; (package! rjsx-mode) # you prolly have this installed.
+; type M-x rjs and you should see it autocompleting
+;
+
+
+
+
 ; -- protobuffers
 (package! protobuf-mode)
 
@@ -146,6 +153,8 @@
 
 ; interactive align
 (package! ialign)
+; folding based on indentation
+(package! yafolding)
 
 ; APP Support
 (package! ox-hugo) ; hugo file format for org mode
