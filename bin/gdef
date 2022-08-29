@@ -36,7 +36,8 @@ echo ""
 #   defp foo     (elixir)
 #   defmacro     (elixir)
 # grep -rn $WHAT $WHERE 2>/dev/null | egrep --colour=never "[[:space:]]*defp? $WHAT|[[:space:]]*def self.$WHAT|[[:space:]]*scope :$WHAT|[[:space:]]*defmacro $WHAT" \
-rg -n $WHAT $WHERE 2>/dev/null | egrep --colour=never "[[:space:]]*defp? $WHAT|[[:space:]]*def self.$WHAT|[[:space:]]*scope :$WHAT|[[:space:]]*defmacro $WHAT" \
+rg -n $WHAT $WHERE 2>/dev/null \
+  | egrep --colour=never "[[:space:]]*defp? $WHAT|[[:space:]]*def self.$WHAT|[[:space:]]*scope :$WHAT|[[:space:]]*defmacro $WHAT|[[:space:]]*sub $WHAT|[[:space:]]*method $WHAT" \
   | egrep -v "tags:" \
   | grep -v ".js:" \
   | grep -v ".log:" \
