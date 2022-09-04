@@ -1,0 +1,22 @@
+# a template for `clu` toml files
+name = "bak"
+description = "bak moves or copies the proffered file to a .back version"
+usage_command="bak"
+# fallback_usage=""
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+type="executable"
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/bak"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+# [[cheats]]
+# [[cheats.bar]]
+# description = "a description of task bar with backtrace_details"
+# template="bar {{arg1}} {{arg2}}"
+# [[cheats.baz]]
+# description = "a description of task baz with backtrace_details"
+# template="bar {{arg1}} {{arg2}}"

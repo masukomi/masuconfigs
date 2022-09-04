@@ -3,7 +3,14 @@
 # makes a backup of the specified file
 # Usage: bak [-m] <path/to/file>
 #   -m will move the file, otherwise it'll make a copy
-
+if [ $# -eq 0 ]; then
+	echo "bak moves or copies the proffered file to a .back version"
+	echo ""
+	echo "USAGE: bak [-m] <path/to/file>"
+	echo "       -m will move the file."
+	echo "          otherwise it'll make a copy"
+	exit 0
+fi
 if [ "$1" == "-m" ]; then
 	shift
 	mv $1 $1.bak
