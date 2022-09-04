@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# reduces lines that contain only whitespace to simply \n
+# so, "   \n" becomes "\n"
+#
+# USAGE: pipe text to blankless
+
 read -d '' -u 0 stdin
 printf "$@" "$stdin" | sed '/^\s*$/d'
 
