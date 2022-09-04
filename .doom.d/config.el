@@ -211,7 +211,8 @@
 ;
 ; (global-set-key (kbd "C-c v") 'halve-other-window-height)
 
-(setq display-buffer-base-action '(display-buffer-in-tab))
+; for tab-bar-mode
+(setq display-buffer-base-action '(nil))
 (setq projectile-track-known-projects-automatically nil)
 ;; ;------------
 ;; ; customize the mode-line (think airline in vim)
@@ -320,6 +321,19 @@
 ;; UTILITY CONFIG
 ;; ialign (interatvie alignment)
 (global-set-key (kbd "C-x l") #'ialign)
+
+
+;; yafolding
+;; https://github.com/emacsorphanage/yafolding
+(defvar yafolding-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "<C-S-return>") #'yafolding-hide-parent-element)
+    (define-key map (kbd "<C-M-return>") #'yafolding-toggle-all)
+    (define-key map (kbd "<C-return>") #'yafolding-toggle-element)
+    map))
+
+(add-hook 'prog-mode-hook
+          (lambda () (yafolding-mode)))
 
 ;; dired
 ;; found here:: https://wilkesley.org/~ian/xah/emacs/emacs_dired_tips.html
