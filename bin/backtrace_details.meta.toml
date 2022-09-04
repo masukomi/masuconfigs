@@ -1,0 +1,18 @@
+name = "backtrace_details"
+description = "Pairs a backtrace with the corresponding lines of code"
+usage_command="backtrace_details -h"
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+type="executable"
+language="bash"
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/backtrace_details"
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+# [[cheats]]
+# [[cheats.bar]]
+# description = "a description of task bar with backtrace_details"
+# template="bar {{arg1}} {{arg2}}"
+# [[cheats.baz]]
+# description = "a description of task baz with backtrace_details"
+# template="bar {{arg1}} {{arg2}}"
