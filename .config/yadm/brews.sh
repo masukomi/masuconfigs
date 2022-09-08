@@ -52,8 +52,10 @@ brew tap charmbracelet/tap
 brew tap masukomi/homebrew-apps
 # contains pgcli
 brew tap dbcli/tap
-# contains pinentry-touchid ( use touchid for gpg signing )
-brew tap jorgelbg/tap
+
+brew tap d12frosted/emacs-plus
+# tl;dr go client https://github.com/isacikgoz/tldr
+brew tap isacikgoz/taps
 
 
 # do gum first because this script uses it.
@@ -98,42 +100,36 @@ if ! is_installed "asdf"; then
 		echo "WARNING: Won't install asdf because rbenv is installed"
 	fi
 fi
-# Automatic configure script builder
-maybrew "autoconf"
-# Tool for generating GNU Standards-compliant Makefiles
-maybrew "automake"
-# Official Amazon AWS command-line interface
 maybrew "awscli"
-# because apple has issues with open source licenses
+# Official Amazon AWS command-line interface
+# https://aws.amazon.com/cli/
 maybrew "bash"
-# bat: Clone of cat(1) with syntax highlighting and Git integration
+# Bourne-Again SHell, a UNIX command interpreter
+# https://www.gnu.org/software/bash/
 maybrew "bat"
-# Compiler for the Scheme programming language
-maybrew "chicken"
-# Statistics utility to count lines of code
-maybrew "cloc"
-# Cross-platform make
-maybrew "cmake" # used by yajl
-# GNU core utilities. These will be prefixed with "g" (ls -> gls)
-maybrew "coreutils"
 # Clone of cat(1) with syntax highlighting and Git integration
-# Tool for browsing source code
-maybrew "cscope"
-# universal ctags
-if ! is_installed "universal-ctags/universal-ctags/universal-ctags"; then
-	brew tap universal-ctags/universal-ctags
-	brew install --HEAD universal-ctags/universal-ctags/universal-ctags
-	if [ $? -ne 0 ]; then
-		echo "problem installing universal-ctags. exiting"
-		exit 1
-	fi
-else
-	echo "-- Skipping universal-ctags (installed already)"
-fi
-
-
+# https://github.com/sharkdp/bat
+maybrew "broot"
+# New way to see and navigate directory trees
+# https://dystroy.org/broot/
+maybrew "charmbracelet/tap/gum"
+# A tool for glamorous shell scripts
+# https://charm.sh/
+maybrew "chicken"
+# Compiler for the Scheme programming language
+# https://www.call-cc.org/
+maybrew "cloc"
+# Statistics utility to count lines of code
+# https://github.com/AlDanial/cloc/
+maybrew "cmake"
+# Cross-platform make
+# https://www.cmake.org/
+maybrew "coreutils"
+# GNU File, Shell, and Text utilities
+# https://www.gnu.org/software/coreutils
 # cli utility that shows your progress through the day
 maybrew "days_progress"
+
 ls /Applications/DevUtils.app > /dev/null
 # normal is_installed doesn't work for devutils For some reason
 # it just doesn't show up in brew ls --versions
@@ -145,24 +141,40 @@ else
 	echo "-- Skipping devutils (installed already)"
 fi
 
-# Load/unload environment variables based on $PWD
 maybrew "direnv"
-# Diff that operates at the word level
+# Load/unload environment variables based on $PWD
+# https://direnv.net/
 maybrew "dwdiff"
-# Elixir programming language
-maybrew "elixir"
-# Charset analyzer and converter
+# Diff that operates at the word level
+# https://os.ghalkes.nl/dwdiff.html
+# maybrew "elixir"
+# Functional metaprogramming aware language built on Erlang VM
+# https://elixir-lang.org/
 maybrew "enca"
-# User-friendly command-line shell for UNIX-like operating systems
+# Charset analyzer and converter
+# https://cihar.com/software/enca/
 maybrew "exa"
-# Simple, fast and user-friendly alternative to find
+# Modern replacement for 'ls'
+# https://the.exa.website
+maybrew "exercism"
+# Command-line tool to interact with exercism.io
+# https://exercism.io/cli/
+maybrew "exif"
+# Read, write, modify, and display EXIF data on the command-line
+# https://libexif.github.io/
 maybrew "fd"
-# fish: User-friendly command-line shell for UNIX-like operating systems
+# Simple, fast and user-friendly alternative to find
+# https://github.com/sharkdp/fd
 maybrew "fish"
-# Command-line outline and bitmap font editor/converter
-maybrew "fontforge"
+# User-friendly command-line shell for UNIX-like operating systems
+# https://fishshell.com
 
-# A command-line fuzzy finder
+# maybrew "fontforge"
+# Command-line outline and bitmap font editor/converter
+# https://fontforge.github.io
+
+# Command-line fuzzy finder written in Go
+# https://github.com/junegunn/fzf
 if ! is_installed "fzf"; then
     brew install fzf
     y | $(brew --prefix)/opt/fzf/install
@@ -171,37 +183,53 @@ else
 fi
 
 
-# GNU internationalization (i18n) and localization (l10n) library
-maybrew "gettext"
-# GitHub command-line tool
 maybrew "gh"
-# Interpreter for PostScript and PDF
-maybrew "ghostscript"
-# Distributed revision control system
+# GitHub command-line tool
+# https://github.com/cli/cli
 maybrew "git"
-# mass rewrite commit history
+# Distributed revision control system
+# https://git-scm.com
 maybrew "git-filter-repo"
-# Find where a commit was merged in git
+# Quickly rewrite git repository history
+# https://github.com/newren/git-filter-repo
 maybrew "git-when-merged"
-# Core application library for C
-maybrew "glib"
-# GNU Pretty Good Privacy (PGP) package
-maybrew "gpg"
-# Library access to GnuPG
-maybrew "gpgme"
-# Graph visualization software from AT&T and Bell Labs
-maybrew "graphviz"
-# Make JSON greppable
+# Find where a commit was merged in git
+# https://github.com/mhagger/git-when-merged
+maybrew "glade"
+# RAD tool for the GTK+ and GNOME environment
+# https://glade.gnome.org/
+maybrew "gnu-sed"
+# GNU implementation of the famous stream editor
+# https://www.gnu.org/software/sed/
+maybrew "gnu-tar"
+# GNU version of the tar archiving utility
+# https://www.gnu.org/software/tar/
+maybrew "go"
+# Open source programming language to build simple/reliable/efficient software
+# https://go.dev/
 maybrew "gron"
-# Interruption Tracker  https://interruptiontracker.com
-maybrew "hey"
+# Make JSON greppable
+# https://github.com/tomnomnom/gron
+
+maybrew "masukomi/apps/hey"
+# Hey allows you to track your interruptions as they occur.
+# https://interrupttracker.com
 # Improved top (interactive process viewer)
 maybrew "htop"
-
+# Improved top (interactive process viewer)
+# https://htop.dev/
+maybrew "icu4c"
+# C/C++ and Java libraries for Unicode and globalization
+# https://site.icu-project.org/home
+maybrew "isacikgoz/taps/tldr"
+# fast and interactive tldr client written with go
+# https://github.com/isacikgoz/tldr
+maybrew "ispell"
+# International Ispell
+# https://www.cs.hmc.edu/~geoff/ispell.html
 # Add GitHub support to git on the command-line
 # maybrew("hub
-# C/C++ and Java libraries for Unicode and globalization
-maybrew "icu4c"
+
 # Tools and libraries to manipulate images in many formats
 maybrew "imagemagick"
 # imagemagick@6 is keg-only, which means it was not symlinked into /usr/local,
@@ -218,110 +246,105 @@ maybrew "imagemagick"
 #   set -gx PKG_CONFIG_PATH "/usr/local/opt/imagemagick@6/lib/pkgconfig"
 
 
-# JBIG2 decoder and library (for monochrome documents)
-maybrew "jbig2dec"
-# Image manipulation library
-maybrew "jpeg"
+maybrew "jq"
 # Lightweight and flexible command-line JSON processor
-maybrew "jq" # json parser
-# Command-line note taker
+# https://stedolan.github.io/jq/
 maybrew "jrnl"
-# C library of Git core methods that is re-entrant and linkable
-maybrew "libgit2"
-# Simple terminal UI for git commands
+# Command-line note taker
+# http://jrnl.sh/en/stable/
+maybrew "json-glib"
+# Library for JSON, based on GLib
+# https://wiki.gnome.org/Projects/JsonGlib
 maybrew "lazygit"
-# Portable Foreign Function Interface library
-maybrew "libffi"
-# Common error values for all GnuPG components
-maybrew "libgpg-error"
-# X.509 and CMS library - for GnuPG
-maybrew "libksba"
-# TIFF library and utilities
-maybrew "libtiff"
-# Generic library support script
-maybrew "libtool"
-# GNOME XML library
-maybrew "libxml2"
-# C XSLT library for GNOME
+# Simple terminal UI for git commands
+# https://github.com/jesseduffield/lazygit/
+maybrew "lefthook"
+# Fast and powerful Git hooks manager for any type of projects
+# https://github.com/evilmartians/lefthook
+maybrew "libgit2"
+# C library of Git core methods that is re-entrant and linkable
+# https://libgit2.github.com/
+maybrew "libgnt"
+# NCurses toolkit for creating text-mode graphical user interfaces
+# https://keep.imfreedom.org/libgnt/libgnt
+maybrew "libotr"
+# Off-The-Record (OTR) messaging library
+# https://otr.cypherpunks.ca/
 maybrew "libxslt"
-# YAML Parser
-maybrew "libyaml"
-# Color management engine supporting ICC profiles
-maybrew "little-cms2"
+# C XSLT library for GNOME
+# http://xmlsoft.org/XSLT/
+maybrew "llvm@11"
+# Next-gen compiler infrastructure
+# https://llvm.org/
+maybrew "lynx"
+# Text-based web browser
+# https://invisible-island.net/lynx/
+maybrew "make"
+# Utility for directing compilation
+# https://www.gnu.org/software/make/
+maybrew "masukomi/apps/days_progress"
+# A simple command line chart of your progress through the day
+# https://github.com/masukomi/days_progress
+maybrew "masukomi/apps/oho"
+# Takes your colorful terminal output and converts it to HTML for sharing
+# https://github.com/masukomi/oho
+maybrew "masukomi/apps/private_comments"
+# A REST server to manage private comments on your code.
+# https://github.com/masukomi/private_comments
 # Like sed, awk, cut, join & sort for name-indexed data such as CSV
 maybrew "miller"
-
-# touchid signing of gpg keys
-if ! is_installed "pinentry-touchid"; then
-  brew install pinentry-touchid
-  # Ensure that pinentry-mac is the default pinentry program:
-  pinentry-touchid -fix
-  # something like this is assumed to be in the
-  # ~/.gnupg/gpg-agent.conf
-  #       pinentry-program /usr/local/opt/pinentry-touchid/bin/pinentry-touchid
-  gpg-connect-agent reloadagent /bye
-  defaults write org.gpgtools.common DisableKeychain -bool yes
-else
-    echo "-- Skipping pinentry-touchid (installed already)"
-fi
-
-
-
-# pgcli: CLI for Postgres with auto-completion and syntax highlighting
-maybrew "pgcli"
-
-# Shell command parallelization utility
-# a version is included in moreutils
-# but for reasons I forget we'd rather have this one.
-#maybrew "parallel"
-
-# plantuml: Draw UML diagrams (and more)
-# https://plantuml.com
-maybrew "plantuml"
-
-
-# Collection of tools that nobody wrote when UNIX was young
-# used to install with --without-parallel
-# but that's no longer an option
+# Like sed, awk, cut, join & sort for name-indexed data such as CSV
+# https://github.com/johnkerl/miller
 maybrew "moreutils"
-
-# MIME mail packing and unpacking
+# Collection of tools that nobody wrote when UNIX was young
+# https://joeyh.name/code/moreutils/
 maybrew "mpack"
-# SMTP client that can be used as an SMTP plugin for Mutt
+# MIME mail packing and unpacking
+# https://web.archive.org/web/20190220145801/ftp.andrew.cmu.edu/pub/mpack/
 maybrew "msmtp"
-# Text-based UI library
-maybrew "ncurses"
+# SMTP client that can be used as an SMTP plugin for Mutt
+# https://marlam.de/msmtp/
+# maybrew "neomutt"
 # E-mail reader with support for Notmuch, NNTP and much more
-maybrew "neomutt"
+# https://neomutt.org/
+# maybrew "nim"
+# Statically typed compiled systems programming language
+# https://nim-lang.org/
+maybrew "node"
 # Platform built on V8 to build network applications
-maybrew "npm"
-# custom shell prompt generator thing
-# https://ohmyposh.dev/
-if ! is_installed "oh-my-posh"; then
-	brew install jandedobbeleer/oh-my-posh/oh-my-posh
-fi
-# ANSI->HTML
-maybrew "oho"
-# SSL/TLS cryptography library
-maybrew "openssl"
-# ISO-C API and CLI for generating UUIDs
+# https://nodejs.org/
+maybrew jandedobbeleer/oh-my-posh/oh-my-posh
+# Prompt theme engine for any shell
+# https://ohmyposh.dev
 maybrew "ossp-uuid"
-# store secrets in your macOS keychain
-# useful for not making gpg ask you for your password constantly
+# ISO-C API and CLI for generating UUIDs
+# https://web.archive.org/web/www.ossp.org/pkg/lib/uuid/
+maybrew "pandoc"
+# Swiss-army knife of markup format conversion
+# https://pandoc.org/
+maybrew "pgcli"
+# CLI for Postgres with auto-completion and syntax highlighting
+# https://pgcli.com/
 maybrew "pinentry-mac"
-# Manage compile and link flags for libraries
-maybrew "pkg-config"
-# Object-relational database system
+# Pinentry for GPG on Mac
+# https://github.com/GPGTools/pinentry
+maybrew "plantuml"
+# Draw UML diagrams
+# https://plantuml.com/
 if ! is_installed "postgresql"; then
+# Object-relational database system
+# https://www.postgresql.org/
 	brew install postgresql
 	brew services start postgresql # start it
+	psql postgres -c "create database $USER;"
 else
 	echo "-- Skipping postgresql (installed already)"
 fi
-# psql postgres -c "create database $USER;"
+maybrew "python-tabulate"
+# Pretty-print tabular data in Python
+# https://pypi.org/project/tabulate/
+# custom shell prompt generator thing
 
-# allows you to comment on a file without commenting _in_ the file
-maybrew "private_comments"
 maybrew "python" # python 3 yo!
 if ! is_installed "rakudo-star"; then
 	brew install rakudo-star
@@ -367,44 +390,72 @@ maybrew "readline"
 #
 # For pkg-config to find readline you may need to set:
 #   set -gx PKG_CONFIG_PATH "/usr/local/opt/readline/lib/pkgconfig"
-# ripgrep like ack but better
+
 maybrew "ripgrep"
-# the rust compiler & language
+# Search tool like grep and The Silver Searcher
+# https://github.com/BurntSushi/ripgrep
 # Installed via bootstrap script now instead
 # maybrew "rust"
 # Readline wrapper: adds readline support to tools that lack it
 maybrew "rlwrap"
 
-# Intuitive find & replace CLI
 maybrew "sd"
-# Static analysis and lint tool, for (ba)sh scripts
+# Intuitive find & replace CLI
+# https://github.com/chmln/sd
 maybrew "shellcheck"
-
-# Command-line interface for SQLite
-maybrew "sqlite"
-# File system client based on SSH File Transfer Protocol
-#maybrew "sshfs"
+# Static analysis and lint tool, for (ba)sh scripts
+# https://www.shellcheck.net/
+maybrew "subversion"
+# Version control system designed to be a better CVS
+# https://subversion.apache.org/
+maybrew "task"
 # Feature-rich console based todo list manager
-maybrew "task" # task warrior
-# Send macOS User Notifications from the command-line
+# https://taskwarrior.org/
+maybrew "td"
+# Your todo list in your terminal
+# https://github.com/Swatto/td
 maybrew "terminal-notifier"
-# Smart multi-file multi-part decoder
-# like ack but faster
-maybrew "the_silver_searcher"
-# Text interface for Git repositories
+# Send macOS User Notifications from the command-line
+# https://github.com/julienXX/terminal-notifier
+maybrew "texinfo"
+# Official documentation format of the GNU project
+# https://www.gnu.org/software/texinfo/
+# maybrew "the_silver_searcher"
+# Code-search similar to ack
+# https://github.com/ggreer/the_silver_searcher
 maybrew "tig"
-# Command-line translator using Google Translate and more
+# Text interface for Git repositories
+# https://jonas.github.io/tig/
+maybrew "toot"
+# Mastodon CLI & TUI
+# https://toot.readthedocs.io/en/latest/index.html
 maybrew "translate-shell"
-# Display directories as trees (with optional color/HTML output)
+# Command-line translator using Google Translate and more
+# https://www.soimort.org/translate-shell
 maybrew "tree"
-# Simple GTD-style task management for the command-line
-maybrew "ultralist"
-# uudeview: Smart multi-file multi-part decoder
+# Display directories as trees (with optional color/HTML output)
+# http://mama.indstate.edu/users/ice/tree/
+maybrew "universal-ctags/universal-ctags/universal-ctags"
+# Maintained ctags implementation
+# https://github.com/universal-ctags/ctags
 maybrew "uudeview"
-# Pager/text based browser
+# Smart multi-file multi-part decoder
+# http://www.fpx.de/fp/Software/UUDeview/
 maybrew "w3m"
-# General-purpose data compression with high compression ratio
+# Pager/text based browser
+# https://w3m.sourceforge.io/
+maybrew "wget"
+# Internet file retriever
+# https://www.gnu.org/software/wget/
+maybrew "yadm"
+# Yet Another Dotfiles Manager
+# https://yadm.io/
+maybrew "yj"
+# CLI to convert between YAML, TOML, JSON and HCL
+# https://github.com/sclevine/yj
 maybrew "xz"
+# General-purpose data compression with high compression ratio
+
 # Programatically correct mistyped console commands
 # maybrew "thefuck"
 # Program that can automate interactive applications
@@ -415,12 +466,6 @@ else
 fi
 
 
-# maybrew "homebrew/dupes/expect" # gets you unbuffer
-
-# pandoc: Swiss-army knife of markup format conversion
-maybrew "pandoc" # neomutt is using it if nothing else...
-# CLI for Postgres with auto-completion and syntax highlighting
-maybrew "pgcli"
 # emacs
 # https://github.com/syl20bnr/spacemacs
 brew tap d12frosted/emacs-plus
@@ -459,14 +504,4 @@ else
 	echo "-- Skipping emacs-plus (installed already)"
 fi
 
-# ispell: International Ispell
-maybrew "ispell" #something in/via neomutt wants this
-# A command line interface to the macOS Address Book.
-# DEPRECATED INSTALL COMMAND. NO LONGER WORKS WITH ARBITRARY URL
-# Error: Non-checksummed download of contacts2 formula file from an arbitrary URL is unsupported!
-#  `brew extract` or `brew create` and `brew tap-new` to create a formula file in a tap on GitHub instead.
-# if ! is_installed "https://raw.github.com/tgray/homebrew-tgbrew/master/contacts2.rb"; then
-# 	brew install https://raw.github.com/tgray/homebrew-tgbrew/master/contacts2.rb
-# else
-# 	echo "-- Skipping contacts2.rb (installed already)"
-# fi
+
