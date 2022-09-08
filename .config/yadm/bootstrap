@@ -1,15 +1,23 @@
 #!/bin/sh
 
-echo "have you run ssh-add ~/.github ? [y]"
-read github
-if [ "$github" != "y" ]; then
-	echo "Please load your ssh keys before proceeding."
-	echo "We'll need them to download some github repos."
+
+ssh -T git@github.com 2>&1 | grep "You've successfully authenticated"
+if [ $? -ne 0 ]; then
+	echo "I tried to connect to github with your ssh keys."
+	echo "It didn't work."
+	echo "Load your keys, then run"
+	echo ""
+	echo "ssh -T git@github.com"
+	echo ""
+	echo "Run me again after you get that working."
 	exit 1
 fi
-GENERATE_SETUP_TASKS=1
-if hash task 2>/dev/null; then
-	 GENERATE_SETUP_TASKS=0
+
+GENERATE_SETUP_TASKS=0
+echo "would you like me to generate manual setup tasklist? [y/n]"
+read generate_tasks
+if [ "$generate_tasks" == "y" ]; then
+	GENERATE_SETUP_TASKS=1
 fi
 
 #system_type=$(uname -s)
@@ -233,14 +241,14 @@ mkdir -p $HOME/workspace/reference/crystal
 # fi
 mkdir -p $HOME/workspace/reference/elixir
 # elixir language server protocol
-mayclone "~/workspace/reference/elixir" "git@github.com:elixir-lsp/elixir-ls.git"
-if [ ! -d "~/workspace/reference/elixir/elixir-ls/release" ]; then
-	cd ~/workspace/reference/elixir/elixir-ls
-	mix deps.get
-	mix compile
-	mix elixir_ls.release # creates the release directory
-	cd ~/
-fi
+# mayclone "~/workspace/reference/elixir" "git@github.com:elixir-lsp/elixir-ls.git"
+# if [ ! -d "~/workspace/reference/elixir/elixir-ls/release" ]; then
+# 	cd ~/workspace/reference/elixir/elixir-ls
+# 	mix deps.get
+# 	mix compile
+# 	mix elixir_ls.release # creates the release directory
+# 	cd ~/
+# fi
 mkdir -p $HOME/workspace/reference/lua
 if [ ! -d "~/workspace/reference/lua/pandoc-confluence-writer" ]; then
 	# https://github.com/jpbarrette/pandoc-confluence-writer
@@ -343,6 +351,7 @@ if ! is_installed "rustc"; then
 	yes '' | curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 	rustup toolchain add nightly
 	cargo +nightly install racer
+	cargo install silicon
 fi
 
 # broot is an interactive form of tree
@@ -429,123 +438,55 @@ fi
 defaults  write -g com.apple.mouse.scaling 5
 
 
-# install vim-anywhere
-# https://github.com/cknadler/vim-anywhere
-curl -fsSL https://raw.github.com/cknadler/vim-anywhere/master/install | bash
-
 #####
 if [ $GENERATE_SETUP_TASKS -eq 1 ]; then
 	echo "setting up todo items for you"
-	#Task number (for annotation purposes)
-	# 1
-	task add project:setup priority:H "set ⌘^v as Vim Anywhere shortcut under services in window that just opened"
-	# 2
-	task add project:setup priority:H "download jq, add to path, make executable"
-	task annotate 2 "https://stedolan.github.io/jq/"
-	# 3
-	task add project:setup priority:H "add: /usr/local/bin/fish to /etc/shells"
-	task annotate 3 'echo "/usr/local/bin/fish" | sudo tee -a /etc/shells'
-	task annotate 3 "chsh -s /usr/local/bin/fish"
-	# 4
-	task add project:setup priority:H "add: your ssh keys (and load the github one)"
-	# 5
-	task add project:setup priority:H "download: Inconsolata (not -g or -gz)"
-	task annotate 5 "https://github.com/powerline/fonts"
-	# 6
-	task add project:setup priority:H "run: chsh -s /usr/local/bin/fish"
-	# 7
-	task add project:setup priority:H "run: fish shell integration commands"
-	task annotate 7 "(in fish shell) omf install bobthefish"
-	# 8
-	task add project:setup priority:H "install: taskopen"
-	task annotate 8 "https://github.com/ValiValpas/taskopen"
-	# 9
-	task add project:setup priority:H "run:sudo pip3 install -I urlscan"
-	# 10
-	task add project:setup priority:H "run: urlscan -g"
-	# 11
-	task add project:setup priority:H "run: notmuch setup"
-	# 12
-	task add project:setup priority:H "sync contacts & run  contacts -a --all > ~/.config/neomutt/aliases"
-	# 13
-	task add project:setup priority:H "download roboto mono"
-	task annotate 13 "https://fonts.google.com/specimen/Roboto+Mono"
-
-	# and now tasks for the apps you need to install manually
-	# 14
-	task add project:setup "Install Dropbox"
-	# 15
-	task add project:setup "Install Chrome"
-	# 16
-	task add project:setup "Install Firefox"
-	# 17
-	task add project:setup "Install Xcode"
-	# 18
-	task add project:setup "Accept Xcode license"
-	# 19
-	task add project:setup "after Xcode license, follow instructions https://github.com/kerma/defaultbrowser"
-	# 20
-	task add project:setup "Install Fantastical"
-	# 21
-	task add project:setup "Install Kaleidoscope"
-	task annotate 16 "https://www.kaleidoscopeapp.com/download"
-	# 22
-	task add project:setup "Install nvALT"
-	# 23
-	task add project:setup "Install OmniGraffle"
-	# 24
-	task add project:setup "Install Slack"
-	# 25
-	task add project:setup "Copy Scuttlebutt's gossip.json from the other box"
-	# 26
-	task add project:setup "Copy Scuttlebutt's gossip.json from the other box"
-	# 27
-	task add project:setup "Install Patchwork (Scuttlebutt)"
-	# 28
-	task add project:setup "boot Patchwork and let sync get started"
-	# 29
-	task add project:setup "Install Golang"
-	# 30
-	task add project:setup priority:L "Install Quiver"
-	# 31
-	task add project:setup priority:L "Install Skitch"
-	# 32
-	task add project:setup priority:L "Install Firefox"
-	# 33
-	task add project:setup priority:L "Install Marked 2"
-	# 34
-	task add project:setup priority:L "Install Monodraw"
-	# 35
-	task add project:setup priority:L "Install Noizio"
-	# 36
-	task add project:setup priority:L "Install Tweetbot"
-	# 37
-	task add project:setup priority:L "Install Deckset"
-	# 38
-	task add project:setup priority:L "Install Fenestro"
-	# 39
-	task add project:setup priority:L "Install Tad"
-	# 40
-	task add project:setup priority:L "run ln -s /Applications/Tad.app/Contents/Resources/tad.sh ~/bin/tad"
-	# 41
-	task add project:setup priority:L "Set Ascii font in iterm 2 to roboto mono 18"
-	# 42
-	task add project:setup priority:M "rvm default 2.6.3 (or whatever)"
-	# 43
-	task add project:setup priority:M "gem install solargraph"
-	# 44
-	task add project:setup priority:M "gem install reek"
-	# 45
-	task add project:setup priority:M "gem install bundler"
-	# 46
-	task add project:setup priority:H "doom: M-x all-the-icons-install-fonts"
 
 
-	##########
-	# RUST
-	task add project:setup priority:M "curl https://sh.rustup.rs -sSf | sh"
-	task add project:setup priority:M "cargo install silicon"
-	##########
+echo "- [  ] set ⌘^v as Vim Anywhere shortcut under services in window that just opened
+- [  ] add: /usr/local/bin/fish to /etc/shells
+  echo "/usr/local/bin/fish" | sudo tee -a /etc/shells
+  chsh -s /usr/local/bin/fish
+
+- [  ] add: your ssh keys (and load the github one)
+- [  ] download: Inconsolata (not -g or -gz)
+- [  ] https://github.com/powerline/fonts
+- [  ] run: chsh -s /usr/local/bin/fish
+- [  ] run: fish shell integration commands
+- [  ] run:sudo pip3 install -I urlscan
+- [  ] run: urlscan -g
+- [  ] download roboto mono
+- [  ] https://fonts.google.com/specimen/Roboto+Mono
+- [  ] Install Dropbox
+- [  ] Install Chrome
+- [  ] Install Firefox
+- [  ] Install Xcode
+- [  ] Install Fantastical
+- [  ] Install Kaleidoscope
+- [  ] https://www.kaleidoscopeapp.com/download
+- [  ] Install OmniGraffle
+- [  ] Install Slack
+- [  ] Copy Scuttlebutt's gossip.json from the other box
+- [  ] Copy Scuttlebutt's gossip.json from the other box
+- [  ] Install Patchwork (Scuttlebutt)
+- [  ] boot Patchwork and let sync get started
+- [  ] Install Quiver
+- [  ] Install Marked 2
+- [  ] Install Monodraw
+- [  ] Install Noizio
+- [  ] Install Tweetbot
+- [  ] Install Deckset
+- [  ] Install Fenestro
+- [  ] Install Tad
+- [  ] run ln -s /Applications/Tad.app/Contents/Resources/tad.sh ~/bin/tad
+- [  ] Set Ascii font in iterm 2 to roboto mono 18
+- [  ] rvm default 2.6.3 (or whatever)
+- [  ] gem install solargraph
+- [  ] gem install reek
+- [  ] gem install bundler
+- [  ] doom: M-x all-the-icons-install-fonts" > ~/_MANUAL_TODO_LIST.txt
+open ~/_MANUAL_TODO_LIST.txt
+
 
 	echo "I'M DONE. Here are your todo items"
 fi
