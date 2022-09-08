@@ -2,8 +2,34 @@
 
 # in order to regenerate the list of installed packages with
 # descriptions run this
-# brew leaves | xargs -n1 brew desc
-# brew leaves --installed-on-request | xargs -n1 brew desc
+
+### via bash
+# echo '#!/bin/sh' > brews.sh;
+# brew leaves --installed-on-request \
+#   | grep --color=none "/" \
+#   | sed -e "s/\(.*\)\/.*/\1/" -e "s/^/brew tap /" \
+#   >> brews.sh;
+# brew info $(brew leaves --installed-on-request) \
+#   | grep --color=none -A2 "==> [^[:space:]]\+:" \
+#   | grep -v -- "--" \
+#   | sed -e 's/==> \(.*\):.*/maybrew "\1"/' \
+#     -e '/^maybrew/!s/\(.*\)/# \1/' \
+#    >> brews.sh
+#
+### via fish
+# echo '#!/bin/sh' > brews.sh;
+# brew leaves --installed-on-request \
+#   | grep --color=none "/" \
+#   | sed -e "s/\(.*\)\/.*/\1/" -e "s/^/brew tap /" \
+#   >> brews.sh;
+# brew info (brew leaves --installed-on-request) \
+#   | grep --color=none -A2 "==> [^[:space:]]\+:" \
+#   | grep -v -- "--" \
+#   | sed -e 's/==> \(.*\):.*/maybrew "\1"/' \
+#     -e '/^maybrew/!s/\(.*\)/# \1/' \
+#    >> brews.sh
+
+
 
 
 # maybrew == maybe brew (install)
