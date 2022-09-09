@@ -66,7 +66,7 @@ mkdir -p "~/workspace"
 # * lets me have multiple scripts executed per git hook
 # * gives me a post-init functionality that'll set up a file with
 #   a .vimrc that has just the plugins for this project
-mayclone "~/workspace" "git@github.com:masukomi/git-rook.git"
+mayclone ~/workspace "git@github.com:masukomi/git-rook.git"
 if [ ! -h ~/bin/git-rook ];then
 	ln -s ~/workspace/git-rook/git-rook ~/bin/git-rook
 fi
@@ -210,20 +210,20 @@ mkdir -p ~/workspace/reference
 mkdir -p ~/.vim-tmp
 mkdir -p ~/go/bin #because... fuck you go.
 
-mayclone "~/workspace" "git@github.com:kerma/defaultbrowser.git"
+mayclone ~/workspace "git@github.com:kerma/defaultbrowser.git"
 # MASUKOMI REPOS
-mayclone "~/workspace" "git@github.com:masukomi/cleandiff.git"
-mayclone "~/workspace" "git@github.com:masukomi/rtest.git"
+mayclone ~/workspace "git@github.com:masukomi/cleandiff.git"
+mayclone ~/workspace "git@github.com:masukomi/rtest.git"
 ln -s ~/workspace/rtest/rtest ~/bin/rtest > /dev/null
-mayclone "~/workspace" "git@github.com:masukomi/private_comments.git"
+mayclone ~/workspace "git@github.com:masukomi/private_comments.git"
 ln -s ~/workspace/private_comments/bin/private_comments ~/bin/private_comments > /dev/null
-mayclone "~/workspace" "git@github.com:masukomi/gpup.git"
+mayclone ~/workspace "git@github.com:masukomi/gpup.git"
 ln -s ~/workspace/gpup/gpup ~/bin/gpup > /dev/null
 ln -s ~/workspace/gpup/gpud ~/bin/gpud > /dev/null
-mayclone "~/workspace" "git@github.com:masukomi/git-status-report.git"
-mayclone "~/workspace" "git@github.com:masukomi/git_accessories.git"
+mayclone ~/workspace "git@github.com:masukomi/git-status-report.git"
+mayclone ~/workspace "git@github.com:masukomi/git_accessories.git"
 #^^ requires secondary commands AFTER xcode is installed
-mayclone "~/workspace" "git://github.com/lloyd/yajl"
+mayclone ~/workspace "git://github.com/lloyd/yajl"
 # A fast streaming JSON parsing library in C. http://lloyd.github.com/yajl
 cd ~/workspace/yajl
 ./configure && make install
@@ -232,7 +232,7 @@ cd ~/
 
 mkdir -p $HOME/workspace/reference/crystal
 # `make` doesn't work in icr currently so skip this.
-# mayclone "~/workspace/reference/crystal" "git@github.com:crystal-community/icr.git"
+# mayclone ~/workspace/reference/crystal "git@github.com:crystal-community/icr.git"
 # if ! is_installed "icr"; then # Interactive Crystal Repl
 # 	cd ~/workspace/reference/crystal/icr
 # 	PREFIX=~/ make
@@ -241,7 +241,7 @@ mkdir -p $HOME/workspace/reference/crystal
 # fi
 mkdir -p $HOME/workspace/reference/elixir
 # elixir language server protocol
-# mayclone "~/workspace/reference/elixir" "git@github.com:elixir-lsp/elixir-ls.git"
+# mayclone ~/workspace/reference/elixir "git@github.com:elixir-lsp/elixir-ls.git"
 # if [ ! -d "~/workspace/reference/elixir/elixir-ls/release" ]; then
 # 	cd ~/workspace/reference/elixir/elixir-ls
 # 	mix deps.get
@@ -252,7 +252,7 @@ mkdir -p $HOME/workspace/reference/elixir
 mkdir -p $HOME/workspace/reference/lua
 if [ ! -d "~/workspace/reference/lua/pandoc-confluence-writer" ]; then
 	# https://github.com/jpbarrette/pandoc-confluence-writer
-	mayclone "~/workspace/reference/lua" "git@github.com:jpbarrette/pandoc-confluence-writer.git"
+	mayclone ~/workspace/reference/lua "git@github.com:jpbarrette/pandoc-confluence-writer.git"
 	mkdir -p $HOME/.local/share/pandoc
 	cp ~/workspace/reference/lua/pandoc-confluence-writer/confluence.lua ~/.local/share/pandoc/
 fi
