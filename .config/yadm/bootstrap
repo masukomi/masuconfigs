@@ -76,31 +76,6 @@ if ! is_installed "brew"; then
 	sudo ln -s $(brew --cellar) /usr/local/Cellar
 fi
 
-# if ! is_installed "mas"; then # mac app store cli
-# 	brew install mas
-# 	# mac app store
-# 	# signin functionality no longer a thing
-# 	# you need to be signed in manually via the GUI app
-# 	#mas signin --dialog masukomi@masukomi.org
-#     echo "Run mas account in a separate terminal"
-#     echo "It should return your email address"
-#     echo "Install at least one app from the mac app store manually"
-#     echo "run mas list"
-#     echo "If it doesn't show anything run mas reset"
-#     echo "and run mas list again"
-#     echo "Once mas list is showing you a list of installed apps"
-#     echo "type \"y\" to continue with installing apps from the "
-#     echo "mac app store."
-#     echo "just hit enter to skip"
-#     read MAS_LOGIN
-#     if [ "$MAS_LOGIN" == "y" ];then
-# 		mas install 1384080005 # tweetbot
-# 		mas install 409203825 # Numbers (10.3.5)
-# 		mas install 1464122853 # NextDNS (1.4.3)
-# 		mas install 419330170 # Moom (3.2.20)
-# 		mas install 1289583905 # Pixelmator Pro (2.0.1)
-#     fi
-# fi
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	# Mac OSX
@@ -118,9 +93,54 @@ fi
 # and various homebrew tools have been installed
 #####
 
+read -t 20 -p "download fonts? [y/n]
+" fonts
+
+if [ "$fonts" == "y" ]; then
+	cd ~/Downloads
+	# JetBrains Mono (includes Powerline glyphs)
+	curl -L https://github.com/JetBrains/JetBrainsMono/releases/download/v2.242/JetBrainsMono-2.242.zip \
+		--output JetBrainsMono-2.242.zip
+	unzip JetBrainsMono-2.242.zip
+	cp fonts/ttf/*.ttf ~/Library/Fonts/
+
+	# Meslo LGS (Nerd Font edition)
+	curl -L \
+		https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf \
+		--output ~/Library/Fonts/MesloLGS_NF_Regular.ttf
+
+	# roboto mono family
+	curl -L https://github.com/powerline/fonts/raw/master/Inconsolata/Inconsolata%20for%20Powerline.otf
+		--output ~/Library/Fonts/Inconsolata_for_Powerline.otf
+	curl -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Bold%20Italic%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Bold_Italic_for_Powerline.ttf
+	curl -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Bold%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Bold_for_Powerline.ttf
+	curl -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Italic%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Italic_for_Powerline.ttf
+	curl -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Light%20Italic%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Light_Italic_for_powerline.ttf
+	curl -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Light%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Light_for_Powerline.ttf
+	curl -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Medium%20Italic%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Medium_Italic_for_powerline.ttf
+	curl -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Medium%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Medium_for_Powerline.ttf
+	curl -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Thin%20Italic%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Thin_Italic_for_Powerline.ttf
+	curl -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Thin%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Thin_for_Powerline.ttf
+	curl -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_for_Powerline.ttf
+fi
+
 
 read -t 20 -p "init / update doom? [y/n]
 " doom
+
+yadm submodule init
+# mostly for emacs+doom
+yadm submodule update --init --recursive --remote
 
 if [ "$doom" == "y" ]; then
 	if [ -d '~/.emacs.d' ]; then
@@ -133,13 +153,8 @@ if [ "$doom" == "y" ]; then
 	~/.emacs.d/bin/doom install
 	~/.emacs.d/bin/doom refresh
 	~/.emacs.d/bin/doom sync
-	# install JetBrains Mono Font
-	cd ~/Downloads
-	curl -L https://download.jetbrains.com/fonts/JetBrainsMono-2.225.zip \
-		--output JetBrainsMono-2.225.zip
-	unzip JetBrainsMono-2.225.zip
-	cp fonts/ttf/*.ttf ~/Library/Fonts/
-	#also remind myself to install whatever font it is emacs uses
+	# emacs is currently using JetBrains Mono, which theoretically
+	# just got installed
 	echo "RUN M-x all-the-icons-install-fonts"
 	ln -s $(emacs --app) /Applications/Emacs.app
 
@@ -180,8 +195,6 @@ EOM
 fi
 
 
-yadm submodule init
-yadm submodule update --init --recursive --remote
 
 ##########
 # GEMs
@@ -445,12 +458,11 @@ if [ $GENERATE_SETUP_TASKS -eq 1 ]; then
 
 echo "- [  ] set ⌘^v as Vim Anywhere shortcut under services in window that just opened
 - [  ] add: /usr/local/bin/fish to /etc/shells
-  echo "/usr/local/bin/fish" | sudo tee -a /etc/shells
+  echo \"/usr/local/bin/fish\" | sudo tee -a /etc/shells
   chsh -s /usr/local/bin/fish
 
 - [  ] add: your ssh keys (and load the github one)
 - [  ] download: Inconsolata (not -g or -gz)
-- [  ] https://github.com/powerline/fonts
 - [  ] run: chsh -s /usr/local/bin/fish
 - [  ] run: fish shell integration commands
 - [  ] run:sudo pip3 install -I urlscan
@@ -490,4 +502,3 @@ open ~/_MANUAL_TODO_LIST.txt
 
 	echo "I'M DONE. Here are your todo items"
 fi
-task
