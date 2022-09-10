@@ -26,5 +26,5 @@ functioning in the same manner.
     * This will take ~30 minutes. Don't run it with `time`. It'll just hang.
 10. Install [Maestral](https://maestral.app/)
   * connect to your account
-12. Run `task` and work through the todo items
-13. Update todo items in `bootstrap` script to reflect current reality.
+12. Work through the todo items that just opened.
+13. Update todo items at the end of `bootstrap` script to reflect current reality.
