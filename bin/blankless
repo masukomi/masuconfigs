@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# reduces lines that contain only whitespace to simply \n
+# converts whitespace-only lines to empty lines
 # so, "   \n" becomes "\n"
 #
 # USAGE: pipe text to blankless
