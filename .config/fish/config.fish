@@ -1,24 +1,8 @@
-# Path to Oh My Fish install.
-# set -q XDG_DATA_HOME
-#   and set -gx OMF_PATH "$XDG_DATA_HOME/omf"
-#   or set -gx OMF_PATH "$HOME/.local/share/omf"
-
-# Load Oh My Fish configuration.
-# if test -f $OMF_PATH/init.fish
-# 	source $OMF_PATH/init.fish
-# end
-#
-
-set -g theme_nerd_fonts yes
-
 if test -f $HOME/.config/fish/config_work.fish
 	source $HOME/.config/fish/config_work.fish
 end
 if test -f $HOME/.config/fish/secrets.fish
 	source $HOME/.config/fish/secrets.fish
-end
-if test -f $HOME/perl5/perlbrew/etc/perlbrew.fish
-	source ~/perl5/perlbrew/etc/perlbrew.fish
 end
 
 if test -f /usr/local/share/fish/vendor_completions.d/fd.fish
@@ -29,8 +13,12 @@ if test -f /usr/local/share/fish/vendor_completions.d/task.fish
 end
 
 set -x EDITOR mvim
-set -x BAT_PAGER ""
+set -x BAT_PAGER "" # no paging! Only spew!
 set -x vmm_use_secure_cookies false
+
+## LLVM
+
+
 set -x LLVM_HOME /usr/local/opt/llvm
 set -x DYLD_LIBRARY_PATH $LLVM_HOME/lib
 # set -x RUBY_CONFIGURE_OPTS "--with-openssl-dir="(brew --prefix openssl@1.1)
@@ -120,6 +108,7 @@ alias gcurl /usr/local/opt/curl/bin/curl
 # ruby developers can skip using "bundle exec"
 fish_add_path -g ./bin
 fish_add_path -g -p /opt/homebrew/bin
+fish_add_path -g -p /opt/homebrew/sbin
 # (which fish | sed "s/\/fish//")
 fish_add_path -g . $HOME/bin $HOME/bin/git-scripts $HOME/bin/git-scripts/hooks /usr/local/bin $PATH
 # vvv make python 3 found before macOSs python 2.7
@@ -156,7 +145,8 @@ if test $status -eq 0
 	end
 end
 
-
+set -l readline_version (brew list readline --versions | sed -e "s/.* //")
+set -x -g CSC_OPTIONS "-I$CELLAR/readline/$readline_version/include -L$CELLAR/readline/$readline_version/lib -Wl,-flat_namespace,-undefined,suppress"
 fish_add_path -g -a $CELLAR/chicken/5.0.0/bin
 # OYYY WHEN IT COMPLAINS ABOUT libchicken.dylib being missing
 #ln -s (brew --prefix chicken)/lib/libchicken.dylib /usr/local/lib/libchicken.dylib
@@ -168,16 +158,9 @@ fish_add_path -g -p /opt/homebrew/opt/bash/bin
 fish_add_path -g /Applications/Racket*/bin
 
 # Radicle.xyz
-fish_add_path -g $HOME/.radicle/bin
+# fish_add_path -g $HOME/.radicle/bin
 
-## BEGIN GERBIL
-# set -x PATH /usr/local/opt/gambit-scheme/current/bin $PATH
-# set -x PATH /usr/local/opt/gerbil-scheme/libexec/bin $PATH
-#
-# set -x GERBIL_HOME /usr/local/opt/gerbil-scheme/libexec
-# fish_add_path -g $GERBIL_HOME/bin
-## END GERBIL
-#
+
 # BEGIN JAVA &  Antlr
 set -l ANTLRPATH $HOME/workspace/reference/java/antlr/antlr-4.10.1-complete.jar
 set -x CLASSPATH ".:$ANTLRPATH:$CLASSPATH"
@@ -185,43 +168,36 @@ alias antlr4 "java -Xmx500M -cp \"$ANTLRPATH:\$CLASSPATH\" org.antlr.v4.Tool"
 alias grun "java -Xmx500M -cp \"$ANTLRPATH:\$CLASSPATH\" org.antlr.v4.gui.TestRig"
 # END JAVA & Antlr
 
-## BEGIN GO
-# defaults to ~/go
-# set -x GOPATH $HOME/workspace/gocode
-# fish_add_path -g $GOPATH/bin
-## END GO
-
-
 # RUST
 fish_add_path -g $HOME/.cargo/bin
 
 # Elixir / ERLANG
-set -x ERL_AFLAGS "-kernel shell_history enabled"
+# set -x ERL_AFLAGS "-kernel shell_history enabled"
 
-# these 2 found here
-# https://dev.to/andresdotsh/how-to-install-erlang-on-macos-with-asdf-3p1c
-set -x CFLAGS "-O2 -g -fno-stack-check"
-# set -x KERL_CONFIGURE_OPTIONS=(string join "--disable-hipe --without-javac --with-ssl=" (brew --prefix openssl))
-set -x KERL_CONFIGURE_OPTIONS "--disable-hipe --without-javac --with-ssl=/usr/local/opt/openssl@1.1"
+# # these 2 found here
+# # https://dev.to/andresdotsh/how-to-install-erlang-on-macos-with-asdf-3p1c
+# set -x CFLAGS "-O2 -g -fno-stack-check"
+# # set -x KERL_CONFIGURE_OPTIONS=(string join "--disable-hipe --without-javac --with-ssl=" (brew --prefix openssl))
+# set -x KERL_CONFIGURE_OPTIONS "--disable-hipe --without-javac --with-ssl=/usr/local/opt/openssl@1.1"
+#
 
 
 set -x GPG_TTY (tty)
 
+# SET UP LDFLAGS, CPPFLAGS, PKG_CONFIG_PATH
+# for readline and openssl
 # readline
-set -gx LDFLAGS "-L/usr/local/opt/readline/lib"
-set -gx CPPFLAGS "-I/usr/local/opt/readline/include"
-set -gx PKG_CONFIG_PATH "/usr/local/opt/readline/lib/pkgconfig"
+eval (brew info readline | grep "set -gx " | sed -e "s/^ *//" -e 's/$/;/')
+# opensssl
+# also adds openssl@3/bin to the path
+eval (brew info openssl | egrep "set -gx |fish_add_path" | sed -e "s/^ *//" -e 's/^\(.*\) \([^[:space:]]*\) "/\1 \2 "$\2 /' -e 's/$/;/')
+# and llvm
+eval (brew info llvm | egrep "set -gx |fish_add_path" | sed -e "s/^ *//" -e 's/^\(.*\) \([^[:space:]]*\) "/\1 \2 "$\2 /' -e 's/$/;/')
+# and libxslt
+eval (brew info libxslt | egrep "set -gx |fish_add_path" | sed -e "s/^ *//" -e 's/^\(.*\) \([^[:space:]]*\) "/\1 \2 "$\2 /' -e 's/$/;/')
 
-# END Enscripten
-
+# load the curent theme
 source ~/.config/fish/current_theme.fish
-
-# # START Bob The Fish prompt
-# # ~/.config/fish/functions/fish_prompt.fish
-# set -g theme_display_ruby no
-# set -g theme_nerd_fonts no
-# set -g theme_powerline_fonts yes
-# # END Bob the Fish
 
 # rbenv invocation
 if test (command -v rbenv)
@@ -231,17 +207,20 @@ end
 
 test -e {$HOME}/.iterm2_shell_integration.fish ; and source {$HOME}/.iterm2_shell_integration.fish
 
-set -x PERLLIB $CELLAR/perl/5.24.0_1/lib/perl5/site_perl/5.24.0 $PERLLIB
+# load/unload environment variables based on pwd
+# https://direnv.net/
+# looks for .envrc files when you cd and loads them
+# similar to the .env gem
 eval (direnv hook fish)
-set -x PERLLIB /Users/krhodes/perl5/perlbrew/perls/perl-5.24.0/lib/site_perl/5.24.0 $PERLLIB
-set -g fish_user_paths "/usr/local/opt/openssl@1.1/bin" $fish_user_paths
 
 # set -x USE_FENESTRO true
+# doesn't run in current macos because of cert bs.
 
 # setting desired time zones for the tz utility
 # https://github.com/oz/tz
 # full list of possible ones is here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-set -x TZ_LIST "US/Pacific,Europe/Paris"
+# set -x TZ_LIST "<timezone>,<alias>;<other tz>,<alias>"
+set -x TZ_LIST "US/Pacific,Pacific"
 
 
 # ASDF
