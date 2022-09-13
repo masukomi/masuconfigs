@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 
 ssh -T git@github.com 2>&1 | grep "You've successfully authenticated"
@@ -36,6 +36,7 @@ function mayclone(){
 		git clone $2 $basedir/$subdir
 	fi
 }
+
 function is_installed(){
 	hash $1 >/dev/null 2>&1
 	# if [ $? -eq 0 ] && [ "$(which go)" != "" ]; then
@@ -66,41 +67,16 @@ mkdir -p "~/workspace"
 # * lets me have multiple scripts executed per git hook
 # * gives me a post-init functionality that'll set up a file with
 #   a .vimrc that has just the plugins for this project
-mayclone "~/workspace" "git@github.com:masukomi/git-rook.git"
+mayclone ~/workspace "git@github.com:masukomi/git-rook.git"
 if [ ! -h ~/bin/git-rook ];then
 	ln -s ~/workspace/git-rook/git-rook ~/bin/git-rook
 fi
 
 if ! is_installed "brew"; then
 	/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-	sudo ln -s $(brew --cellar) /usr/local/Cellar
+	# sudo ln -s $(brew --cellar) /usr/local/Cellar
 fi
 
-# if ! is_installed "mas"; then # mac app store cli
-# 	brew install mas
-# 	# mac app store
-# 	# signin functionality no longer a thing
-# 	# you need to be signed in manually via the GUI app
-# 	#mas signin --dialog masukomi@masukomi.org
-#     echo "Run mas account in a separate terminal"
-#     echo "It should return your email address"
-#     echo "Install at least one app from the mac app store manually"
-#     echo "run mas list"
-#     echo "If it doesn't show anything run mas reset"
-#     echo "and run mas list again"
-#     echo "Once mas list is showing you a list of installed apps"
-#     echo "type \"y\" to continue with installing apps from the "
-#     echo "mac app store."
-#     echo "just hit enter to skip"
-#     read MAS_LOGIN
-#     if [ "$MAS_LOGIN" == "y" ];then
-# 		mas install 1384080005 # tweetbot
-# 		mas install 409203825 # Numbers (10.3.5)
-# 		mas install 1464122853 # NextDNS (1.4.3)
-# 		mas install 419330170 # Moom (3.2.20)
-# 		mas install 1289583905 # Pixelmator Pro (2.0.1)
-#     fi
-# fi
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	# Mac OSX
@@ -117,29 +93,65 @@ fi
 # HOMEBREW IS NOW AVAILABLE
 # and various homebrew tools have been installed
 #####
+CELLAR=$(brew --cellar)
+
+read -t 20 -p "download fonts? [y/n]
+" fonts
+
+if [ "$fonts" == "y" ]; then
+	cd ~/Downloads
+	# JetBrains Mono (includes Powerline glyphs)
+	curl -L https://github.com/JetBrains/JetBrainsMono/releases/download/v2.242/JetBrainsMono-2.242.zip \
+		--output JetBrainsMono-2.242.zip
+	unzip JetBrainsMono-2.242.zip
+	cp fonts/ttf/*.ttf ~/Library/Fonts/
+
+	# Meslo LGS (Nerd Font edition)
+	curl -L \
+		https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf \
+		--output ~/Library/Fonts/MesloLGS_NF_Regular.ttf
+
+	# roboto mono family
+	curl -s -L https://github.com/powerline/fonts/raw/master/Inconsolata/Inconsolata%20for%20Powerline.otf
+		--output ~/Library/Fonts/Inconsolata_for_Powerline.otf
+	curl -s -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Bold%20Italic%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Bold_Italic_for_Powerline.ttf
+	curl -s -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Bold%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Bold_for_Powerline.ttf
+	curl -s -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Italic%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Italic_for_Powerline.ttf
+	curl -s -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Light%20Italic%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Light_Italic_for_powerline.ttf
+	curl -s -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Light%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Light_for_Powerline.ttf
+	curl -s -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Medium%20Italic%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Medium_Italic_for_powerline.ttf
+	curl -s -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Medium%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Medium_for_Powerline.ttf
+	curl -s -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Thin%20Italic%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Thin_Italic_for_Powerline.ttf
+	curl -s -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Thin%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_Thin_for_Powerline.ttf
+	curl -s -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20for%20Powerline.ttf \
+		--output ~/Library/Fonts/Roboto_Mono_for_Powerline.ttf
+fi
 
 
 read -t 20 -p "init / update doom? [y/n]
 " doom
 
+yadm submodule init
+yadm submodule update --init --recursive --remote
+
 if [ "$doom" == "y" ]; then
-	if [ -d '~/.emacs.d' ]; then
-		yadm submodule init
-		yadm submodule update --init --recursive --remote
-		yadm submodule update --recursive ~/.emacs.d
-	else
+	if [ ! -d ~/.emacs.d ]; then
 		git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
 	fi
 	~/.emacs.d/bin/doom install
 	~/.emacs.d/bin/doom refresh
 	~/.emacs.d/bin/doom sync
-	# install JetBrains Mono Font
-	cd ~/Downloads
-	curl -L https://download.jetbrains.com/fonts/JetBrainsMono-2.225.zip \
-		--output JetBrainsMono-2.225.zip
-	unzip JetBrainsMono-2.225.zip
-	cp fonts/ttf/*.ttf ~/Library/Fonts/
-	#also remind myself to install whatever font it is emacs uses
+	# emacs is currently using JetBrains Mono, which theoretically
+	# just got installed
 	echo "RUN M-x all-the-icons-install-fonts"
 	ln -s $(emacs --app) /Applications/Emacs.app
 
@@ -180,87 +192,60 @@ EOM
 fi
 
 
-yadm submodule init
-yadm submodule update --init --recursive --remote
 
 ##########
 # GEMs
-gem install aws-sdk
-gem install uniscribe
 
-# gollum personal git backed wiki
-# https://github.com/gollum/gollum
-# https://www.youtube.com/watch?v=qbBElCn6C_w
-# gem install charlock_holmes -- --with-icu-dir=/usr/local/opt
-# gem install github-markup
-# gem install gollum
+read -p "install gems? [y/n]:
+" install_gems
+if [ "$install_gems" == "y" ]; then
+	gem install bundler
+	gem install aws-sdk
+	gem install uniscribe
+	gem install solargraph
+	gem install reek
+fi
 ##########
-
-##########
-# PERL
-# perlbrew is a tool to manage multiple perl installations in your $HOME directory.
-# https://perlbrew.pl
-# if ! is_installed "perlbrew"; then
-# 	curl -L https://install.perlbrew.pl | bash
-# fi
-
-
 
 mkdir -p ~/workspace/reference
 mkdir -p ~/.vim-tmp
 mkdir -p ~/go/bin #because... fuck you go.
 
-mayclone "~/workspace" "git@github.com:kerma/defaultbrowser.git"
+mayclone ~/workspace "git@github.com:kerma/defaultbrowser.git"
 # MASUKOMI REPOS
-mayclone "~/workspace" "git@github.com:masukomi/cleandiff.git"
-mayclone "~/workspace" "git@github.com:masukomi/rtest.git"
-ln -s ~/workspace/rtest/rtest ~/bin/rtest > /dev/null
-mayclone "~/workspace" "git@github.com:masukomi/private_comments.git"
-ln -s ~/workspace/private_comments/bin/private_comments ~/bin/private_comments > /dev/null
-mayclone "~/workspace" "git@github.com:masukomi/gpup.git"
-ln -s ~/workspace/gpup/gpup ~/bin/gpup > /dev/null
-ln -s ~/workspace/gpup/gpud ~/bin/gpud > /dev/null
-mayclone "~/workspace" "git@github.com:masukomi/git-status-report.git"
-mayclone "~/workspace" "git@github.com:masukomi/git_accessories.git"
+mayclone ~/workspace "git@github.com:masukomi/cleandiff.git"
+if [ ! -d ~/workspace/rtest ]; then
+	mayclone ~/workspace "git@github.com:masukomi/rtest.git"
+	ln -s ~/workspace/rtest/rtest ~/bin/rtest > /dev/null
+fi
+if [ ! -d ~/workspace/private_comments ]; then
+	mayclone ~/workspace "git@github.com:masukomi/private_comments.git"
+	ln -s ~/workspace/private_comments/bin/private_comments ~/bin/private_comments > /dev/null
+fi
+if [ ! -d ~/workspace/gpup ]; then
+	mayclone ~/workspace "git@github.com:masukomi/gpup.git"
+	ln -s ~/workspace/gpup/gpup ~/bin/gpup > /dev/null
+	ln -s ~/workspace/gpup/gpud ~/bin/gpud > /dev/null
+fi
+mayclone ~/workspace "git@github.com:masukomi/git-status-report.git"
+mayclone ~/workspace "git@github.com:masukomi/git_accessories.git"
 #^^ requires secondary commands AFTER xcode is installed
-mayclone "~/workspace" "git://github.com/lloyd/yajl"
-# A fast streaming JSON parsing library in C. http://lloyd.github.com/yajl
-cd ~/workspace/yajl
-./configure && make install
+
+mkdir -p ~/workspace/reference/c
+if [ ! -d ~/workspace/reference/c/yajl ]; then
+	mayclone ~/workspace/reference/c "git@github.com:lloyd/yajl.git"
+	# A fast streaming JSON parsing library in C. http://lloyd.github.com/yajl
+	cd ~/workspace/reference/c/yajl
+	./configure && make install
+fi
 cd ~/
 
-
-mkdir -p $HOME/workspace/reference/crystal
-# `make` doesn't work in icr currently so skip this.
-# mayclone "~/workspace/reference/crystal" "git@github.com:crystal-community/icr.git"
-# if ! is_installed "icr"; then # Interactive Crystal Repl
-# 	cd ~/workspace/reference/crystal/icr
-# 	PREFIX=~/ make
-# 	PREFIX=~/ make install
-# 	cd ~/
-# fi
-mkdir -p $HOME/workspace/reference/elixir
-# elixir language server protocol
-# mayclone "~/workspace/reference/elixir" "git@github.com:elixir-lsp/elixir-ls.git"
-# if [ ! -d "~/workspace/reference/elixir/elixir-ls/release" ]; then
-# 	cd ~/workspace/reference/elixir/elixir-ls
-# 	mix deps.get
-# 	mix compile
-# 	mix elixir_ls.release # creates the release directory
-# 	cd ~/
-# fi
-mkdir -p $HOME/workspace/reference/lua
-if [ ! -d "~/workspace/reference/lua/pandoc-confluence-writer" ]; then
-	# https://github.com/jpbarrette/pandoc-confluence-writer
-	mayclone "~/workspace/reference/lua" "git@github.com:jpbarrette/pandoc-confluence-writer.git"
-	mkdir -p $HOME/.local/share/pandoc
-	cp ~/workspace/reference/lua/pandoc-confluence-writer/confluence.lua ~/.local/share/pandoc/
-fi
 
 # install Cask https://github.com/cask/cask
 # the Private Comments Mode bulid script needs this
 # Cask simplifies sandboxing for emacs developers
-if [ ! -d "~/workspace/reference/emacs/cask" ]; then
+if [ ! -d ~/workspace/reference/emacs/cask ]; then
+	echo "installing emacs cask"
 	mkdir -p ~/workspace/reference/emacs
 	cd ~/workspace/reference/emacs
 	git clone https://github.com/cask/cask
@@ -271,80 +256,15 @@ if [ ! -d "~/workspace/reference/emacs/cask" ]; then
 fi
 
 
-if is_installed "go"; then
-	# gomodify tags needs this for... shrug. reasons
-	echo "about to ask for sudo twice to change perms for:"
-	echo "  /usr/local/go/bin"
-	echo "  /usr/loca/go/pkg"
-	echo ""
-	echo "For something to do with gomodify tags"
-	echo " Go tool to modify/update field tags in structs."
-	echo " https://github.com/fatih/gomodifytags#readme"
-	sudo chmod 777 /usr/local/go/bin
-	sudo chmod 777 /usr/local/go/pkg
-
-	if ! is_installed "gomodifytags"; then
-		go get github.com/fatih/gomodifytags
-	fi
-
-	if ! is_installed "gotests"; then
-		go get -u github.com/cweill/gotests/...
-	fi
-
-	if ! is_installed "gore"; then
-		go get github.com/motemen/gore/cmd/gore
-	fi
-
-	if ! is_installed "guru"; then
-		go get golang.org/x/tools/cmd/guru
-	fi
-fi
-
-
-
-#^^^ json formatting library
-#    gives you json_reformat and json_verify
-
-
-## START MUTT
-#mu index --rebuild
-if ! is_installed "urlscan"; then
-	pip install --user urlscan
-fi
-echo "Sync mutt contacts if needed: https://github.com/tgray/contacts"
-## END MUTT
-
-## START gcalcli (google calendar cli)
-if ! is_installed "gcalcli"; then
-	pip install gcalcli
-fi
-
-# cp -r ~/workspace/home_dir_configs/Library/Fonts/* ~/Library/Fonts/
-
 echo "Setting iTerm preference folder"
 defaults write com.googlecode.iterm2 PrefsCustomFolder "$HOME/.iterm2"
-
-# setup CCL
-# mkdir -p /usr/local/src
-
-# fish shell config
-if [ ! -d "~/.local/share/omf" ] && [ ! -d "~/.config/omf" ]; then
-	curl -L https://get.oh-my.fish > install
-	fish install --path=~/.local/share/omf --config=~/.config/omf
-fi
-
-# twtxt
-# mkdir -p ~/Library/Application\ Support/twtxt/config
-
-
-# command-t should already be installed via a vimball stored in the git repo
-# https://wincent.com/products/command-t
 
 # disable the @#$%@#$ back and forth swipe in chrome
 defaults write com.google.Chrome.plist AppleEnableSwipeNavigateWithScrolls -bool FALSE
 
 # install rust stuff
 if ! is_installed "rustc"; then
+	echo "installing rust stuff"
 	#install via rustup
 	# yes '' just sends an enter which we need to choose the default
 	# Install option
@@ -359,33 +279,37 @@ cargo install broot
 # ruut also you to easily generate tree diagrams
 cargo install ruut
 
-# install chicken scheme stuff
-readline_version=$(brew list readline --versions)
-export CSC_OPTIONS="-I/usr/local/Cellar/readline/$readline_version/include -L/usr/local/Cellar/readline/$readline_version/lib -Wl,-flat_namespace,-undefined,suppress"
-unset readline_version
-#chicken-install readline
-chicken-install apropos
-chicken-install chicken-doc
-chicken-install linenoise
-chicken-install simple-loops
-chicken-install directory-utils
-chicken-install regex
-chicken-install srfi-18
-chicken-install srfi-128
-chicken-install srfi-63
-chicken-install medea
-chicken-install filepath
-chicken-install spiffy spiffy-request-vars intarweb
-chicken-install shell
-chicken-install sha2 message-digest
-chicken-install http-client
-# chicken < 5 instructions
-# cd `csi -p '(import chicken.platform)(chicken-home)' | tail -n1`
-# curl http://3e8.org/pub/chicken-doc/chicken-doc-repo.tgz | sudo tar zx
-# chicken > 5 instructions
-cd `csi -R chicken.platform -p '(chicken-home)'`
-curl https://3e8.org/pub/chicken-doc/chicken-doc-repo-5.tgz | sudo tar zx
+read -p "install chicken scheme stuff? [y/n]:
+" chicken_stuff
 
+if [ "$chicken_stuff" == "y" ]; then
+	# install chicken scheme stuff
+	readline_version=$(brew list readline --versions | sed -e "s/.* //")
+	export CSC_OPTIONS="-I$CELLAR/readline/$readline_version/include -L$CELLAR/readline/$readline_version/lib -Wl,-flat_namespace,-undefined,suppress"
+	unset readline_version
+	#chicken-install readline
+	chicken-install apropos
+	chicken-install chicken-doc
+	chicken-install linenoise
+	chicken-install simple-loops
+	chicken-install directory-utils
+	chicken-install regex
+	chicken-install srfi-18
+	chicken-install srfi-128
+	chicken-install srfi-63
+	chicken-install medea
+	chicken-install filepath
+	chicken-install spiffy spiffy-request-vars intarweb
+	chicken-install shell
+	chicken-install sha2 message-digest
+	chicken-install http-client
+	# chicken < 5 instructions
+	# cd `csi -p '(import chicken.platform)(chicken-home)' | tail -n1`
+	# curl http://3e8.org/pub/chicken-doc/chicken-doc-repo.tgz | sudo tar zx
+	# chicken > 5 instructions
+	cd `csi -R chicken.platform -p '(chicken-home)'`
+	curl https://3e8.org/pub/chicken-doc/chicken-doc-repo-5.tgz | sudo tar zx
+fi
 
 # requires `chicken-install linenoise` to have been run first
 
@@ -396,11 +320,10 @@ curl https://3e8.org/pub/chicken-doc/chicken-doc-repo-5.tgz | sudo tar zx
 # GPG CONFIG
 # based on tips here: https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e
 # killing agent to ensure new one is started based on new configs
-killall gpg-agent
+killall gpg-agent > /dev/null
 
 # RBENV
-command -v rbenv
-if [ $? -ne 0 ]; then
+if ! is_installed "rbenv"; then
 	read -p "install rbenv? [y/n]
 	" rbenv_install
 	if [ "$rbenv_install" == "y" ]; then
@@ -408,13 +331,6 @@ if [ $? -ne 0 ]; then
 		rbenv init
 		# test that it's working
 		curl -fsSL https://github.com/rbenv/rbenv-installer/raw/main/bin/rbenv-doctor | bash
-		# going to assume it's already set up in the corresponding shells
-		# fish
-		#  set -Ux fish_user_paths $HOME/.rbenv/bin $fish_user_paths
-		# bash
-		#  echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-		# zsh
-		#  echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
 		if [ $? -ne 0 ]; then
 			echo "something went wrong with rbenv install. exit bootstrap?  [y/n]"
 			read exit_bootstrap
@@ -445,12 +361,11 @@ if [ $GENERATE_SETUP_TASKS -eq 1 ]; then
 
 echo "- [  ] set ⌘^v as Vim Anywhere shortcut under services in window that just opened
 - [  ] add: /usr/local/bin/fish to /etc/shells
-  echo "/usr/local/bin/fish" | sudo tee -a /etc/shells
+  echo \"/usr/local/bin/fish\" | sudo tee -a /etc/shells
   chsh -s /usr/local/bin/fish
 
 - [  ] add: your ssh keys (and load the github one)
 - [  ] download: Inconsolata (not -g or -gz)
-- [  ] https://github.com/powerline/fonts
 - [  ] run: chsh -s /usr/local/bin/fish
 - [  ] run: fish shell integration commands
 - [  ] run:sudo pip3 install -I urlscan
@@ -481,13 +396,9 @@ echo "- [  ] set ⌘^v as Vim Anywhere shortcut under services in window that ju
 - [  ] run ln -s /Applications/Tad.app/Contents/Resources/tad.sh ~/bin/tad
 - [  ] Set Ascii font in iterm 2 to roboto mono 18
 - [  ] rvm default 2.6.3 (or whatever)
-- [  ] gem install solargraph
-- [  ] gem install reek
-- [  ] gem install bundler
 - [  ] doom: M-x all-the-icons-install-fonts" > ~/_MANUAL_TODO_LIST.txt
 open ~/_MANUAL_TODO_LIST.txt
 
 
 	echo "I'M DONE. Here are your todo items"
 fi
-task

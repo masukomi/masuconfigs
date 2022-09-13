@@ -1,7 +1,25 @@
 #!/usr/bin/env bash
 # written by Pat Collins https://burned.com
+# Polls a command and reports when its output changes.
+
+
+if [ $# -eq 0 ]; then
+  echo "USAGE: watch_when \"<command>\" [sleep_interval]"
+  echo "     The supplied command will be evaluated,"
+  echo "     and called every 2 seconds (or sleep interval seconds"
+  echo "     if supplied). When the output changes it will print"
+  echo "     it out with a timestamp."
+  echo "     ^c to stop it."
+  exit 0
+fi
 
 cmd=$1
+if [ $# -ne 2 ]; then
+  sleep_interval=2
+else
+  sleep_interval=$2
+fi
+
 last=""
 output=""
 while [[ true ]]; do

@@ -8,27 +8,31 @@
 # brew leaves --installed-on-request \
 #   | grep --color=none "/" \
 #   | sed -e "s/\(.*\)\/.*/\1/" -e "s/^/brew tap /" \
+#   | sort -u \
 #   >> brews.sh;
-# brew info $(brew leaves --installed-on-request) \
+# brew info $(brew leaves --installed-on-request) 2>/dev/null \
 #   | grep --color=none -A2 "==> [^[:space:]]\+:" \
 #   | grep -v -- "--" \
-#   | sed -e 's/==> \(.*\):.*/maybrew "\1"/' \
+#   | sed -e 's/==> \(.*\):.*/maybrew \1/' \
 #     -e '/^maybrew/!s/\(.*\)/# \1/' \
-#    >> brews.sh
+#   | ruby -e 'lines=STDIN.each_line.to_a; (2..(lines.size - 1)).step(3){|n| puts "\n#{lines[n - 1]}"; puts lines[n]; puts lines[n - 2]}' \
+#   >> brews.sh
 #
 ### via fish
 # echo '#!/bin/sh' > brews.sh;
 # brew leaves --installed-on-request \
-#   | grep --color=none "/" \
-#   | sed -e "s/\(.*\)\/.*/\1/" -e "s/^/brew tap /" \
+#  | grep --color=none "/" \
+#  | sed -e "s/\(.*\)\/.*/\1/" -e "s/^/brew tap /" \
+#  | sort -u \
 #   >> brews.sh;
-# brew info (brew leaves --installed-on-request) \
-#   | grep --color=none -A2 "==> [^[:space:]]\+:" \
-#   | grep -v -- "--" \
-#   | sed -e 's/==> \(.*\):.*/maybrew "\1"/' \
-#     -e '/^maybrew/!s/\(.*\)/# \1/' \
-#    >> brews.sh
-
+# brew info (brew leaves --installed-on-request) 2>/dev/null  \
+#  | grep --color=none -A2 "==> [^[:space:]]\+:" \
+#  | grep -v -- "--" \
+#  | sed -e 's/==> \(.*\):.*/maybrew \1/' \
+#      -e '/^maybrew/!s/\(.*\)/# \1/' \
+#  | ruby -e 'lines=STDIN.each_line.to_a; (2..(lines.size - 1)).step(3){|n| puts "\n#{lines[n - 1]}"; puts lines[n]; puts lines[n - 2]}' \
+#  >> brews.sh
+#
 
 
 

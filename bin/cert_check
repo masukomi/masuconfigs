@@ -1,16 +1,19 @@
-#!/bin/sh
+#!/usr/bin/env bash
+
+# DESCRIPTION: validates the ssl cert at a given domain and port
+# USAGE: cert_check HOST [PORT]
 
 HOST=$1
 if [ "$HOST" != "" ]; then
-DEFAULT_PORT=443
-PORT="${2:-$DEFAULT_PORT}"
-echo "Cert from $HOST:$PORT"
-# note: the echo -n gives a respones to the server
-# so that the connection is released
-echo -n \
-	|  openssl s_client -connect $HOST:$PORT -servername $HOST 2> /dev/null \
-	|  openssl x509 -noout  -dates
-
+	DEFAULT_PORT=443
+	PORT="${2:-$DEFAULT_PORT}"
+	echo "Cert from $HOST:$PORT"
+	# note: the echo -n gives a respones to the server
+	# so that the connection is released
+	echo -n \
+		|  openssl s_client -connect $HOST:$PORT -servername $HOST 2> /dev/null \
+		|  openssl x509 -noout  -dates
 else
 	echo "Please specify the domain to download a cert for."
+	echo "USAGE: cert_check <host> [port]"
 fi
