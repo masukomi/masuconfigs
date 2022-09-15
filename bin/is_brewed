@@ -10,7 +10,14 @@
 #
 # Usage: is_brewed <name of package to check for>
 
-
+if [ $# -eq 0 ]; then
+  echo "USAGE: is_brewed <formula name>"
+  echo "       Outputs 'true' or 'false' and exits with 0 or 1 respectively."
+  echo "       If the package is not found it'll look for similarly "
+  echo "       named packages and output additional lines, if it finds"
+  echo "       any that contain your input."
+  exit 64;
+fi
 
 if brew ls --versions $1 > /dev/null; then
   # the package is installed
