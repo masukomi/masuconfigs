@@ -63,6 +63,7 @@ abbr -a rtnw 'env RUBYOPT=W0 rake test'
 abbr -a sqlf "sqlformat --reindent --keywords upper --identifiers lower"
 abbr -a top "top -o cpu"
 abbr -a unset 'set --erase'
+abbr -a ycom 'yadm com -f .local/share/yadm/repo.git/config'
 
 if [ (uname) = "Darwin" ]
 	abbr -a ldd "otool -L"
