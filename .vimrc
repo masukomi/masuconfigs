@@ -421,27 +421,27 @@ if ! filereadable(".vimrc") || len(split(getcwd(), "/")) == 2
 	" Surround.vim is "all about "surroundings": parentheses, brackets,
 	" quotes, XML tags, and more. The plugin provides mappings to easily
 	" delete, change and add such surroundings in pairs.
-	Plug 'godlygeek/tabular'
+	" Plug 'godlygeek/tabular'
 	"vvv indentline shows levels of indentation visually
 	Plug 'Yggdroot/indentLine'
 	let g:indentLine_char = '|'
 	Plug 'masukomi/rainbow_parentheses.vim'
 
 	" vvv gives you <leader>be for better buffer exploration
-	Plug 'jlanzarotta/bufexplorer'
+	" Plug 'jlanzarotta/bufexplorer'
 
 	"vvv dims inactive splits
-	Plug 'blueyed/vim-diminactive'
+	" Plug 'blueyed/vim-diminactive'
 	"let g:diminactive_use_syntax = 1
 	" let g:diminactive_enable_focus = 1
 
 	"vvv shows marks in the gutter
-	Plug 'jacquesbh/vim-showmarks'
-	Plug 'vim-scripts/ShowMarks'
+	" Plug 'jacquesbh/vim-showmarks'
+	" Plug 'vim-scripts/ShowMarks'
 
 
     " The Toolkit for Vim Color Scheme Designers!
-	Plug 'lifepillar/vim-colortemplate'
+	" Plug 'lifepillar/vim-colortemplate'
 
 	" Plug 'nestorsalceda/vim-strip-trailing-whitespaces'
 	Plug 'masukomi/vim-strip-trailing-whitespaces'
@@ -452,9 +452,9 @@ if ! filereadable(".vimrc") || len(split(getcwd(), "/")) == 2
 	" Plug '/usr/local/opt/fzf'
 	" Plug 'junegunn/fzf.vim'
 	" else...
-	Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-	Plug 'mileszs/ack.vim'
-	Plug 'ddrscott/vim-side-search'
+	" Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+	" Plug 'mileszs/ack.vim'
+	" Plug 'ddrscott/vim-side-search'
 	Plug 'tpope/vim-fugitive'
     Plug 'tpope/vim-rhubarb' " If fugitive.vim is the Git, rhubarb.vim is the Hub. - Tim Pope
 	Plug 'segeljakt/vim-silicon' " create pretty code screenshots
@@ -465,8 +465,8 @@ if ! filereadable(".vimrc") || len(split(getcwd(), "/")) == 2
 	"-------------------
 	" LANGUAGE PLUGINS...
 	"
-	Plug 'elixir-editors/vim-elixir'
-	Plug 'rhysd/vim-crystal', { 'for': 'crystal' }
+	" Plug 'elixir-editors/vim-elixir'
+	" Plug 'rhysd/vim-crystal', { 'for': 'crystal' }
 	" Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 	Plug 'dag/vim-fish', { 'for': 'fish' }
 	Plug 'fatih/vim-go', { 'for': 'go' }
@@ -480,11 +480,11 @@ if ! filereadable(".vimrc") || len(split(getcwd(), "/")) == 2
 	" govim has a number of config tweaks below
 
 	" Plug 'nono/vim-handlebars', { 'for': 'handlebars' }
-	Plug 'mustache/vim-mustache-handlebars'
+	" Plug 'mustache/vim-mustache-handlebars'
 	" Plug 'jelera/vim-javascript-syntax', { 'for': 'javascript' }
 	Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 	" Plug 'tpope/vim-endwise'
-	Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+	" Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 	" Plug 'pedrohdz/vim-yaml-folds', { 'for': 'yaml' }
 	" Plug 'kballard/vim-swift', { 'for': 'swift' }
 	"Plug 'Keithbsmiley/swift.vim'
@@ -494,13 +494,13 @@ if ! filereadable(".vimrc") || len(split(getcwd(), "/")) == 2
 	"Plug 'vim-scripts/paredit.vim'
 	" join multiline statements into one gJ
 	" split single line statements into multi-line gS
-	Plug 'AndrewRadev/splitjoin.vim'
+	" Plug 'AndrewRadev/splitjoin.vim'
 	" racket / scheme / lisp
-	Plug 'bhurlow/vim-parinfer'
-	Plug 'wlangstroth/vim-racket'
-	Plug 'ds26gte/scmindent'
+	" Plug 'bhurlow/vim-parinfer'
+	" Plug 'wlangstroth/vim-racket'
+	" Plug 'ds26gte/scmindent'
 
-	Plug 'dylon/vim-antlr'
+	" Plug 'dylon/vim-antlr'
 
 
 	"-------------------
@@ -508,12 +508,12 @@ if ! filereadable(".vimrc") || len(split(getcwd(), "/")) == 2
 	Plug 'clarke/vim-renumber', { 'for': 'markdown' }
 	" Plug 'Scuilion/markdown-drawer', { 'for': 'markdown' }
     "
-	Plug 'masukomi/vim-markdown-folding', { 'for': 'markdown' }
+	" Plug 'masukomi/vim-markdown-folding', { 'for': 'markdown' }
 	" Plug 'file:///Users/masukomi/workspace/vim-markdown-folding'
 
-	Plug 'masukomi/html_encode_decode' " html  encoder decoder
+	" Plug 'masukomi/html_encode_decode' " html  encoder decoder
 "
-	Plug 'itspriddle/vim-marked', { 'for': 'markdown' }
+	" Plug 'itspriddle/vim-marked', { 'for': 'markdown' }
 " 	" OS X Only - Open the current Markdown buffer in Marked. Supports Marked 1 and 2.
 " 	" Marked: http://marked2app.com/
 " 	" END MARKDOWN PLUGINS
@@ -654,27 +654,26 @@ if ! filereadable(".vimrc") || len(split(getcwd(), "/")) == 2
 
 
 	"-----------
-	" fzf
-	" fuzzy search buffers
+	" fzf + fuzzy search buffers
 	" https://jesseleite.com/posts/2/its-dangerous-to-vim-alone-take-fzf
-	nmap <Leader>f :FZF<CR>
-	nmap <Leader>b :Buffers<CR>
-	" fuzzy search buffer history
-	nmap <Leader>h :History<CR>
-	" fuzzy search tags in current buffer
-	nmap <Leader>t :BTags<CR>
-	" fuzzy search tags in ALL buffers
-	nmap <Leader>T :Tags<CR>
-	" fuzzy search lines in current buffer
-	nmap <Leader>l :BLines<CR>
-	" fuzzy search lines in ALL buffers
-	nmap <Leader>L :Lines<CR>
-	" fuzzy search marks
-	nmap <Leader>' :Marks<CR>
-	" fuzzy search Help docs
-	nmap <Leader>H :Helptags!<CR>
-	" fuzzy search against existing key mappings
-	nmap <Leader>M :Maps<CR>
+	" nmap <Leader>f :FZF<CR>
+	" nmap <Leader>b :Buffers<CR>
+	" " fuzzy search buffer history
+	" nmap <Leader>h :History<CR>
+	" " fuzzy search tags in current buffer
+	" nmap <Leader>t :BTags<CR>
+	" " fuzzy search tags in ALL buffers
+	" nmap <Leader>T :Tags<CR>
+	" " fuzzy search lines in current buffer
+	" nmap <Leader>l :BLines<CR>
+	" " fuzzy search lines in ALL buffers
+	" nmap <Leader>L :Lines<CR>
+	" " fuzzy search marks
+	" nmap <Leader>' :Marks<CR>
+	" " fuzzy search Help docs
+	" nmap <Leader>H :Helptags!<CR>
+	" " fuzzy search against existing key mappings
+	" nmap <Leader>M :Maps<CR>
 
 
 	" -----------------
