@@ -1,38 +1,19 @@
 #!/usr/bin/env bash
 
-# in order to regenerate the list of installed packages with
-# descriptions run this
 
-### via bash
-# echo '#!/bin/sh' > brews.sh;
-# brew leaves --installed-on-request \
-#   | grep --color=none "/" \
-#   | sed -e "s/\(.*\)\/.*/\1/" -e "s/^/brew tap /" \
-#   | sort -u \
-#   >> brews.sh;
-# brew info $(brew leaves --installed-on-request) 2>/dev/null \
-#   | grep --color=none -A2 "==> [^[:space:]]\+:" \
-#   | grep -v -- "--" \
-#   | sed -e 's/==> \(.*\):.*/maybrew \1/' \
-#     -e '/^maybrew/!s/\(.*\)/# \1/' \
-#   | ruby -e 'lines=STDIN.each_line.to_a; (2..(lines.size - 1)).step(3){|n| puts "\n#{lines[n - 1]}"; puts lines[n]; puts lines[n - 2]}' \
-#   >> brews.sh
+# manually adding an item?:
+# <output from:  brew info foo | head -n3 | tail -n2>
+# maybrew "foo"
+
+# (re)generating list of installed items?:
+# in order to regenerate the list of installed packages with
+# descriptions run
+#   ~/.config/yadm/brews-extractor <path/to/output>
+# and copy whatever bits of it you want after the
+# following functions.
 #
-### via fish
-# echo '#!/bin/sh' > brews.sh;
-# brew leaves --installed-on-request \
-#  | grep --color=none "/" \
-#  | sed -e "s/\(.*\)\/.*/\1/" -e "s/^/brew tap /" \
-#  | sort -u \
-#   >> brews.sh;
-# brew info (brew leaves --installed-on-request) 2>/dev/null  \
-#  | grep --color=none -A2 "==> [^[:space:]]\+:" \
-#  | grep -v -- "--" \
-#  | sed -e 's/==> \(.*\):.*/maybrew \1/' \
-#      -e '/^maybrew/!s/\(.*\)/# \1/' \
-#  | ruby -e 'lines=STDIN.each_line.to_a; (2..(lines.size - 1)).step(3){|n| puts "\n#{lines[n - 1]}"; puts lines[n]; puts lines[n - 2]}' \
-#  >> brews.sh
-#
+# NOTE: it'll take a while to run depending
+# on how many packages you have installed.
 
 
 
@@ -93,15 +74,10 @@ maybrew "charmbracelet/tap/gum"
 
 
 
-
 # Strip or convert ANSI codes into HTML, (La)Tex, RTF, or BBCode
-# http://www.andre-simon.de/doku/ansifilter/en/ansifilter.php
-maybrew "ansifilter"
-# Yet another dotfiles manager
-# maybrew "yadm"
-# Search tool like grep, but optimized for programmers
-# have switched to ripgrep (installed below)
-#maybrew "ack"
+# http://www.andre-simon.de/doku/ansifilter/ansifilter.html
+maybrew 'ansifilter'
+
 # https://github.com/asdf-vm/asdf
 # Manage multiple runtime versions with a single CLI tool, extendable via plugins
 if ! is_installed "asdf"; then
@@ -130,35 +106,43 @@ if ! is_installed "asdf"; then
 		echo "WARNING: Won't install asdf because rbenv is installed"
 	fi
 fi
-maybrew "awscli"
+
+
 # Official Amazon AWS command-line interface
 # https://aws.amazon.com/cli/
-maybrew "bash"
+maybrew 'awscli'
+
 # Bourne-Again SHell, a UNIX command interpreter
 # https://www.gnu.org/software/bash/
-maybrew "bat"
+maybrew 'bash'
+
 # Clone of cat(1) with syntax highlighting and Git integration
 # https://github.com/sharkdp/bat
-maybrew "broot"
+maybrew 'bat'
+
 # New way to see and navigate directory trees
 # https://dystroy.org/broot/
-maybrew "charmbracelet/tap/gum"
+maybrew 'broot'
+
 # A tool for glamorous shell scripts
 # https://charm.sh/
-maybrew "chicken"
+maybrew 'charmbracelet/tap/gum'
+
 # Compiler for the Scheme programming language
 # https://www.call-cc.org/
-maybrew "cloc"
+maybrew 'chicken'
+
 # Statistics utility to count lines of code
 # https://github.com/AlDanial/cloc/
-maybrew "cmake"
+maybrew 'cloc'
+
 # Cross-platform make
 # https://www.cmake.org/
-maybrew "coreutils"
+maybrew 'cmake'
+
 # GNU File, Shell, and Text utilities
 # https://www.gnu.org/software/coreutils
-# cli utility that shows your progress through the day
-maybrew "days_progress"
+maybrew "coreutils"
 
 ls /Applications/DevUtils.app > /dev/null
 # normal is_installed doesn't work for devutils For some reason
@@ -171,37 +155,49 @@ else
 	echo "-- Skipping devutils (installed already)"
 fi
 
-maybrew "direnv"
 # Load/unload environment variables based on $PWD
 # https://direnv.net/
-maybrew "dwdiff"
+maybrew 'direnv'
+
 # Diff that operates at the word level
 # https://os.ghalkes.nl/dwdiff.html
-# maybrew "elixir"
+maybrew 'dwdiff'
+
 # Functional metaprogramming aware language built on Erlang VM
 # https://elixir-lang.org/
-maybrew "enca"
+maybrew 'elixir'
+
 # Charset analyzer and converter
 # https://cihar.com/software/enca/
-maybrew "exa"
+maybrew 'enca'
+
 # Modern replacement for 'ls'
 # https://the.exa.website
-maybrew "exercism"
+maybrew 'exa'
+
 # Command-line tool to interact with exercism.io
 # https://exercism.io/cli/
-maybrew "exif"
+maybrew 'exercism'
+
 # Read, write, modify, and display EXIF data on the command-line
 # https://libexif.github.io/
-maybrew "fd"
+maybrew 'exif'
+
 # Simple, fast and user-friendly alternative to find
 # https://github.com/sharkdp/fd
-maybrew "fish"
+maybrew 'fd'
+
+# macOS CLI for managing custom icons for files and folders
+# https://github.com/mklement0/fileicon
+maybrew 'fileicon'
+
 # User-friendly command-line shell for UNIX-like operating systems
 # https://fishshell.com
+maybrew 'fish'
 
-# maybrew "fontforge"
 # Command-line outline and bitmap font editor/converter
 # https://fontforge.github.io
+maybrew 'fontforge'
 
 # Command-line fuzzy finder written in Go
 # https://github.com/junegunn/fzf
@@ -213,55 +209,55 @@ else
 fi
 
 
-maybrew "gh"
 # GitHub command-line tool
 # https://github.com/cli/cli
-maybrew "git"
+maybrew 'gh'
+
 # Distributed revision control system
 # https://git-scm.com
-maybrew "git-filter-repo"
+maybrew 'git'
+
 # Quickly rewrite git repository history
 # https://github.com/newren/git-filter-repo
-maybrew "git-when-merged"
+maybrew 'git-filter-repo'
+
 # Find where a commit was merged in git
 # https://github.com/mhagger/git-when-merged
-maybrew "glade"
+maybrew 'git-when-merged'
+
 # RAD tool for the GTK+ and GNOME environment
 # https://glade.gnome.org/
-maybrew "gnu-sed"
-# GNU implementation of the famous stream editor
-# https://www.gnu.org/software/sed/
-maybrew "gnu-tar"
-# GNU version of the tar archiving utility
-# https://www.gnu.org/software/tar/
-maybrew "go"
+maybrew 'glade'
+
 # Open source programming language to build simple/reliable/efficient software
 # https://go.dev/
-maybrew "gron"
+maybrew 'go'
+
 # Make JSON greppable
 # https://github.com/tomnomnom/gron
+maybrew 'gron'
 
-maybrew "masukomi/apps/hey"
-# Hey allows you to track your interruptions as they occur.
-# https://interrupttracker.com
-# Improved top (interactive process viewer)
-maybrew "htop"
 # Improved top (interactive process viewer)
 # https://htop.dev/
-maybrew "icu4c"
+maybrew 'htop'
+
+# Configurable static site generator
+# https://gohugo.io/
+maybrew 'hugo'
+
 # C/C++ and Java libraries for Unicode and globalization
 # https://site.icu-project.org/home
-maybrew "isacikgoz/taps/tldr"
+maybrew "icu4c"
+
 # fast and interactive tldr client written with go
 # https://github.com/isacikgoz/tldr
-maybrew "ispell"
+maybrew 'isacikgoz/taps/tldr'
+
 # International Ispell
 # https://www.cs.hmc.edu/~geoff/ispell.html
-# Add GitHub support to git on the command-line
-# maybrew("hub
+maybrew 'ispell'
 
-# Tools and libraries to manipulate images in many formats
-maybrew "imagemagick"
+
 # imagemagick@6 is keg-only, which means it was not symlinked into /usr/local,
 # because this is an alternate version of another formula.
 #
@@ -274,93 +270,109 @@ maybrew "imagemagick"
 #
 # For pkg-config to find imagemagick@6 you may need to set:
 #   set -gx PKG_CONFIG_PATH "/usr/local/opt/imagemagick@6/lib/pkgconfig"
+maybrew "imagemagick"
 
-
-maybrew "jq"
 # Lightweight and flexible command-line JSON processor
 # https://stedolan.github.io/jq/
-maybrew "jrnl"
+maybrew 'jq'
+
 # Command-line note taker
 # http://jrnl.sh/en/stable/
-maybrew "json-glib"
+maybrew 'jrnl'
+
 # Library for JSON, based on GLib
 # https://wiki.gnome.org/Projects/JsonGlib
-maybrew "lazygit"
+maybrew 'json-glib'
+
 # Simple terminal UI for git commands
 # https://github.com/jesseduffield/lazygit/
-maybrew "lefthook"
+maybrew 'lazygit'
+
 # Fast and powerful Git hooks manager for any type of projects
 # https://github.com/evilmartians/lefthook
-maybrew "libgit2"
+maybrew 'lefthook'
+
 # C library of Git core methods that is re-entrant and linkable
 # https://libgit2.github.com/
-maybrew "libgnt"
-# NCurses toolkit for creating text-mode graphical user interfaces
-# https://keep.imfreedom.org/libgnt/libgnt
-maybrew "libotr"
-# Off-The-Record (OTR) messaging library
-# https://otr.cypherpunks.ca/
-maybrew "libxslt"
+maybrew 'libgit2'
+
 # C XSLT library for GNOME
 # http://xmlsoft.org/XSLT/
-maybrew "llvm@11"
+maybrew 'libxslt'
+
+
+# NCurses toolkit for creating text-mode graphical user interfaces
+# https://keep.imfreedom.org/libgnt/libgnt
+maybrew "libgnt"
+
+# Off-The-Record (OTR) messaging library
+# https://otr.cypherpunks.ca/
+# maybrew "libotr"
+
 # Next-gen compiler infrastructure
 # https://llvm.org/
-maybrew "lynx"
+maybrew "llvm"
+
 # Text-based web browser
 # https://invisible-island.net/lynx/
-maybrew "make"
-# Utility for directing compilation
-# https://www.gnu.org/software/make/
-maybrew "masukomi/apps/days_progress"
+maybrew 'lynx'
+
 # A simple command line chart of your progress through the day
 # https://github.com/masukomi/days_progress
-maybrew "masukomi/apps/oho"
+maybrew 'masukomi/apps/days_progress'
+
+# Hey allows you to track your interruptions as they occur.
+# https://interrupttracker.com
+maybrew 'masukomi/apps/hey'
+
 # Takes your colorful terminal output and converts it to HTML for sharing
 # https://github.com/masukomi/oho
-maybrew "masukomi/apps/private_comments"
+maybrew 'masukomi/apps/oho'
+
 # A REST server to manage private comments on your code.
 # https://github.com/masukomi/private_comments
-# Like sed, awk, cut, join & sort for name-indexed data such as CSV
-maybrew "miller"
+maybrew 'masukomi/apps/private_comments'
+
+# Scalable distributed version control system
+# https://mercurial-scm.org/
+maybrew 'mercurial'
+
 # Like sed, awk, cut, join & sort for name-indexed data such as CSV
 # https://github.com/johnkerl/miller
-maybrew "moreutils"
+maybrew 'miller'
+
 # Collection of tools that nobody wrote when UNIX was young
 # https://joeyh.name/code/moreutils/
-maybrew "mpack"
+maybrew 'moreutils'
+
 # MIME mail packing and unpacking
 # https://web.archive.org/web/20190220145801/ftp.andrew.cmu.edu/pub/mpack/
-maybrew "msmtp"
-# SMTP client that can be used as an SMTP plugin for Mutt
-# https://marlam.de/msmtp/
-# maybrew "neomutt"
-# E-mail reader with support for Notmuch, NNTP and much more
-# https://neomutt.org/
-# maybrew "nim"
-# Statically typed compiled systems programming language
-# https://nim-lang.org/
-maybrew "node"
-# Platform built on V8 to build network applications
-# https://nodejs.org/
-maybrew jandedobbeleer/oh-my-posh/oh-my-posh
+maybrew 'mpack'
+
 # Prompt theme engine for any shell
 # https://ohmyposh.dev
-maybrew "ossp-uuid"
+maybrew 'oh-my-posh'
+
 # ISO-C API and CLI for generating UUIDs
 # https://web.archive.org/web/www.ossp.org/pkg/lib/uuid/
-maybrew "pandoc"
+maybrew 'ossp-uuid'
+
 # Swiss-army knife of markup format conversion
 # https://pandoc.org/
-maybrew "pgcli"
+maybrew 'pandoc'
+
 # CLI for Postgres with auto-completion and syntax highlighting
 # https://pgcli.com/
-maybrew "pinentry-mac"
+maybrew 'pgcli'
+
 # Pinentry for GPG on Mac
 # https://github.com/GPGTools/pinentry
-maybrew "plantuml"
+maybrew 'pinentry-mac'
+
 # Draw UML diagrams
 # https://plantuml.com/
+maybrew 'plantuml'
+
 if ! is_installed "postgresql"; then
 # Object-relational database system
 # https://www.postgresql.org/
@@ -370,12 +382,18 @@ if ! is_installed "postgresql"; then
 else
 	echo "-- Skipping postgresql (installed already)"
 fi
-maybrew "python-tabulate"
-# Pretty-print tabular data in Python
-# https://pypi.org/project/tabulate/
-# custom shell prompt generator thing
 
 maybrew "python" # python 3 yo!
+# Program that can automate interactive applications
+if ! is_installed "python"; then
+	maybrew "python"
+	pip install gcalcli
+fi
+
+# Pretty-print tabular data in Python
+# https://pypi.org/project/tabulate/
+maybrew 'python-tabulate'
+
 if ! is_installed "rakudo-star"; then
 	brew install rakudo-star
 	zef install fez
@@ -402,9 +420,15 @@ if ! is_installed "rbenv"; then
 		echo "WARNING: Won't install rbenv because asdf is installed"
 	fi
 fi
+# Tools to work with human-editable, plain text data files
+# https://www.gnu.org/software/recutils/
+maybrew 'recutils'
 
 # Library for command-line editing
 maybrew "readline"
+#   flags need to be set, but this is a path with more to it.
+#   see ~/.config/fish/config.fish
+#
 #	set -gx LDFLAGS "-L/usr/local/opt/readline/lib"
 #	set -gx CPPFLAGS "-I/usr/local/opt/readline/include"
 #	set -gx PKG_CONFIG_PATH "/usr/local/opt/readline/lib/pkgconfig"
@@ -421,89 +445,93 @@ maybrew "readline"
 # For pkg-config to find readline you may need to set:
 #   set -gx PKG_CONFIG_PATH "/usr/local/opt/readline/lib/pkgconfig"
 
-maybrew "ripgrep"
+
 # Search tool like grep and The Silver Searcher
 # https://github.com/BurntSushi/ripgrep
-# Installed via bootstrap script now instead
-# maybrew "rust"
+maybrew 'ripgrep'
+
 # Readline wrapper: adds readline support to tools that lack it
 maybrew "rlwrap"
 
-maybrew "sd"
+# RUST is installed via bootstrap now
+# maybrew "rust"
+
+
 # Intuitive find & replace CLI
 # https://github.com/chmln/sd
-maybrew "shellcheck"
+maybrew 'sd'
+
 # Static analysis and lint tool, for (ba)sh scripts
 # https://www.shellcheck.net/
-maybrew "subversion"
+maybrew 'shellcheck'
+
 # Version control system designed to be a better CVS
 # https://subversion.apache.org/
-maybrew "task"
+maybrew 'subversion'
+
 # Feature-rich console based todo list manager
 # https://taskwarrior.org/
-maybrew "td"
+maybrew 'task'
+
 # Your todo list in your terminal
 # https://github.com/Swatto/td
-maybrew "terminal-notifier"
+maybrew 'td'
+
 # Send macOS User Notifications from the command-line
 # https://github.com/julienXX/terminal-notifier
-maybrew "texinfo"
-# Official documentation format of the GNU project
-# https://www.gnu.org/software/texinfo/
-# maybrew "the_silver_searcher"
-# Code-search similar to ack
-# https://github.com/ggreer/the_silver_searcher
-maybrew "tig"
+maybrew 'terminal-notifier'
+
 # Text interface for Git repositories
 # https://jonas.github.io/tig/
-maybrew "toot"
-# Mastodon CLI & TUI
-# https://toot.readthedocs.io/en/latest/index.html
-maybrew "translate-shell"
+maybrew 'tig'
+
 # Command-line translator using Google Translate and more
 # https://www.soimort.org/translate-shell
-maybrew "tree"
+# maybrew "translate-shell"
 # Display directories as trees (with optional color/HTML output)
 # http://mama.indstate.edu/users/ice/tree/
-maybrew "universal-ctags/universal-ctags/universal-ctags"
+maybrew "tree"
+
+
 # Maintained ctags implementation
 # https://github.com/universal-ctags/ctags
-maybrew "uudeview"
+maybrew 'universal-ctags/universal-ctags/universal-ctags'
+
 # Smart multi-file multi-part decoder
 # http://www.fpx.de/fp/Software/UUDeview/
-maybrew "w3m"
+maybrew 'uudeview'
+
 # Pager/text based browser
 # https://w3m.sourceforge.io/
-maybrew "wget"
+maybrew 'w3m'
+
 # Internet file retriever
 # https://www.gnu.org/software/wget/
-maybrew "yadm"
+maybrew 'wget'
+
 # Yet Another Dotfiles Manager
 # https://yadm.io/
-maybrew "yj"
+maybrew 'yadm'
 # CLI to convert between YAML, TOML, JSON and HCL
 # https://github.com/sclevine/yj
-maybrew "xz"
+maybrew "yj"
 # General-purpose data compression with high compression ratio
+maybrew "xz"
 
-# Programatically correct mistyped console commands
-# maybrew "thefuck"
-# Program that can automate interactive applications
-if ! is_installed "gcalcli"; then
-	pip install gcalcli
-else
-	echo "-- Skipping gcalcli (installed already)"
-fi
 
 
 # emacs
-# https://github.com/syl20bnr/spacemacs
-brew tap d12frosted/emacs-plus
+# brew tap d12frosted/emacs-plus
 if ! is_installed "emacs-plus"; then
 	brew unlink gawk 2>&1 /dev/null
 	# it complaind about this vs awk
 	# so now we unlink gawk and relink later
-	install_or_die "emacs-plus"
+	brew install emacs-plus --with-native-comp --with-imagemagick
+	if [ $? -ne 0 ]; then
+		echo "problem installing emacs-plus --with-native-comp --with-imagemagic"
+		echo "exiting"
+		exit 1
+	fi
 	# EMACS_VERSION=$(ls /usr/local/Cellar/ \
 	# 	| grep --color=never emacs-plus \
 	# 	| sort \
@@ -514,8 +542,9 @@ if ! is_installed "emacs-plus"; then
 	# 	| sort \
 	# 	| tail -n1)
 	# ln -s /usr/local/Cellar/$VERSION/$EMACS_SUB_VERSION/Emacs.app /Applications/
+	rm /Applications/Emacs.app > /dev/null
 	eval "$(brew info emacs-plus | grep 'ln -s' | sed -e 's/^ //')"
-	eval "$( brew info emacs-plus | grep 'services start' | sed -e 's/^ //')"
+	eval "$(brew info emacs-plus | grep 'services start' | sed -e 's/^ //')"
 	brew link gawk
 # 	--natural-title-bar option was removed from this formula, in order to
 # 	  duplicate its effect add following line to your init.el file
