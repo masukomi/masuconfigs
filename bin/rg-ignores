@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+if [ $# -ne 1 ]; then
+	echo "USAGE: rg-ignores <path>"
+	echo ""
+	echo "       Use me when rg isn't finding something you expect"
+	echo "       and rg --hidden isn't helping."
+	echo "       Looks for files that RipGrep will consult"
+	echo "       in order to find patterns to ignore."
+	exit 0
+fi
+
+
+fd --hidden "\.gitignore|\.ignore|\.rgignore" $1
