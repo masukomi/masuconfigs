@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+
+if ARGV.size == 0
+  STDERR.puts "USAGE: brews-extractor <path/to/output/file>"
+  exit 0
+end
+file_path=ARGV[0]
+
+
+def package_version_check(package)
+  if ! /@(\d+)/.match(package)
+    package
+  else
+    puts "do you want to keep this locked to a version?"
+    puts package
+    puts "y/n: "
+    response = STDIN.gets.chomp.downcase
+    if %w(y n).include? response
+      if response == 'y'
+        package
+      else
+        package.sub(/@.*/, '')
+      end
+    else
+      puts "y or n please..."
+      package_version_check(package)
+    end
+  end
+end
+
+info_blocks=[]
+
+lines = `brew info $(brew leaves --installed-on-request) 2>/dev/null` .split("\n")
+in_match = false
+current_info_block = nil
+lines.each_with_index do | l, idx |
+  m = /^==> (\S+):/.match(l)
+  if ! in_match
+    if m
+      info_blocks << current_info_block unless current_info_block.nil?
+      in_match = true
+      current_info_block = {package: package_version_check(m[1]), description: nil, url: nil}
+    end
+  else # we're after some match
+    if m # crap
+      # happens when you've got version specific installs
+      info_blocks << current_info_block unless current_info_block.nil?
+      current_info_block = {package: nil, description: nil, url: nil}
+      current_info_block[:package] = package_version_check(m[1])
+    elsif current_info_block[:description].nil?
+      current_info_block[:description] = l
+    elsif l.start_with? "http"
+      current_info_block[:url] = l
+    end
+  end
+end
+
+open(file_path, 'w') do |f|
+  f.puts `brew leaves --installed-on-request | grep --color=none "/" | sed -e "s/\\(.*\\)\\/.*/\\1/" -e "s/^/brew tap /" | sort -u`
+
+  info_blocks.each do | ib |
+    f.puts "# #{ib[:description]}" if ib[:description]
+    f.puts "# #{ib[:url]}" if ib[:url]
+    f.puts "maybrew '#{ib[:package]}'\n\n"
+  end
+end
+
+
+
