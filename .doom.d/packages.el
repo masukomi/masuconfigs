@@ -1,22 +1,17 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
-;; This is where you install packages, by declaring them with the `package!'
-;; macro, then running 'doom refresh' on the command line. You'll need to
-;; restart Emacs for your changes to take effect! Or at least, run M-x
-;; `doom/reload'.
-;;
-;; WARNING: Don't disable core packages listed in ~/.emacs.d/core/packages.el.
-;; Doom requires these, and disabling them may have terrible side effects.
-;;
-;; Here are a couple examples:
+;; To install a package with Doom you must declare them here and run 'doom sync'
+;; on the command line, then restart Emacs for the changes to take effect -- or
+;; use 'M-x doom/reload'.
+
 
 ;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
 ;(package! some-package)
 
-;; To install a package directly from a particular repo, you'll need to specify
-;; a `:recipe'. You'll find documentation on what `:recipe' accepts here:
-;; https://github.com/raxod502/straight.el#the-recipe-format
+;; To install a package directly from a remote git repo, you must specify a
+;; `:recipe'. You'll find documentation on what `:recipe' accepts here:
+;; https://github.com/radian-software/straight.el#the-recipe-format
 ;(package! another-package
 ;  :recipe (:host github :repo "username/repo"))
 
@@ -27,8 +22,8 @@
 ;  :recipe (:host github :repo "username/repo"
 ;           :files ("some-file.el" "src/lisp/*.el")))
 
-;; If you'd like to disable a package included with Doom, for whatever reason,
-;; you can do so here with the `:disable' property:
+;; If you'd like to disable a package included with Doom, you can do so here
+;; with the `:disable' property:
 ;(package! builtin-package :disable t)
 
 ;; You can override the recipe of a built in package without having to specify
@@ -39,8 +34,20 @@
 
 ;; Specify a `:branch' to install a package from a particular branch or tag.
 ;; This is required for some packages whose default branch isn't 'master' (which
-;; our package manager can't deal with; see raxod502/straight.el#279)
+;; our package manager can't deal with; see radian-software/straight.el#279)
 ;(package! builtin-package :recipe (:branch "develop"))
+
+;; Use `:pin' to specify a particular commit to install.
+;(package! builtin-package :pin "1a2b3c4d5e")
+
+
+;; Doom's packages are pinned to a specific commit and updated from release to
+;; release. The `unpin!' macro allows you to unpin single packages...
+;(unpin! pinned-package)
+;; ...or multiple packages
+;(unpin! pinned-package another-pinned-package)
+;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
+;(unpin! t)
 
 
 ; INTERACTION STUFF
@@ -69,6 +76,7 @@
 ; edit that face to change what it looks like.
 (package! rainbow-mode)
 (package! xterm-color)
+
 (package! emojify)
 ; Pins the most recent method signature to the top of the window
 ; https://github.com/alphapapa/topsy.el#readme
@@ -85,13 +93,6 @@
 (package! sass-mode)
 (package! web-mode)
 
-; (package! rjsx-mode) # you prolly have this installed.
-; type M-x rjs and you should see it autocompleting
-;
-
-
-
-
 ; -- protobuffers
 (package! protobuf-mode)
 
@@ -104,7 +105,7 @@
 (package! ruby-tools)
 
 ; -- Schemes
-(package! geiser-chicken)
+; (package! geiser-chicken) # FORBIDDEN - EVIL BREAKS EVERYTHING
 (package! racket-mode)
 (package! scheme-complete)
 (package! scribble-mode) ; racket documentation is "scribble"
@@ -114,28 +115,6 @@
 
 ; -- Yaml
 (package! yaml-mode)
-
-; CURRENTLY UNUSED LANGUAGES
-; -- Elixir
-; -- Schemes
-; (package! geiser-chicken)
-;; (package! jinja2-mode) ; Jinja2 templates (python and chicken scheme)
-; -- HTML & Friends
-; (package! haml-mode)
-; -- Lua
-; (package! lua-mode)
-; -- Janet
-; (package! janet-mode)
-; -- Schemes
-; (package! fennel-mode)
-; (package! geiser-chicken)
-; geiser-chicken requires the following chicken libs to be installed
-; chicken-install apropos chicken-doc srfi-18 srfi-1
-; also installation of latest docs
-; cd (csi -R chicken.platform -p '(chicken-home)')
-; curl https://3e8.org/pub/chicken-doc/chicken-doc-repo-5.tgz | sudo tar zx
-
-
 
 
 ; -- Org-Mode
@@ -149,7 +128,6 @@
 (package! org-wc)
 (package! toc-org) ; table of contents generator
 
-
 ; UTILITIES
 
 ; interactive align
@@ -161,13 +139,13 @@
 (package! ox-hugo) ; hugo file format for org mode
 ;; (package! ox-slack)
 (package! ox-slack
-  :recipe (:host github :repo "masukomi/ox-slack" :branch "community"))
+  :recipe (:host github :repo "masukomi/ox-slack" :branch "main"))
 (package! ox-bb)
 (package! ox-leanpub)
 ; ripgrep (rg)
 (package! rg)
 (package! sqlite3)
-(package! mastodon)
+; (package! mastodon)
 (package! private-comments-mode)
 ; (package! example
 ;   :recipe (:host github :repo "masukomi/private-comments-mode"))
