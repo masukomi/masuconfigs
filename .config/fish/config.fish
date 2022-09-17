@@ -57,6 +57,7 @@ abbr -a less "less -R"
 abbr -a raku-repl "rlwrap --always-readline raku"
 abbr -a raw "script -q /dev/null"
 abbr -a rca "lcf -p | xargs -I{} sh -c \"echo checking {}; rubocop -A {}\""
+abbr -a rgall "rg --hidden --no-ignore"
 abbr -a rt 'rake test'
 abbr -a rtnw 'env RUBYOPT=W0 rake test'
 abbr -a sqlf "sqlformat --reindent --keywords upper --identifiers lower"
