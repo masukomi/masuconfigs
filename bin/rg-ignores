@@ -7,6 +7,8 @@ if [ $# -ne 1 ]; then
 	echo "       and rg --hidden isn't helping."
 	echo "       Looks for files that RipGrep will consult"
 	echo "       in order to find patterns to ignore."
+	echo ""
+	echo "       Note: using --hidden --no-ignore is a short term fix"
 	exit 0
 fi
 
