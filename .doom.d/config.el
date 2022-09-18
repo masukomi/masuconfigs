@@ -426,30 +426,41 @@
 
 ;;---------------------------------
 ;; ORG Configs
+;;
+;;FOR MORE CONFIGS SEE M-x org-customize
 
-;; If you intend to use org, it is recommended you change this!
-(setq org-directory "~/.config/org/")
-(setq org-hide-emphasis-markers t)
-;(straight-use-package 'org-bullets)
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-; prevent it from interpreting _ as subscript and ^ as superscript
-; and thus generating <sub> and <super> tags when exporting to markdown
-(setq org-export-with-sub-superscripts nil)
 
-; syntax highlighting within org blocks
-(setq org-src-fontify-natively t)
+; https://github.com/Somelauw/evil-org-mode
+(use-package evil-org
+  :ensure t
+  :after (evil org)
+  :config
+  (add-hook 'org-mode-hook 'evil-org-mode)
+  (add-hook 'evil-org-mode-hook
+            (lambda ()
+              (evil-org-set-key-theme '(navigation insert textobjects additional calendar))))
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
 ; if that is too slow you can call
 ;
 ; org-src-fontify-buffer
 ; org-src-fontify-block
 ;
-; TODO KEYWORDS
-(setq org-todo-keywords
+(setq
+
+	; prevent it from interpreting _ as subscript and ^ as superscript
+	; and thus generating <sub> and <super> tags when exporting to markdown
+	org-export-with-sub-superscripts nil
+
+	; KEYWORDS
+	org-todo-keywords
 	'((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
 	(sequence "[ ](T)" "|" "[X](D)")
 	(sequence "|" "OKAY(o)" "YES(y)" "NO(n)"))
-      org-todo-keyword-faces
-      '(
+
+	org-todo-keyword-faces
+	'(
 	("TODO"		:foreground "#7c7c75" :weight normal :underline t)
 	("WAITING"	:foreground "#9f7efe" :weight normal :underline t)
 	("INPROGRESS"	:foreground "#0098dd" :weight normal :underline t)
@@ -457,9 +468,73 @@
 	("CANCELLED"	:foreground "#ff6480" :weight normal :underline t)
 
 	)
-      org-agenda-files (list "~/Documents/notes/")
 
+	org-agenda-files '("~/Documents/notes/"
+					   "~/.config/org/")
+	; DEBATING if ^^ and vvv should be the same directory
+	org-directory "~/.config/org/"
+	org-default-notes-file (concat org-directory "notes.org")
+	+org-capture-notes-file (concat org-directory "notes.org")
+	; use denote instead for journal stuff
+	+org-capture-notes-file (concat org-directory "journal.org")
+	+org-capture-todo-file (concat org-directoy "todo.org")
+
+	; org-log-done adds a timestamp when marking a todo item as done
+	org-log-done t
+
+	; start off with things folded
+	; manually override in a file with
+	; #+STARTUP: showall
+	; #+STARTUP: fold
+	org-startup-folded t
+
+	; syntax highlighting within org blocks
+	org-src-fontify-natively t
+
+	; Non-nil mean font-lock should hide the emphasis marker characters.
+	; e.g. / / for italics disappear
+	org-hide-emphasis-markers t
+
+	; defalt image width when it can't find something
+	; specified in any #+ATTR.* page keyword
+	; for example:
+	; #+ATTR_HTML: :width 300px
+	; nil: use original width
+	; non-nil & non-number: use original width
+	org-image-actual-width 300
+	; see auto-image-resize function below which will override this
+	; related #+STARTUP: inlineimages
       )
+; oddly, org-agenda has no keybinding by default. ?!?!
+; C-a is the community standard
+(global-set-key (kbd "C-c a") 'org-agenda)
+
+
+; auto-resizing of images
+; org-image-resize function found here:
+; https://stackoverflow.com/a/73426792/13973
+;
+; this will resize down whenever the window is < 80 columns
+;
+;; (defun org-image-resize (frame)
+;;   (when (derived-mode-p 'org-mode)
+;;       (if (< (window-total-width) 80)
+;;       (setq org-image-actual-width (window-pixel-width))
+;;     (setq org-image-actual-width (* 80 (window-font-width))))
+;;       (org-redisplay-inline-images)))
+;; (add-hook 'window-size-change-functions 'org-image-resize)
+
+; this will auto-resize ALL images whenever the window is resized
+(defun org-image-resize (frame)
+  (when (derived-mode-p 'org-mode)
+      (setq org-image-actual-width
+	    ; (window-pixel-width)
+	    ; give it a 20 pixels bufer
+	    (- (window-pixel-width) 20)
+	    )
+      (org-redisplay-inline-images)))
+
+(add-hook 'window-size-change-functions 'org-image-resize)
 
 
 ; EMOJIFY things

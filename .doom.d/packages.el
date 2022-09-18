@@ -120,6 +120,11 @@
 ; -- Org-Mode
 ; pretty bullets
 (package! org-bullets)
+; in config: (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+; alternative org-superstar adds fancyness to unordered lists
+; (package! org-superstar)
+; in config: (add-hook 'org-mode-hook (lambda () (org-superstart-mode 1)))
+(package! evil-org)
 (package! ox-clip)
 (package! denote)
 (package! plantuml-mode)
