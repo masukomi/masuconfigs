@@ -1,7 +1,79 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
-;; refresh' after modifying this file!
+;; sync' after modifying this file!
+
+
+;; Some functionality uses this to identify you, e.g. GPG configuration, email
+;; clients, file templates and snippets. It is optional.
+(setq user-full-name "John Doe"
+      user-mail-address "john@doe.com")
+
+;; Doom exposes five (optional) variables for controlling fonts in Doom:
+;;
+;; - `doom-font' -- the primary font to use
+;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
+;; - `doom-big-font' -- used for `doom-big-font-mode'; use this for
+;;   presentations or streaming.
+;; - `doom-unicode-font' -- for unicode glyphs
+;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
+;;
+;; See 'C-h v doom-font' for documentation and more examples of what they
+;; accept. For example:
+;;
+;;(setq doom-font (font-spec :family "Fira Code" :size 12 :weight 'semi-light)
+;;      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
+;;
+;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
+;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
+;; refresh your font settings. If Emacs still can't find your font, it likely
+;; wasn't installed correctly. Font issues are rarely Doom issues!
+
+;; There are two ways to load a theme. Both assume the theme is installed and
+;; available. You can either set `doom-theme' or manually load a theme with the
+;; `load-theme' function. This is the default:
+(setq doom-theme 'doom-one)
+
+;; This determines the style of line numbers in effect. If set to `nil', line
+;; numbers are disabled. For relative line numbers, set this to `relative'.
+(setq display-line-numbers-type t)
+
+;; If you use `org' and don't want your org files in the default location below,
+;; change `org-directory'. It must be set before org loads!
+(setq org-directory "~/org/")
+
+
+;; Whenever you reconfigure a package, make sure to wrap your config in an
+;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
+;;
+;;   (after! PACKAGE
+;;     (setq x y))
+;;
+;; The exceptions to this rule:
+;;
+;;   - Setting file/directory variables (like `org-directory')
+;;   - Setting variables which explicitly tell you to set them before their
+;;     package is loaded (see 'C-h v VARIABLE' to look up their documentation).
+;;   - Setting doom variables (which start with 'doom-' or '+').
+;;
+;; Here are some additional functions/macros that will help you configure Doom.
+;;
+;; - `load!' for loading external *.el files relative to this one
+;; - `use-package!' for configuring packages
+;; - `after!' for running code after a package has loaded
+;; - `add-load-path!' for adding directories to the `load-path', relative to
+;;   this file. Emacs searches the `load-path' when you load packages with
+;;   `require' or `use-package'.
+;; - `map!' for binding new keys
+;;
+;; To get information about any of these functions/macros, move the cursor over
+;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
+;; This will open documentation for it, including demos of how they are used.
+;; Alternatively, use `C-h o' to look up a symbol (functions, variables, faces,
+;; etc).
+;;
+;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
+;; they are implemented.
 
 ;;---------------------------------
 ;; General Config
@@ -54,12 +126,14 @@
 
 ; https://melpa.org/#/exec-path-from-shell
 (exec-path-from-shell-initialize)
+
 ;;---------------------------------
 ;; Configuring DOOM itself
 
 ; image courtesy of eccentric-j in this GitHub issue
 ; https://github.com/doomemacs/doomemacs/issues/3382
 (setq fancy-splash-image "~/.doom.d/images/doom_icon_256x256.png")
+
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -204,13 +278,6 @@
 (map! :nv "C-=" #'er/contract-region
       :nv "C-+" #'er/expand-region)
 
-; (defun halve-other-window-height ()
-;   "Expand current window to use half of the other window's lines."
-;   (interactive)
-;   (enlarge-window (/ (window-height (next-window)) 2)))
-;
-; (global-set-key (kbd "C-c v") 'halve-other-window-height)
-
 ; for tab-bar-mode
 (setq display-buffer-base-action '(nil))
 (setq projectile-track-known-projects-automatically nil)
@@ -244,6 +311,7 @@
 ; topsy: keeps function signatures pinned to the top as you scroll
 ; https://github.com/alphapapa/topsy.el#readme
 (add-hook 'prog-mode-hook #'topsy-mode)
+
 
 
 ;; ---- Doom Word Wrap
@@ -316,6 +384,7 @@
 ; toggle it on and off with C-c m o
 (define-key mac-opt-keymap (kbd "C-c m o") 'mac-opt-chars-mode)
 (define-key global-map (kbd "C-c m o") 'mac-opt-chars-mode)
+
 
 ;;---------------------------------
 ;; UTILITY CONFIG
@@ -421,6 +490,7 @@ now being rendered as Emojis. Filter this case out."
 	(require 'ox-clip)
 	(require 'ox-md)
 	(require 'ox-publish)
+	(require 'ox-slack)
 
 
   )
@@ -617,9 +687,6 @@ now being rendered as Emojis. Filter this case out."
   (warn "toc-org not found"))
 
 
-
-
-
 ;;---------------------------------
 ;; EVIL Mode
 
@@ -634,7 +701,6 @@ now being rendered as Emojis. Filter this case out."
 (add-hook 'yaml-mode-hook
           (lambda ()
             (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
-
 
 
 ;;---------------------------------
@@ -676,25 +742,6 @@ now being rendered as Emojis. Filter this case out."
     (css-mode "<style[^>]*>" "</style>")))
 (setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5" "erb"))
 (multi-web-global-mode 1)
-
-;;------------- CHICKEN SCHEME
-; this and more at https://wiki.call-cc.org/emacs
-
-(setq scheme-programe-name "csi -:c")
-;; Indenting module body code at column 0
-(defun scheme-module-indent (state indent-point normal-indent) 0)
-(put 'module 'scheme-indent-function 'scheme-module-indent)
-
-(put 'and-let* 'scheme-indent-function 1)
-(put 'parameterize 'scheme-indent-function 1)
-(put 'handle-exceptions 'scheme-indent-function 1)
-(put 'when 'scheme-indent-function 1)
-(put 'unless 'scheme-indent-function 1)
-(put 'match 'scheme-indent-function 1)
-
-; to enable binding.pry and byebug when using rspec-mode
-; When you've hit the breakpoint, hit C-x C-q to enable inf-ruby.
-(add-hook 'after-init-hook 'inf-ruby-switch-setup)
 
 ;;------------- RACKET
 ; racket
@@ -817,135 +864,12 @@ now being rendered as Emojis. Filter this case out."
 
 ;;------------- MASTODON
 ; current repo here: https://codeberg.org/martianh/mastodon.el
-(use-package mastodon
-  :ensure t)
-(setq mastodon-instance-url "https://connectified.com"
-      mastodon-active-user "masukomi")
-(require 'mastodon-async)
+; (use-package mastodon
+;   :ensure t)
+; (setq mastodon-instance-url "https://connectified.com"
+;       mastodon-active-user "masukomi")
+; (require 'mastodon-async)
 
 
 
 
-;------------------------------- DETRITUS
-; currently disabled because i can't figure out how the eff
-; to make a new tab instead of a new workspace
-;; (use-package centaur-tabs
-;;   :ensure t
-;;   :config
-;;     (setq centaur-tabs-set-bar 'under
-;;           centaur-tabs-style "slant"
-;;           centaur-tabs-gray-out-icons 'buffer
-;;           centaur-tabs-set-modified-marker t
-;;           centaur-tabs-set-icons t
-;;           )
-;;     (centaur-tabs-headline-match)
-;;     (centaur-tabs-mode t)
-;;     :bind
-;;     (:map evil-normal-state-map
-;;       ("g t" . centaur-tabs-forward)
-;;       ("g T" . centaur-tabs-backward))
-;;   )
-;;(define-key evil-normal-state-map (kbd "g t") 'centaur-tabs-forward)
-;; (define-key evil-normal-state-map (kbd "g T") 'centaur-tabs-backward)
-
-
-; tell yasnippet to expand on space too (because that's the way it worked in vim)
-; blows up if run here. i think something's not loaded yet
-;; (define-key yas-minor-mode-map (kbd "SPC") yas-maybe-expand)
-
-
-
-;; (defun my-eshell-mode-faces ()
-;;     ;; (face-remap-add-relative 'default '((:foreground "#BD9700")))
-;;     ;; (face-remap-add-relative 'eshell-prompt '((:foreground "#BD9700" :weight bold)))
-;;     (interactive)
-;;     (setq buffer-face-mode-face '(:family "Courrier"))
-;;     (buffer-face-mode)
-;;     )
-
-;; (add-hook 'eshell-mode-hook 'my-eshell-mode-faces)
-
-
-
-
-; UNNECESSARY LSP bits vvvv
-; (setq lsp-enable-folding t)
-; (use-package! lsp-origami)
-; (add-hook! 'lsp-after-open-hook #'lsp-origami-try-enable)
-
-
-
-
-
-
-
-; rubocop
-; https://github.com/rubocop/rubocop-emacs
-; (add-hook 'ruby-mode-hook #'rubocop-mode)
-; (setq rubocop-autocorrect-on-save t)
-; ;(setq rubocop-autocorrect-command "rubocop -A --format emacs")
-; ☝️ that code would be good but we're using rubocop-flexport which is buggy
-;    and causes that to break
-;; (defun rubocop-format ()
-;; (defun rfmt ()
-;;   "rubocop-flexport is crap that breaks rubocop-autocorrect-command"
-;;   (when (eq major-mode 'ruby-mode)
-;;     (shell-command-to-string (format "rubocop -A %s" buffer-file-name))))
-
-; (add-hook 'after-save-hook #'rubocop-format)
-; (add-hook 'after-save-hook #'rfmt)
-
-
-
-(evil-ex-define-cmd "clean" 'rubocop-format)
-
-;; ;; org-roam stuff
-
-;; ;; (make-directory "~/Documents/org-roam")
-;; (setq org-roam-directory (file-truename "~/Documents/org-roam"))
-;; (org-roam-db-autosync-mode)
-;; ;; (setq org-roam-database-connector 'sqlite3)
-
-;; ; org-roam-ui stuff
-;; (use-package! websocket
-;;   :after org-roam)
-;; (use-package! org-roam-ui
-;;   :after org-roam ; or :after org
-;; ;;         normally we'd recommend hooking orui after org-roam, but since
-;; ;;         org-roam does not have a hookable mode anymore, you're advised to
-;; ;;         pick something yourself if you don't care about startup time, use
-;; ;;         :hook (after-init . org-roam-ui-mode)
-;;     :config
-;;     (setq org-roam-ui-sync-theme t
-;;           org-roam-ui-follow t
-;;           org-roam-ui-update-on-save t
-;;           org-roam-ui-open-on-start t))
-
-;; (setq org-roam-dailies-directory "daily/")
-
-;; ;; see this link for how to create new templates (daily & otherwise)
-;; ;; https://systemcrafters.net/build-a-second-brain-in-emacs/capturing-notes-efficiently/
-;; (setq org-roam-dailies-capture-templates
-;;       '(("d" "default" entry
-;;          "* %?"
-;;          :target (file+head "%<%Y-%m-%d>.org"
-;;                             "#+title: %<%Y-%m-%d>\n"))
-;;         ("w" "work" plain
-;;          "\n\nprevious: \nnext: \n* TODO \n- [ ] get a ticket to work on\n- [ ] check PR comments \n- [ ] see if there are PRs needing review\n\n%?")
-;;         :if-new (file+head "%<%Y-%m-%d>.org"
-;;                            "#+title: %<%Y-%m-%d>\n")
-;;         :unnarrowed t))
-
-
-;; ; for searching org-roam stuff
-;; ; for more on deft check out this video:
-;; ; https://www.youtube.com/watch?v=mldoUx_wi10
-;; (use-package deft
-;;   :after org
-;;   :bind
-;;   ("C-c n d" . deft)
-;;   :custom
-;;   (deft-recursive t)
-;;   (deft-use-filter-string-for-filename t)
-;;   (deft-default-extension "org")
-;;   (deft-directory org-roam-directory))
