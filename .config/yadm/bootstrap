@@ -23,8 +23,6 @@ fi
 #system_type=$(uname -s)
 #if [ "$system_type" = "Darwin" ]; then
 
-# doom is loaded via submodule
-
 
 function mayclone(){
 	#$1 = base dir
@@ -101,18 +99,18 @@ read -t 20 -p "download fonts? [y/n]
 if [ "$fonts" == "y" ]; then
 	cd ~/Downloads
 	# JetBrains Mono (includes Powerline glyphs)
-	curl -L https://github.com/JetBrains/JetBrainsMono/releases/download/v2.242/JetBrainsMono-2.242.zip \
+	curl -s -L https://github.com/JetBrains/JetBrainsMono/releases/download/v2.242/JetBrainsMono-2.242.zip \
 		--output JetBrainsMono-2.242.zip
 	unzip JetBrainsMono-2.242.zip
 	cp fonts/ttf/*.ttf ~/Library/Fonts/
 
 	# Meslo LGS (Nerd Font edition)
-	curl -L \
+	curl -s -L \
 		https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf \
 		--output ~/Library/Fonts/MesloLGS_NF_Regular.ttf
 
 	# roboto mono family
-	curl -s -L https://github.com/powerline/fonts/raw/master/Inconsolata/Inconsolata%20for%20Powerline.otf
+	curl -s -L https://github.com/powerline/fonts/raw/master/Inconsolata/Inconsolata%20for%20Powerline.otf \
 		--output ~/Library/Fonts/Inconsolata_for_Powerline.otf
 	curl -s -L https://github.com/powerline/fonts/raw/master/RobotoMono/Roboto%20Mono%20Bold%20Italic%20for%20Powerline.ttf \
 		--output ~/Library/Fonts/Roboto_Mono_Bold_Italic_for_Powerline.ttf
@@ -153,10 +151,9 @@ if [ "$doom" == "y" ]; then
 	# emacs is currently using JetBrains Mono, which theoretically
 	# just got installed
 	echo "RUN M-x all-the-icons-install-fonts"
-	ln -s $(emacs --app) /Applications/Emacs.app
 
 	echo "setting up the launch daemon manully should NOT be required"
-	echo "try this first: $(brew info emacs-plus | grep 'services start' | sed -e 's/^ //')"
+	echo "try this first: $(brew info emacs-plus | grep 'services start' | sed -e 's/^ *//')"
 	echo ""
 	read -p "manually setup emacs launch daemon? [y/n]
 	" emacs_launch_daemon
@@ -320,7 +317,7 @@ fi
 # GPG CONFIG
 # based on tips here: https://gist.github.com/troyfontaine/18c9146295168ee9ca2b30c00bd1b41e
 # killing agent to ensure new one is started based on new configs
-killall gpg-agent > /dev/null
+killall gpg-agent 2>&1 > /dev/null
 
 # RBENV
 if ! is_installed "rbenv"; then
