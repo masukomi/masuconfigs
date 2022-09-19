@@ -38,9 +38,6 @@
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
 
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
 
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
@@ -472,12 +469,13 @@
 	org-agenda-files '("~/Documents/notes/"
 					   "~/.config/org/")
 	; DEBATING if ^^ and vvv should be the same directory
+	; org-directory needs to be set before org loads
 	org-directory "~/.config/org/"
 	org-default-notes-file (concat org-directory "notes.org")
 	+org-capture-notes-file (concat org-directory "notes.org")
 	; use denote instead for journal stuff
 	+org-capture-notes-file (concat org-directory "journal.org")
-	+org-capture-todo-file (concat org-directoy "todo.org")
+	+org-capture-todo-file (concat org-directory "todo.org")
 
 	; org-log-done adds a timestamp when marking a todo item as done
 	org-log-done t
