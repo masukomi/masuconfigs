@@ -203,7 +203,7 @@ maybrew 'fontforge'
 # https://github.com/junegunn/fzf
 if ! is_installed "fzf"; then
     brew install fzf
-    y | $(brew --prefix)/opt/fzf/install
+    yes | $(brew --prefix)/opt/fzf/install
 else
 	echo "-- Skipping fzf (installed already)"
 fi

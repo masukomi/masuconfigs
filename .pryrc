@@ -11,6 +11,7 @@ end
 def helpme
   usage=<<~END
     Available custom functions:
+    - backtrace(exception, lines=10)
     - where_is(klass, method = nil)
     - Where.is_proc(proc)
     - Where.is_method(klass, method_name)
@@ -23,6 +24,11 @@ def helpme
       opens the specified path with your default editor (ENV['EDITOR'])
   END
   puts usage
+end
+
+def backtrace(exception, lines = 10)
+  return "that's not an exception" unless e.is_a? Exception
+  e.backtrace[..lines].each{|b| puts b }
 end
 
 # https://gist.github.com/wtaysom/1236979

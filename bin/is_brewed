@@ -16,7 +16,7 @@ if [ $# -eq 0 ]; then
   echo "       If the package is not found it'll look for similarly "
   echo "       named packages and output additional lines, if it finds"
   echo "       any that contain your input."
-  exit 64;
+  exit 0;
 fi
 
 if brew ls --versions $1 > /dev/null; then
