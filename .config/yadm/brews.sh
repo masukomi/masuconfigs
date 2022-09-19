@@ -523,7 +523,7 @@ maybrew "xz"
 # emacs
 # brew tap d12frosted/emacs-plus
 if ! is_installed "emacs-plus"; then
-	brew unlink gawk 2>&1 /dev/null
+	brew unlink gawk 2>&1 > /dev/null
 	# it complaind about this vs awk
 	# so now we unlink gawk and relink later
 	brew install emacs-plus --with-native-comp --with-imagemagick
@@ -542,10 +542,10 @@ if ! is_installed "emacs-plus"; then
 	# 	| sort \
 	# 	| tail -n1)
 	# ln -s /usr/local/Cellar/$VERSION/$EMACS_SUB_VERSION/Emacs.app /Applications/
-	rm /Applications/Emacs.app > /dev/null
-	eval "$(brew info emacs-plus | grep 'ln -s' | sed -e 's/^ //')"
-	eval "$(brew info emacs-plus | grep 'services start' | sed -e 's/^ //')"
-	brew link gawk
+	rm -rf /Applications/Emacs.app > /dev/null
+	eval "$(brew info emacs-plus | grep --color=none 'ln -s' | sed -e 's/^ *//')"
+	eval "$(brew info emacs-plus | grep --color=none 'services start' | sed -e 's/^ *//')"
+	brew link --overwrite gawk
 # 	--natural-title-bar option was removed from this formula, in order to
 # 	  duplicate its effect add following line to your init.el file
 # 	  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
