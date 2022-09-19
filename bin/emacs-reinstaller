@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+brew tap d12frosted/emacs-plus
+brew reinstall libgccjit
+
+command -v emacs-plus
+if [ $? -ne 0 ]; then
+	brew unlink gawk 2>&1 > /dev/null
+	rm -rf /Applications/Emacs.app > /dev/null
+fi
+
+brew install emacs-plus --with-native-comp --with-imagemagick
+if [ $? -ne 0 ]; then
+	echo "problem installing emacs-plus --with-native-comp --with-imagemagic"
+	echo "exiting"
+	exit 1
+fi
+emacs_location=$(brew info emacs-plus | grep --color=none 'ln -s' | sed -e 's/^ *ln -s //')
+ls $emacs_location
+if [ $? -ne 0 ]; then
+	echo "Somethig's not right. Emacs isn't where brew said it would be."
+	echo "should be at: $emacs_location"
+	echo "run `brew info emacs-plus` maybe that'll tell you something useful."
+	exit 2
+fi
+# create symlink for the Emacs.app
+eval "$(brew info emacs-plus | grep --color=none 'ln -s' | sed -e 's/^ *//')"
+# start the service
+eval "$(brew info emacs-plus | grep --color=none 'services start' | sed -e 's/^ *//')"
+brew link --overwrite gawk
+
+# 	--natural-title-bar option was removed from this formula, in order to
+# 	  duplicate its effect add following line to your init.el file
+# 	  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+# 	  (add-to-list 'default-frame-alist '(ns-appearance . dark))
+# 	or:
+# 	  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+# 	  (add-to-list 'default-frame-alist '(ns-appearance . light))
+#   If you are using macOS Mojave, please note that most of the experimental
+#   options are forbidden on Mojave. This is temporary decision.
+# 	To have launchd start d12frosted/emacs-plus/emacs-plus now and restart at login:
+# 	  brew services start d12frosted/emacs-plus/emacs-plus
+# 	Or, if you don't want/need a background service you can just run:
+# 	  emacs
+#
+#
+# EMACS_VERSION=$(ls /usr/local/Cellar/ \
+# 	| grep --color=never emacs-plus \
+# 	| sort \
+# 	| tail -n1 \
+# 	| sed -e "s/@/\\\@/g" )
+#
+# EMACS_SUB_VERSION=$( ls /usr/local/Cellar/$EMACS_VERSION \
+# 	| sort \
+# 	| tail -n1)
+#

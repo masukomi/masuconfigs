@@ -523,42 +523,7 @@ maybrew "xz"
 # emacs
 # brew tap d12frosted/emacs-plus
 if ! is_installed "emacs-plus"; then
-	brew unlink gawk 2>&1 > /dev/null
-	# it complaind about this vs awk
-	# so now we unlink gawk and relink later
-	brew install emacs-plus --with-native-comp --with-imagemagick
-	if [ $? -ne 0 ]; then
-		echo "problem installing emacs-plus --with-native-comp --with-imagemagic"
-		echo "exiting"
-		exit 1
-	fi
-	# EMACS_VERSION=$(ls /usr/local/Cellar/ \
-	# 	| grep --color=never emacs-plus \
-	# 	| sort \
-	# 	| tail -n1 \
-	# 	| sed -e "s/@/\\\@/g" )
-    #
-	# EMACS_SUB_VERSION=$( ls /usr/local/Cellar/$EMACS_VERSION \
-	# 	| sort \
-	# 	| tail -n1)
-	# ln -s /usr/local/Cellar/$VERSION/$EMACS_SUB_VERSION/Emacs.app /Applications/
-	rm -rf /Applications/Emacs.app > /dev/null
-	eval "$(brew info emacs-plus | grep --color=none 'ln -s' | sed -e 's/^ *//')"
-	eval "$(brew info emacs-plus | grep --color=none 'services start' | sed -e 's/^ *//')"
-	brew link --overwrite gawk
-# 	--natural-title-bar option was removed from this formula, in order to
-# 	  duplicate its effect add following line to your init.el file
-# 	  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-# 	  (add-to-list 'default-frame-alist '(ns-appearance . dark))
-# 	or:
-# 	  (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-# 	  (add-to-list 'default-frame-alist '(ns-appearance . light))
-#   If you are using macOS Mojave, please note that most of the experimental
-#   options are forbidden on Mojave. This is temporary decision.
-# 	To have launchd start d12frosted/emacs-plus/emacs-plus now and restart at login:
-# 	  brew services start d12frosted/emacs-plus/emacs-plus
-# 	Or, if you don't want/need a background service you can just run:
-# 	  emacs
+	~/bin/emacs-reinstaller
 else
 	echo "-- Skipping emacs-plus (installed already)"
 fi

@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+	echo "deleting ~/.emacs.d"
+
+	rm -rf ~/.emacs.d > /dev/null
+	echo "cloning down new copy"
+	git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.emacs.d
+	echo "running installer"
+	yes | ~/.emacs.d/bin/doom install
+	~/.emacs.d/bin/doom sync
+	echo "RUN M-x all-the-icons-install-fonts"
+
+	echo "setting up the launch daemon manully should NOT be required"
+	echo "try this first: $(brew info emacs-plus | grep 'services start' | sed -e 's/^ *//')"
+	echo ""
+	read -p "manually setup emacs launch daemon? [y/n]
+	" emacs_launch_daemon
+
+	if [ "$emacs_launch_daemon" == "y" ]; then
+		# launch the emacs daemon at login
+		# instructions found here: http://www.rockhoppertech.com/blog/emacs-daemon-on-macos/
+		LAUNCH_DAEMON_PLIST="$HOME/Library/LaunchAgents/gnu.emacs.daemon.plist"
+		if [ ! -f "$LAUNCH_DAEMON_PLIST" ]; then
+			cat > "$LAUNCH_DAEMON_PLIST" <<- EOM
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>gnu.emacs.daemon</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Applications/Emacs.app/Contents/MacOS/Emacs</string>
+    <string>--daemon</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>UserName</key>
+  <string>$USER</string>
+</dict>
+</plist>
+EOM
+	fi
+
+	fi # end if setup launch daemon manually
+
