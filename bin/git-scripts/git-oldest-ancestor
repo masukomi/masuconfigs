@@ -4,9 +4,61 @@
 #
 # The first argument defaults to `master` and the second argument defaults to `HEAD`.
 
-ancestor=$(diff --old-line-format='' --new-line-format='' \
-    <(git rev-list --first-parent "${1:-master}") \
-    <(git rev-list --first-parent "${2:-HEAD}") | \
-    head -1)
+function usage() {
+	echo "USAGE: git oldest-ancestor <-p parent branch> <-c child branch>"
+	echo "       enter 'choose' for either to interactively chose it (requires fzf)."
+}
 
-git rev-parse --short "$ancestor"
+function choose() {
+echo $(git branch -v \
+      | grep -v " [[:xdigit:]]\{7\} \[gone\]" \
+      | sed -e "s/^*/ /" -e "s/^+/ /" \
+      | fzf \
+      | awk '{print $1}' )
+}
+
+while getopts "hp:c:" opt; do
+	case $opt in
+		p)
+			PARENT=$OPTARG
+			;;
+		c)
+			CHILD=$OPTARG
+			;;
+		h)
+			usage
+			exit 0
+			;;
+	esac
+done
+
+if [ "$PARENT" == "" ] || [ "$CHILD" == "" ]; then
+	usage
+	exit 0
+fi
+
+if [ "$PARENT" == "choose" ]; then
+	PARENT=$(choose)
+fi
+
+if [ "$CHILD" == "choose" ]; then
+	CHILD=$(choose)
+fi
+
+echo "Looking for common ancestor between "
+echo "$PARENT and $CHILD"
+
+ancestor=$(diff --old-line-format='' --new-line-format='' \
+    <(git rev-list --first-parent "$PARENT") \
+    <(git rev-list --first-parent "$CHILD") | \
+    head -1)
+if [ $? -eq 0 ] && [ "$ancestor" != "" ]; then
+	short_ancestor=$(git rev-parse --short "$ancestor")
+	echo "Common ancestor appears to be: $short_ancestor"
+	printf '%.s─' $(seq 1 $(tput cols))
+	echo "" #oddly if you don't put this here the line gets printed
+	# at the end of the 1st line of the following. Very strange.
+	git show --stat $short_ancestor
+else
+	echo "Alas, I was unable to find a common ancestor"
+fi
