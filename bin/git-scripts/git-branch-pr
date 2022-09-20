@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# a simple utility to find, and optionally open, PRs for the current
+# git branch.
+# Requires gh to be installed.
+
+function usage() {
+	echo "USAGE: git branch-pr [-b branch] [-o open in browser] [-h]"
+	echo "       requires the gh command line tool to be installed."
+	echo "       To see this usage call it with -h"
+	exit 0;
+}
+
+current_branch=""
+open=false
+
+while getopts "b:oh" opt; do
+	case $opt in
+		b)
+			current_branch=$OPTARG
+			;;
+		o)
+			open=true
+			;;
+		h)
+			usage
+			;;
+	esac
+done
+if [ "$current_branch" == "" ]; then
+	current_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null);
+fi
+
+if [ "$current_branch" == "" ]; then
+	usage
+fi
+
+if [ "$open" = true ]; then
+	pr_number=$(gh pr list --head $current_branch 2>&1 | awk -F' ' '{print $1}')
+	if [ "$pr_number" == "" ]; then
+		echo "Couldn't find an open PR for branch $current_branch"
+		exit 0;
+	fi
+	gh pr view --web $pr_number
+else
+	gh pr list --head $current_branch
+fi
