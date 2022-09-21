@@ -1,3 +1,6 @@
+
+set -l start (date +%s)
+
 if test -f $HOME/.config/fish/config_work.fish
 	source $HOME/.config/fish/config_work.fish
 end
@@ -63,7 +66,7 @@ abbr -a rtnw 'env RUBYOPT=W0 rake test'
 abbr -a sqlf "sqlformat --reindent --keywords upper --identifiers lower"
 abbr -a top "top -o cpu"
 abbr -a unset 'set --erase'
-abbr -a ycom 'yadm com -f .local/share/yadm/repo.git/config'
+abbr -a ycom 'yadm com -f ~/.local/share/yadm/repo.git/config'
 
 if [ (uname) = "Darwin" ]
 	abbr -a ldd "otool -L"
@@ -116,7 +119,7 @@ fish_add_path -g . $HOME/bin $HOME/bin/git-scripts $HOME/bin/git-scripts/hooks /
 # vvv make python 3 found before macOSs python 2.7
 # macOS one is at /usr/local/bin/python
 set brewed_python_version (brew ls --versions python | sed -e "s/python@//" -e "s/ .*//")
-if test "" != "$brewed_python_version"
+if test $brewed_python_version
 	set -x PATH /usr/local/opt/python/libexec/bin $PATH
 	fish_add_path -g -a $HOME/Library/Python/$brewed_python_version/bin
 end
@@ -186,17 +189,17 @@ fish_add_path -g $HOME/.cargo/bin
 
 set -x GPG_TTY (tty)
 
-# SET UP LDFLAGS, CPPFLAGS, PKG_CONFIG_PATH
-# for readline and openssl
-# readline
-eval (brew info readline | grep "set -gx " | sed -e "s/^ *//" -e 's/$/;/')
-# opensssl
-# also adds openssl@3/bin to the path
-eval (brew info openssl | egrep "set -gx |fish_add_path" | sed -e "s/^ *//" -e 's/^\(.*\) \([^[:space:]]*\) "/\1 \2 "$\2 /' -e 's/$/;/')
-# and llvm
-eval (brew info llvm | egrep "set -gx |fish_add_path" | sed -e "s/^ *//" -e 's/^\(.*\) \([^[:space:]]*\) "/\1 \2 "$\2 /' -e 's/$/;/')
-# and libxslt
-eval (brew info libxslt | egrep "set -gx |fish_add_path" | sed -e "s/^ *//" -e 's/^\(.*\) \([^[:space:]]*\) "/\1 \2 "$\2 /' -e 's/$/;/')
+
+# load compiler flags.
+# takes ~ 6 seconds to generate this data.
+# if it's old, then run the generate_compiler_flags function
+if test -f $HOME/.config/fish/compiler_flags.fish
+	source $HOME/.config/fish/compiler_flags.fish
+else
+	echo "generating compiler flags..."
+	generate_compiler_flags
+	source $HOME/.config/fish/compiler_flags.fish
+end
 
 # load the curent theme
 source ~/.config/fish/current_theme.fish
@@ -240,4 +243,5 @@ end
 
 set -x NVM_DIR "$HOME/.nvm"
 
-
+echo "startup time: "
+math (date +%s) - $start
