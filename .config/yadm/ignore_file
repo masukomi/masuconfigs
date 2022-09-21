@@ -11,3 +11,4 @@
 .config/neomutt/aliases
 .gnupg/*
 .yas-compiled-snippets.el
+com.googlecode.iterm2.plist
