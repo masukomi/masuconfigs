@@ -13,4 +13,5 @@
 .yas-compiled-snippets.el
 com.googlecode.iterm2.plist
 .config/fish/fish_variables
-/Users/kayrhodes/.gitconfig_personal
+.gitconfig_personal
+.config/work/*
