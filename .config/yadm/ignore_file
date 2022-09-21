@@ -17,3 +17,4 @@ com.googlecode.iterm2.plist
 .config/work/*
 .git/*
 .ssh/*
+.vim/bundle/*
