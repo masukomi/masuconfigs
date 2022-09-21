@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# TODO
+# - request ignore string
+# - append to $HOME/.local/share/yadm/repo.git/info/exclude
+# - copy  $HOME/.local/share/yadm/repo.git/info/exclude
+#   to    $HOME/.config/yadm/ignore_file
+# - yadm add $HOME/.config/yadm/ignore_file
+# - yadm commit -m "updated yadm ignore file"
+
+if [ $# -eq 1 ]; then
+	echo "$1" | sd "$HOME/" "" | sd "~/" ""  >> $HOME/.local/share/yadm/repo.git/info/exclude
+	cp $HOME/.local/share/yadm/repo.git/info/exclude \
+		$HOME/.config/yadm/ignore_file
+	yadm add $HOME/.config/yadm/ignore_file
+	yadm commit -m "added $1 to yadm's ignore_file"
+	yadm push origin master
+	if [ $? -ne 0 ]; then
+		echo "Failed to push yadm commit. See error message above."
+	else
+		echo "ignored. committed. pushed."
+	fi
+
+	exit 0
+else
+	echo "USAGE: yadm_ignore <ignore_string>"
+	echo "       adds the string to yadm's ignore file"
+	exit 0;
+fi
