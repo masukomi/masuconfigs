@@ -15,3 +15,4 @@ com.googlecode.iterm2.plist
 .config/fish/fish_variables
 .gitconfig_personal
 .config/work/*
+.git/*
