@@ -308,6 +308,10 @@ fi
 defaults  write -g com.apple.mouse.scaling 5
 
 
+if [ ! -e $HOME/.local/share/yadm/repo.git/info/exclude ]; then
+	cp $HOME/.config/yadm/ignore_file  $HOME/.yadm/repo.git/info/exclude
+fi
+
 #####
 if [ $GENERATE_SETUP_TASKS -eq 1 ]; then
 	echo "setting up todo items for you"
