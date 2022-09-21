@@ -243,5 +243,4 @@ end
 
 set -x NVM_DIR "$HOME/.nvm"
 
-echo "startup time: "
-math (date +%s) - $start
+echo "fish config startup time: " (math (date +%s) - $start) "s"
