@@ -18,3 +18,4 @@ com.googlecode.iterm2.plist
 .git/*
 .ssh/*
 .vim/bundle/*
+.config/private_comments/*
