@@ -16,3 +16,4 @@ com.googlecode.iterm2.plist
 .gitconfig_personal
 .config/work/*
 .git/*
+.ssh/*
