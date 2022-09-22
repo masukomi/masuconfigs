@@ -1,6 +1,3 @@
-[user]
-	name = masukomi
-	email = masukomi@masukomi.org
 [include]
 	path = ~/.gitconfig_personal
 [includeIf "gitdir:~/workspace/dutchie/"]
@@ -161,6 +158,7 @@
 	default = current
 [gpg]
 	program = gpg
+	format = ssh
 [url "git@github.com:"]
 	insteadOf = https://github.com/
 	# http://albertech.blogspot.com/2016/11/fix-git-error-could-not-read-username.html
@@ -183,7 +181,7 @@
 [checkout]
 	defaultRemote = upstream
 [commit]
-	gpgsign = false
+	gpgsign = true
 
 
 
