@@ -81,6 +81,7 @@ GIT_COM_TAGS=$(git config $GIT_CONFIG_FILE --get com.tags | xargs -n1 | sort -u 
 if [ $? != 0 ]; then
 	GIT_COM_TAGS=""
 fi
+
 eval "TAG_CHOICES=($GIT_COM_TAGS)";
 
 GIT_COM_TYPES=$(git config "$GIT_CONFIG_FILE" --get com.types | xargs -n1 | sort -u | xargs)
@@ -91,6 +92,7 @@ eval "TYPE_CHOICES=($GIT_COM_TYPES)";
 
 echo "Specify a change type"
 # choose from list
+#
 MAYBE_TYPE=$(gum choose ${TYPE_CHOICES[@]} ".new" )
 if [[ "$MAYBE_TYPE" == *".new"* ]]; then
 	MAYBE_TYPE=$(echo "$MAYBE_TYPE" | sed -e "s/\.new//" -e "s/  / /g")
@@ -107,7 +109,7 @@ else
 	exit 1
 fi
 # uniquify and sort types
-# if [[ -n "$TYPES" ]]; then
+if [[ -n "$TYPES" ]]; then
 	STORABLE_TYPES=$(echo "$TYPES" \
 		| sd "\s+" "\n" \
 		| sed -e "s/ //g" \
@@ -115,7 +117,7 @@ fi
 		| sort \
 		| tr "\n" " " )
 	git config "$GIT_CONFIG_FILE" com.types "$STORABLE_TYPES"
-# fi
+fi
 clear_last_line
 
 
@@ -162,7 +164,7 @@ else
 fi
 clear_last_2_lines
 if [ "$MAYBE_TAG" != "" ]; then
-	TAGS="$TAGS $MAYBE_TAG"
+	TAGS="$GIT_COM_TAGS $MAYBE_TAG"
 fi
 
 # uniquify and sort tags
@@ -170,6 +172,7 @@ if [[ -n "$TAGS" ]]; then
 	STORABLE_TAGS=$(echo "$TAGS" | xargs -n1 | sort -u | xargs )
 	git config "$GIT_CONFIG_FILE" com.tags "$STORABLE_TAGS"
 fi
+
 echo "commit details: "
 echo "(ESC to end)"
 DESCRIPTION=$(gum write --placeholder "Details of this change" \
