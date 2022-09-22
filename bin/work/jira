@@ -45,17 +45,24 @@ if [[ $? -ne 0 ]]; then
 	exit 1;
 fi
 
+current_branch=$(git current-branch)
+
 set -- $VALID_ARGS
 while :; do
 	case "$1" in
 		-b)
-			TICKET=$(git current-branch | sd '.*?(?P<ticket>(eng|ENG)-\d+).*' '$ticket')
+			if [[ "$current_branch" == *"JIRA-IGNORE"* ]]; then
+				TICKET="JIRA-IGNORE"
+			else
+				TICKET=$(echo "$current_branch" | sd '.*?(?P<ticket>(eng|ENG)-\d+).*' '$ticket')
+			fi
 			if [ "$TICKET" == "" ]; then
 				echo "UNABLE TO DETERMINE TICKET FROM BRANCH: $BRANCH"
 				echo ""
 				usage
 				exit 3
 			fi
+			TICKET=$(echo $TICKET | tr [:lower:] [:upper:])
 			shift
 			;;
 		-m)
