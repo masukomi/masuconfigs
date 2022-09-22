@@ -28,6 +28,7 @@ function usage () {
 	echo "      this will expect you to pass in the ticket number"
 	echo " -m: generate markdown. If -b isn't specified"
 	echo "      this will expect you to pass in the ticket number."
+	echo " -t: output the ticket number"
 	echo " -h: output this help"
 	echo ""
 	echo " Example of combined usage: "
@@ -35,6 +36,8 @@ function usage () {
 	echo "      * extract the ticket name from the branch,"
 	echo "      * output the markdown link"
 	echo "      * open the url in your browser (macos only)"
+	echo " jira -bt will:"
+	echo "      * print the ticket number"
 }
 VALID_ARGS=`getopt tbomh? $*`
 if [[ $? -ne 0 ]]; then
