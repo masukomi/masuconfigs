@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+
+# requires gum
+
+function clear_last_line () {
+	echo -en "\e[1A\e[K" ;printf "\r"
+}
+
+EDITOR=${EDITOR:-vim}
+
+
+gum confirm "Have you pushed yet?"
+if [ $? -ne 0 ]; then
+	echo "Pushing..."
+	git push origin $(git current-branch)
+	if [ $? -ne 0 ]; then
+		echo "problem pushing. exiting"
+		exit 1
+	fi
+fi
+clear_last_line
+
+ticket=$(jira -bt)
+
+if [ "$ticket" == "" ]; then
+	echo "unable to figure out the ticket number from the branch name"
+	exit 1
+fi
+change_type=$(git current-branch | sed -e "s/\/.*//" -e 's/_.*//')
+
+possible_subject=$(git current-branch | sed -e 's/.*\///' -e 's/_/ /g')
+
+
+echo "Which branch are you targeting?"
+
+target_branch=$(gum choose "develop" "main" "other")
+if [ "$target_branch" == "other" ]; then
+	echo "Please enter the target branch name"
+	target_branch=$(gum input --width 100 --placeholder "target branch name")
+	clear_last_line
+fi
+clear_last_line
+
+
+echo "Ticket title please:"
+subject=$(gum input --width 100 --value "$possible_subject")
+
+echo "Please Confirm/Edit PR title to be used"
+
+real_title=$(gum input --width 100 --value "$change_type: $possible_subject $ticket")
+clear_last_line
+
+
+echo "Please describe the PR"
+tempfile=$(mktemp /tmp/pr_from_branch.XXXXXX)
+cat $(git root)/.github/pull_request_template.md > $tempfile
+vim $tempfile
+description=$(cat $tempfile)
+clear_last_line
+
+
+echo "Does this look good? "
+echo "PR targeting branch: $target_branch"
+echo ""
+echo TITLE: $real_title
+echo ""
+echo "DESCRIPTION:"
+echo $description
+echo ""
+
+gum confirm
+
+if [ $? -eq 0 ]; then
+	echo "doing it"
+	gh pr create \
+		--base $target_branch \
+		--head $(git current-branch) \
+		--title "$real_title"
+		--body "$description"
+else
+	echo "cancelled"
+fi
+
+
