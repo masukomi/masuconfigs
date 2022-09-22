@@ -169,7 +169,12 @@ fi
 
 # uniquify and sort tags
 if [[ -n "$TAGS" ]]; then
-	STORABLE_TAGS=$(echo "$TAGS" | xargs -n1 | sort -u | xargs )
+	STORABLE_TAGS=$(echo "$TAGS" \
+		| sd "\s+" "\n" \
+		| sed -e "s/ //g" \
+		| uniq \
+		| sort \
+		| tr "\n" " " )
 	git config "$GIT_CONFIG_FILE" com.tags "$STORABLE_TAGS"
 fi
 
