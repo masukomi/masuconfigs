@@ -183,7 +183,7 @@ fi
 
 echo "commit details: "
 echo "(ESC to end)"
-DESCRIPTION=$(gum write --placeholder "Details of this change" \
+DESCRIPTION=$(gum write --width $(expr $(tput cols) - 3)  --placeholder "Details of this change" \
 	| fold -w 50 -s)
 [[ -n "$TICKET" ]] && DESCRIPTION="$DESCRIPTION
 
