@@ -139,7 +139,7 @@ fi
 
 
 echo "commit title: "
-SUMMARY=$(gum input --value "[$SCOPE] $TYPE: ")
+SUMMARY=$(gum input --width $(expr $(tput cols) - 3) --value "[$SCOPE] $TYPE: ")
 if [ "$SUMMARY" == "" ]; then
 	echo "⚠️  You must supply a title"
 	exit 1
