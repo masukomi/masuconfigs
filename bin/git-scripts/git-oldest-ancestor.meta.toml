@@ -1,6 +1,6 @@
 # a template for `clu` toml files
 # the name of the command or function you're documenting
-name="git-oldeste-ancestor"
+name="git-oldest-ancestor"
 # a short (one line) description of what it does
 description="finds the oldest common ancestor between two git treeishes"
 # if the tool has some sort of usage / help documentation you can
