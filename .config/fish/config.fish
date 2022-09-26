@@ -134,6 +134,7 @@ fish_add_path -g -a $HOME/Applications
 fish_add_path -g -a $HOME/workspace/git_accessories
 fish_add_path -g -a $HOME/workspace/go/bin
 fish_add_path -g -a $HOME/.cargo/bin
+fish_add_path -g -a $HOME/bin/work
 fish_add_path -g -p $HOME/.local/bin # haskell stuff installed with Stack
 # we're prepending this in case the homebrew version is installed
 fish_add_path /usr/local/opt/mongodb-community@4.2/bin
