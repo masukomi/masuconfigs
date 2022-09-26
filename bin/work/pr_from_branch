@@ -36,18 +36,18 @@ echo "Which branch are you targeting?"
 target_branch=$(gum choose "develop" "main" "other")
 if [ "$target_branch" == "other" ]; then
 	echo "Please enter the target branch name"
-	target_branch=$(gum input --width 100 --placeholder "target branch name")
+	target_branch=$(gum input --width $(expr $(tput cols) - 3) --placeholder "target branch name")
 	clear_last_line
 fi
 clear_last_line
 
 
 echo "Ticket title please:"
-subject=$(gum input --width 100 --value "$possible_subject")
+subject=$(gum input --width $(expr $(tput cols) - 3) --value "$possible_subject")
 
 echo "Please Confirm/Edit PR title to be used"
 
-real_title=$(gum input --width 100 --value "$change_type: $possible_subject $ticket")
+real_title=$(gum input --width $(expr $(tput cols) - 3) --value "$change_type: $possible_subject $ticket")
 clear_last_line
 
 
@@ -65,7 +65,7 @@ echo ""
 echo TITLE: $real_title
 echo ""
 echo "DESCRIPTION:"
-echo $description
+echo "$description"
 echo ""
 
 gum confirm
@@ -75,7 +75,7 @@ if [ $? -eq 0 ]; then
 	gh pr create \
 		--base $target_branch \
 		--head $(git current-branch) \
-		--title "$real_title"
+		--title "$real_title" \
 		--body "$description"
 else
 	echo "cancelled"
