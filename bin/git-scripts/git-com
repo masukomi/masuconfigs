@@ -190,7 +190,7 @@ DESCRIPTION=$(gum write --width $(expr $(tput cols) - 3)  --placeholder "Details
 TICKET: $TICKET"
 [[ -n "$TAGS" ]] && DESCRIPTION="$DESCRIPTION
 
-TAGS: $TAGS"
+TAGS: $MAYBE_TAG"
 
 clear_last_2_lines
 
