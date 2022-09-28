@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+require 'json';
+require 'date';
+
+if ARGV.empty?
+  puts "USAGE: pr-age ticket_number
+       must be run within a repo.
+       requires official github command line client
+       https://github.com/cli/cli
+  "
+  exit 0
+end
+
+begin
+  cl_output = `gh pr view #{ARGV[0]} --json createdAt,mergedAt,closedAt,state`
+  json = JSON.parse(cl_output)
+
+  # timestamp format "2022-09-27T15:41:01Z",
+  format="%Y-%m-%dT%H:%M:%SZ"
+  created_at = Date.strptime(json['createdAt'], format)
+  merged_at = json['mergedAt'].nil? ? nil : Date.strptime(json['mergedAt'], format)
+  closed_at = json['closedAt'].nil? ? nil : Date.strptime(json['closedAt'], format)
+
+  if json['state'] == "OPEN"
+    days=(Date.today - created_at).to_i
+    puts "Days open: #{days}"
+  elsif closed_at.nil?
+    days = (merged_at - created_at).to_i
+    puts "Days to merge: #{days}"
+  else
+    days = (closed_at - created_at).to_i
+    puts "Days to close: #{days}"
+  end
+
+rescue JSON::ParserError
+  STDERR.puts cl_output
+  exit 1
+end
+
