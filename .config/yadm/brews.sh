@@ -144,6 +144,12 @@ maybrew 'cmake'
 # https://www.gnu.org/software/coreutils
 maybrew "coreutils"
 
+
+# Tools to manipulate dates with a focus on financial data
+# installed for "datediff" / "ddiff"
+# https://www.fresse.org/dateutils/
+maybrew "dateutils"
+
 ls /Applications/DevUtils.app > /dev/null
 # normal is_installed doesn't work for devutils For some reason
 # it just doesn't show up in brew ls --versions
