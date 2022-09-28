@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: worklog
+# key: worklog
+# --
+
+- [created]
+  -
+- [merged]
+  -
+- [closed]
+  -
+- [blocked]
+  -
+- [waiting]
+  -
+- [other]
+  -
