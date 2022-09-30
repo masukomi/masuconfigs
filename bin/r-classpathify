@@ -6,7 +6,13 @@
 #
 # Usage: r-classpathify path/to/ruby/file
 
-
+if ARGV.size == 0
+  puts "USAGE: r-classpathify <path/to/ruby/file>
+       Converts all the module X, module Y, class Z lines
+       in a Ruby file and converts them to
+       X::Y::Z and prints it to STDOUT"
+  exit 0
+end
 
 def process_classpath_lines(classpath_lines)
   new_lines = []
