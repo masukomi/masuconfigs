@@ -3,11 +3,43 @@
 brew tap d12frosted/emacs-plus
 brew reinstall libgccjit
 
+# private_comment's make file uses Cask.
+# cask's brew installer has vanilla emacs as a dependency
+# so, we need to
+# - get rid of any existing emacs
+# - install cask
+# - uninstall vanilla emacs
+# - install the emacs we want
+#
+# cask doesn't actually _need_ vanilla emacs. it works fine with
+# emacs-plus BUT...
+
 command -v emacs-plus
 if [ $? -ne 0 ]; then
 	brew unlink gawk 2>&1 > /dev/null
 	rm -rf /Applications/Emacs.app > /dev/null
 fi
+command -v emacs
+if [ $? -ne 0 ]; then
+	brew uninstall --ignore-dependencies emacs
+fi
+# this prolly isn't necessary but who knows what state
+# the world is at this point. so, i'm just cleaning everything
+# out so that we can start fresh.
+command -v cask
+if [ $? -ne 0 ]; then
+	brew uninstall cask
+fi
+
+
+brew install cask
+# uninstall the vanilla emacs that came as a cask dependency
+# but don't uninstall anything that depends on it because we're
+# about to install a replacement
+brew uninstall --ignore-dependencies emacs
+
+
+
 
 brew install emacs-plus --with-native-comp --with-imagemagick
 if [ $? -ne 0 ]; then
