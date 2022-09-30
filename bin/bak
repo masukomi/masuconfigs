@@ -6,14 +6,21 @@
 if [ $# -eq 0 ]; then
 	echo "bak moves or copies the proffered file to a .back version"
 	echo ""
-	echo "USAGE: bak [-m] <path/to/file>"
-	echo "       -m will move the file."
-	echo "          otherwise it'll make a copy"
+	echo "USAGE: bak [-c] <path/to/file>"
+	echo "       -c will copy the file."
+	echo "          otherwise it'll move it"
 	exit 0
 fi
-if [ "$1" == "-m" ]; then
+
+copy=false
+
+if [ "$1" == "-c" ] ; then
 	shift
-	mv $1 $1.bak
+	copy=true
+fi
+path=$(echo "$1" | sed -e 's/\/$//')
+if [ $copy == true ]; then
+	cp -r $path $path.bak
 else
-	cp $1 $1.bak
+	mv $path $path.bak
 fi
