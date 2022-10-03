@@ -8,15 +8,33 @@
 # git cop <pasted-thing-from-github>
 # and it strips out the <repo>: if it exists
 
+ESCAPE=$(printf "\033")
+RED="${ESCAPE}[91m"
+GREEN="${ESCAPE}[92m"
+NOCOLOR="${ESCAPE}[0m"
+
+
 if [ "$1" != "" ]; then
   PR_BRANCH=$(echo "$1" | sed -e "s/^.*://")
 
   git checkout $PR_BRANCH
+  if [ $? -eq 0 ]; then
+    echo $GREEN"✅ CHECKOUT SUCCEEDED"$NOCOLOR;
+  else
+    echo $RED"❌ CHECKOUT FAILED"$NOCOLOR;
+  fi
 else
-  echo "please specify a github branch identifier"
-  echo "should look something like this:"
-  echo "    a_gh_username:branch_name_here"
-  exit 1
+  echo "USAGE: git-cop <branch name>"
+  echo "       NOTE: branch name can be a 'normal' branch name"
+  echo "       OR one of the identifiers you get from GitHub"
+  echo "       when you copy the branch from a PR from a forked repo."
+  echo "       Those look like <username>:<branch_name>"
+  echo "       In that scenario this presumes that you have already"
+  echo "       checked out their fork as a remote."
+  echo ""
+  echo "       Due to limitations of git, this _will_ fail if the"
+  echo "       same branch name exists in more than one remote."
+  exit 0
 fi
 exit 0
 
