@@ -1,5 +1,5 @@
 
-set -l start (date +%s)
+# set -l start (date +%s)
 
 if test -f $HOME/.config/fish/config_work.fish
 	source $HOME/.config/fish/config_work.fish
@@ -132,7 +132,7 @@ fish_add_path -g -a $HOME/.iterm2/
 # fish_add_path -g /sbin
 fish_add_path -g -a $HOME/Applications
 fish_add_path -g -a $HOME/workspace/git_accessories
-fish_add_path -g -a $HOME/workspace/go/bin
+fish_add_path -g -a $HOME/workspace/go/bin $HOME/go/bin
 fish_add_path -g -a $HOME/.cargo/bin
 fish_add_path -g -a $HOME/bin/work
 fish_add_path -g -p $HOME/.local/bin # haskell stuff installed with Stack
@@ -244,4 +244,4 @@ end
 
 set -x NVM_DIR "$HOME/.nvm"
 
-echo "fish config startup time: " (math (date +%s) - $start) "s"
+# echo "fish config startup time: " (math (date +%s) - $start) "s"
