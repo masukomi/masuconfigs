@@ -237,6 +237,13 @@
 ; https://github.com/emacsorphanage/git-gutter-fringe#readme
 (global-git-gutter-mode t)
 
+(global-set-key (kbd "<C-S-up>")     'buf-move-up)
+
+; sometimes command+w closes a workspace. Sometimes it closes the window.
+; I want it to _only_ get rid of the workspace and _never_ close the window
+; (unless maybe it's the only one).
+; By default this is mapped to +workspace/close-window-or-workspace
+(global-set-key (kbd "s-w")  '+workspace/delete)
 
 ; buffer-move stuff
 ; https://github.com/lukhas/buffer-move
@@ -826,6 +833,13 @@ now being rendered as Emojis. Filter this case out."
     (shell-command-to-string (format "raco fmt -i --width 80 %s" buffer-file-name))))
 
 (add-hook 'after-save-hook #'raco-fmt)
+
+
+;;------------- RUBY
+(after! 'ruby-mode
+  (require 'ruby-tools))
+; disable rubocop because it fucking sucks and breaks half the time.
+(setq-default flycheck-disabled-checkers '(ruby-rubocop))
 
 
 ;;------------- LUA

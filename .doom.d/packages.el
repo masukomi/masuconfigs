@@ -102,7 +102,7 @@
 ; -- Ruby
 (package! rspec-mode)
 (package! ruby-hash-syntax)
-(package! ruby-tools)
+(package! ruby-tools) ; https://github.com/rejeep/ruby-tools.el
 
 ; -- Schemes
 ; (package! geiser-chicken) # FORBIDDEN - EVIL BREAKS EVERYTHING
