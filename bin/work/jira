@@ -28,6 +28,8 @@ function usage () {
 	echo "      this will expect you to pass in the ticket number"
 	echo " -m: generate markdown. If -b isn't specified"
 	echo "      this will expect you to pass in the ticket number."
+	echo " -e: generate an org-mode link. If -b isn't specified"
+	echo "      this will expect you to pass in the ticket number."
 	echo " -t: output the ticket number"
 	echo " -h: output this help"
 	echo ""
@@ -39,7 +41,7 @@ function usage () {
 	echo " jira -bt will:"
 	echo "      * print the ticket number"
 }
-VALID_ARGS=`getopt tbomh? $*`
+VALID_ARGS=`getopt tbomeh? $*`
 if [[ $? -ne 0 ]]; then
 	usage
 	exit 1;
@@ -67,6 +69,10 @@ while :; do
 			;;
 		-m)
 			MARKDOWN="true"
+			shift
+			;;
+		-e) # e for emacs
+			ORGMODE="true"
 			shift
 			;;
 		-o)
@@ -116,6 +122,7 @@ fi
 
 if [[ -n "$TICKET_ID" ]]; then
 	echo $TICKET
+	echo $TICKET | pbcopy
 	exit 0
 fi
 
@@ -124,11 +131,18 @@ if [ "$WORKSPACE" == "" ]; then
 	echo "(Only because you didn't run from within ~/workspace/<client>)"
 	read -p "Specify Atlassian subdomain: " WORKSPACE
 fi
+
+OUTPUT=""
 if [ "$MARKDOWN" == "true" ]; then
-	echo "[$TICKET](https://$WORKSPACE.atlassian.net/browse/$TICKET)"
+	OUTPUT="[$TICKET](https://$WORKSPACE.atlassian.net/browse/$TICKET)"
+elif [ "$ORGMODE" == "true" ]; then
+	OUTPUT="[[https://$WORKSPACE.atlassian.net/browse/$TICKET][$TICKET]]"
 else
-	echo "https://$WORKSPACE.atlassian.net/browse/$TICKET"
+	OUTPUT="https://$WORKSPACE.atlassian.net/browse/$TICKET"
 fi
+
+echo $OUTPUT
+echo $OUTPUT | pbcopy
 
 if [ "$OPEN" == "true" ]; then
 	open "https://$WORKSPACE.atlassian.net/browse/$TICKET"
