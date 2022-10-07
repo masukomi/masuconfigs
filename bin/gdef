@@ -15,12 +15,12 @@
 WHAT=$1
 
 if [ "$WHAT" == "" ]; then
-	echo "USAGE: gdef <method_name> <path>"
-	echo "   - \"method_name\" is the name of the method you are looking for."
+	echo "USAGE: gdef <method_name> [path]"
+	echo "   method_name: the name of the method you are looking for."
 	echo "     It can also be just the initial portion of the method name."
-	echo "   - \"path\" is the path to the dir you want to search under."
+	echo "   path: the path to the dir you want to search under."
 	echo "     path defaults to the current directory."
-	exit 1
+	exit 0
 fi
 
 WHERE=$2
