@@ -12,7 +12,10 @@ TAG="$1"
 
 git tag -d "$TAG"
 if [ $? -ne 0 ]; then
-	exit 1
+	echo "USAGE: git delete-tag <tag>"
+	echo "       This will delete it locally, and preset you"
+	echo "       with the option of deleting it in the remote too."
+	exit 0
 fi
 
 echo "Delete from remote repo too?"
