@@ -12,18 +12,19 @@
 # https://github.com/charmbracelet/gum
 #
 function usage () {
-	echo "USAGE: gh-url [-o | -l line-num] path/to/file/in/repo
+    echo "USAGE: gh-url [-o | -l line-num | -b branch] path/to/file/in/repo
        -o open in browser
        -l line number to link directly to
+       -b branch defaults to current branch
 ";
 }
 function clear_last_line () {
-	echo -en "\e[1A\e[K" ;printf "\r"
+    echo -en "\e[1A\e[K" ;printf "\r"
 }
 
 if [ $# -eq 0 ]; then
-	usage
-	exit 1;
+    usage
+    exit 1;
 fi
 
 command -v gum > /dev/null
@@ -36,21 +37,20 @@ https://github.com/charmbracelet/gum"
 fi
 
 LINE=""
-while getopts "hol:" opt; do
+while getopts "hol:b:" opt; do
   case $opt in
     h)
       usage
-      exit 1
+      exit 0
       ;;
-	o)
-	  OPEN="true"
-	  ;;
+    o)
+      OPEN="true"
+      ;;
     l)
       LINE=$OPTARG
       ;;
-    \?)
-      usage
-      exit 1
+    b)
+      BRANCH=$OPTARG
       ;;
   esac
 done
@@ -59,6 +59,8 @@ LOCAL_PATH=${@: -1}
 if [ "$LOCAL_PATH" == "" ]; then
 	usage
 	exit 1
+else
+  LOCAL_PATH=$(echo "$LOCAL_PATH" | sd "^\./" "")
 fi
 
 REMOTES=$(git remote)
@@ -84,8 +86,11 @@ fi
 
 # strip the trailing .git & replace with /blob/
 REMOTE_URL=$(echo $REMOTE_URL | sed -e 's/\.git$/\/blob\//')
-
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ "$BRANCH" != "" ]; then
+  CURRENT_BRANCH="$BRANCH"
+else
+  CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+fi
 
 # https://github.com/blob/<current_branch>/<path_to_file>
 
@@ -97,37 +102,37 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 CURRENT_DIR=$(pwd)
 
 if [ "$CURRENT_DIR" == "$REPO_ROOT" ]; then
-	# we're in the root, so the path they gave us is the full path
-	FULL_URL="$REMOTE_URL"$CURRENT_BRANCH"/"$LOCAL_PATH;
+    # we're in the root, so the path they gave us is the full path
+    FULL_URL="$REMOTE_URL"$CURRENT_BRANCH"/"$LOCAL_PATH;
 else
-	# we need the dirs between REPO_ROOT & CURRENT_DIR
-	# REPO_ROOT: /Users/foo/bar
-	# CURRENT_DIR      : /Users/foo/bar/baz/beedle
-	# NEEDED                   /baz/beedle
-	#
-	# NOTE: this will start with a slash
+    # we need the dirs between REPO_ROOT & CURRENT_DIR
+    # REPO_ROOT: /Users/foo/bar
+    # CURRENT_DIR      : /Users/foo/bar/baz/beedle
+    # NEEDED                   /baz/beedle
+    #
+    # NOTE: this will start with a slash
     MISSING_DIRS=${CURRENT_DIR#"$REPO_ROOT"}
-	FULL_URL="$REMOTE_URL"$CURRENT_BRANCH"$MISSING_DIRS/"$LOCAL_PATH;
+    FULL_URL="$REMOTE_URL"$CURRENT_BRANCH"$MISSING_DIRS/"$LOCAL_PATH;
 fi
 
 if [ "$LINE" != "" ]; then
-	# let's make sure the file has that many lines
-	LINE_COUNT=$(wc -l < $LOCAL_PATH | sed -e "s/ //g")
-	if [ $LINE_COUNT -lt $LINE ]; then
-		echo "That file only has $LINE_COUNT lines."
-		echo "You indicated I should linke to line $LINE."
-		INSTRUCTIONS=$(gum choose "continue" "don't specify line" "exit")
-		clear_last_line
-		clear_last_line
-		if [ "$INSTRUCTIONS" == "exit" ]; then
-			exit 0;
-		elif [ "$INSTRUCTIONS" == "continue" ]; then
-			FULL_URL="$FULL_URL#L$LINE";
-		# else don't alter the url
-		fi
-	else
-		FULL_URL="$FULL_URL#L$LINE"
-	fi
+    # let's make sure the file has that many lines
+    LINE_COUNT=$(wc -l < $LOCAL_PATH | sed -e "s/ //g")
+    if [ $LINE_COUNT -lt $LINE ]; then
+        echo "That file only has $LINE_COUNT lines."
+        echo "You indicated I should linke to line $LINE."
+        INSTRUCTIONS=$(gum choose "continue" "don't specify line" "exit")
+        clear_last_line
+        clear_last_line
+        if [ "$INSTRUCTIONS" == "exit" ]; then
+            exit 0;
+        elif [ "$INSTRUCTIONS" == "continue" ]; then
+            FULL_URL="$FULL_URL#L$LINE";
+        # else don't alter the url
+        fi
+    else
+        FULL_URL="$FULL_URL#L$LINE"
+    fi
 
 fi
 
