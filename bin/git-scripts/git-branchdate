@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 
-for branch in `git branch --no-color 2> /dev/null | sed -E 's/^.{2}//'`; do 
+# Usage: git branchdate
+# Lists the date of the last commit of each branch
+
+for branch in `git branch --no-color 2> /dev/null | sed -E 's/^.{2}//'`; do
 	printf "%s %s %s" \
 		$(git log $branch -n 1 --format="%Cgreen%ci%Creset" $branch ) \
 		$branch $CURRENT_INDICATOR\
