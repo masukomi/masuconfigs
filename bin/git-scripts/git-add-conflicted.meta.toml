@@ -1,0 +1,33 @@
+# a template for `clu` toml files
+
+
+# the name of the command or function you're documenting
+name="git-add-conflicted"
+# a short (one line) description of what it does
+description="runs git add on any unmerged (conflicting) files"
+# if the tool has some sort of usage / help documentation you can
+# invoke, enter it in the usage_command. Otherwise, comment that out,
+# and document it in the fallback_usage. In TOML you can create a
+# multiline string by surrounding it with triple double quotes.
+# """ like this """
+#usage_command=""
+fallback_usage="""
+USAGE: git add-conflicted
+       Adds any unmerged (conflicting) files to the index."""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="ttps://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/git-add-conflicted"
+# where you can find the repo that contains this file
+source_repo_url="ttps://github.com/masukomi/masuconfigs"
+
+# [[cheats]]
+# [[cheats.bar]]
+# description = "a description of task bar with backtrace_details"
+# template="bar {{arg1}} {{arg2}}"
+# [[cheats.baz]]
+# description = "a description of task baz with backtrace_details"
+# template="bar {{arg1}} {{arg2}}"
