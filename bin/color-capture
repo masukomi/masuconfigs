@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+if [ $# -eq 0 ]; then
+	echo "USAGE: color-capture <command that produces color>"
+	echo "       Allows you to pipe a script without having its color escape codes stripped"
+	echo "       Example: capture the color of git log output"
+	echo "                and pipe that to oho"
+	echo "       color-capture git log --stat -n 4 | oho"
+	exit 0
+fi
+
+script -q /dev/null $@
