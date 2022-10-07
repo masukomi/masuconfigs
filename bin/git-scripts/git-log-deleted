@@ -2,8 +2,8 @@
 
 FILE=$1
 if [ "$FILE" == "" ]; then
-	echo "please supply a path to the delete file you want a log of"
-	exit 64
+	echo "Usage: please supply a path to the deleted file you want a log of"
+	exit 0
 fi
 
 git log --stat --all --full-history -- "$FILE"
