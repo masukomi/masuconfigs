@@ -6,10 +6,11 @@
 if [ $# -eq 0 ]; then
 	echo "double grep"
 	echo ""
-	echo "Usage: dgrep <search_term> <2nd search term> <where>"
+	echo "Usage: dgrep <search_term> <2nd search term> [where]"
 	echo "       or"
-	echo "       echo "foo bar baz" | dgrep <search_term> <2nd search term>"
-	exit 1
+	echo "       cat some-file.txt | dgrep <search_term> <2nd search term>"
+	echo "       Where is a path that defaults to the current directory"
+	exit 0
 fi
 if [[ -t 0 ]]; then
 	WHERE="*"
