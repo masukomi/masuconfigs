@@ -5,60 +5,96 @@
 # and it will make the treeishes into links :)
 
 require 'tempfile'
+require 'optparse'
+
 def get_commits_for_author(author, file)
-	commits = `git log --follow --pretty=format:'%h %ad %d %s' --date=short --author "#{author}" #{file}`.split(/\n/)
+  commits = `git log --follow --pretty=format:'%h %ad %d %s' --date=short --author "#{author}" #{file}`.split(/\n/)
 end
 
 def get_repo_url()
-	url = `git config --get github.repoWebUrl`
-	url.sub!(/\/$/, '')
-	url.size > 0 ? url : nil
+  url = `git config --get github.repoWebUrl`
+  url.sub!(/\/$/, '')
+  url.size > 0 ? url : nil
 end
 
 def get_numbers_and_authors(lines)
-	numbers_and_authors = []
-	lines.each do | l |
-		cleaned = l.strip
-		next unless cleaned.length > 0
-		items = cleaned.split(/\s+/)
-		num = items[0].to_i
-		name = items[1..-1].join(' ')
-		numbers_and_authors.push( [num, name] )
-	end
-	numbers_and_authors
+  numbers_and_authors = []
+  lines.each do | l |
+    cleaned = l.strip
+    next unless cleaned.length > 0
+    items = cleaned.split(/\s+/)
+    num = items[0].to_i
+    name = items[1..-1].join(' ')
+    numbers_and_authors.push( [num, name] )
+  end
+  numbers_and_authors
 end
 
 def load_commit_info(numbers_and_authors, file)
-	$stderr.puts("loading commits for #{numbers_and_authors.count} authors")
-	new_numbers_and_authors = []
-	numbers_and_authors.each_with_index do | arr, idx |
-		$stderr.putc('.')
-		commits = get_commits_for_author( arr[1], file )
-		new_numbers_and_authors.push([arr[0], arr[1], commits])
-	end
-	$stderr.puts("")
-	new_numbers_and_authors
+  $stderr.puts("loading commits for #{numbers_and_authors.count} authors")
+  new_numbers_and_authors = []
+  numbers_and_authors.each_with_index do | arr, idx |
+    $stderr.putc('.')
+    commits = get_commits_for_author( arr[1], file )
+    new_numbers_and_authors.push([arr[0], arr[1], commits])
+  end
+  $stderr.puts("")
+  new_numbers_and_authors
 end
 
 def get_lines(file)
-	if File.exist?(file)
-		lines = `git log --follow #{file} | git shortlog -sn #{file}`.split("\n")
-	else
-		lines = []
-	end
+  if File.exist?(file)
+    lines = `git log --follow #{file} | git shortlog -sn #{file}`.split("\n")
+  else
+    lines = []
+  end
 end
 
 def write_to_tempfile(output)
-	t = Tempfile.new("git_who_f")
-	t.write(output)
-	t.close()
+  t = Tempfile.new("git_who_f")
+  t.write(output)
+  t.close()
 
-	`fenestro -p #{t.path} -n "git_who"`
-	t.unlink()
+  `fenestro -p #{t.path} -n "git_who"`
+  t.unlink()
 end
 ############################################################
+
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: example.rb [options]"
+
+  opts.on("-h", "--html", "HTML formats the output") do
+    options[:html] = true
+  end
+
+  opts.on("-o", "--output output", "write to a file") do |output|
+    options[:output] = output
+  end
+end.parse!
+
+if ARGV.size == 0
+  puts "USAGE: git-who <path/to/file> [-h|--html] [-o file]"
+  puts "       Outputs a list of people who've worked on a file sorted by commits"
+  puts "       -h / --html html formatted"
+  puts "       -o / --output writes the output to a file"
+  puts "       If you specify -s or -o then HTML will be printed to STDOUT"
+  exit 0
+end
+
 file=ARGV[0]
-stdout=ARGV[1].nil? ? false : true
+
+if ! options[:html]
+  #TODO capture the exit code and exit with whatever it returned
+  git_output=`git shortlog -sn -- #{file}`
+  if ! options[:output]
+    puts git_output
+  else
+    open(options[:output], 'w') { |f| f.puts git_output }
+  end
+  exit 0
+end
 
 
 output = ""
@@ -68,12 +104,11 @@ numbers_and_authors = get_numbers_and_authors(lines)
 
 numbers_and_authors = load_commit_info(numbers_and_authors, file)
 sum = numbers_and_authors.map{|arr| arr[0]}.reduce(:+)
-
 header=<<EOL
-	<html>
-		<head>
-			<title>git who</title>
-			<style>
+  <html>
+    <head>
+      <title>git who</title>
+      <style>
 *, *:before, *:after {
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
  }
@@ -147,54 +182,54 @@ h2, .heading {
 }
 
 tt {
-	background: white;
-	padding: 0.2rem;
-	margin-top: 0.5rem;
-	display: inline-block;
-	border-radius: 0.25rem;
+  background: white;
+  padding: 0.2rem;
+  margin-top: 0.5rem;
+  display: inline-block;
+  border-radius: 0.25rem;
 }
 .author{
-	white-space: nowrap;
-	padding-left: 1rem;
+  white-space: nowrap;
+  padding-left: 1rem;
 }
 .heading{
-	font-size: 2rem;
-	font-weight: bold;
+  font-size: 2rem;
+  font-weight: bold;
 }
 .commits{
-	display: none;
-	font-family: monospace;
+  display: none;
+  font-family: monospace;
 }
 .commits ul {
-	margin-bottom: 0px;
+  margin-bottom: 0px;
 }
 .treeish{
-	white-space: pre;
+  white-space: pre;
 }
 input[type=checkbox] {
-	display: none;
+  display: none;
 }
 input[type=checkbox]:checked ~ .commits {
-	display: inline-block;
+  display: inline-block;
 }
-			</style>
+      </style>
 
-		</head>
-		<body>
-			<div class="heading">
-				#{sum} Commits on
-				<br /><tt class="rounded">#{file}</tt>
-				#{error_message}
-			</div>
-			<div class="container horizontal rounded">
+    </head>
+    <body>
+      <div class="heading">
+        #{sum} Commits on
+        <br /><tt class="rounded">#{file}</tt>
+        #{error_message}
+      </div>
+      <div class="container horizontal rounded">
 EOL
 
 output += header
 
 numbers_and_authors.sort_by{|arr|arr[0]}.reverse.each do | arr |
-	num = arr[0]
-	percent = (100*num/sum)
-	id= "#{arr[0]}-#{arr[1].gsub(/\s+/, '_')}"
+  num = arr[0]
+  percent = (100*num/sum)
+  id= "#{arr[0]}-#{arr[1].gsub(/\s+/, '_')}"
 bar=<<EOL
   <div>
   <input type="checkbox" id="#{id}">
@@ -209,35 +244,35 @@ bar=<<EOL
   </div>
   </label>
 EOL
-	output += bar
-	commits = arr[2]
-	repo_url = get_repo_url()
-	if repo_url.nil?
-		commits = commits.map{|c|c.strip.sub(/^(\w+)/, "<span class='treeish'>\\1</span>")}
-	else
-		commits = commits.map{|c|c.strip.sub(/^(\w+)/, "<a class='treeish' href='#{repo_url}/commit/\\1'>\\1</a>")}
-	end
-	output +=<<EOL
-		<div class='commits'>
-			<ul>
-				<li>#{commits.join("</li><li>")[0..-5]}
-			</ul>
-		</div>
-	</div>
+  output += bar
+  commits = arr[2]
+  repo_url = get_repo_url()
+  if repo_url.nil?
+    commits = commits.map{|c|c.strip.sub(/^(\w+)/, "<span class='treeish'>\\1</span>")}
+  else
+    commits = commits.map{|c|c.strip.sub(/^(\w+)/, "<a class='treeish' href='#{repo_url}/commit/\\1'>\\1</a>")}
+  end
+  output +=<<EOL
+    <div class='commits'>
+      <ul>
+        <li>#{commits.join("</li><li>")[0..-5]}
+      </ul>
+    </div>
+  </div>
 EOL
 end
 $stderr.puts("\n")
 footer=<<EOL
-			</div>
-		</body>
-	</html>
+      </div>
+    </body>
+  </html>
 EOL
 
 output += footer
 
-if ! stdout 
-	write_to_tempfile(output)
+if options[:output]
+    open(options[:output], 'w') { |f| f.puts output }
 else
-	puts output
+    puts output
 end
 
