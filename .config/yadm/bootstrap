@@ -24,17 +24,6 @@ fi
 #if [ "$system_type" = "Darwin" ]; then
 
 
-function mayclone(){
-	#$1 = base dir
-	#$2 = repo
-	basedir=$1
-	mkdir -p $basedir
-	subdir=$(basename $2 | sed -e "s/\.git//")
-	if [ ! -d "$basedir/$subdir" ]; then
-		git clone $2 $basedir/$subdir
-	fi
-}
-
 function is_installed(){
 	hash $1 >/dev/null 2>&1
 	# if [ $? -eq 0 ] && [ "$(which go)" != "" ]; then
@@ -61,30 +50,38 @@ fi
 
 
 mkdir -p "~/workspace"
-# set up git-rook
-# * lets me have multiple scripts executed per git hook
-# * gives me a post-init functionality that'll set up a file with
-#   a .vimrc that has just the plugins for this project
-mayclone ~/workspace "git@github.com:masukomi/git-rook.git"
-if [ ! -h ~/bin/git-rook ];then
-	ln -s ~/workspace/git-rook/git-rook ~/bin/git-rook
-fi
 
 if ! is_installed "brew"; then
 	/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 	# sudo ln -s $(brew --cellar) /usr/local/Cellar
 fi
 
+#### BEGIN PACKAGE MANAGER LOADING
+read -p "clone git repos? [y/n]
+" clone_gits
+if [ "$clone_gits" == "y" ]; then
+	if [ -e $HOME/.config/yadm/git-bootstrap ]; then
+	$HOME/.config/yadm/git-bootstrap
+	fi
+fi
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-	# Mac OSX
+read -p "install homebrew stuff? [y/n]
+" homebrew_installs
+if [ "$homebrew_installs" == "y" ]; then
+	if [ -e $HOME/.config/yadm/homebrew-bootstrap ]; then
+	$HOME/.config/yadm/homebrew-bootstrap
+	fi
+fi
+#### END PACKAGE MANAGER LOADING
+
+
+
+
+
 read -p "(re)run homebrew installs? [y/n]
 " rerun_homebrew
-	if [ "$rerun_homebrew" == "y" ]; then
-		source "$HOME/.config/yadm/brews.sh"
-	fi
-else
-	echo "Hey! You should create a brews.sh equivalent for $OSTYPE"
+if [ "$rerun_homebrew" == "y" ]; then
+	source "$HOME/.config/yadm/homebrew-bootstrap"
 fi
 
 #####
@@ -164,50 +161,6 @@ fi
 mkdir -p ~/workspace/reference
 mkdir -p ~/.vim-tmp
 mkdir -p ~/go/bin #because... fuck you go.
-
-mayclone ~/workspace "git@github.com:kerma/defaultbrowser.git"
-# MASUKOMI REPOS
-mayclone ~/workspace "git@github.com:masukomi/cleandiff.git"
-if [ ! -d ~/workspace/rtest ]; then
-	mayclone ~/workspace "git@github.com:masukomi/rtest.git"
-	ln -s ~/workspace/rtest/rtest ~/bin/rtest > /dev/null
-fi
-if [ ! -d ~/workspace/private_comments ]; then
-	mayclone ~/workspace "git@github.com:masukomi/private_comments.git"
-	ln -s ~/workspace/private_comments/bin/private_comments ~/bin/private_comments > /dev/null
-fi
-if [ ! -d ~/workspace/gpup ]; then
-	mayclone ~/workspace "git@github.com:masukomi/gpup.git"
-	ln -s ~/workspace/gpup/gpup ~/bin/gpup > /dev/null
-	ln -s ~/workspace/gpup/gpud ~/bin/gpud > /dev/null
-fi
-mayclone ~/workspace "git@github.com:masukomi/git-status-report.git"
-mayclone ~/workspace "git@github.com:masukomi/git_accessories.git"
-#^^ requires secondary commands AFTER xcode is installed
-
-mkdir -p ~/workspace/reference/c
-if [ ! -d ~/workspace/reference/c/yajl ]; then
-	mayclone ~/workspace/reference/c "git@github.com:lloyd/yajl.git"
-	# A fast streaming JSON parsing library in C. http://lloyd.github.com/yajl
-	cd ~/workspace/reference/c/yajl
-	./configure && make install
-fi
-cd ~/
-
-
-# install Cask https://github.com/cask/cask
-# the Private Comments Mode bulid script needs this
-# Cask simplifies sandboxing for emacs developers
-if [ ! -d ~/workspace/reference/emacs/cask ]; then
-	echo "installing emacs cask"
-	mkdir -p ~/workspace/reference/emacs
-	cd ~/workspace/reference/emacs
-	git clone https://github.com/cask/cask
-	cd cask
-	make install
-	make install # i don't understand why, but whatever
-	cd ~/
-fi
 
 
 echo "Setting iTerm preference folder"

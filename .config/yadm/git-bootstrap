@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+
+
+function mayclone(){
+	basedir=$1
+	url=$2
+	subdir=$(repo_name $url)
+	if [[ $(is_cloned $basedir $url) == "false" ]] ; then
+		echo "wasn't cloned"
+		mkdir -p $basedir
+		clone $basedir $url
+	else
+		echo "skipping $url - already installed"
+	fi
+}
+
+function is_cloned(){
+	basedir=$1
+	url=$2
+	subdir=$(repo_name "$url")
+	if [ -d "$basedir/$subdir/.git" ]; then
+		echo true
+	else
+		echo false
+	fi
+}
+
+function clone(){
+	basedir=$1
+	url=$2
+	subdir=$(repo_name $url)
+	echo "clone: basedir: $basedir subdir: $subdir url: $url"
+	git clone $url "$basedir/$subdir"
+}
+
+function repo_name(){
+	url=$1
+	echo $(basename $url | sed -e "s/\.git//")
+}
+
+###########
+# actual clones / installs
+
+for url in git@github.com:masukomi/rtest.git git@github.com:masukomi/private_comments.git git@github.com:masukomi/gpup.git; do
+	if [[ $(is_cloned ~/workspace $url) == "false" ]] ; then
+		repo_name=$(repo_name $url)
+		mayclone ~/workspace $url
+		ln -s ~/workspace/private_comments/bin/$repo_name ~/bin/$repo_name 2&>1 > /dev/null
+	fi
+done
+
+ln -s ~/workspace/gpup/bin/gpud ~/bin/gpud 2&>1 > /dev/null
+mayclone ~/workspace git@github.com:masukomi/cleandiff.git
+mayclone ~/workspace git@github.com:masukomi/git-status-report.git
+mayclone ~/workspace git@github.com:masukomi/git_accessories.git
+
+
+yajl_url="git@github.com:lloyd/yajl.git"
+if [[ $(is_cloned ~/workspace/reference/c $yajl_url) == "false" ]] ; then
+	mayclone ~/workspace/reference/c $yajl_url
+	cd ~/workspace/reference/c/yajl
+	./configure && make install
+	cd ~/
+fi
+
+cask_url="https://github.com/cask/cask"
+if [[ $(is_cloned ~/workspace/reference/emacs $cask_url) == "false" ]] ; then
+	mayclone ~/workspace/reference/emacs $cask_url
+	cd ~/workspace/reference/emacs/cask
+	make install
+	make install # i don't understand why, but whatever
+	cd ~/
+fi
+
+mayclone ~/workspace "git@github.com:kerma/defaultbrowser.git"
