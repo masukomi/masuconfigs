@@ -7,16 +7,18 @@
 # requires Charm's Gum
 # https://github.com/charmbracelet/gum
 
-git fetch --tags --all
-TAG="$1"
-
-git tag -d "$TAG"
-if [ $? -ne 0 ]; then
+if [ $# -ne 1 ]; then
 	echo "USAGE: git delete-tag <tag>"
 	echo "       This will delete it locally, and preset you"
 	echo "       with the option of deleting it in the remote too."
 	exit 0
 fi
+
+
+git fetch --tags --all
+TAG="$1"
+
+git tag -d "$TAG"
 
 echo "Delete from remote repo too?"
 CHOICE=$(gum choose "yes" "no")
