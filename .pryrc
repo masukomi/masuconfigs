@@ -1,12 +1,8 @@
-
-# dry-struct compensators
-def struct_attrs(struct)
-  struct.attributes
+work_specific_file="#{ENV['HOME']}/.pryrc_work"
+if File.file? work_specific_file
+  load work_specific_file
 end
 
-def struct_keys(struct)
-  struct.attributes.keys
-end
 
 def helpme
   usage=<<~END
@@ -27,7 +23,7 @@ def helpme
 end
 
 def backtrace(exception, lines = 10)
-  return "that's not an exception" unless e.is_a? Exception
+  return "that's not an exception" unless exception.is_a? Exception
   e.backtrace[..lines].each{|b| puts b }
 end
 

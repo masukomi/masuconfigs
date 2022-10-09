@@ -3,15 +3,11 @@
 # key: worklog
 # --
 
+- [started]
 - [created]
-  -
 - [merged]
-  -
 - [closed]
-  -
 - [blocked]
-  -
 - [waiting]
-  -
+- [in progress]
 - [other]
-  -
