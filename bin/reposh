@@ -4,8 +4,19 @@
 # that they work on arm and intel macs
 #
 
-oh-my-posh init fish --config ~/.config/fish/current_theme.omp.json \
+shell=${1:=fish}
+if [ "$shell" == "fish" ]; then
+	echo "reposhing for $shell"
+oh-my-posh init $shell --config ~/.config/$shell/current_theme.omp.json \
 	| sed -e "s/'.*\/bin\/oh-my-posh'/PREFIX=\(brew --prefix\) \"\$PREFIX\/bin\/oh-my-posh\"/" \
 		-e "s/$USER/\$USER/" \
 		-e "s/POSH_THEME '\(.*\)'/POSH_THEME \"\1\"/" \
-	> ~/.config/fish/current_theme.fish
+	> ~/.config/$shell/current_theme.fish
+else
+	echo "reposhing for $shell"
+oh-my-posh init $shell --config ~/.config/$shell/current_theme.omp.json \
+	| sed -e "s/'.*\/bin\/oh-my-posh'/PREFIX=\$\(brew --prefix\) \"\$PREFIX\/bin\/oh-my-posh\"/" \
+		-e "s/$USER/\$USER/" \
+		-e "s/POSH_THEME '\(.*\)'/POSH_THEME \"\1\"/" \
+	> ~/.config/$shell/current_theme.sh
+fi
