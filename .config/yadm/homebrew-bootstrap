@@ -78,6 +78,10 @@ maybrew "charmbracelet/tap/gum"
 # http://www.andre-simon.de/doku/ansifilter/ansifilter.html
 maybrew 'ansifilter'
 
+# Record and share terminal sessions
+# https://asciinema.org
+maybrew 'asciinema'
+
 # https://github.com/asdf-vm/asdf
 # Manage multiple runtime versions with a single CLI tool, extendable via plugins
 if ! is_installed "asdf"; then

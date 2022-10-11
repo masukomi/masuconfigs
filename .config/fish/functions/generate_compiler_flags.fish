@@ -12,6 +12,11 @@ brew info readline | grep "set -gx " | sed -e "s/^ *//" -e 's/$/;/' \
 echo "openssl..."
 brew info openssl | egrep "set -gx |fish_add_path" | sed -e "s/^ *//" -e 's/^\(.*\) \([^[:space:]]*\) "/\1 \2 "$\2 /' -e 's/$/;/' \
 	>> ~/.config/fish/compiler_flags.fish
+
+echo "openssl3..."
+brew info openssl@3 | egrep "set -gx |fish_add_path" | sed -e "s/^ *//" -e 's/^\(.*\) \([^[:space:]]*\) "/\1 \2 "$\2 /' -e 's/$/;/' \
+	>> ~/.config/fish/compiler_flags.fish
+
 # and llvm
 echo "llvm..."
 brew info llvm | egrep "set -gx |fish_add_path" | sed -e "s/^ *//" -e 's/^\(.*\) \([^[:space:]]*\) "/\1 \2 "$\2 /' -e 's/$/;/' \
