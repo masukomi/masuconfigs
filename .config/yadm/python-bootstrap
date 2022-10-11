@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+
+function is_installed(){
+	hash $1 >/dev/null 2>&1
+	# if [ $? -eq 0 ] && [ "$(which go)" != "" ]; then
+	if [ $? -eq 0 ]; then
+		true
+	else
+		false
+	fi
+}
+
+if ! is_installed "python3"; then
+	brew install python3
+fi
+
+# https://www.geeksforgeeks.org/how-to-install-pip-in-macos/
+if ! is_installed "pip"; then
+	curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+	python3 get-pip.py 2&>1 > pip_install_output.txt
+	#   WARNING: The scripts pip, pip3 and pip3.9 are installed in '/Users/masukomi/Library/Python/3.9/bin' which is not on PATH.
+	grep "WARNING:.*is not on PATH" pip_install_output.txt
+	# pip3 is prolly on the path /usr/bin/pip3
+	# but pip isn't
+	if [ $? -eq 0 ]; then
+		FOLDER=$(cat pip_install_output.txt  | sd ".*?'(.*?)'.*" '$1' | sd "$HOME" '~')
+		echo "The following folder is not on your path. "
+		echo "$FOLDER"
+		echo "It contains: "
+		ls "$FOLDER"
+		echo ""
+		read -p "Shall I add it? [y/n]
+		" add_path
+		if [ "$add_path" == "y" ]; then
+			# adding it to the current session so that we'll at least
+			# have pip access for the rest of this file
+			PATH=$PATH:$FOLDER
+
+			read -p "To fish? [y/n]
+			" add_to_fish
+			if [ "$add_to_fish" == "y" ]; then
+				echo "fish_add_path -g -a $FOLDER" >> ~/.config/fish/config.fish
+			fi
+			read -p "To bash? [y/n]
+			" add_to_bash
+			if [ "$add_to_bash" == "y" ]; then
+				echo "PATH=\$PATH:$FOLDER" >> ~/.bashrc
+			fi
+		fi
+	fi
+	rm -rf get-pip.py
+	python3 -m pip install --upgrade pip
+fi
+
+if ! is_installed 'itsalive'; then
+	pip install itsalive
+fi

@@ -138,6 +138,7 @@ fish_add_path -g -a $HOME/bin/work
 fish_add_path -g -p $HOME/.local/bin # haskell stuff installed with Stack
 # we're prepending this in case the homebrew version is installed
 fish_add_path /usr/local/opt/mongodb-community@4.2/bin
+fish_add_path -g -a $HOME/Library/Python/3.9/bin
 
 
 set CELLAR (brew --cellar)

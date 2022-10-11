@@ -69,7 +69,17 @@ read -p "install homebrew stuff? [y/n]
 " homebrew_installs
 if [ "$homebrew_installs" == "y" ]; then
 	if [ -e $HOME/.config/yadm/homebrew-bootstrap ]; then
-	$HOME/.config/yadm/homebrew-bootstrap
+		$HOME/.config/yadm/homebrew-bootstrap
+	fi
+fi
+
+# python needs to come after homebrew
+# because i use `sd` in python-bootstrap which comes from homebrew
+read -p "install python stuff? [y/n]
+" python_installs
+if [ "$python_installs" == "y" ]; then
+	if [ -e $HOME/.config/yadm/python-bootstrap ]; then
+		$HOME/.config/yadm/python-bootstrap
 	fi
 fi
 #### END PACKAGE MANAGER LOADING
