@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+# requires Charm's Gum
+# https://github.com/charmbracelet/gum
+function usage() {
+	echo "USAGE: git link-to-commit <treeish>"
+	echo "       this will link to the specified treeish in "
+	echo "       GitHub or GitLab"
+	exit 0
+}
+if [ $# -ne 1 ]; then
+  usage
+fi
+
+if [ $1 == "-h" ]; then
+	usage
+fi
+
+TREEISH=$1
+num_repos=$(git remote -vv | grep --color=none "(fetch)" | wc -l)
+
+if [ $num_repos -eq 0 ]; then
+	echo "This has no remotes. Please configure a git remote"
+	exit 1
+fi
+CHOSEN_REPO="NONE";
+if [ $num_repos -eq 1 ]; then
+	CHOSEN_REPO=$(git remote -vv | grep --color=none "(fetch)" | awk '{ print $2 }')
+else
+	echo "Which Remote?"
+	REMOTE_NAME=$(gum choose  $(git remote))
+	# clear the question
+	echo -en "\e[1A\e[K" ;printf "\r"
+	CHOSEN_REPO=$(git remote -vv | grep --color=none "$REMOTE_NAME.*(fetch)" | awk  '{ print $2 }')
+fi
+# oddly hub and lab both have 3 letters. thus ...
+OWNER_AND_REPO=$(echo $CHOSEN_REPO | sed -e "s/.*git...\.com.//" -e "s/\.git//")
+if [[ $(echo $CHOSEN_REPO | grep --color=none 'github.com') ]]; then
+	# https://github.com/masukomi/postcircumfix-test/tree/9c432d3e0f6e3833968b9ed6679ed73a9680ba4b
+	echo "https://github.com/$OWNER_AND_REPO/tree/$TREEISH"
+elif [[ $(echo $CHOSEN_REPO | grep --color=none 'gitlab.com') ]]; then
+	# https://gitlab.com/masukomi/raku-pretty-table/-/tree/cafb4a97f4cf227fa1971619f2a61401ea0e9db5/
+	echo "https://gitlab.com/$OWNER_AND_REPO/-/tree/$TREEISH"
+else
+	echo "I don't know the linking structure for this remote"
+	echo "$CHOSEN_REPO"
+	exit 1;
+fi
