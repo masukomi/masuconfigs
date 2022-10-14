@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Generate a link to the specified file in GitHub,
+# Generate a link to the specified file / repo  in GitHub or GitLab,
 # and optionally open that link in your browser.
 #
 # Expects you to call it from within a repo.
@@ -16,6 +16,16 @@
 source ~/bin/lib/colors.sh
 function usage () {
     echo "USAGE: git url [-o | -l line-num | -b branch | -r remote] [path/to/file/in/repo]
+
+       Generates a link to:
+       * a specific treeish / branch
+       * a specific treeish / branch in a specific remote
+       * a specific file at a specific treeeish / branch in a specific remote
+       * a specific line in a specific file in a specific treeish / branch in a specific remote
+       * various other combinations of those ;)
+
+       Supports linking to repos in GitHub and GitLab.
+
        -l line number to link directly to
        -o open in browser
        -r specify the remote repo to link to
@@ -23,6 +33,7 @@ function usage () {
           but can be commit hash, tag, etc.
 
        You *must* specify either a path, a treeish, or both.
+
 ";
 }
 function clear_last_line () {
