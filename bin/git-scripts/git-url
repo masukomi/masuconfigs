@@ -55,32 +55,23 @@ https://github.com/charmbracelet/gum"
 fi
 
 LINE=""
-while getopts "hol:t:r:" opt; do
+while getopts "hot:r:l:" opt; do
   case $opt in
     h)
       usage
       exit 0
-      shift
       ;;
     o)
       OPEN="true"
-      shift
-      shift
       ;;
     l)
       LINE=$OPTARG
-      shift
-      shift
       ;;
     t)
       TREEISH=$OPTARG
-      shift
-      shift
       ;;
     r)
       REMOTE=$OPTARG
-      shift
-      shift
       ;;
   esac
 done
@@ -88,7 +79,7 @@ if [ $# -eq 0 ] && [ "$TREEISH" == "" ]; then
 	usage
 	exit 1
 fi
-
+shift $((OPTIND-1))
 LOCAL_PATH=$(echo "$1" | sd "^\./" "")
 
 REMOTE_URL="NONE";
