@@ -1,0 +1,44 @@
+export ASCIINEMA_REC=1
+## REMINDER Launch with SHELL=/opt/homebrew/opt/bash/bin/bash itsalive <path to this>
+rm git-url.cast 2> /dev/null
+## MOVE FAST AFTER THIS
+asciinema rec git-url.cast
+# Let's demonstrate git-url functionality
+# recipes/ob-raku is a file I'm adding to a PR.
+# Note: This supports GitHub and GitLab repos
+
+# Get help by running it with no args
+git url
+
+# Generate a link to a specific file
+git url recipes/ob-raku
+## DEAL WITH MENU
+##@pause
+## THEN ^r to resume
+# If you only have one remote it won't give you a menu.
+# This repo has 2 though:
+git remote
+# You can skip the menu by specifying a remote
+git url -r origin recipes/ob-raku
+# You can link to a specific Line number in the file with -l
+# This file only has 2 lines ;)
+git url -l 1 -r origin recipes/ob-raku
+# git-url will warn you if you've linked to an invalid line number
+git url -l 20 -r origin recipes/ob-raku
+##@pause
+## DEAL WITH MENU. CHOOSE EXIT
+
+# You can link to the file at a specific point in time
+# by specifying a treeish (branch, hash, tag, etc.)
+git log -n1
+## remember to mash then ^e when you get to the hash
+git url -r origin -t 0a7a6b9112251d8a8cf0ee8abc8eab55e6c4c24d recipes/ob-raku
+# OR you can link to a repo at a specific point in time
+# by specifying a treeish without a file path
+git url -r origin -t 0a7a6b9112251d8a8cf0ee8abc8eab55e6c4c24d
+
+## EXIT ASCIINEMA NOW
+##@pause
+## HIT ^d
+## EXIT ITSALIVE NOW
+exit
