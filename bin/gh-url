@@ -8,14 +8,21 @@
 # wherever you are under the repo's root dir.
 #
 # DEPENDENCIES:
-# needs "gum" to be installed.
+# Needs "gum" to be installed.
 # https://github.com/charmbracelet/gum
+# Wants my colors.sh for colorizing output
 #
+#
+source ~/bin/lib/colors.sh
 function usage () {
-    echo "USAGE: gh-url [-o | -l line-num | -b branch] path/to/file/in/repo
+    echo "USAGE: gh-url [-o | -l line-num | -b branch | -r remote] [path/to/file/in/repo]
        -o open in browser
        -l line number to link directly to
-       -b branch defaults to current branch
+       -t treeish  defaults to the current branch name
+          but can be commit hash, tag, etc.
+       -r specify the remote repo to link to
+
+       You *must* specify either a path, a treeish, or both.
 ";
 }
 function clear_last_line () {
@@ -24,12 +31,12 @@ function clear_last_line () {
 
 if [ $# -eq 0 ]; then
     usage
-    exit 1;
+    exit 0;
 fi
 
 command -v gum > /dev/null
 if [ $? -ne 0 ]; then
-	echo "This script requires \"gum\".
+	echo "$RED_PLUS_X This script requires \"gum\". $NOCOLOR
 Please install it and try again.
 
 https://github.com/charmbracelet/gum"
@@ -37,103 +44,184 @@ https://github.com/charmbracelet/gum"
 fi
 
 LINE=""
-while getopts "hol:b:" opt; do
+while getopts "hol:t:r:" opt; do
   case $opt in
     h)
       usage
       exit 0
+      shift
       ;;
     o)
       OPEN="true"
+      shift
+      shift
       ;;
     l)
       LINE=$OPTARG
+      shift
+      shift
       ;;
-    b)
-      BRANCH=$OPTARG
+    t)
+      TREEISH=$OPTARG
+      shift
+      shift
+      ;;
+    r)
+      REMOTE=$OPTARG
+      shift
+      shift
       ;;
   esac
 done
-
-LOCAL_PATH=${@: -1}
-if [ "$LOCAL_PATH" == "" ]; then
+if [ $# -eq 0 ] && [ "$TREEISH" == "" ]; then
 	usage
 	exit 1
+fi
+
+LOCAL_PATH=$(echo "$1" | sd "^\./" "")
+
+REMOTE_URL="NONE";
+if [ "$REMOTE" == "" ]; then
+  REMOTES=$(git remote)
+  if [ $? -ne 0 ]; then
+      echo "This repo has no remotes. Please configure a git remote"
+      exit 1
+  fi
+
+  NUM_REMOTES=$(echo "$REMOTES" | wc -l)
+  if [ $NUM_REMOTES -gt 1 ]; then
+      echo "choose a remote: "
+      REMOTE=$(gum choose $(git remote))
+      clear_last_line
+  else
+      REMOTE=$(git remote)
+  fi
+
+  REMOTE_URL=$(git config --get remote.$REMOTE.url)
+
 else
-  LOCAL_PATH=$(echo "$LOCAL_PATH" | sd "^\./" "")
+  REMOTE_URL=$(git config --get remote.$REMOTE.url)
 fi
 
-REMOTES=$(git remote)
-if [ $? -ne 0 ]; then
-	echo "Run me from within a git repo."
-	exit 1
-fi
-
-NUM_REMOTES=$(echo "$REMOTES" | wc -l)
-if [ $NUM_REMOTES -gt 1 ]; then
-	echo "choose a remote: "
-	REMOTE=$(gum choose $(git remote))
-	clear_last_line
+if [ "$TREEISH" != "" ]; then
+  CURRENT_TREEISH="$TREEISH"
 else
-	REMOTE=$(git remote)
+  CURRENT_TREEISH=$(git rev-parse --abbrev-ref HEAD)
 fi
 
-REMOTE_URL=$(git config --get remote.$REMOTE.url)
+OWNER_AND_REPO=$(echo $REMOTE_URL | sed -e "s/.*git...\.com.//" -e "s/\.git//")
+if [[ $(echo $REMOTE_URL | grep --color=none 'github.com') ]]; then
+  GIT_HUB=1
+elif [[ $(echo $REMOTE_URL | grep --color=none 'gitlab.com') ]]; then
+  GIT_LAB=1
+else
+  echo "$RED_PLUS_X I don't know the linking structure for this remote."$NOCOLOR
+  echo "'$REMOTE_URL'"
+  exit 1;
+fi
 
+# Convert SSH urls to HTTPS
 if [[ "$REMOTE_URL" == *"git@"* ]]; then
-	REMOTE_URL=$(echo "$REMOTE_URL" | sed -e "s/.*:/https:\/\/github.com\//")
+    REMOTE_URL=$(echo "$REMOTE_URL" | sed -e "s/.*@/https:\/\//" -e "s/com:/com\//")
 fi
 
-# strip the trailing .git & replace with /blob/
-REMOTE_URL=$(echo $REMOTE_URL | sed -e 's/\.git$/\/blob\//')
-if [ "$BRANCH" != "" ]; then
-  CURRENT_BRANCH="$BRANCH"
-else
-  CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-fi
 
-# https://github.com/blob/<current_branch>/<path_to_file>
+# NOW, are we linking to a _FILE_ or just a specific commit?
+if [ "$LOCAL_PATH" != "" ]; then
+  # We're linking to a specific file at a specific point in time
 
-# we need the _full_ path to the file, but we may be in a subdirectory of the repo
-# so, step one get the repo root.
-REPO_ROOT=$(git rev-parse --show-toplevel)
+  # Example urls
+  # https://github.com/<owner>/<repo>/blob/<treeish>/<path>#L<line num>
+  # https://gitlab.com/<owner>/<repo>/-/blob/<treeish>/<path>#L<line num>
 
-# now the current directory
-CURRENT_DIR=$(pwd)
 
-if [ "$CURRENT_DIR" == "$REPO_ROOT" ]; then
-    # we're in the root, so the path they gave us is the full path
-    FULL_URL="$REMOTE_URL"$CURRENT_BRANCH"/"$LOCAL_PATH;
-else
-    # we need the dirs between REPO_ROOT & CURRENT_DIR
-    # REPO_ROOT: /Users/foo/bar
-    # CURRENT_DIR      : /Users/foo/bar/baz/beedle
-    # NEEDED                   /baz/beedle
-    #
-    # NOTE: this will start with a slash
-    MISSING_DIRS=${CURRENT_DIR#"$REPO_ROOT"}
-    FULL_URL="$REMOTE_URL"$CURRENT_BRANCH"$MISSING_DIRS/"$LOCAL_PATH;
-fi
+  # strip the trailing .git & replace with /blob/
+  if [ $GIT_HUB -eq 1 ]; then
+    REMOTE_URL=$(echo $REMOTE_URL | sed -e 's/\.git$/\/blob\//')
+  else # GIT_LAB
+    REMOTE_URL=$(echo $REMOTE_URL | sed -e 's/\.git$/\/-\/blob\//')
+  fi
 
-if [ "$LINE" != "" ]; then
-    # let's make sure the file has that many lines
-    LINE_COUNT=$(wc -l < $LOCAL_PATH | sed -e "s/ //g")
-    if [ $LINE_COUNT -lt $LINE ]; then
-        echo "That file only has $LINE_COUNT lines."
-        echo "You indicated I should linke to line $LINE."
-        INSTRUCTIONS=$(gum choose "continue" "don't specify line" "exit")
-        clear_last_line
-        clear_last_line
-        if [ "$INSTRUCTIONS" == "exit" ]; then
-            exit 0;
-        elif [ "$INSTRUCTIONS" == "continue" ]; then
-            FULL_URL="$FULL_URL#L$LINE";
-        # else don't alter the url
+  # we need the _full_ path to the file, from the repo's root
+  # but we may be in a subdirectory of the repo
+  # so, step 1: get the repo root.
+  REPO_ROOT=$(git rev-parse --show-toplevel)
+
+  # now the current directory
+  CURRENT_DIR=$(pwd)
+
+  if [ "$CURRENT_DIR" == "$REPO_ROOT" ]; then
+      # we're in the root, so the path they gave us is the full path
+      FULL_URL="$REMOTE_URL"$CURRENT_TREEISH"/"$LOCAL_PATH;
+  else
+      # we need the dirs between REPO_ROOT & CURRENT_DIR
+      # REPO_ROOT:   /Users/foo/bar
+      # CURRENT_DIR: /Users/foo/bar/baz/beedle
+      # NEEDED:                    /baz/beedle
+      #
+      # NOTE: this will start with a slash
+      MISSING_DIRS=${CURRENT_DIR#"$REPO_ROOT"}
+      FULL_URL="$REMOTE_URL"$CURRENT_TREEISH"$MISSING_DIRS/"$LOCAL_PATH;
+  fi
+
+  if [ "$LINE" != "" ]; then
+      # let's make sure the file has that many lines
+      # at the point in time of the specified treeish
+      #
+
+      # is the treeish a branch?
+      # if so we can make some extra checks
+      # if not... we could but it'd be a PITA
+      git branch | grep $CURRENT_TREEISH > /dev/null
+      if [ $? -eq 0 ]; then
+        # it's a branch !
+        # let's make sure that remote HAS that branch
+        # note that leaving off the :$LOCAL_PATH has very different
+        # results
+        git show $REMOTE/$CURRENT_TREEISH:$LOCAL_PATH > /dev/null
+        # will output
+        # fatal: invalid object name '<remote>/<treeish>'.
+        # if it doesn't exist and nothing if it does.
+        if [ $? -ne 0 ]; then
+          echo "$RED_PLUS_X The remote $REMOTE doesn't have a $CURRENT_TREEISH branch.$NOCOLOR"
+          echo "Maybe you should push."
+          exit 128;
         fi
-    else
-        FULL_URL="$FULL_URL#L$LINE"
-    fi
 
+        SHOW_THIS="$REMOTE/$CURRENT_TREEISH:$LOCAL_PATH"
+      else
+        SHOW_THIS="$CURRENT_TREEISH:$LOCAL_PATH"
+      fi
+
+      LINE_COUNT=$(git show $SHOW_THIS | wc -l | sed -e "s/ //g")
+      if [ $LINE_COUNT -lt $LINE ]; then
+          echo "That file only has $LINE_COUNT lines."
+          echo "You indicated I should linke to line $LINE."
+          INSTRUCTIONS=$(gum choose "continue" "don't specify line" "exit")
+          clear_last_line
+          clear_last_line
+          if [ "$INSTRUCTIONS" == "exit" ]; then
+              exit 0;
+          elif [ "$INSTRUCTIONS" == "continue" ]; then
+              FULL_URL="$FULL_URL#L$LINE";
+          # else don't alter the url
+          fi
+      else
+          FULL_URL="$FULL_URL#L$LINE"
+      fi
+
+  fi
+else # We're linking to just a point in time
+
+  # oddly hub and lab both have 3 letters. thus ...
+  OWNER_AND_REPO=$(echo $CHOSEN_REPO | sed -e "s/.*git...\.com.//" -e "s/\.git//")
+  if [ $GIT_HUB -eq 1 ]; then
+      # https://github.com/masukomi/postcircumfix-test/tree/9c432d3e0f6e3833968b9ed6679ed73a9680ba4b
+      FULL_URL="https://github.com/$OWNER_AND_REPO/tree/$TREEISH"
+  else # GIT_LAB
+      # https://gitlab.com/masukomi/raku-pretty-table/-/tree/cafb4a97f4cf227fa1971619f2a61401ea0e9db5/
+      FULL_URL="https://gitlab.com/$OWNER_AND_REPO/-/tree/$TREEISH"
+  fi
 fi
 
 echo $FULL_URL
