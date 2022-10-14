@@ -2,15 +2,15 @@
 
 
 # the name of the command or function you're documenting
-name="gh-url"
+name="git-url"
 # a short (one line) description of what it does
-description="generates an url to the specified file in github"
+description="generates an url to the specified file and/or commit in github"
 # if the tool has some sort of usage / help documentation you can
 # invoke, enter it in the usage_command. Otherwise, comment that out,
 # and document it in the fallback_usage. In TOML you can create a
 # multiline string by surrounding it with triple double quotes.
 # """ like this """
-usage_command="gh-url -h"
+usage_command="git-url -h"
 # fallback_usage="""
 # USAGE: fallback_usage is used when
 # usage_command is not present"""
@@ -20,9 +20,10 @@ type="executable"
 # what language is it written in?
 language="bash"
 # where you can find this specific file in source control
-source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/gh-url"
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/git-url"
 # where you can find the repo that contains this file
 source_repo_url="https://github.com/masukomi/masuconfigs"
+tags=[ "git", "links" ]
 
 # [[cheats]]
 # [[cheats.bar]]
