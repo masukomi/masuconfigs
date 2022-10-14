@@ -15,12 +15,12 @@
 #
 source ~/bin/lib/colors.sh
 function usage () {
-    echo "USAGE: gh-url [-o | -l line-num | -b branch | -r remote] [path/to/file/in/repo]
-       -o open in browser
+    echo "USAGE: git url [-o | -l line-num | -b branch | -r remote] [path/to/file/in/repo]
        -l line number to link directly to
+       -o open in browser
+       -r specify the remote repo to link to
        -t treeish  defaults to the current branch name
           but can be commit hash, tag, etc.
-       -r specify the remote repo to link to
 
        You *must* specify either a path, a treeish, or both.
 ";
