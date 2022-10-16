@@ -23,7 +23,7 @@ language="bash"
 source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/color-capture"
 # where you can find the repo that contains this file
 source_repo_url="https://github.com/masukomi"
-
+tags=["escape", "codes", "ansii", "color"]
 # [[cheats]]
 # [[cheats.bar]]
 # description = "a description of task bar with backtrace_details"

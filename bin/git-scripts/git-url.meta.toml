@@ -23,7 +23,7 @@ language="bash"
 source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/git-url"
 # where you can find the repo that contains this file
 source_repo_url="https://github.com/masukomi/masuconfigs"
-tags=[ "git", "links" ]
+tags=[ "git", "sharing" ]
 
 # [[cheats]]
 # [[cheats.bar]]

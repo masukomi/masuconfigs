@@ -1,25 +1,30 @@
 # the name of the command or function you're documenting
-name="git-cop"
+name="git-brv"
 # a short (one line) description of what it does
-description="a replacement for checkout that works with branch names copied from PRs"
+description="A sorted prettier git branch -vv"
 # if the tool has some sort of usage / help documentation you can
 # invoke, enter it in the usage_command. Otherwise, comment that out,
 # and document it in the fallback_usage. In TOML you can create a
 # multiline string by surrounding it with triple double quotes.
 # """ like this """
-usage_command="git-cop"
-# fallback_usage="""
-# USAGE: fallback_usage is used when
-# usage_command is not present"""
+# usage_command=""
+fallback_usage="""
+USAGE: git brv
+       Outputs a list of branches, sorted by date
+       Example:
+2022-10-05 [7;33mmaster(B[m [34morigin/master(B[m [33m304e7b7(B[m [input] fix: readline related breakages
+2022-10-05 [33mtemp  (B[m [34m             (B[m [33m1adfa1b(B[m [generation] feat: specifying an unknown version now replaces Unreleased header
+2022-06-19 [33mnext  (B[m [34m             (B[m [33mfd0e73e(B[m multiple "get it running" changes
+"""
 
 # is this an executable, function, or ???
 type="executable"
 # what language is it written in?
 language="bash"
 # where you can find this specific file in source control
-source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/git-cop"
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/git-brv"
 # where you can find the repo that contains this file
-source_repo_url="https://github.com/masukomi/masuconfigs"
+source_repo_url="https://github.com/masukomi"
 tags=["git"]
 
 # [[cheats]]

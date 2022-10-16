@@ -23,6 +23,7 @@ language="bash"
 source_url="ttps://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/git-add-conflicted"
 # where you can find the repo that contains this file
 source_repo_url="ttps://github.com/masukomi/masuconfigs"
+tags=["git", "merge"]
 
 # [[cheats]]
 # [[cheats.bar]]

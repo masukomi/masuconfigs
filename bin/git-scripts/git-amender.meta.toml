@@ -1,25 +1,29 @@
+# a template for `clu` toml files
+
+
 # the name of the command or function you're documenting
-name="git-link-to-commit"
+name="git-ammender"
 # a short (one line) description of what it does
-description="Links to git repo at the specified commit in GitHub or GitLab"
+description="adds changed files to last commit, and force pushes with gpup"
 # if the tool has some sort of usage / help documentation you can
 # invoke, enter it in the usage_command. Otherwise, comment that out,
 # and document it in the fallback_usage. In TOML you can create a
 # multiline string by surrounding it with triple double quotes.
 # """ like this """
-usage_command="git-link-to-commit -h"
-# fallback_usage="""
-# USAGE: fallback_usage is used when
-# usage_command is not present"""
+# usage_command=""
+fallback_usage="""
+USAGE: git amender
+       adds changed files to last commit, and force pushes with gpup"""
 
 # is this an executable, function, or ???
 type="executable"
 # what language is it written in?
 language="bash"
 # where you can find this specific file in source control
-source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/git-link-to-commit"
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/git-amender"
 # where you can find the repo that contains this file
 source_repo_url="https://github.com/masukomi/masuconfigs"
+tags=["git"]
 
 # [[cheats]]
 # [[cheats.bar]]
