@@ -9,12 +9,6 @@
           "style": "plain",
           "template": "<#69FF94>\u276f </>",
           "type": "text"
-        },
-        {
-          "foreground": "#DCB977",
-          "style": "plain",
-          "template": " \uf119",
-          "type": "exit"
         }
       ],
       "type": "prompt"
