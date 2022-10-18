@@ -2,9 +2,16 @@
 
 # converts whitespace-only lines to empty lines
 # so, "   \n" becomes "\n"
+# pass in the -d (delete) argument to delete those lines
 #
 # USAGE: pipe text to blankless
 
 read -d '' -u 0 stdin
-printf "$@" "$stdin" | sed '/^\s*$/d'
+if [ "$1" == "-d" ]; then
+	shift
+	printf "$@" "$stdin" | sed '/^\s*$/d' | grep "\S"
+else
+	printf "$@" "$stdin" | sed '/^\s*$/d'
+fi
+
 

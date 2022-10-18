@@ -1,7 +1,8 @@
 name = "blankless"
-description = "converts whitespace-only lines to empty lines."
+description = "converts whitespace-only lines to empty lines & optionally deletes."
 # usage_command=""
 fallback_usage="""USAGE: just pipe files into this."
+       -d delete blank lines
        cat foo.txt | blankless
 """
 type="executable"
