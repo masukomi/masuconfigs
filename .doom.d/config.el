@@ -395,6 +395,10 @@
 ;; ialign (interatvie alignment)
 (global-set-key (kbd "C-x l") #'ialign)
 
+;; private comments mode
+;; (autoload 'private-comments-mode "private-comments-mode" nil t)
+
+
 
 ;; yafolding
 ;; https://github.com/emacsorphanage/yafolding
@@ -404,9 +408,20 @@
     (define-key map (kbd "<C-M-return>") #'yafolding-toggle-all)
     (define-key map (kbd "<C-return>") #'yafolding-toggle-element)
     map))
+; we're usually not in yafolding-mode so...
+(let ((map global-map))
+  (define-key map (kbd "C-c f") #'yafolding-toggle-element))
 
 (add-hook 'prog-mode-hook
-          (lambda () (yafolding-mode)))
+          (lambda () (progn
+			(yafolding-mode)
+			(private-comments-mode)
+		       )))
+
+(with-eval-after-load "private-comments-mode"
+  (set-face-background 'private-comments-face "#527568")
+  (set-face-foreground 'private-comments-face "#FFFFFF"))
+
 
 ;; dired
 ;; found here:: https://wilkesley.org/~ian/xah/emacs/emacs_dired_tips.html
@@ -766,6 +781,28 @@ now being rendered as Emojis. Filter this case out."
       ;(define-key markdown-mode-map (kbd "\C-c\C-o") 'toc-org-markdown-follow-thing-at-point)
 
   (warn "toc-org not found"))
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((shell . t))
+ )
+
+(let ((ob-raku-el "~/workspace/reference/emacs/ob-raku/ob-raku.el"))
+ (when (file-exists-p ob-raku-el)
+    (load-file ob-raku-el)
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((shell . t)
+       (raku . t))
+     )
+
+
+   )
+)
+
+
+
+
 
 
 ;;---------------------------------
