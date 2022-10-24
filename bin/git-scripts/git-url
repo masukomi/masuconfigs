@@ -26,13 +26,15 @@ function usage () {
 
        Supports linking to repos in GitHub and GitLab.
 
+       -b branch name to link to - defaults to current if not specified
+          can't be combined with -t
        -l line number to link directly to
        -o open in browser
        -r specify the remote repo to link to
        -t treeish  defaults to the current branch name
           but can be commit hash, tag, etc.
 
-       You *must* specify either a path, a treeish, or both.
+       You *must* specify either a path, a treeish/branch, or both.
 
 ";
 }
@@ -55,8 +57,11 @@ https://github.com/charmbracelet/gum"
 fi
 
 LINE=""
-while getopts "hot:r:l:" opt; do
+while getopts "hot:r:l:b:" opt; do
   case $opt in
+    b)
+      BRANCH=$OPTARG
+      ;;
     h)
       usage
       exit 0
@@ -81,6 +86,13 @@ if [ $# -eq 0 ] && [ "$TREEISH" == "" ]; then
 fi
 shift $((OPTIND-1))
 LOCAL_PATH=$(echo "$1" | sd "^\./" "")
+
+if [ "$BRANCH" != "" ] && [ "$TREEISH" != "" ]; then
+  echo "ERROR: You can't specify a branch AND a treeish. It's one or the other."
+  usage
+  exit 2
+fi
+
 
 REMOTE_URL="NONE";
 if [ "$REMOTE" == "" ]; then
@@ -107,6 +119,8 @@ fi
 
 if [ "$TREEISH" != "" ]; then
   CURRENT_TREEISH="$TREEISH"
+elif [ "$BRANCH" != "" ]; then
+  CURRENT_TREEISH=$BRANCH
 else
   CURRENT_TREEISH=$(git rev-parse --abbrev-ref HEAD)
 fi
@@ -216,13 +230,13 @@ if [ "$LOCAL_PATH" != "" ]; then
 else # We're linking to just a point in time
 
   # oddly hub and lab both have 3 letters. thus ...
-  OWNER_AND_REPO=$(echo $CHOSEN_REPO | sed -e "s/.*git...\.com.//" -e "s/\.git//")
+  # OWNER_AND_REPO=$(echo $CHOSEN_REPO | sed -e "s/.*git...\.com.//" -e "s/\.git//")
   if [ $GIT_HUB -eq 1 ]; then
       # https://github.com/masukomi/postcircumfix-test/tree/9c432d3e0f6e3833968b9ed6679ed73a9680ba4b
-      FULL_URL="https://github.com/$OWNER_AND_REPO/tree/$TREEISH"
+      FULL_URL="https://github.com/$OWNER_AND_REPO/tree/$CURRENT_TREEISH"
   else # GIT_LAB
       # https://gitlab.com/masukomi/raku-pretty-table/-/tree/cafb4a97f4cf227fa1971619f2a61401ea0e9db5/
-      FULL_URL="https://gitlab.com/$OWNER_AND_REPO/-/tree/$TREEISH"
+      FULL_URL="https://gitlab.com/$OWNER_AND_REPO/-/tree/$CURRENT_TREEISH"
   fi
 fi
 
