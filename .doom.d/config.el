@@ -467,6 +467,10 @@
 ;;
 ;;FOR MORE CONFIGS SEE M-x org-customize
 
+
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode 1))))
+
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
 ; https://github.com/Somelauw/evil-org-mode
