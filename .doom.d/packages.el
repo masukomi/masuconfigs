@@ -88,6 +88,7 @@
 ; LANGUAGES
 
 ; HTML, JavaScript, CSS
+(package! fish-mode)
 (package! handlebars-mode)
 (package! htmlize)
 (package! multi-web-mode)
@@ -100,6 +101,7 @@
 
 ; -- Raku
 (package! raku-mode)
+(package! ob-raku)
 
 ; -- Ruby
 (package! rspec-mode)
@@ -148,7 +150,7 @@
 (package! ox-slack
   :recipe (:host github :repo "masukomi/ox-slack" :branch "main"))
 (package! ox-bb)
-(package! ox-leanpub)
+;(package! ox-leanpub)
 ; ripgrep (rg)
 (package! rg)
 (package! sqlite3)
