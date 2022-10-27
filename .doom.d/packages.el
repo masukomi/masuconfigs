@@ -51,6 +51,8 @@
 
 
 ; INTERACTION STUFF
+; (package! avy) it's installed by default so no need for it here
+;                check out the gs prefix for many doom specific avy jump things
 (package! evil-surround)
 (package! buffer-move)
 (package! reformatter)

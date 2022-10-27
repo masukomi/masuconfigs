@@ -404,6 +404,21 @@
 
 
 
+;; avy (jumping to visible text using a char-based decision tree.)
+;; https://github.com/abo-abo/avy
+(map!
+ :nv "C-f" #'avy-goto-char
+ :nv "C-s" #'avy-goto-char-2
+ :nv "C-d" #'avy-goto-line
+ )
+; note instructions for this map came from https://github.com/doomemacs/doomemacs/issues/1643
+; which also provides info on finding more info on map
+; In case you're looking for more, you'll find many avy-ified evil motions on
+; the gs prefix, e.g. gsw, gsa (jump to an argument in a comma-delimited
+; argument list), and (a community favorite) g s SPC, which invokes
+; avy-goto-char-timer across all open windows. There's also gs/ for
+; avy-goto-char-timer restricted to the current window. - hlissner
+
 ;; yafolding
 ;; https://github.com/emacsorphanage/yafolding
 (defvar yafolding-mode-map
