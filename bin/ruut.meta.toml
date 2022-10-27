@@ -1,0 +1,35 @@
+# Clu documentation file. Details: https://github.com/masukomi/Clu
+
+# the name of the command or function you're documenting
+name="ruut"
+# a short (one line) description of what it does
+description="converts simple nested parens structure into tree-like output"
+# if the tool has some sort of usage / help documentation you can
+# invoke, enter it in the usage_command. Otherwise, comment that out,
+# and document it in the fallback_usage. In TOML you can create a
+# multiline string by surrounding it with triple double quotes.
+# """ like this """
+usage_command="ruut --help"
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="rust"
+# where you can find this specific file in source control
+source_url="https://github.com/hibachrach/ruut"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/hibachrach/ruut"
+# additional keywords that might help you find this in a search
+# or when browsing by tag
+# future functionality: https://github.com/masukomi/Clu/issues/10
+tags=[ "3rd_party" ];
+
+# [[cheats]]
+# description = "a description of task bar with backtrace_details"
+# template="bar {{arg1}} {{arg2}}"
+# [[cheats]]
+# description = "a description of task baz with backtrace_details"
+# template="bar {{arg1}} {{arg2}}"
