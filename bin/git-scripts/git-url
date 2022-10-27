@@ -169,6 +169,7 @@ if [ "$LOCAL_PATH" != "" ]; then
   if [ "$CURRENT_DIR" == "$REPO_ROOT" ]; then
       # we're in the root, so the path they gave us is the full path
       FULL_URL="$REMOTE_URL"$CURRENT_TREEISH"/"$LOCAL_PATH;
+      FULL_LOCAL_PATH="$LOCAL_PATH"
   else
       # we need the dirs between REPO_ROOT & CURRENT_DIR
       # REPO_ROOT:   /Users/foo/bar
@@ -177,6 +178,10 @@ if [ "$LOCAL_PATH" != "" ]; then
       #
       # NOTE: this will start with a slash
       MISSING_DIRS=${CURRENT_DIR#"$REPO_ROOT"}
+      # echo MISSING_DIRS: $MISSING_DIRS
+      # echo LOCAL_PATH: $LOCAL_PATH
+      # echo REPO_ROOT: $REPO_ROOT
+      FULL_LOCAL_PATH=$(echo "$MISSING_DIRS/$LOCAL_PATH" | sed -e "s/^\///")
       FULL_URL="$REMOTE_URL"$CURRENT_TREEISH"$MISSING_DIRS/"$LOCAL_PATH;
   fi
 
@@ -194,7 +199,10 @@ if [ "$LOCAL_PATH" != "" ]; then
         # let's make sure that remote HAS that branch
         # note that leaving off the :$LOCAL_PATH has very different
         # results
-        git show $REMOTE/$CURRENT_TREEISH:$LOCAL_PATH > /dev/null
+		#TODO: CHANGE TO FULL PATH FROM ROOT NOT SUBDIR
+		#TODO: resulting url has "blob" instead of "tree"
+        # echo "running: git show $REMOTE/$CURRENT_TREEISH:$LOCAL_PATH > /dev/null"
+        git show $REMOTE/$CURRENT_TREEISH:$FULL_LOCAL_PATH > /dev/null
         # will output
         # fatal: invalid object name '<remote>/<treeish>'.
         # if it doesn't exist and nothing if it does.
@@ -204,14 +212,15 @@ if [ "$LOCAL_PATH" != "" ]; then
           exit 128;
         fi
 
-        SHOW_THIS="$REMOTE/$CURRENT_TREEISH:$LOCAL_PATH"
+        SHOW_THIS="$REMOTE/$CURRENT_TREEISH:$FULL_LOCAL_PATH"
       else
-        SHOW_THIS="$CURRENT_TREEISH:$LOCAL_PATH"
+        SHOW_THIS="$CURRENT_TREEISH:$FULL_LOCAL_PATH"
       fi
 
       LINE_COUNT=$(git show $SHOW_THIS | wc -l | sed -e "s/ //g")
       if [ $LINE_COUNT -lt $LINE ]; then
           echo "That file only has $LINE_COUNT lines."
+          echo "File in question: $SHOW_THIS"
           echo "You indicated I should linke to line $LINE."
           INSTRUCTIONS=$(gum choose "continue" "don't specify line" "exit")
           clear_last_line
