@@ -33,4 +33,7 @@ lines.each do | line |
     classpath_lines = []
   end
 end
+if classpath_lines.size > 0
+  process_classpath_lines(classpath_lines)
+end
 
