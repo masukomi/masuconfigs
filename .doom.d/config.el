@@ -899,7 +899,7 @@ now being rendered as Emojis. Filter this case out."
 (after! 'ruby-mode
   (require 'ruby-tools))
 ; disable rubocop because it fucking sucks and breaks half the time.
-(setq-default flycheck-disabled-checkers '(ruby-rubocop))
+(setq-default flycheck-disabled-checkers '(ruby-rubocop ruby-reek))
 
 
 ;;------------- LUA
