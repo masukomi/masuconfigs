@@ -181,10 +181,19 @@ if [[ -n "$TAGS" ]]; then
 	git config "$GIT_CONFIG_FILE" com.tags "$STORABLE_TAGS"
 fi
 
-echo "commit details: "
-echo "(ESC to end)"
-DESCRIPTION=$(gum write --width $(expr $(tput cols) - 3)  --placeholder "Details of this change" \
-	| fold -w 50 -s)
+# echo "commit details: "
+# DESCRIPTION=$(gum write --width $(expr $(tput cols) - 3)  --placeholder "Details of this change" \
+# 	| fold -w 50 -s)
+echo "Commit Message:"
+tempfile=$(mktemp /tmp/git-com.XXXXXX)
+echo "#commit details" > $tempfile
+vim $tempfile
+DESCRIPTION=$(cat $tempfile)
+clear_last_line
+
+
+
+
 [[ -n "$TICKET" ]] && DESCRIPTION="$DESCRIPTION
 
 TICKET: $TICKET"
@@ -192,7 +201,7 @@ TICKET: $TICKET"
 
 TAGS: $MAYBE_TAG"
 
-clear_last_2_lines
+# clear_last_2_lines
 
 # TEMPLATE EVAL
 if [[ "$DESCRIPTION" == *"\`"* ]]; then

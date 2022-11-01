@@ -60,6 +60,7 @@
 (package! exec-path-from-shell)
 ; use sane regexp (PCRE) in emacs
 (package! pcre2el)
+(package! avy)
 
 ; UI STUFF
 

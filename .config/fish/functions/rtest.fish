@@ -6,6 +6,7 @@ function rtrs --description "rtestify (rt) last rspec (rs) command"
 		history \
 		| grep "^bundle exec rspec" \
 		| grep -v "rtest" \
+		| grep "\S" \
 		| head -n 1 \
 		| sd "^.*rspec (-+\w+(=| )[0-9a-zA-Z-]+)* *" "rtest "
 		)
@@ -18,8 +19,9 @@ function rsrt --description "rspecify (rs) last rtest (rt) command"
 	set -l command (
 		history \
 		| grep "rtest " \
-		| grep -v "\--rspec" \
-		| head -n1\
+		| grep -v -- "--rspec" \
+		| grep "\S" \
+		| head -n1 \
 		| sd "rtest" "rtest --rspec" )
 	set -l c2 (eval $command)
 	echo "$c2"
