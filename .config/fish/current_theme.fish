@@ -1,4 +1,4 @@
-set --export POSH_THEME "/Users/$USER/.config/fish/current_theme.omp.json"
+set --export POSH_THEME /Users/$USER/.config/fish/current_theme.omp.json
 set --global POWERLINE_COMMAND "oh-my-posh"
 set --global CONDA_PROMPT_MODIFIER false
 set --global omp_tooltip_command ""
@@ -11,7 +11,7 @@ function fish_prompt
     # see https://github.com/fish-shell/fish-shell/issues/8418
     printf \e\[0J
     if test "$omp_transient" = "1"
-      PREFIX=(brew --prefix) "$PREFIX/bin/oh-my-posh" print transient --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION
+      /opt/homebrew/bin/oh-my-posh print transient --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION
       return
     end
     set --global omp_status_cache $omp_status_cache_temp
@@ -29,7 +29,7 @@ function fish_prompt
       set --global --export omp_last_status_generation $status_generation
     end
 
-    PREFIX=(brew --prefix) "$PREFIX/bin/oh-my-posh" print primary --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION
+    /opt/homebrew/bin/oh-my-posh print primary --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION
 end
 
 function fish_right_prompt
@@ -39,20 +39,28 @@ function fish_right_prompt
       return
     end
     if test -n "$omp_tooltip_command"
-      set omp_tooltip_prompt (PREFIX=(brew --prefix) "$PREFIX/bin/oh-my-posh" print tooltip --config $POSH_THEME --shell fish --error $omp_status_cache --shell-version $FISH_VERSION --command $omp_tooltip_command)
+      set omp_tooltip_prompt (/opt/homebrew/bin/oh-my-posh print tooltip --config $POSH_THEME --shell fish --error $omp_status_cache --shell-version $FISH_VERSION --command $omp_tooltip_command)
       if test -n "$omp_tooltip_prompt"
         echo -n $omp_tooltip_prompt
         set omp_tooltip_command ""
         return
       end
     end
-    PREFIX=(brew --prefix) "$PREFIX/bin/oh-my-posh" print right --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION
+    /opt/homebrew/bin/oh-my-posh print right --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION
 end
 
 function postexec_omp --on-event fish_postexec
   # works with fish <3.2
   # pre and postexec not fired for empty command in fish >=3.2
   set --global --export omp_lastcommand $argv
+end
+
+# perform cleanup so a new initialization in current session works
+if test "$(string match -e '_render_transient' $(bind \r --user 2>/dev/null))" != ''
+  bind -e \r
+end
+if test "$(string match -e '_render_tooltip' $(bind \x20 --user 2>/dev/null))" != ''
+  bind -e \x20
 end
 
 # tooltip
@@ -64,18 +72,28 @@ function _render_tooltip
   commandline --function repaint
 end
 
-function enable_poshtooltips
+if test "false" = "true"
   bind \x20 _render_tooltip
 end
 
 # transient prompt
 
 function _render_transient
+  if commandline --paging-mode
+    commandline --function accept-autosuggestion
+    return
+  end
   set omp_transient 1
   commandline --function repaint
   commandline --function execute
 end
 
-function enable_poshtransientprompt
+if test "false" = "true"
   bind \r _render_transient
+end
+
+# legacy functions
+function enable_poshtooltips
+end
+function enable_poshtransientprompt
 end

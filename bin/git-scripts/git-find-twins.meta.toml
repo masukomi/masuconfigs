@@ -1,7 +1,7 @@
 # the name of the command or function you're documenting
 name="git-find-twins"
 # a short (one line) description of what it does
-description="Finds other git branches whose HEADs point to the same"
+short_description="Finds other git branches whose HEADs point to the same"
 # if the tool has some sort of usage / help documentation you can
 # invoke, enter it in the usage_command. Otherwise, comment that out,
 # and document it in the fallback_usage. In TOML you can create a

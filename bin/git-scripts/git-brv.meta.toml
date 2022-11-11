@@ -1,20 +1,23 @@
 # the name of the command or function you're documenting
 name="git-brv"
 # a short (one line) description of what it does
-description="A sorted prettier git branch -vv"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+short_description="A sorted prettier git branch -vv"
+description="""
+A compact, colorful, summary of your git branches.
+"""
 # usage_command=""
 fallback_usage="""
 USAGE: git brv
        Outputs a list of branches, sorted by date
        Example:
-2022-10-05 [7;33mmaster(B[m [34morigin/master(B[m [33m304e7b7(B[m [input] fix: readline related breakages
-2022-10-05 [33mtemp  (B[m [34m             (B[m [33m1adfa1b(B[m [generation] feat: specifying an unknown version now replaces Unreleased header
-2022-06-19 [33mnext  (B[m [34m             (B[m [33mfd0e73e(B[m multiple "get it running" changes
+        ❯ git brv
+        2022-11-11 markdown        origin/markdown   0d71347 strips ANSI escape codes in usage section
+        2022-11-06 v2_staging      origin/v2_staging cbb273c updated output with Prettier::Table
+        2022-11-06 prettier_tables                   cbb273c updated output with Prettier::Table
+        2022-11-06 tags            origin/tags       1650dbf added tag support and tests
+        2022-10-16 asciinema       origin/asciinema  b40d75b improved documentation
+        2022-10-12 beautification                    f60726c added comment about box drawing characters
+        2022-10-05 main            origin/main       0d2df47 added repo to meta6
 """
 
 # is this an executable, function, or ???

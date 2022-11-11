@@ -2,6 +2,11 @@
 
 # makes a backup of whatever file you pass in to it by copying it in the same location with the .bak extension
 
+if [ $# -eq 0 ]; then
+	echo "USAGE: unbak <path/to/foo.bak>"
+	echo "       removes .bak from the end of the specified file's name"
+	exit 0
+fi
 
 unback=$(echo $1 | sed -e "s/.bak$//")
 mv $1 $unback

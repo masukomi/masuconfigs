@@ -4,12 +4,14 @@
 # the name of the command or function you're documenting
 name="git-add-conflicted"
 # a short (one line) description of what it does
-description="runs git add on any unmerged (conflicting) files"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+short_description="runs git add on any unmerged (conflicting) files"
+description="""
+After a git conflict you'll address the required changes and then
+need to run `git add <path/to/conflicted/file>`.
+
+This saves you time, by letting you just run `git add-conflicted`
+in order to `add` all of them.
+"""
 #usage_command=""
 fallback_usage="""
 USAGE: git add-conflicted

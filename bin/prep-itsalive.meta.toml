@@ -3,7 +3,7 @@
 # the name of the command or function you're documenting
 name="prep-itsalive"
 # a short (one line) description of what it does
-description="preps a template for an itsalive recording of the specified command"
+short_description="preps a template for an itsalive recording of the specified command"
 # if the tool has some sort of usage / help documentation you can
 # invoke, enter it in the usage_command. Otherwise, comment that out,
 # and document it in the fallback_usage. In TOML you can create a

@@ -1,6 +1,16 @@
 # a template for `clu` toml files
 name = "bak"
-description = "bak moves or copies the proffered file to a .back version"
+short_description= "bak moves or copies the proffered file to a .back version"
+description="""
+Use `bak` when you need to quickly make a backup copy of a file or
+folder.
+
+Simply renames the file or folder by appending .bak
+
+If you specify the `-c` option it'll copy it instead of moving.
+
+(see also `unbak`)
+"""
 usage_command="bak"
 # fallback_usage=""
 # fallback_usage="""

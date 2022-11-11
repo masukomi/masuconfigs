@@ -4,7 +4,6 @@
 
 PROMPT="$HOME/.config/bash/current_theme.sh"
 if [[ -f "$PROMPT" ]]; then
-    echo "$PROMPT exists."
     source "$PROMPT"
 else
     echo "no prompt file"
@@ -23,3 +22,4 @@ export CHICKEN_BUILD=~/workspace/reference/scheme/chicken-4.10.0
 bind '"\e[A": history-search-backward' #up-arrow through history
 bind '"\e[B": history-search-forward' #down-arrow through history
 
+PATH=$PATH:$HOME/Library/Python/3.9/bin

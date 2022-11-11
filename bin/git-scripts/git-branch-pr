@@ -6,6 +6,7 @@
 
 function usage() {
 	echo "USAGE: git branch-pr [-b branch] [-o open in browser] [-h]"
+	echo "       -b specify the branch to reference (defaults to current branch)"
 	echo "       requires the gh command line tool to be installed."
 	echo "       To see this usage call it with -h"
 	exit 0;

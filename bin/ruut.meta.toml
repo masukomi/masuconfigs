@@ -3,7 +3,7 @@
 # the name of the command or function you're documenting
 name="ruut"
 # a short (one line) description of what it does
-description="converts simple nested parens structure into tree-like output"
+short_description="converts simple nested parens structure into tree-like output"
 # if the tool has some sort of usage / help documentation you can
 # invoke, enter it in the usage_command. Otherwise, comment that out,
 # and document it in the fallback_usage. In TOML you can create a
@@ -25,7 +25,7 @@ source_repo_url="https://github.com/hibachrach/ruut"
 # additional keywords that might help you find this in a search
 # or when browsing by tag
 # future functionality: https://github.com/masukomi/Clu/issues/10
-tags=[ "3rd_party" ];
+tags=[ "3rd_party" ]
 
 # [[cheats]]
 # description = "a description of task bar with backtrace_details"

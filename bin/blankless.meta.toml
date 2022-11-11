@@ -1,9 +1,18 @@
 name = "blankless"
-description = "converts whitespace-only lines to empty lines & optionally deletes."
+short_description= "converts whitespace-only lines to empty lines & optionally deletes."
+description="""
+When processing text in unix pipelines, you sometimes want to take lines that consist
+entirely of whitespace characters and trim them. Sometimes you want to delete them
+and their 0 length bretheren. Just add this into your pipeline and it'll take
+care of that for you.
+"""
 # usage_command=""
-fallback_usage="""USAGE: just pipe files into this."
+fallback_usage="""
+USAGE: no direct invocation. just pipe files into this.
        -d delete blank lines
-       cat foo.txt | blankless
+
+       Ex.: cat foo.txt | blankless
+            cat foo.txt | blankless -d
 """
 type="executable"
 language="bash"

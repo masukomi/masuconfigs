@@ -1,7 +1,7 @@
 # the name of the command or function you're documenting
 name="git-who"
 # a short (one line) description of what it does
-description="Outputs a list of people who've worked on a file sorted by commits"
+short_description="Outputs a list of people who've worked on a file sorted by commits"
 # if the tool has some sort of usage / help documentation you can
 # invoke, enter it in the usage_command. Otherwise, comment that out,
 # and document it in the fallback_usage. In TOML you can create a

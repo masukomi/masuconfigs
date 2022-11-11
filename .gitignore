@@ -32,3 +32,4 @@ tester.*
 *~
 .rtest.json
 sdist
+.DS_Store

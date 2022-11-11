@@ -2,12 +2,18 @@
 # the name of the command or function you're documenting
 name="git-branch-pr"
 # a short (one line) description of what it does
-description="Shows or opens the Pull Request (PR) for the current branch"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+short_description="Shows or opens the Pull Request (PR) for the current branch"
+description="""
+Want to easily open the GitHub Pull Request associated with a branch?
+
+`git branch-pr -o`
+
+`-o` tells it to open in your default browser, otherwise it'll just
+output the link to the PR.
+
+
+Requires: GitHub's [gh cli tool](https://cli.github.com/)
+"""
 usage_command="git-branch-pr -h"
 # fallback_usage="""
 # USAGE: fallback_usage is used when
@@ -21,7 +27,7 @@ language="bash"
 source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/git-branch-pr"
 # where you can find the repo that contains this file
 source_repo_url="https://github.com/masukomi/masuconfigs"
-tags=["git", "github"]
+tags=["git", "github", "gh", "pr"]
 # [[cheats]]
 # [[cheats.bar]]
 # description = "a description of task bar with backtrace_details"

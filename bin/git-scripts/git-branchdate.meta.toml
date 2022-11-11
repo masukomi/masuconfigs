@@ -1,12 +1,22 @@
 # the name of the command or function you're documenting
 name="git-branchdate"
 # a short (one line) description of what it does
-description="Lists the date of the last commit of each branch"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+short_description="Lists the date of the last commit of each branch"
+description="""
+Useful when trying to find branch that you edited in a specific
+time-frame. E.g. "I know i was working on it 2 weeks ago..."
+
+```
+❯ git branchdate
+2022-10-16 00:07:58   asciinema
+2022-10-12 00:02:52   beautification
+2022-10-05 21:39:08   main
+2022-11-11 15:45:14   markdown
+2022-11-06 18:26:39   prettier_tables
+2022-11-06 10:57:58   tags
+2022-11-06 18:26:39   v2_staging
+```
+"""
 # usage_command=""
 fallback_usage="""
 USAGE: git branchdate

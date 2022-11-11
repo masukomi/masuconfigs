@@ -207,6 +207,9 @@
 (setq doom-font (font-spec :family "JetBrains Mono Medium" :size 20)
       doom-variable-pitch-font (font-spec :family "Monaco")
       doom-big-font (font-spec :family "JetBrains Mono Medium"))
+;; (setq doom-font (font-spec :family "Fira Code Medium" :size 20)
+;;       doom-variable-pitch-font (font-spec :family "Monaco")
+;;       doom-big-font (font-spec :family "Fira Code Medium"))
 ;; RESET FONT TO DEFAULT `doom-font` with a call to
 ;; doom/reset-font-size
 

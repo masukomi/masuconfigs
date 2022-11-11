@@ -235,7 +235,7 @@ set -x TZ_LIST "US/Pacific,Pacific"
 # https://asdf-vm.com/guide/getting-started.html
 # search for Fish. 3 different ways of handling based on how installed
 if test (command -v asdf)
-  fish_add_path -p -g $HOME/.asdf/shims
+  # fish_add_path -p -g $HOME/.asdf/shims
   source (brew --prefix asdf)/libexec/asdf.fish
 end
 
@@ -246,3 +246,7 @@ end
 set -x NVM_DIR "$HOME/.nvm"
 
 # echo "fish config startup time: " (math (date +%s) - $start) "s"
+
+# Setting PATH for Python 3.11
+# The original version is saved in /Users/masukomi/.config/fish/config.fish.pysave
+set -x PATH "/Library/Frameworks/Python.framework/Versions/3.11/bin" "$PATH"

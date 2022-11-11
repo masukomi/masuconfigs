@@ -4,12 +4,17 @@
 # the name of the command or function you're documenting
 name="git-ammender"
 # a short (one line) description of what it does
-description="adds changed files to last commit, and force pushes with gpup"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+short_description="adds changed files to last commit, and force pushes with gpup"
+description="""
+Need to ammend that last git commit and force push?
+
+`git amender`
+
+That's it. Thanks to `gpup` it guarantees that you'll never
+accidentally force-push anywhere other than your `origin` repo.
+
+Requires [gpup](https://github.com/masukomi/gpup)
+"""
 # usage_command=""
 fallback_usage="""
 USAGE: git amender

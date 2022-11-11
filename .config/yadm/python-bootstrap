@@ -12,7 +12,11 @@ function is_installed(){
 }
 
 if ! is_installed "python3"; then
-	brew install python3
+	echo "YO! Install from the web, not homebrew."
+	echo https://www.python.org/downloads/macos/
+	#brew install python3
+	echo "hit enter when done"
+	read ignorable
 fi
 
 # https://www.geeksforgeeks.org/how-to-install-pip-in-macos/
@@ -54,5 +58,5 @@ if ! is_installed "pip"; then
 fi
 
 if ! is_installed 'itsalive'; then
-	pip install itsalive
+	pip3 install itsalive
 fi

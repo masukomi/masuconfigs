@@ -95,6 +95,7 @@
 (package! polymode)
 (package! sass-mode)
 (package! web-mode)
+(package! tt-mode) ; Perl Template Toolkit & Raku Template6
 
 ; -- protobuffers
 (package! protobuf-mode)

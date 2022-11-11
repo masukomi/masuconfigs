@@ -1,12 +1,13 @@
 # the name of the command or function you're documenting
 name="git-conflicted"
 # a short (one line) description of what it does
-description="lists unmerged (confilcting) files"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+short_description="lists unmerged (confilcting) files"
+description="""
+A simple listing of all your un-merged files that have conflicts in
+them.
+
+(see also `git-add-conflicted`)
+"""
 # usage_command=""
 fallback_usage="""
 USAGE: git conflicted

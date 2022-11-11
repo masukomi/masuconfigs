@@ -1,12 +1,14 @@
 # the name of the command or function you're documenting
 name="dgrep"
 # a short (one line) description of what it does
-description="dgrep (double grep) finds lines where 2 search terms appear"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+short_description="dgrep (double grep) finds lines where 2 search terms appear"
+description="""
+Instead of running `grep foo * | grep bar` you can run `dgrep foo bar`
+
+For example, imagine you have a log file and you need to find the
+word "foo" but you _only_ want the occurrances that are on lines
+starting with "ERROR": `dgrep "^ERROR" foo`
+"""
 usage_command="dgrep"
 # fallback_usage="""
 # USAGE: fallback_usage is used when

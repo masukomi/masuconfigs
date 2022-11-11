@@ -1,12 +1,24 @@
 # the name of the command or function you're documenting
 name="git-cop"
 # a short (one line) description of what it does
-description="a replacement for checkout that works with branch names copied from PRs"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+short_description="a replacement for checkout that works with branch names copied from PRs"
+description="""
+"git cop" = "git checkout pr"
+
+Useful on open source work, and teams where individual contributors
+fork the central repo on GitHub.
+
+In these scenarios when you click on the copy icon by the branch name
+in GitHub what you get is prefaced with the username and
+colon. For example a PR from my the downloads branch of my forked repo
+would show up as `masukomi:downloads`
+
+When I make a PR and the recepient wants to actually check out my
+changes locally they can copy that and then, run `git cop <paste>`
+
+NOTE: in order for this to work you'll have had to configure a remote
+with a matching username. `git-cop` will warn you if you haven't.
+"""
 usage_command="git-cop"
 # fallback_usage="""
 # USAGE: fallback_usage is used when

@@ -2,7 +2,7 @@
 # the name of the command or function you're documenting
 name="watch_when"
 # a short (one line) description of what it does
-description="Polls a command and reports when its output changes"
+short_description="Polls a command and reports when its output changes"
 usage_command="watch_when"
 # fallback_usage="""
 # USAGE: fallback_usage is used when

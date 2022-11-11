@@ -2,7 +2,7 @@
 # the name of the command or function you're documenting
 name="rg-ignores"
 # a short (one line) description of what it does
-description="finds files that rg may be using to ignore patterns"
+short_description="finds files that rg may be using to ignore patterns"
 # if the tool has some sort of usage / help documentation you can
 # invoke, enter it in the usage_command. Otherwise, comment that out,
 # and document it in the fallback_usage. In TOML you can create a

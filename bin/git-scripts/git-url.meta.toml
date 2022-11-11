@@ -4,7 +4,7 @@
 # the name of the command or function you're documenting
 name="git-url"
 # a short (one line) description of what it does
-description="generates an url to the specified file and/or commit in github"
+short_description="generates an url to the specified file and/or commit in github"
 # if the tool has some sort of usage / help documentation you can
 # invoke, enter it in the usage_command. Otherwise, comment that out,
 # and document it in the fallback_usage. In TOML you can create a
@@ -24,6 +24,7 @@ source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/
 # where you can find the repo that contains this file
 source_repo_url="https://github.com/masukomi/masuconfigs"
 tags=[ "git", "sharing" ]
+asciicast_url="~/.local/share/clu/asciicasts/git-url.cast"
 
 # [[cheats]]
 # [[cheats.bar]]

@@ -1,5 +1,5 @@
 name = "backtrace_details"
-short_description= "Pairs a backtrace with the corresponding lines of code"
+short_description= "Pairs a Ruby backtrace with the corresponding lines of code"
 description="""
 Ruby development involves looking at a lot of backtraces. Knowing that
 something happend on line 15 isn't generally very helpful

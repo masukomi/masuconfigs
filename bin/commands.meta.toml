@@ -1,12 +1,18 @@
 # the name of the command or function you're documenting
 name="commands"
 # a short (one line) description of what it does
-description="Lists all the executables in your PATH"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+short_description="Lists all the executables in your PATH"
+description="""
+Need a list of all the executables in your `$PATH`? I did.
+`commands` will return a sorted list of executables found
+in the directories in your `$PATH`. This is going to be long.
+On my system it's ~3,500 lines.
+
+Note: generally you're better off just calling `which <command>`
+or `command -v <command>` to see if a specific command is
+avaliable.
+"""
+
 # usage_command=""
 fallback_usage="""
 USAGE: commands

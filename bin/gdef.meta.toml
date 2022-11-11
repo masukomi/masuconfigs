@@ -1,12 +1,14 @@
 # the name of the command or function you're documenting
 name="gdef"
 # a short (one line) description of what it does
-description="Finds the definition of a Ruby, Crystal, or Elixir function"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+short_description="Finds the definition of a Ruby, Crystal, or Elixir function"
+description="""
+`gdef` helps you `grep` for the "`def`inition" of a method in one of the
+aforementioned languages.
+
+Can handle the fact that sometimes a ruby method is defined as `def foo` and
+sometimes it's `def self.foo` Either way it'll find it.
+"""
 usage_command="gdef"
 # fallback_usage="""
 # USAGE: fallback_usage is used when

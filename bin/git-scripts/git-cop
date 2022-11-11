@@ -16,7 +16,12 @@ NOCOLOR="${ESCAPE}[0m"
 
 if [ "$1" != "" ]; then
   PR_BRANCH=$(echo "$1" | sed -e "s/^.*://")
-
+  REMOTE=$(echo "$1" | sed -e "s/:.*//")
+  git remote | grep $REMOTE
+  if [ $? -ne 0 ]; then
+    echo $RED"❌ CHECKOUT FAILED \"$REMOTE\" is not a known remote"$NOCOLOR;
+    exit 1
+  fi
   git checkout $PR_BRANCH
   if [ $? -eq 0 ]; then
     echo $GREEN"✅ CHECKOUT SUCCEEDED"$NOCOLOR;

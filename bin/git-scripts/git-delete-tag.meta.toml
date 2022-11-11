@@ -1,7 +1,7 @@
 # the name of the command or function you're documenting
 name="git-delete-tag"
 # a short (one line) description of what it does
-description="helper script to delete a git tag"
+short_description="helper script to delete a git tag"
 # if the tool has some sort of usage / help documentation you can
 # invoke, enter it in the usage_command. Otherwise, comment that out,
 # and document it in the fallback_usage. In TOML you can create a

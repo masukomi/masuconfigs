@@ -4,12 +4,12 @@
 # the name of the command or function you're documenting
 name="color-capture"
 # a short (one line) description of what it does
-description="Allows you to pipe a script without having its color escape codes stripped"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+short_description="Allows you to pipe a script without having its color escape codes stripped"
+description="""
+Unix pipes got you down? Stripping the color from your output? Run
+them with color-capture and their glorious escape codes will be
+preserved for the next tool in the chain.
+"""
 usage_command="color-capture"
 # fallback_usage="""
 # USAGE: fallback_usage is used when

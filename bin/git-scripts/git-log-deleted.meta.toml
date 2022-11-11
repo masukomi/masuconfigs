@@ -4,7 +4,7 @@
 # the name of the command or function you're documenting
 name="git-log-deleted"
 # a short (one line) description of what it does
-description="runs git log for a file path that has been deleted"
+short_description="runs git log for a file path that has been deleted"
 # if the tool has some sort of usage / help documentation you can
 # invoke, enter it in the usage_command. Otherwise, comment that out,
 # and document it in the fallback_usage. In TOML you can create a
