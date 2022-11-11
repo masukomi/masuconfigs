@@ -1,5 +1,14 @@
 name = "backtrace_details"
-description = "Pairs a backtrace with the corresponding lines of code"
+short_description= "Pairs a backtrace with the corresponding lines of code"
+description="""
+Ruby development involves looking at a lot of backtraces. Knowing that
+something happend on line 15 isn't generally very helpful
+becaues you don't know what's on line 15.
+
+Pipe your ruby backtraces through `backtrace_details` and it'll
+highlight the backtrace line, extract the trailing information on it,
+_and_ tell you what was on the line in question.
+"""
 usage_command="backtrace_details -h"
 # fallback_usage="""
 # USAGE: fallback_usage is used when
