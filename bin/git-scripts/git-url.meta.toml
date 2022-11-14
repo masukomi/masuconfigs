@@ -4,12 +4,18 @@
 # the name of the command or function you're documenting
 name="git-url"
 # a short (one line) description of what it does
-short_description="generates an url to the specified file and/or commit in github"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+short_description="generates an url to the specified file and/or commit in GitHub or GitLab"
+description="""
+This script has a _lot_ of options. The short version is that you
+should use this when you need to share a link to a file, or a branch
+in a GitHub repo.
+
+You should also consider using this when you want a teammate to render
+an opinion about a piece of code you're working on. Commit it. Push it
+to GitHub, or GitLab and use this to generate a link they can use to
+see it.
+"""
+
 usage_command="git-url -h"
 # fallback_usage="""
 # USAGE: fallback_usage is used when

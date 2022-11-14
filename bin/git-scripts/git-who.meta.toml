@@ -2,6 +2,41 @@
 name="git-who"
 # a short (one line) description of what it does
 short_description="Outputs a list of people who've worked on a file sorted by commits"
+description="""
+Provides you a sorted list of contributors by how many changes they've
+made to the specified file. This is useful when you need to ask
+someone a question about a file, and you're not sure who's best
+qualified to ask. In the example below, I'd know that "Eugen" is the
+person I should speak to.
+
+If you pass it the `-b` (for "browser") option it'll generate an HTML graph of the
+same information and open it in your browser.
+
+Example output (from a random Mastodon file):
+
+```text
+❯ git who app/views/admin/accounts/show.html.haml
+    34	Eugen Rochko
+     9	ThibG
+     5	Matt Jankowski
+     3	unarist
+     2	Ash Furrow
+     2	Claire
+     2	Emelia Smith
+     2	Takeshi Umeda
+     2	Yamagishi Kazutoshi
+     2	nullkal
+     1	Shuhei Kitagawa
+     1	Kaylee
+     1	Thomas Citharel
+     1	Eugen
+     1	abcang
+     1	chr v1.x
+     1	Mashiro
+     1	Lynx Kotoura
+     1	nightpool
+```
+"""
 # if the tool has some sort of usage / help documentation you can
 # invoke, enter it in the usage_command. Otherwise, comment that out,
 # and document it in the fallback_usage. In TOML you can create a

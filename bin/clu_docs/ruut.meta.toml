@@ -4,11 +4,26 @@
 name="ruut"
 # a short (one line) description of what it does
 short_description="converts simple nested parens structure into tree-like output"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+description="""
+ruut is a great tool by [Hazel Bachrach](https://tech.lgbt/@hibachrach)
+for making diagrams that resemble the output of the `tree` command.
+For example:
+
+```text
+❯ ruut 'Parent (Child 1, Child 2 (Grandchild 1, Grandchild 2), Child 3)'
+Parent
+├── Child 1
+├── Child 2
+│   ├── Grandchild 1
+│   └── Grandchild 2
+└── Child 3
+```
+
+I use this so infrequently that I can never remember what it's called.
+This doc gets it into [clu](https://github.com/masukomi/Clu#readme),
+which helps me to find it again when I need it.
+"""
+
 usage_command="ruut --help"
 # fallback_usage="""
 # USAGE: fallback_usage is used when
@@ -27,9 +42,3 @@ source_repo_url="https://github.com/hibachrach/ruut"
 # future functionality: https://github.com/masukomi/Clu/issues/10
 tags=[ "3rd_party" ]
 
-# [[cheats]]
-# description = "a description of task bar with backtrace_details"
-# template="bar {{arg1}} {{arg2}}"
-# [[cheats]]
-# description = "a description of task baz with backtrace_details"
-# template="bar {{arg1}} {{arg2}}"

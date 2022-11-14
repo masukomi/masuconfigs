@@ -2,11 +2,33 @@
 name="r-classpathify"
 # a short (one line) description of what it does
 short_description="Translates Module X; class Y; lines in a ruby file to X::Y for STDOUT"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+description="""
+Ruby geeks frequently need to refer to a class by its fully qualified
+name. But there's nowhere to get that name in the appropriate format.
+
+For example:
+
+```ruby
+module Foo
+  module Bar
+   class Baz
+     ...
+   end
+  end
+end
+```
+
+The developer would need to refer to that as `Foo::Bar::Baz` in their
+code.
+
+So, point `r-classpathify` at the file in question and it'll read that in,
+and generate the appropriate single-line version for you.
+
+Integrate this with your editor and you can get it to just tell you
+the "classpathified" name of the current file. How to do that is an
+exercise for the reader.
+
+"""
 usage_command="r-classpathify"
 # fallback_usage="""
 # USAGE: fallback_usage is used when

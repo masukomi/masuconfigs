@@ -3,6 +3,21 @@
 name="rg-ignores"
 # a short (one line) description of what it does
 short_description="finds files that rg may be using to ignore patterns"
+descirption="""
+[rg](https://github.com/BurntSushi/ripgrep) is an incredible
+replacement for grep, but sometimes it's too smart for my own good.
+
+It intentionally ignores many types of files. For example, it'll
+ignore and file or directory mentioned by your `.gitignore`.
+
+This is useful when you _know_ something is there, but ripgrep isn't
+finding it.
+
+In these situations call `rg-ignores <search term>` instead of `rg`.
+
+Mostly it exits because I can't remember the flags to make it stop
+ignoring things.
+"""
 # if the tool has some sort of usage / help documentation you can
 # invoke, enter it in the usage_command. Otherwise, comment that out,
 # and document it in the fallback_usage. In TOML you can create a

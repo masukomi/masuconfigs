@@ -2,6 +2,17 @@
 name="git-delete-tag"
 # a short (one line) description of what it does
 short_description="helper script to delete a git tag"
+description="""
+A simple tool to help you delete a git tag locally, and on the remote,
+because I can never remember the command to do it on a remote, and
+when you need to do this, you need to do it _fast_.
+
+If there are multiple remotes it'll ask you which one.
+
+Pre-requisites:
+
+* [Charm's gum](https://github.com/charmbracelet/gum)
+"""
 # if the tool has some sort of usage / help documentation you can
 # invoke, enter it in the usage_command. Otherwise, comment that out,
 # and document it in the fallback_usage. In TOML you can create a

@@ -5,11 +5,21 @@
 name="git-log-deleted"
 # a short (one line) description of what it does
 short_description="runs git log for a file path that has been deleted"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+description="""
+I've needed the `git log` of a deleted file countless times. Sometimes
+you want to know who deleted it. Sometimes why. Sometimes you need
+something from that deleted file. The
+command to do this requires 3 options and I can never remember it.
+
+`git log-deleted path/to/where/the/file/was.txt`
+
+Once you've got the log, you can then checkout any of the hashes
+it shows you.
+
+This is a simple wrapper around `git log` so if the file isn't found
+you'll get a blank response, and a successful exit, because that's what git
+log does for files it can't find.
+"""
 usage_command="git-log-deleted"
 # fallback_usage="""
 # USAGE: fallback_usage is used when

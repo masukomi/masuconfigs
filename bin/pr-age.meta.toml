@@ -5,11 +5,15 @@
 name="pr-age"
 # a short (one line) description of what it does
 short_description="outputs the age of a PR in days"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+description="""
+Wondering how old that PR is?
+
+Run this from the repo that has the PR you're wondering about and
+it'll tell you how old it is in days.
+
+Prerequisites: [gh](https://github.com/cli/cli) - the official GitHub
+command line client.
+"""
 usage_command="pr-age"
 # fallback_usage="""
 # USAGE: fallback_usage is used when

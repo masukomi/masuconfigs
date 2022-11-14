@@ -3,11 +3,13 @@
 name="is_brewed"
 # a short (one line) description of what it does
 short_description="indicates if a package is installed via homebrew"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+description="""
+a simply utility to call to determine if something is already
+installed via homebrew.
+
+I use this in conjunction with [yadm](https://yadm.io/) to make my
+bootstrap scripts idempotent.
+"""
 usage_command="is_brewed"
 # fallback_usage="""
 # USAGE: fallback_usage is used when

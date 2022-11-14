@@ -5,11 +5,21 @@
 name="hr"
 # a short (one line) description of what it does
 short_description="outputs a horizontal rule the width of your terminal"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+description="""
+a silly little utility that draws a horizontal rule the full width
+of your terminal.
+
+Not very useful by itself, but nice to call from other scripts
+when you need to divide some information visually.
+
+By default it'll use Box Drawings Light Horizontal (\\u2500) for
+a nice smooth line, but you can pass it any character you want and
+it'll use that instead. Want a line of hearts? `hr ❤️`
+
+Note: emojis end up a little weird because they're frequently more
+than one character wide but your terminal expects monospaced
+characters. 🤷‍♀️ Whatever. Experiment. Have fun.
+"""
 # usage_command=""
 fallback_usage="""
 USAGE: hr [character]

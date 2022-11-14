@@ -6,7 +6,7 @@ description="""
 Useful when trying to find branch that you edited in a specific
 time-frame. E.g. "I know i was working on it 2 weeks ago..."
 
-```
+```text
 ❯ git branchdate
 2022-10-16 00:07:58   asciinema
 2022-10-12 00:02:52   beautification

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ $# -ne 1 ]; then
-	echo "USAGE: rg-ignores <path>"
+	echo "USAGE: rg-ignores <search term>"
 	echo ""
 	echo "       Use me when rg isn't finding something you expect"
 	echo "       and rg --hidden isn't helping."

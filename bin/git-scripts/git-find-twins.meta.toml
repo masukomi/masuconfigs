@@ -2,16 +2,19 @@
 name="git-find-twins"
 # a short (one line) description of what it does
 short_description="Finds other git branches whose HEADs point to the same"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+description="""
+It's possible to end up with multiple branches pointing to the same
+[treeish](https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddeftree-ishatree-ishalsotreeish). This makes it easy to find.
+
+Checkout the branch you're looking for the twin of, then run
+`git find-twins`
+
+"""
 #usage_command=""
 fallback_usage="""
 USAGE: git find-twins
        looks for other git branches with heads pointing
-to the same treeish as the current branch
+       to the same treeish as the current branch
 """
 
 # is this an executable, function, or ???

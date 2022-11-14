@@ -3,11 +3,16 @@
 name="git-oldest-ancestor"
 # a short (one line) description of what it does
 short_description="finds the oldest common ancestor between two git treeishes"
-# if the tool has some sort of usage / help documentation you can
-# invoke, enter it in the usage_command. Otherwise, comment that out,
-# and document it in the fallback_usage. In TOML you can create a
-# multiline string by surrounding it with triple double quotes.
-# """ like this """
+description="""
+It's not easy to tell when one git branch diverged from another. Even
+worse, it's not possible to give a difinitive response.
+
+However, it _is_ possible to generate a response that's _probably_
+right. That's what this script does. Give it two branches, the one you
+believe to be the parent, and the one you believe to be the child, and
+it'll make a good guess at the first common commit in their history.
+That's the commit they _probably_ diverged at.
+"""
 usage_command="git-oldest-ancestor"
 # fallback_usage="""
 # USAGE: fallback_usage is used when
