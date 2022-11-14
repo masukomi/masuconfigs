@@ -16,13 +16,16 @@ socket_file=$(lsof -c Emacs | grep server | tr -s " " | cut -d' ' -f8 | tail -n1
 
 # echo "socket file: $socket_file"
 
-while getopts "nf" opt; do
+while getopts "nfdh" opt; do
   case ${opt} in
     n)
       NEW="true"
       ;;
     f)
       FORCE="true"
+      ;;
+    d)
+      DEBUG="true"
       ;;
     h)
       echo "Usage: doom [-n|-f] [path]"
@@ -42,9 +45,17 @@ else
   echo "will use client"
   if [[ "$NEW" == "true" ]]; then
     echo "\t...with new frame"
-    emacsclient --create-frame -n $@ --socket-name $socket_file > /dev/null 2>&1
+    if [[ "$DEBUG" != "true" ]]; then
+      emacsclient --create-frame -n $@ --socket-name $socket_file > /dev/null 2>&1
+    else
+      emacsclient --create-frame -n $@ --socket-name $socket_file
+    fi
   else
-    emacsclient -n $@ --socket-name $socket_file > /dev/null 2>&1
+    if [[ "$DEBUG" != "true" ]]; then
+      emacsclient -n $@ --socket-name $socket_file > /dev/null 2>&1
+    else
+      emacsclient -n $@ --socket-name $socket_file
+    fi
   fi
 
   if [ $? -ne 0 ]; then
