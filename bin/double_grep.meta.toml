@@ -1,15 +1,15 @@
 # the name of the command or function you're documenting
-name="dgrep"
+name="double_grep"
 # a short (one line) description of what it does
-short_description="dgrep (double grep) finds lines where 2 search terms appear"
+short_description="double_grep (double grep) finds lines where 2 search terms appear"
 description="""
-Instead of running `grep foo * | grep bar` you can run `dgrep foo bar`
+Instead of running `grep foo * | grep bar` you can run `double_grep foo bar`
 
 For example, imagine you have a log file and you need to find the
 word "foo" but you _only_ want the occurrances that are on lines
-starting with "ERROR": `dgrep "^ERROR" foo`
+starting with "ERROR": `double_grep "^ERROR" foo`
 """
-usage_command="dgrep"
+usage_command="double_grep"
 # fallback_usage="""
 # USAGE: fallback_usage is used when
 # usage_command is not present"""
@@ -19,7 +19,7 @@ type="executable"
 # what language is it written in?
 language="bash"
 # where you can find this specific file in source control
-source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/dgrep"
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/double_grep"
 # where you can find the repo that contains this file
 source_repo_url="https://github.com/masukomi"
 tags=["search"]
