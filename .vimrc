@@ -470,6 +470,7 @@ if ! filereadable(".vimrc") || len(split(getcwd(), "/")) == 2
 	" Plug 'ElmCast/elm-vim', { 'for': 'elm' }
 	Plug 'dag/vim-fish', { 'for': 'fish' }
 	Plug 'fatih/vim-go', { 'for': 'go' }
+	Plug 'Raku/vim-raku', { 'for': 'raku' }
 	" Plug 'myitcv/govim', { 'for': 'go' }
 	" let g:go_template_autocreate=0
 
