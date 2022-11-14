@@ -6,6 +6,22 @@
 
 require 'tempfile'
 require 'optparse'
+require 'mkmf'
+
+# Cross-platform way of finding an executable in the $PATH.
+#
+#   which('ruby') #=> /usr/bin/ruby
+def which(cmd)
+  exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
+  ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+    exts.each do |ext|
+      exe = File.join(path, "#{cmd}#{ext}")
+      return exe if File.executable?(exe) && !File.directory?(exe)
+    end
+  end
+  nil
+end
+
 
 def get_commits_for_author(author, file)
   commits = `git log --follow --pretty=format:'%h %ad %d %s' --date=short --author "#{author}" #{file}`.split(/\n/)
@@ -50,12 +66,17 @@ def get_lines(file)
   end
 end
 
-def write_to_tempfile(output)
-  t = Tempfile.new("git_who_f")
+def write_to_tempfile_and_open(output)
+  t = Tempfile.new(['git_who', '.html'])
   t.write(output)
   t.close()
-
-  `fenestro -p #{t.path} -n "git_who"`
+  # fenestro_executable = find_executable('fenestro')
+  # if fenestro_executable
+  #   `#{fenestro_executable} -p #{t.path} -n "#{t.path}"`
+  # else
+    `open #{t.path}`
+  # end
+  sleep 0.5
   t.unlink()
 end
 ############################################################
@@ -72,6 +93,9 @@ OptionParser.new do |opts|
   opts.on("-o", "--output output", "write to a file") do |output|
     options[:output] = output
   end
+  opts.on("-b", "open in browser") do
+    options[:browser] = true
+  end
 end.parse!
 
 if ARGV.size == 0
@@ -79,11 +103,15 @@ if ARGV.size == 0
   puts "       Outputs a list of people who've worked on a file sorted by commits"
   puts "       -h / --html html formatted"
   puts "       -o / --output writes the output to a file"
-  puts "       If you specify -s or -o then HTML will be printed to STDOUT"
+  puts "       -b / --view opens it in a browser"
+  puts "       If you specify -o then HTML will be printed to STDOUT unless you also specify -b"
   exit 0
 end
 
 file=ARGV[0]
+if options[:browser] && ! options[:html]
+  options[:html] = true
+end
 
 if ! options[:html]
   #TODO capture the exit code and exit with whatever it returned
@@ -273,6 +301,10 @@ output += footer
 if options[:output]
     open(options[:output], 'w') { |f| f.puts output }
 else
-    puts output
+    if options[:browser]
+      write_to_tempfile_and_open(output)
+    else
+      puts output
+    end
 end
 
