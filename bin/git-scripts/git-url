@@ -125,6 +125,7 @@ else
   CURRENT_TREEISH=$(git rev-parse --abbrev-ref HEAD)
 fi
 
+
 OWNER_AND_REPO=$(echo $REMOTE_URL | sed -e "s/.*git...\.com.//" -e "s/\.git//")
 if [[ $(echo $REMOTE_URL | grep --color=none 'github.com') ]]; then
   GIT_HUB=1
@@ -141,6 +142,10 @@ if [[ "$REMOTE_URL" == *"git@"* ]]; then
     REMOTE_URL=$(echo "$REMOTE_URL" | sed -e "s/.*@/https:\/\//" -e "s/com:/com\//")
 fi
 
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ "$BRANCH" == "" ] && [ "$LOCAL_PATH" == "$CURRENT_BRANCH" ]; then
+  LOCAL_PATH=""
+fi
 
 # NOW, are we linking to a _FILE_ or just a specific commit?
 if [ "$LOCAL_PATH" != "" ]; then
@@ -153,10 +158,11 @@ if [ "$LOCAL_PATH" != "" ]; then
 
   # strip the trailing .git & replace with /blob/
   if [ $GIT_HUB -eq 1 ]; then
-    REMOTE_URL=$(echo $REMOTE_URL | sed -e 's/\.git$/\/blob\//')
+    REMOTE_URL=$(echo $REMOTE_URL | sed -e 's/\.git$/\/tree\//')
   else # GIT_LAB
     REMOTE_URL=$(echo $REMOTE_URL | sed -e 's/\.git$/\/-\/blob\//')
   fi
+
 
   # we need the _full_ path to the file, from the repo's root
   # but we may be in a subdirectory of the repo
