@@ -28,9 +28,10 @@ while getopts "nfdh" opt; do
       DEBUG="true"
       ;;
     h)
-      echo "Usage: doom [-n|-f] [path]"
+      echo "Usage: doom [-n|-f|-d] [path]"
       echo "     -n open a new window"
       echo "     -f force use of a new emacs server"
+      echo "     -d debug (just shows emacs' output)"
       exit 0
       ;;
   esac
