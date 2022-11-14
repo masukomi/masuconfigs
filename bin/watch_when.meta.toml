@@ -3,6 +3,29 @@
 name="watch_when"
 # a short (one line) description of what it does
 short_description="Polls a command and reports when its output changes"
+description="""
+Simple utility to run a command, and then take action if its output
+changes.
+
+This can be used to monitor things, but there are probably better
+tools for that. I've primarily used it when tracking down bugs that
+only happen during a small percentage of invocations. Write a test
+that will invoke the bug, then run this and have it keep executing the
+test until the bug reveals itself. When it does, the output will
+change, and you can have it do something useful.
+
+For example, run this on macOS
+
+```sh
+watch_when -c "date -I minutes" \
+  -x "osascript -e 'display alert \"Hello\" message \"check the terminal\"'; exit"
+```
+
+That will watch the output of date until the minute changes, and then
+alert you and exit.... and print "button returned: OK" when you click
+it, but that's just a side-effect of osascript.
+
+"""
 usage_command="watch_when"
 # fallback_usage="""
 # USAGE: fallback_usage is used when

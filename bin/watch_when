@@ -1,34 +1,63 @@
 #!/usr/bin/env bash
 # written by Pat Collins https://burned.com
 # Polls a command and reports when its output changes.
+# modified by masukomi
 
-
-if [ $# -eq 0 ]; then
-  echo "USAGE: watch_when \"<command>\" [sleep_interval]"
+function usage(){
+  echo "USAGE: watch_when -c \"<command>\" [-s sleep_interval] [-x \"<command for when it changes>\"]"
+  echo "     -c <command> tells it what command to execute and watch"
+  echo "     -s <seconds> tells it how long to sleep between executions"
+  echo "        defaults to 2 seconds"
+  echo "     -x <command> optional command to run when the output changes"
+  echo ""
   echo "     The supplied command will be evaluated,"
   echo "     and called every 2 seconds (or sleep interval seconds"
   echo "     if supplied). When the output changes it will print"
   echo "     it out with a timestamp."
-  echo "     ^c to stop it."
+  echo "     ^c to stop it. or -x 'exit'"
+}
+
+if [ $# -eq 0 ]; then
+  usage
   exit 0
 fi
-
-cmd=$1
-if [ $# -ne 2 ]; then
-  sleep_interval=2
-else
-  sleep_interval=$2
+while getopts "c:s:x:" opt; do
+  case ${opt} in
+    c)
+      COMMAND=${OPTARG}
+      ;;
+    s)
+      SLEEP=${OPTARG}
+      ;;
+    x)
+      CHANGED_COMMAND=${OPTARG}
+      ;;
+    h)
+      usage
+      exit 0
+      ;;
+  esac
+done
+if [ "$SLEEP" == "" ]; then
+  SLEEP=2
 fi
 
 last=""
 output=""
+first_time="true"
 while [[ true ]]; do
-  output=$(eval $cmd)
-  if [[ $last != $output ]]; then
+  output=$(eval "$COMMAND")
+  if [[ $last != $output ]] && [ "$first_time" != "true" ]; then
     echo -n "$output"
     echo -en "\t"
     echo $(date -u +"%Y-%m-%dT%H:%M:%SZ")
     last=$output
+    eval "$CHANGED_COMMAND"
+  elif [[ "$first_time" == "true" ]]; then
+    echo "watching..."
+    last=$output
+    first_time="false"
   fi
-  sleep 2
+
+  sleep $SLEEP
 done
