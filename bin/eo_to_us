@@ -1,3 +1,3 @@
 #!/bin/sh
 
-open "http://www.ultralingua.com/onlinedictionary/dictionary#src_lang=Esperanto&dest_lang=English&query=$1"
+open "https://en.bab.la/dictionary/esperanto-english/$1"
