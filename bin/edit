@@ -1,11 +1,29 @@
 #!/bin/sh
 
+
+if [[ "$EDITOR" != *"vim" ]] && [[ "$EDITOR" != "emacs" ]]; then
+  echo "Alas, I only know how to edit files in vim (mvim, nvim, etc) and emacs"
+  echo "set your \$EDITOR variable to one of those and I'll work."
+  exit 1;
+fi
+if [ $# -eq 0 ]; then
+  echo "USAGE: edit <path ending with :<num>>"
+  echo "       Please specify a file to edit."
+  echo "       example:"
+  echo "       edit foo/bar/baz.rb:44"
+  echo ""
+  echo "       I'll open the provided file to the specified line numeber"
+
+  exit 1;
+fi
+
+
 for var in "$@"
 do
   echo $var
-  if [[ $var = *":"* ]]; then 
-    eval $(echo $var | sed 's/\([^:]*\):\(.*\)/mvim +\2 \1/g')
+  if [[ $var = *":"* ]]; then
+    $EDITOR $(eval $(echo $var | sed 's/\([^:]*\):\(.*\)/mvim +\2 \1/g'))
   else
-    mvim $var
+    $EDITOR $var
   fi
 done

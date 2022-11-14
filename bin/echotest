@@ -1,4 +1,0 @@
-#!/bin/sh
-
-/usr/local/opt/coreutils/libexec/gnubin/echo -e "\033[36mhey\033[0m ho"
-
