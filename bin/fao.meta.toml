@@ -1,0 +1,52 @@
+# Clu documentation file. Details: https://github.com/masukomi/Clu
+
+# The name of the command or function you're documenting
+# This is the thing you type to invoke it. Note: git scripts
+# are typically named git-foo but you invoke them as 'git foo'.
+# It's your call, but for these I'd recommend using git-foo in
+# the name field. This will enable Clu to tell you where it's
+# located on your system.
+name="fao"
+# a short (one line) description of what it does
+short_description="Find And Open - find files with matching names and opens them in your editor"
+
+# an optional detailed description of what it does.
+# definitely include this if you're going to generate a web site.
+# Note: You can include markdown in this and have it rendered
+# when the web site is generated
+#
+description="""
+When you know what a file is called, but not where it is, use `fao` to
+Find And Open it. Opens with whatever you have configured in your
+`$EDITOR` environment variable.
+
+Under the covers it's using `find` so asterisk style wildcards are
+supported.  To Find And Open, every Markdown file, for example, you could
+run `fao '*.md'`
+"""
+
+# If the tool has some sort of usage / help documentation you can
+# invoke, enter it in the usage_command. Otherwise, comment that out,
+# and document it in the fallback_usage. In TOML you can create a
+# multiline string by surrounding it with triple double quotes.
+# """ like this """
+usage_command="fao"
+
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/fao"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+# additional keywords that might help you find this in a search
+# or when browsing by tag. There are more features coming that
+# will add functionality based on tags. ;)
+#
+tags=[ "cli", "search"  ]

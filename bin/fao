@@ -1,13 +1,37 @@
 #!/bin/sh
+function usage {
+  echo "USAGE: fao <file_name>"
+  echo "       fao = Find And Open"
+  echo "       starting in the current directory, this"
+  echo "       finds each file matching the specified name"
+  echo "       and then asks you if you want to open the"
+  echo "       discovered path."
+  echo "       If yes, it passes it to \$EDITOR"
+  echo ""
+  echo "       You can use asterisks for wildcards."
+  echo "       E.g. 'fao foo.rb' calls 'vim path/to/foo.rb'"
+  echo "       \"fao '*.rb'\" calls \"vim path/to/every/*.rb\""
+  exit 0
+}
 
 function opener {
 	FILE="$1"
 	echo "open $FILE ? [return / n]"
 	read OPEN
 	if [ "$OPEN" == "" ]; then
-		mvim "$FILE"
+		$EDITOR "$FILE"
 	fi
 }
+
+if [ $# -eq 0 ]; then
+  usage
+fi
+
+if [ "$EDITOR" == "" ]; then
+  echo "Your EDITOR environment variable is not set"
+  usage
+fi
+
 export -f opener;
 # FILE=$(mdfind -onlyin . -name "$argv")
 find . -name "$1" -exec bash -c 'opener "$0"' '{}'  \;
