@@ -6,7 +6,7 @@ Usage: find_in_branches "something to grep for" some/file/to/grep/in [branch_nam
 It will then iterate over all your local branches and look for that phrase.
 
 OR
-if you say "-L something to grep for" it will tell the branches in which that 
+if you say "-L something to grep for" it will tell the branches in which that
 string was NOT found by grep (on the specified file.
 
 This will NOT bother to grep the file in branches where it does not exist.
@@ -17,7 +17,7 @@ file = ARGV[1]
 
 if grep_param.nil? or file.nil? or grep_param == '' or file == ''
   puts usage
-  exit(1)
+  exit(0)
 end
 
 branch_name_regexp = ARGV.length > 1 ? ARGV[2] : '.*'
