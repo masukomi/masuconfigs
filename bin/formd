@@ -1,9 +1,23 @@
 #!/usr/bin/env python
 # encoding=utf8
 """
-Seth Brown
+formd: a markdown formatting tool
+
+formd is a CLI tool for (for)matting (m)ark(d)own that allows
+interconversion between the two styles of Markdown links, inline and
+referenced. The tool conforms to the Github Flavored Markdown spec.
+
+
+Original Author Seth Brown
 02-24-12
-http://drbunsen.github.com/formd/
+original url: http://drbunsen.github.com/formd/
+appears to have been rewritten in JavaScript
+https://github.com/seth-brown/formd
+
+Last Python commit: https://github.com/seth-brown/formd/tree/3e08bc679dabe8ea402b373820c3c990ffee013f
+
+According to that commit this is MIT Licensed
+and Copyright 2012 Seth Brown
 """
 from sys import stdin, stdout, argv
 import re
