@@ -1,0 +1,87 @@
+# Clu documentation file. Details: https://github.com/masukomi/Clu
+
+# The name of the command or function you're documenting
+# This is the thing you type to invoke it. Note: git scripts
+# are typically named git-foo but you invoke them as 'git foo'.
+# It's your call, but for these I'd recommend using git-foo in
+# the name field. This will enable Clu to tell you where it's
+# located on your system.
+name="extract_prs_from_branch"
+# a short (one line) description of what it does
+short_description="extracts a list of open/closed/all PRs from a branch"
+
+# an optional detailed description of what it does.
+# definitely include this if you're going to generate a web site.
+# Note: You can include markdown in this and have it rendered
+# when the web site is generated
+#
+description="""
+Intended to help release managers know what's in an impending
+release, this generates a list of GitHub Pull Requests that have been
+merged into the history of the specified branch,
+are pending merge, or both.
+
+NOTE: because of ruby + shell weirdness it may not see the
+EXTRACT_PRS_TOKEN even when you have it set in
+your shell's environment.
+
+To address this you can invoke it like this:
+```sh
+EXTRACT_PRS_TOKEN=$EXTRACT_PRS_TOKEN extract_prs_from_branch main
+```
+
+Example (from Mastodon's main repo):
+
+```
+❯ EXTRACT_PRS_TOKEN=$EXTRACT_PRS_TOKEN extract_prs_from_branch main
+* Otachon v4.0.2
+  by Otakan951
+  https://github.com/mastodon/mastodon/pull/20784
+* Use 'wasm-unsafe-eval' in CSP
+  by prplecake
+  https://github.com/mastodon/mastodon/pull/20732
+* Fix wrong directive `unsafe-wasm-eval` to `wasm-unsafe-eval`
+  by mastodon
+  https://github.com/mastodon/mastodon/pull/20729
+* Bump version to 4.0.2
+  by mastodon
+  https://github.com/mastodon/mastodon/pull/20725
+```
+(There were, of course, many more entries.)
+
+Prerequisites:
+* [octokit gem](https://github.com/octokit/octokit.rb)
+* [faraday-retry gem](https://github.com/lostisland/faraday-retry)
+* EXTRACT_PRS_TOKEN env var
+  a personal access token created in GitHub for this app.
+  Use a fine-grained token and give it read-only access
+  to Contents, Metadata, Pull Requests.
+
+[Your GitHub Personal Access Tokens](https://github.com/settings/personal-access-tokens)
+"""
+
+# If the tool has some sort of usage / help documentation you can
+# invoke, enter it in the usage_command. Otherwise, comment that out,
+# and document it in the fallback_usage. In TOML you can create a
+# multiline string by surrounding it with triple double quotes.
+# """ like this """
+usage_command="extract_prs_from_branch"
+
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="ruby"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/extract_prs_from_branch"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+# additional keywords that might help you find this in a search
+# or when browsing by tag. There are more features coming that
+# will add functionality based on tags. ;)
+#
+tags=[ "ruby", "release_management", "prs"  ]
