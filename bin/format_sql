@@ -1,8 +1,25 @@
 #!/bin/sh
 
+if [ $# -eq 0 ]; then
+
+	echo "USAGE: format_sql path/to/sql_file.sql"
+	echo "       replaces the content of the file"
+	echo "       with formatted SQL"
+	echo "       Requires sqlformat command"
+	echo "       see https://github.com/andialbrecht/sqlparse"
+	exit 0
+fi
+
+
+COMMAND=$(command -v sqlformat)
+if [ "$COMMAND" == "" ]; then
+	echo "Can't find sqlformat"
+	echo "Run 'pip3 install sqlparse' to install it."
+	exit 1
+fi
 if [[ -f "$1" ]]; then
   TEMPFILE=$(mktemp -t "format_sql")
-  /usr/local/bin/sqlformat \
+  $COMMAND \
           --reindent \
           --keywords upper \
           --identifiers lower $1 > $TEMPFILE
