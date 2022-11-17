@@ -60,3 +60,6 @@ fi
 if ! is_installed 'itsalive'; then
 	pip3 install itsalive
 fi
+if ! is_installed 'sqlformat'; then
+	pip3 install itsalive
+fi
