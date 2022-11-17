@@ -15,7 +15,7 @@ if test -f /usr/local/share/fish/vendor_completions.d/task.fish
 	source /usr/local/share/fish/vendor_completions.d/task.fish
 end
 
-set -x EDITOR mvim
+set -x EDITOR doom
 set -x BAT_PAGER "" # no paging! Only spew!
 set -x vmm_use_secure_cookies false
 
