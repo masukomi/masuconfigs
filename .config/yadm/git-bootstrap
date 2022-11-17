@@ -75,9 +75,7 @@ fi
 format_md_links_url="git@github.com:masukomi/format_md_links.git"
 if [[ $(is_cloned ~/workspace/reference/format_md_links $cask_url) == "false" ]] ; then
 	mayclone ~/workspace $format_md_links_url
-	cd ~/workspace/format_md_links
-	ln -s format_md_links ~/bin/format_md_links
-	cd ~/
+	ln -s ~/workspace/format_md_links ~/bin/format_md_links
 fi
 
 mayclone ~/workspace "git@github.com:kerma/defaultbrowser.git"
