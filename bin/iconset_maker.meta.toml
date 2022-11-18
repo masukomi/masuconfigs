@@ -1,0 +1,43 @@
+# Clu documentation file. Details: https://github.com/masukomi/Clu
+name="iconset_maker"
+short_description="generates a .icns file from a 1024x1024 PNG file"
+
+description="""
+`iconset_maker` Makes it easy to generate a collection of sized icons
+and bundle them into a .iconset in order to generate and apply
+custom icons for applications in macOS
+
+The image _must_ be 1024 by 1024 resolution. It should also be noted
+that frequently images that look good large, look terrible
+in tiny icon sizes (like in the list view). A good (human) icon designer
+will create different icons for small and large views.
+
+Example:
+```
+iconset_maker my_awesome_image_1024x1024.png awesome_icon
+```
+that will generated `awesome_icon.icns` which you can use
+in your mac apps, or to customize the icons of other people's
+mac apps.
+
+
+Prerequisets: sips, iconutil
+
+I believe both of these come with macOS
+
+"""
+
+usage_command="iconset_maker"
+
+# fallback_usage="""
+# """
+
+# is this an executable, function, or ???
+type="executable"
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/iconset_maker"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+tags=[ "images", "icons", "macOS" ]
