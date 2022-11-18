@@ -209,6 +209,10 @@ maybrew 'fish'
 # https://fontforge.github.io
 maybrew 'fontforge'
 
+# Monitor a directory for changes and run a shell command
+# https://github.com/emcrisostomo/fswatch
+maybrew 'fswatch'
+
 # Command-line fuzzy finder written in Go
 # https://github.com/junegunn/fzf
 if ! is_installed "fzf"; then
