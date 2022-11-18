@@ -1,0 +1,31 @@
+# Clu documentation file. Details: https://github.com/masukomi/Clu
+name="html2pdf"
+short_description="Converts html to pdf by way of Google Chrome"
+
+description="""
+Chrome is, quite possibly, the best tool for generating a good looking
+PDF from an HTML file. Surprisingly, they offer a command line
+interface for this.
+
+`html2pdf` will convert a local .html file to PDF by invoking chrome.
+It can also handle HTML that's been piped in.
+
+Should work on macOS, Linux, and FreeBSD
+
+Prerequisets: Chrome
+"""
+
+usage_command="html2pdf -h"
+
+# fallback_usage="""
+# """
+
+# is this an executable, function, or ???
+type="executable"
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/html2pdf"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+tags=[ "pdf", "html" ]
