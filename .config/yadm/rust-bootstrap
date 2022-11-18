@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+source core_bootstrap_functions.sh
+
+# install rust stuff
+if ! is_installed "rustc"; then
+	echo "installing rust stuff"
+	#install via rustup
+	# yes '' just sends an enter which we need to choose the default
+	# Install option
+	yes '' | curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+	rustup toolchain add nightly
+	cargo +nightly install racer
+	cargo install silicon
+fi
+
+# broot is an interactive form of tree
+cargo install broot
+# ruut also you to easily generate tree diagrams
+cargo install ruut
+
+# converts html 2 markdown
+cargo install html2runes
+
+cargo install readable_url
+
+
