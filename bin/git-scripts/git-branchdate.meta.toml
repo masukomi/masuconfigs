@@ -6,21 +6,30 @@ description="""
 Useful when trying to find branch that you edited in a specific
 time-frame. E.g. "I know i was working on it 2 weeks ago..."
 
+Output is sorted in reverse chronological order (oldest last).
+
 ```text
 ❯ git branchdate
+2022-11-16 12:21:21   v2_staging
+2022-11-16 07:10:30   markdown
+2022-11-16 06:42:31   tag_merge
+2022-11-06 18:26:39   prettier_tables
+2022-11-06 10:57:58   tags
 2022-10-16 00:07:58   asciinema
 2022-10-12 00:02:52   beautification
 2022-10-05 21:39:08   main
-2022-11-11 15:45:14   markdown
-2022-11-06 18:26:39   prettier_tables
-2022-11-06 10:57:58   tags
-2022-11-06 18:26:39   v2_staging
 ```
+
+Search keywords: branch age
 """
 # usage_command=""
 fallback_usage="""
-USAGE: git branchdate
-       Lists the date of the last commit of each branch."""
+USAGE: git branchdate [any git branch flags]
+       Lists the date of the last commit of each branch.
+
+       optionally takes any arguments and passes them
+       directly on to the git branch command
+"""
 
 # is this an executable, function, or ???
 type="executable"
