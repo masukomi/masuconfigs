@@ -33,6 +33,7 @@ function usage () {
        -r specify the remote repo to link to
        -t treeish  defaults to the current branch name
           but can be commit hash, tag, etc.
+       -w link to the raW file
 
        You *must* specify either a path, a treeish/branch, or both.
 
@@ -57,7 +58,7 @@ https://github.com/charmbracelet/gum"
 fi
 
 LINE=""
-while getopts "hot:r:l:b:" opt; do
+while getopts "whot:r:l:b:" opt; do
   case $opt in
     b)
       BRANCH=$OPTARG
@@ -77,6 +78,9 @@ while getopts "hot:r:l:b:" opt; do
       ;;
     r)
       REMOTE=$OPTARG
+      ;;
+    w)
+      RAW="true"
       ;;
   esac
 done
@@ -156,11 +160,22 @@ if [ "$LOCAL_PATH" != "" ]; then
   # https://gitlab.com/<owner>/<repo>/-/blob/<treeish>/<path>#L<line num>
 
 
-  # strip the trailing .git & replace with /blob/
+
+  # strip the trailing .git & replace with /blob/ or /-/blob
   if [ $GIT_HUB -eq 1 ]; then
-    REMOTE_URL=$(echo $REMOTE_URL | sed -e 's/\.git$/\/tree\//')
+    if [ "$RAW" != "true" ]; then
+      # https://github.com/<owner>/<repo>/blob/readme_images/images/find.png
+      # https://raw.githubusercontent.com/<owner>/<repo>/readme_images/images/find.png
+      REMOTE_URL=$(echo $REMOTE_URL | sed -e 's/\.git$/\/blob\//')
+    else
+      REMOTE_URL=$(echo $REMOTE_URL | sed -e 's/\.git$/\//')
+    fi
   else # GIT_LAB
-    REMOTE_URL=$(echo $REMOTE_URL | sed -e 's/\.git$/\/-\/blob\//')
+    if [ "$RAW" != "true" ]; then
+      REMOTE_URL=$(echo $REMOTE_URL | sed -e 's/\.git$/\/-\/blob\//')
+    else
+      REMOTE_URL=$(echo $REMOTE_URL | sed -e 's/\.git$/\/-\/raw\//')
+    fi
   fi
 
 
@@ -247,11 +262,24 @@ else # We're linking to just a point in time
   # oddly hub and lab both have 3 letters. thus ...
   # OWNER_AND_REPO=$(echo $CHOSEN_REPO | sed -e "s/.*git...\.com.//" -e "s/\.git//")
   if [ $GIT_HUB -eq 1 ]; then
-      # https://github.com/masukomi/postcircumfix-test/tree/9c432d3e0f6e3833968b9ed6679ed73a9680ba4b
-      FULL_URL="https://github.com/$OWNER_AND_REPO/tree/$CURRENT_TREEISH"
+    # https://github.com/masukomi/postcircumfix-test/tree/9c432d3e0f6e3833968b9ed6679ed73a9680ba4b
+    FULL_URL="https://github.com/$OWNER_AND_REPO/tree/$CURRENT_TREEISH"
   else # GIT_LAB
-      # https://gitlab.com/masukomi/raku-pretty-table/-/tree/cafb4a97f4cf227fa1971619f2a61401ea0e9db5/
-      FULL_URL="https://gitlab.com/$OWNER_AND_REPO/-/tree/$CURRENT_TREEISH"
+    # https://gitlab.com/masukomi/raku-pretty-table/-/tree/cafb4a97f4cf227fa1971619f2a61401ea0e9db5/
+    FULL_URL="https://gitlab.com/$OWNER_AND_REPO/-/tree/$CURRENT_TREEISH"
+  fi
+fi
+
+if [ "$RAW" == "true" ]; then
+  if [ $GIT_HUB -eq 1 ]; then
+    # got
+    # https://raw.githubusercontent.com/masukomi/Clu/blob/readme_images/images/find.png
+    # needed
+    # https://raw.githubusercontent.com/masukomi/Clu/readme_images/images/find.png
+
+    FULL_URL=$(echo "$FULL_URL" | sed -e "s/github.com/raw.githubusercontent.com/" -e "s/\/tree//")
+  # else
+    # This was already addressed in the LOCAL area
   fi
 fi
 
