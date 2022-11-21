@@ -15,7 +15,7 @@ This performs the Pandoc conversion and then applies some cleanup
 to compensate for what it gets wrong.
 
 
-Prerequisites: pandoc
+Prerequisites: pandoc, sd
 """
 
 # If the tool has some sort of usage / help documentation you can
