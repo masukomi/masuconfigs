@@ -470,6 +470,21 @@
 ;;
 ;;FOR MORE CONFIGS SEE M-x org-customize
 
+(require 'org-mouse)
+;; Org-mouse implements the following features:
+;; * following links with the left mouse button (in Emacs 22)
+;; * subtree expansion/collapse (org-cycle) with the left mouse button
+;; * several context menus on the right mouse button:
+;;    + general text
+;;    + headlines
+;;    + timestamps
+;;    + priorities
+;;    + links
+;;    + tags
+;; * promoting/demoting/moving subtrees with mouse-3
+;;    + if the drag starts and ends in the same line then promote/demote
+;;    + otherwise move the subtree
+;;
 
 (dolist (hook '(text-mode-hook))
   (add-hook hook (lambda () (flyspell-mode 1))))
@@ -541,6 +556,7 @@
 	; e.g. / / for italics disappear
 	org-hide-emphasis-markers t
 
+	org-display-remote-inline-images 'cache
 	; defalt image width when it can't find something
 	; specified in any #+ATTR.* page keyword
 	; for example:
