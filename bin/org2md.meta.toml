@@ -34,12 +34,12 @@ type="executable"
 # what language is it written in?
 language="bash"
 # where you can find this specific file in source control
-source_url=""
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/org2md"
 # where you can find the repo that contains this file
-source_repo_url=""
+source_repo_url="https://github.com/masukomi/masuconfigs"
 
 # additional keywords that might help you find this in a search
 # or when browsing by tag. There are more features coming that
 # will add functionality based on tags. ;)
 #
-# tags=[ "foo", "bar"  ]
+tags=[ "markdown", "emacs", "org-mode"  ]
