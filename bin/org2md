@@ -1,0 +1,33 @@
+#!/bin/sh
+
+function usage {
+  echo "USAGE: org2md -i <path/to/input> -o <path/to/output>
+       -i specifies an org mode file path
+       -o specifies a markdown file path
+
+       Performs a simple pandoc conversion and then
+       cleans up the things pandoc gets wrong.
+
+       Requires pandoc
+"
+  exit 0
+}
+while getopts "hi:o:" opt; do
+  case $opt in
+    i)
+      IN=$OPTARG
+      ;;
+    o)
+      OUT=$OPTARG
+      ;;
+    h)
+      usage
+      ;;
+  esac
+done
+
+if [ $# -lt 2 ]; then
+ usage
+fi
+
+pandoc -i $IN | sed -e "s/{.verbatim}//g" > $OUT

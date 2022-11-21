@@ -1,0 +1,45 @@
+name="org2md"
+# a short (one line) description of what it does
+short_description="Converts org files to markdown & performs cleanup"
+
+# an optional detailed description of what it does.
+# definitely include this if you're going to generate a web site.
+# Note: You can include markdown in this and have it rendered
+# when the web site is generated
+#
+description="""
+Pandoc does a pretty good job of converting org-mode files to
+Markdown, but it leaves some garbage in the file.
+
+This performs the Pandoc conversion and then applies some cleanup
+to compensate for what it gets wrong.
+
+
+Prerequisites: pandoc
+"""
+
+# If the tool has some sort of usage / help documentation you can
+# invoke, enter it in the usage_command. Otherwise, comment that out,
+# and document it in the fallback_usage. In TOML you can create a
+# multiline string by surrounding it with triple double quotes.
+# """ like this """
+usage_command="org2md"
+
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url=""
+# where you can find the repo that contains this file
+source_repo_url=""
+
+# additional keywords that might help you find this in a search
+# or when browsing by tag. There are more features coming that
+# will add functionality based on tags. ;)
+#
+# tags=[ "foo", "bar"  ]
