@@ -1,5 +1,21 @@
 #!/bin/sh
-# hextorgb.sh
+
+if [ $# -eq 0 ]; then
+  echo "USAGE: hex2rgb <hex color>
+        Takes in a hex color and ouputs:
+
+        - RGB (css style)
+        - ANSI escape code for foreground color
+        - ANSI escape code for background color
+
+        The color can be in #CCFFCC or CCFFCC style.
+        Does not support 3 character style (#CFC).
+        Capitalization doesn't matter."
+
+        exit 0
+fi
+
+
 hexinput=`echo $1 | tr '[:lower:]' '[:upper:]' | sed -e "s/^#//"`  # uppercase-ing
 a=`echo $hexinput | cut -c-2`
 b=`echo $hexinput | cut -c3-4`
@@ -11,7 +27,6 @@ b=`echo "ibase=16; $c" | bc`
 
 echo "Hex: #$hexinput"
 echo "CSS: rgb($r,$g,$b)"
-echo "ANSI foreground: \\\033[38;2;$r;$g;$b""m"
-echo "ANSI background: \\\033[48;2;$r;$g;$b""m"
-
+echo "ANSI foreground: \\\033[38;2;$r;$g;$b""m -> \033[38;2;$r;$g;$b""m foreground\033[0m"
+echo "ANSI background: \\\033[48;2;$r;$g;$b""m -> \033[48;2;$r;$g;$b""m background\033[0m"
 exit 0
