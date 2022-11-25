@@ -1,0 +1,42 @@
+# Clu documentation file. Details: https://github.com/masukomi/Clu
+name="fswatch"
+short_description="cross platform file change monitor"
+
+description="""
+A file system monitory tool that uses platform specific mechanisms to
+achieve its goal efficiently.
+
+`fswatch` is a command line front end to `libfswatch` which can be
+incorporated into any C software that needs to watch the filesystem.
+
+It's got a bajillion options but usage can be summarized as follows
+
+> `fswatch` is invoked using the following syntax:
+>
+> `fswatch (options)* (paths)+`
+>
+> `fswatch` interprets file names as being relative to the working
+> directory and canonicalizes them using `realpath`.
+
+[Documentation](http://emcrisostomo.github.io/fswatch/doc)
+
+
+Conceptually Related:
+[watch_when](https://github.com/masukomi/masuconfigs/blob/master/bin/watch_when)
+watches for when the output of a command changes.
+"""
+
+usage_command="fswatch --help"
+
+# fallback_usage="""
+# """
+
+# is this an executable, function, or ???
+type="executable"
+language="c++"
+# where you can find this specific file in source control
+# source_url=""
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/emcrisostomo/fswatch"
+
+tags=[ "notmine", "filesystem" ]

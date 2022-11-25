@@ -1,0 +1,59 @@
+# Clu documentation file. Details: https://github.com/masukomi/Clu
+
+# the name of the command or function you're documenting
+name="copstop"
+# a short (one line) description of what it does
+short_description="run rubocop against changed files, or files in last commit"
+# an optional detailed description of what it does.
+# definitely include this if you're going to generate a web site
+#
+description="""
+If you've got a CI server checking that your Ruby code matches your
+Rubocop specifications, you want copstop.
+
+Before you commit run `copstop -n` (`-n` for "new" files). It'll run
+`rubocop -A` on anything that ends with `.rb`.
+
+If you committed, but haven't pushed yet, run `copstop -l` (`-l` for
+"last" commit). And it'll run the same command againts all the `.rb`
+files that were part of that commit.
+
+Note that the `-A` option to Rubocop means it'll attept to autocorrect
+_all_ offenses (safe and unsafe). Edit the file and change this to `-a` if you'd prefer
+it to only do the "safe" changes.
+
+ProTip: if you're using a git hook manager like
+[lefthook](https://github.com/evilmartians/lefthook) or
+[git-rook](https://github.com/mtdowling/git-rook)
+you should be able to have it run it as a pre-commit hook. ;)
+"""
+
+# if the tool has some sort of usage / help documentation you can
+# invoke, enter it in the usage_command. Otherwise, comment that out,
+# and document it in the fallback_usage. In TOML you can create a
+# multiline string by surrounding it with triple double quotes.
+# """ like this """
+usage_command="copstop"
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/copstop"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+# additional keywords that might help you find this in a search
+# or when browsing by tag
+# future functionality: https://github.com/masukomi/Clu/issues/10
+tags=[ "ruby" ]
+
+# [[cheats]]
+# description = "a description of task bar with backtrace_details"
+# template="bar {{arg1}} {{arg2}}"
+# [[cheats]]
+# description = "a description of task baz with backtrace_details"
+# template="bar {{arg1}} {{arg2}}"

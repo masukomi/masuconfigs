@@ -1,0 +1,41 @@
+# Clu documentation file. Details: https://github.com/masukomi/Clu
+
+# the name of the command or function you're documenting
+name="fuser"
+# a short (one line) description of what it does
+short_description="list the process ids of things using a file"
+description="""
+It's unclear what exactly fuser can do, But the relevant
+bit that has been useful to me is `fuser -cfu path/to/file` which will
+tell you what processes have a lock on a file.
+
+For example: SQLite might be complaining that a database is locked
+when you try and access it. fuser will tell you which processes
+are accessing it.
+"""
+# usage_command="fuser"
+fallback_usage="""
+fuser: [-cfu] file ...
+    -c  file is treated as mount point
+    -f  the report is only for the named files
+    -u  print username of pid in parenthesis"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="c"
+# where you can find this specific file in source control
+# source_url=""
+# where you can find the repo that contains this file
+# source_repo_url=""
+# additional keywords that might help you find this in a search
+# or when browsing by tag
+# future functionality: https://github.com/masukomi/Clu/issues/10
+tags=[ "filesystem", "processes"  ]
+
+# [[cheats]]
+# description = "a description of task bar with backtrace_details"
+# template="bar {{arg1}} {{arg2}}"
+# [[cheats]]
+# description = "a description of task baz with backtrace_details"
+# template="bar {{arg1}} {{arg2}}"

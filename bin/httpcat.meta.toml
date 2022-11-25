@@ -1,0 +1,32 @@
+# Clu documentation file. Details: https://github.com/masukomi/Clu
+name="httpcat"
+short_description="Tells you what an HTTP status code means."
+
+description="""
+Give `httpcat` an HTTP status code and it will give you
+the corresponding image from [HTTP Cats](https://http.cat)
+as well as a link to the detailed eplanation on developer.mozilla.org
+
+Prerequisites:
+
+* `imgcat` - [the one that comes with iterm2](https://iterm2.com/documentation-images.html)
+  is best, but [the other one](https://github.com/eddieantonio/imgcat)
+  should probably work fine too if you're not on macOS. It just won't
+  look very good.
+* `curl` but, you likely already have that.
+"""
+
+usage_command=""
+
+# fallback_usage="""
+# """
+
+# is this an executable, function, or ???
+type="executable"
+language="bash"
+# where you can find this specific file in source control
+source_url=""
+# where you can find the repo that contains this file
+source_repo_url=""
+
+tags=[ "humor", "webdev" ]
