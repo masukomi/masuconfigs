@@ -1,0 +1,37 @@
+# TooLoo documentation file.
+# Details: https://github.com/masukomi/TooLoo
+name="yadm_ignore"
+short_description="adds a string to yadm's ignore file"
+
+description="""
+Telling [yadm](https://yadm.io/) to ignore a pattern
+_without_ adding it to your global .gitignore is
+a pain.
+
+This script simplifies that.
+
+It adds whatever string you pass it to yadm's "exclude" file,
+then copies it to `~/.config/yadm/ignore_file` so that you've
+got a version you can commit if you need it on another machine.
+It then then attempts to commit that and run
+`yadm push origin` to push up the changes.
+
+
+"""
+
+usage_command=""
+
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/yadm_ignore"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+tags=[ "yadm", "dotfiles", "git"  ]

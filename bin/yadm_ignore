@@ -14,7 +14,7 @@ if [ $# -eq 1 ]; then
 		$HOME/.config/yadm/ignore_file
 	yadm add $HOME/.config/yadm/ignore_file
 	yadm commit -m "added $1 to yadm's ignore_file"
-	yadm push origin master
+	yadm push origin
 	if [ $? -ne 0 ]; then
 		echo "Failed to push yadm commit. See error message above."
 	else
