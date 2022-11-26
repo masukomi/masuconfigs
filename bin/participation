@@ -1,5 +1,14 @@
 #!/usr/bin/env ruby
 
+# creates a sparkline of commit activity by week
+# for the history of the current branch.
+#
+# Usage: participation
+#        takes no arguments.
+#
+# Pre-requisites: ruby-let gem
+
+
 require 'ruby-let'
 
 class Time
