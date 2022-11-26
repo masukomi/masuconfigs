@@ -20,6 +20,7 @@ first_grep_output_file=$(mktemp first_grep_output.XXXXXXXX)
 # echo "results in $first_grep_output_file"
 grep -rl $1 $start_path > $first_grep_output_file
 echo "found $(cat $first_grep_output_file | wc -l ) files matching $1"
+echo "now searching within those matching lines for $2"
 echo "================================================================================"
 
 
