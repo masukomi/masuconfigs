@@ -109,6 +109,9 @@
 (package! ruby-hash-syntax)
 (package! ruby-tools) ; https://github.com/rejeep/ruby-tools.el
 
+; -- Ruby
+(package! rust-mode)
+
 ; -- Schemes
 ; (package! geiser-chicken) # FORBIDDEN - EVIL BREAKS EVERYTHING
 (package! racket-mode)
