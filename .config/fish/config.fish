@@ -98,6 +98,7 @@ abbr -a sall 'env SKIP=bad_words,rb_tester,rubocopper,ruby_docs'
 # alias vimr /Applications/VimR.app/Contents/Resources/vimr
 abbr -a vfz "mvim (fzf)"
 abbr -a which "command -v"
+abbr -a zdeps "zef install --deps-only ."
 alias :q exit
 
 alias lg lazygit
