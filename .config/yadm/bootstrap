@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+source core_bootstrap_functions.sh
 
 ssh -T git@github.com 2>&1 | grep "You've successfully authenticated"
 if [ $? -ne 0 ]; then
@@ -23,16 +24,6 @@ fi
 #system_type=$(uname -s)
 #if [ "$system_type" = "Darwin" ]; then
 
-
-function is_installed(){
-	hash $1 >/dev/null 2>&1
-	# if [ $? -eq 0 ] && [ "$(which go)" != "" ]; then
-	if [ $? -eq 0 ]; then
-		true
-	else
-		false
-	fi
-}
 
 read -p "install / update xcode commandline tools? [y/n]
 " command_line_tools
@@ -61,7 +52,7 @@ read -p "clone git repos? [y/n]
 " clone_gits
 if [ "$clone_gits" == "y" ]; then
 	if [ -e $HOME/.config/yadm/git-bootstrap ]; then
-	$HOME/.config/yadm/git-bootstrap
+		$HOME/.config/yadm/git-bootstrap
 	fi
 fi
 
@@ -80,6 +71,14 @@ read -p "install python stuff? [y/n]
 if [ "$python_installs" == "y" ]; then
 	if [ -e $HOME/.config/yadm/python-bootstrap ]; then
 		$HOME/.config/yadm/python-bootstrap
+	fi
+fi
+
+read -p "install rust stuff? [y/n]
+" rust_installs
+if [ "$rust_installs" == "y" ]; then
+	if [ -e $HOME/.config/yadm/rust-bootstrap ]; then
+		$HOME/.config/yadm/rust-bootstrap
 	fi
 fi
 #### END PACKAGE MANAGER LOADING
