@@ -1,0 +1,36 @@
+# TooLoo documentation file.
+# Details: https://github.com/masukomi/TooLoo
+name="where_in_git"
+short_description="finds a file, or file-path across your local git branches"
+
+description="""
+Iterates over each of your _local_ git branches
+(the stuff you see with `git branch`, not `git branch -a`)
+gets the paths of all the files in that branch, and compares it
+against the string you passed in.
+
+Example:
+```
+❯ where_in_git scheduler/feed
+-------------------  main
+app/workers/scheduler/feed_cleanup_scheduler.rb
+spec/workers/scheduler/feed_cleanup_scheduler_spec.rb
+```
+"""
+
+usage_command="where_in_git"
+
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/where_in_git"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+tags=[ "git" ]

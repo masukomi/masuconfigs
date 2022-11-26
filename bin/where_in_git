@@ -8,6 +8,6 @@ fi
 for BRANCH in $(git branch | sed -e "s/* //" -e "s/+ //" -e "s/  //")
 do
 	echo "-------------------  $BRANCH"
-	git log $BRANCH --name-only --pretty="format:" \
+	git ls-tree --name-only -r $BRANCH  \
 		| grep --color=always "$1";
 done
