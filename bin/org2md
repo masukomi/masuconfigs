@@ -26,11 +26,12 @@ while getopts "hi:o:" opt; do
   esac
 done
 
-if [ $# -lt 2 ]; then
+if [ $# -lt 4 ] || [ "$IN" == "" ] || [ "$OUT" == "" ]; then
  usage
 fi
 
 
 pandoc -f org -t markdown -i $IN \
   | sd '\)\{alt="(.*)"\}' ' "$1")' \
+  | sed -e "s/{.verbatim}//g" \
   > $OUT
