@@ -1,0 +1,16 @@
+#!/bin/sh
+
+if [ $# -eq 0 ]; then
+	echo "USAGE: pdfunlock <path/to/pdf>
+       Removes the password protection from a pdf.
+       Outputs a new file in the same directory as
+       the original. Same name prefixed with \"unlocked_\""
+	exit 0
+fi
+
+PDF=$1
+#-sPDFPassword=$PASS
+dir=$(dirname $PDF)
+filename=$(basename $PDF)
+
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=%stdout% -c .setpdfwrite -f $PDF > "$dir/unlocked_$basename"
