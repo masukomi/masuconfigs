@@ -1,4 +1,0 @@
-#!/bin/sh
-
-/usr/local/opt/coreutils/libexec/gnubin/echo -en "$@"
-cat -
