@@ -1,3 +1,14 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-gsed -r "s/\x1B\[([0-9]+(;[0-9]+)?)+[m|G|K]//g"
+
+# test if there's piped input
+if [[ ! -t 0  ]]; then
+	# without a 'while read...' here it'll
+	# just process it as if it were being piped
+	# directly into the next line. Funky
+  gsed -r "s/\x1B\[([0-9]+(;[0-9]+)?)+[m|G|K]//g"
+else
+  echo "USAGE: pipe text into me"
+  exit 0
+fi
+

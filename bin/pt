@@ -1,7 +1,0 @@
-#!/bin/sh
-
-if [ "$2" != "url" ]; then 
-	open "https://pivotaltracker.com/story/show/$1"
-else
-	echo "https://pivotaltracker.com/story/show/$1"
-fi
