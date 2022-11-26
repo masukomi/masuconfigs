@@ -1,5 +1,12 @@
 #!/bin/sh
 
-while read line; do
-  echo $line | sed "s@+@ @g;s@%@\\\\x@g" | xargs -0 printf "%b"
-done < "${1:-/dev/stdin}"
+# test if there's piped input
+if [[ ! -t 0  ]]; then
+  # without a 'while read...' here it'll
+  # just process it as if it were being piped
+  # directly into the next line. Funky
+  sed "s@+@ @g;s@%@\\\\x@g" | xargs -0 printf "%b"
+else
+  echo "USAGE: pipe text into me"
+  exit 0
+fi

@@ -1,0 +1,26 @@
+# TooLoo documentation file.
+# Details: https://github.com/masukomi/TooLoo
+name="urldecode"
+short_description="decodes any url-encoded strings piped through it"
+
+description="""
+pipe data into this and it'll decode the url encoded text
+
+"""
+
+usage_command="urldecode"
+
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/urldecode"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+tags=[ "html", "web"  ]
