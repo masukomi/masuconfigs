@@ -1,0 +1,68 @@
+# TooLoo documentation file.
+# Details: https://github.com/masukomi/TooLoo
+
+# The name of the command or function you're documenting
+# This is the thing you type to invoke it. Note: git scripts
+# are typically named git-foo but you invoke them as 'git foo'.
+# It's your call, but for these I'd recommend using git-foo in
+# the name field. This will enable Clu to tell you where it's
+# located on your system.
+name="missing_pr_merges"
+# a short (one line) description of what it does
+short_description="Finds PRs that haven't been merged into the current branch"
+
+# an optional detailed description of what it does.
+# definitely include this if you're going to generate a web site.
+# Note: You can include markdown in this and have it rendered
+# when the web site is generated
+#
+description="""
+Finds PRs that exist in one branch, but do not exist in the current
+branch.
+
+For example. If you're about to cut a release on production, and
+want to make sure that all the PRs merged into the QA branch are
+present you would do the following:
+
+```
+git checkout production
+git log --oneline qa | missing_commit_titles
+```
+
+Note: It accomplishes this by looking for the merge commits
+that GitHub creates that look like the following. If your
+process doesn't produce these, it won't work.
+
+```
+17122df80 Merge pull request #101 from kschaper/master
+```
+
+"""
+
+# If the tool has some sort of usage / help documentation you can
+# invoke, enter it in the usage_command. Otherwise, comment that out,
+# and document it in the fallback_usage. In TOML you can create a
+# multiline string by surrounding it with triple double quotes.
+# """ like this """
+# usage_command=""
+
+fallback_usage="""
+USAGE: STDIN | missing_pr_merges
+       For example:
+       git checkout production
+       git log --oneline qa | missing_commit_titles
+"""
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/missing_pr_merges"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+# additional keywords that might help you find this in a search
+# or when browsing by tag. There are more features coming that
+# will add functionality based on tags. ;)
+#
+tags=[ "release_management", "github"  ]

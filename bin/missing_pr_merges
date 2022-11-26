@@ -1,5 +1,20 @@
 #!/bin/sh
 
+# Finds PRs that exist in one branch, but do not exist in the current
+# branch.
+#
+# Usage:
+# Pipe in a list of commits
+# presumably the output of something like git log --oneline <branch>
+# It will extract the PR numbers found in that list.
+# and see if they are in the _current_ branch.
+#
+# For example. If you're about to cut a release on production, and
+# want to make sure that all the PRs merged into the QA branch are
+# present you would...
+# git checkout production
+# git log --oneline qa | missing_commit_titles
+
 input=$(cat /dev/stdin)
 
 all_numbers=$(echo "$input" | grep "Merge pull request" \
@@ -23,6 +38,9 @@ echo "$all_numbers" > $file_a
 echo "$found_numbers"> $file_b
 
 echo "These PRs are missing from the current branch"
+# comm – select or reject lines common to two files
+# prints out lines that only exist in file_a (all_numbers)
+# but are not in file_b (the current branch)
 comm -23 $file_a $file_b
 rm $file_a
 rm $file_b
