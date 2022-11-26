@@ -21,7 +21,7 @@ help() {
   echo "The default update interval is 30 seconds."
   echo
   echo "Supported servers: Google, GitHub, GitLab, Bitbucket"
-  exit -1
+  exit 0
 }
 
 TOTP_SECRET=$1
