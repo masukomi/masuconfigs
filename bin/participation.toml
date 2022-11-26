@@ -32,6 +32,7 @@ Prerequisites:
 
 - git
 - [ruby-let gem](https://github.com/shurizzle/ruby-let)
+- [spark](https://zachholman.com/spark/) (available via homebrew)
 """
 
 # If the tool has some sort of usage / help documentation you can
