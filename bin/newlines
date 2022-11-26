@@ -1,2 +1,11 @@
 #!/bin/sh
+
+if [ $# -eq 0 ]; then
+  echo "USAGE: newlines <path/to/file>
+       converts \\\r\\\n and \\\r to \\\n
+       in the specified file.
+"
+  exit 0
+fi
+
 perl -pi -e 's/\r\n|\r/\n/g' $1
