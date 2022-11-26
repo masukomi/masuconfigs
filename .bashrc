@@ -8,7 +8,9 @@ if [[ -f "$PROMPT" ]]; then
 else
     echo "no prompt file"
 fi
-
+if [[ -e ~/.bash_secrets ]]; then
+  source ~/.bash_secrets
+fi
 
 export GPG_TTY=$(tty)
 export USERNAME=`id -nu`
