@@ -16,10 +16,11 @@ Prerequisites:
 * `curl` but, you likely already have that.
 """
 
-usage_command=""
+fallback_usage="""
+USAGE: httpcat <http status code>
 
-# fallback_usage="""
-# """
+       note: requires imgcat from iterm2, and curl to be installed.
+"""
 
 # is this an executable, function, or ???
 type="executable"

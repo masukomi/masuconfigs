@@ -1,20 +1,22 @@
 #!/bin/sh
 
 
-if [[ "$EDITOR" != *"vim" ]] && [[ "$EDITOR" != "emacs" ]] && [[ "$EDITOR" != "code" ]]; then
-  echo "Alas, I only know how to edit files in vim (mvim, nvim, etc),"
-  echo "and emacs, and vscode ('code')"
-  echo "set your \$EDITOR variable to one of those and I'll work."
-  exit 1;
-fi
 if [ $# -eq 0 ]; then
   echo "USAGE: edit <path ending with :<num>>"
   echo "       Please specify a file to edit."
   echo "       example:"
   echo "       edit foo/bar/baz.rb:44"
   echo ""
-  echo "       I'll open the provided file to the specified line numeber"
+  echo "       Set your EDITOR env variable to emacs, code, or any *vim variant."
+  echo ""
+  echo "       I'll open the provided file to the specified line number"
 
+  exit 0;
+fi
+if [[ "$EDITOR" != *"vim" ]] && [[ "$EDITOR" != "emacs" ]] && [[ "$EDITOR" != "code" ]]; then
+  echo "Alas, I only know how to edit files in vim (mvim, nvim, etc),"
+  echo "and emacs, and vscode ('code')"
+  echo "set your \$EDITOR variable to one of those and I'll work."
   exit 1;
 fi
 
