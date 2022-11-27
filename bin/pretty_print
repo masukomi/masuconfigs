@@ -2,6 +2,7 @@
 
 if [ $# -ne 2 ]; then
   echo "Usage: pretty_print <csv|json> <file_path>"
+  exit 0
 fi
 
 echo "mlr --$1 --opprint cat $2"
