@@ -19,7 +19,7 @@ It then then attempts to commit that and run
 
 """
 
-usage_command=""
+usage_command="yadm_ignore"
 
 # fallback_usage="""
 # USAGE: fallback_usage is used when

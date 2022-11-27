@@ -35,7 +35,7 @@ Prerequisets:
 # and document it in the fallback_usage. In TOML you can create a
 # multiline string by surrounding it with triple double quotes.
 # """ like this """
-usage_command=""
+usage_command="scour"
 
 # fallback_usage="""
 # USAGE: fallback_usage is used when
