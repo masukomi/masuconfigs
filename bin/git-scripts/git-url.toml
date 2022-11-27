@@ -30,7 +30,7 @@ source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/
 # where you can find the repo that contains this file
 source_repo_url="https://github.com/masukomi/masuconfigs"
 tags=[ "git", "sharing" ]
-asciicast_url="~/.local/share/clu/asciicasts/git-url.cast"
+asciicast_url="~/.local/share/tooloo/asciicasts/git-url.cast"
 
 # [[cheats]]
 # [[cheats.bar]]
