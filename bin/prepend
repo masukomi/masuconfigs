@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+
+if [ $# -lt 2 ]; then
+  echo "USAGE: prepend <prepend/me/path> <prepended/to/path>
+       Prepends the contents of one file to another.
+       The 1st argument is path to the file whose content you
+       wish to prepend to the file in the 2nd argument.
+
+       E.x. prepend header.txt body.txt"
+       exit 0
+fi
+
+HEADER_PATH="$1"
+CONTENT_PATH="$2"
+
+if ! test -f "$HEADER_PATH" ; then
+  echo "This wasn't found, or wasn't a normal file: $HEADER_PATH"
+  exit 1
+fi
+if ! test -f "$CONTENT_PATH" ; then
+  echo "This wasn't found, or wasn't a normal file: $CONTENT_PATH"
+  exit 1
+fi
+
+TEMPFILE=$(mktemp /tmp/prepend.XXXXXX)
+cat "$HEADER_PATH" > $TEMPFILE
+cat "$CONTENT_PATH" >> $TEMPFILE
+mv $TEMPFILE "$CONTENT_PATH"
+
+

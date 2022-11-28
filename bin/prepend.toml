@@ -1,0 +1,41 @@
+# TooLoo documentation file.
+# Details: https://github.com/masukomi/TooLoo
+name="prepend"
+short_description="prepends the contents of one file onto another"
+
+description="""
+There's no prepend version of the `>>` (append) operator in bash. It requires
+a tiny bit of hoop jumping that this script performs.
+
+Useful when you need to append something like a copyright
+notice or license to the top of every file.
+
+Example: a quick Fish Shell loop to add a legal notice to the
+top of every `.rakumod` file in a repo.
+
+```fish
+for file in (fbn "\.rakumod")
+      echo prepending to $file
+      prepend legal_notice.txt $file
+      git add $file
+end
+```
+
+"""
+
+usage_command="prepend"
+
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/prepend"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+tags=[ "text"  ]
