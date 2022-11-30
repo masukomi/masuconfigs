@@ -15,6 +15,10 @@ function usage(){
   echo "     if supplied). When the output changes it will print"
   echo "     it out with a timestamp."
   echo "     ^c to stop it. or -x 'exit'"
+  echo ""
+  echo "     If you have terminal-notifier installed it'll try and use that"
+  echo "     to provide additional notification."
+
 }
 
 if [ $# -eq 0 ]; then
@@ -42,6 +46,13 @@ if [ "$SLEEP" == "" ]; then
   SLEEP=2
 fi
 
+# https://github.com/vjeantet/alerter/issues/46
+SOMEONE_FIXED_ALERTER=0
+command -v alerter > /dev/null
+ALERTER=$?
+command -v terminal-notifier > /dev/null
+TERMINAL_NOTIFIER=$?
+
 last=""
 output=""
 first_time="true"
@@ -52,7 +63,18 @@ while [[ true ]]; do
     echo -en "\t"
     echo $(date -u +"%Y-%m-%dT%H:%M:%SZ")
     last=$output
-    eval "$CHANGED_COMMAND"
+    if [ "$CHANGED_COMMAND" != "" ]; then
+      eval "$CHANGED_COMMAND"
+    else
+      if [ $SOMEONE_FIXED_ALERTER -ne 0 ] && [ $ALERTER -eq 0 ] ; then
+        alerter -title watch_when -message "Something changed! Check the terminal." --timeout 0
+      elif [ $TERMINAL_NOTIFIER -eq 0 ]; then
+        terminal-notifier -message "Something changed! Check the terminal." -title "watch_when"
+      fi
+      echo "$output"
+      echo "👆THE OUTPUT CHANGED!!!!"
+    fi
+    exit 0
   elif [[ "$first_time" == "true" ]]; then
     echo "watching..."
     last=$output

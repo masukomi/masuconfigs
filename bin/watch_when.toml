@@ -25,6 +25,13 @@ That will watch the output of date until the minute changes, and then
 alert you and exit.... and print "button returned: OK" when you click
 it, but that's just a side-effect of osascript.
 
+Optional Prerequisites:
+* [terminal-notifier](https://github.com/julienXX/terminal-notifier)
+* [alerter](https://github.com/vjeantet/alerter)
+
+Note: alerter use is currently disabled because
+[it's broken](https://github.com/vjeantet/alerter/issues/46)
+
 """
 usage_command="watch_when"
 # fallback_usage="""
