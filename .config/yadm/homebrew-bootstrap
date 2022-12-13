@@ -193,6 +193,10 @@ maybrew 'exercism'
 # https://libexif.github.io/
 maybrew 'exif'
 
+# Tool to plot realtime and stored data from the command-line
+# https://github.com/dkogan/feedgnuplot
+maybrew 'feedgnuplot'
+
 # Simple, fast and user-friendly alternative to find
 # https://github.com/sharkdp/fd
 maybrew 'fd'
