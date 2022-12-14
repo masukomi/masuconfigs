@@ -40,6 +40,7 @@ shift $((OPTIND -1))
 
 if [[ $socket_file == "" ]] || [[ "$FORCE" == "true" ]]; then
   echo "starting Emacs server..."
+  killall Emacs 2>&1 >/dev/null
   emacs --chdir $PWD --execute "(server-start)" $@ > /dev/null 2>&1 &
   disown
 else
