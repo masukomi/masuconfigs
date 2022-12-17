@@ -120,6 +120,10 @@ maybrew 'awscli'
 # https://www.gnu.org/software/bash/
 maybrew 'bash'
 
+# Bash unit testing enterprise edition framework for professionals
+# https://github.com/pgrange/bash_unit
+maybrew 'bash_unit'
+
 # Clone of cat(1) with syntax highlighting and Git integration
 # https://github.com/sharkdp/bat
 maybrew 'bat'
