@@ -1,0 +1,49 @@
+# TooLoo documentation file.
+# Details: https://github.com/masukomi/TooLoo
+name="gron"
+short_description=""
+
+description="""
+takes nested json data structures and converts them into key-value
+pairs so that you can then grep them.
+
+Ex.
+```json
+[
+    { "commit" :
+        { "author":
+             { "date": "2016-07-02T10:51:21Z",
+               "email": "example@example.com",
+               "name": "Foo Bar"
+            }
+        }
+    }
+]
+```
+becomes:
+
+```
+json[0].commit.author = {};
+json[0].commit.author.date = "2016-07-02T10:51:21Z";
+json[0].commit.author.email = "example@example.com";
+json[0].commit.author.name = "Foo Bar";
+```
+
+"""
+
+usage_command="gron --help"
+
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="go"
+# where you can find this specific file in source control
+source_url="https://github.com/tomnomnom/gron"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/tomnomnom/gron"
+
+tags=[ "grep", "json", "go"  ]
