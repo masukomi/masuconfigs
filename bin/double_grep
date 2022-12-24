@@ -1,13 +1,13 @@
 #!/bin/sh
 
 if [ $# -lt 2 ];then
-	echo "Usage: double_grep first_grep second_grep [file]"
+	echo "USAGE: double_grep first_grep second_grep [file]"
 	echo "  * first_grep used to find files"
 	echo "  * second_grep is what you want to find IN those files"
 	echo "  * file is any file path/wildcard that grep would accept"
 	echo "    to limit where it looks."
 	echo "Note: dgrep stands for \"double grep\""
-	exit 1
+	exit 0
 fi
 
 start_path=$3
