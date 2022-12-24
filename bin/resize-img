@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+if [ $# -ne 3 ]; then
+	echo "USAGE: resize-img <source_image> <width> <height>
+       Generates jpg image in same dir with _<width>x<height> suffix."
+
+	exit 0
+fi
+
+image="$1"
+trimmed=$(echo "$image"  \
+	| sed -e "s/^\.\///"
+		-e "s/\..*//"
+		-e "s/_large//" \
+		-e "s/_small//")
+width=$2
+height=$3
+
+
+convert "$image" \
+	-resize $width"x"$height \
+	$trimmed"_"$width"x"$height.jpg"
+
+
