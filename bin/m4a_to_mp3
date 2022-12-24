@@ -3,8 +3,8 @@
 IN=$1
 OUT=$2
 if [ "$IN" == "" ]; then
-	echo "Usage: mp4_to_mp3 <IN.mp4> [<OUT.mp3>]"
-	exit 1
+	echo "USAGE: mp4_to_mp3 <IN.mp4> [<OUT.mp3>]"
+	exit 0
 fi
 
 if [ "$OUT" == "" ]; then
