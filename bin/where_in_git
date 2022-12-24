@@ -1,8 +1,8 @@
 #!/bin/sh
 
 if [ "$1" == "" ]; then
-	echo "Usage: where_in_git <portion_of_file_path>"
-	exit 1
+	echo "USAGE: where_in_git <portion_of_file_path>"
+	exit 0
 fi
 
 for BRANCH in $(git branch | sed -e "s/* //" -e "s/+ //" -e "s/  //")
