@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: redbubble product links
+# key: rlinks
+# --
+
+[$2]($3), [$4]($5), or [one of our many other items]($1)
+
+[![](/images/products/$6)]($3 "$2")
+[![](/images/products/$7)]($5 "$4")

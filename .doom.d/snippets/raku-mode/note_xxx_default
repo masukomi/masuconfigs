@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: note default
+# key: ndx
+# --
+note("\nXXX \\${1:variable}: " ~ $1.raku);

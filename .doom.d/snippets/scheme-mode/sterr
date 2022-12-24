@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sterr
+# key: ferr
+# --
+(format (current-error-port) "XXX $1: $2 ~a~%" $2)

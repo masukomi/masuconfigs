@@ -1,0 +1,30 @@
+# -*- mode: snippet -*-
+# name: personal worklog
+# key: pwork
+# --
+
+`(make-string (org-current-level) ?*)` `(current-time-string)`
+The Year Of Brick Laying
+`(make-string (+ (org-current-level) 1) ?*)` What are you personally grateful for?
+$1
+`(make-string (+ (org-current-level) 1) ?*)` What's the 1 thing you feel you need to accomplish today?
+$2
+`(make-string (+ (org-current-level) 1) ?*)` Was there something that's been frustrating you that you could improve with small actions?
+$3
+
+`(make-string (+ (org-current-level) 1) ?*)` Daily TODOs
+- [started]
+- [finished]
+- [continued]
+- [started & finished]
+- [explored]
+- TODO [/]:
+  - [ ] check [[https://hired.com][Hired.com]]
+  - [ ] check [[https://fastmail.com][email]]
+  - [ ] check [[https://www.linkedin.com/messaging/][LinkedIn messages]]
+  - [ ] check [[https://github.com/notifications][GH Notifications]]
+  - [ ] apply for jobs?
+    - [[https://weworkremotely.com/remote-jobs/search?term=ruby&categories%5B%5D=18][WeWorkRemotely]]
+  - [ ] [[https://uipublic01.labor.vermont.gov/Claimantportal/portal/login.aspx][file for unemployment]]?
+  - [ ] go through remmy reminders
+  - [ ] address a known bug in something

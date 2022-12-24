@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: note_xxx
+# key: nx
+# --
+note("\nXXX: $1");
