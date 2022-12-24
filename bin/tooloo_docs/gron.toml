@@ -1,7 +1,7 @@
 # TooLoo documentation file.
 # Details: https://github.com/masukomi/TooLoo
 name="gron"
-short_description=""
+short_description="json data becomes greppable name value pairs"
 
 description="""
 takes nested json data structures and converts them into key-value
