@@ -587,17 +587,19 @@
 ;; (add-hook 'window-size-change-functions 'org-image-resize)
 
 ; this will auto-resize ALL images whenever the window is resized
-(defun org-image-resize (frame)
-  (when (derived-mode-p 'org-mode)
-      (setq org-image-actual-width
-	    ; (window-pixel-width)
-	    ; give it a 20 pixels bufer
-	    (- (window-pixel-width) 20)
-	    )
-      (org-redisplay-inline-images)))
+;; (defun org-image-resize (frame)
+;;   (when (derived-mode-p 'org-mode)
+;;       (setq org-image-actual-width
+;; 	    ; (window-pixel-width)
+;; 	    ; give it a 20 pixels bufer
+;; 	    (- (window-pixel-width) 60)
+;; 	    )
+;;       (org-redisplay-inline-images)))
 
-(add-hook 'window-size-change-functions 'org-image-resize)
+;; (add-hook 'window-size-change-functions 'org-image-resize)
 
+;; (setq org-image-actual-width (list 550))
+(setq org-image-actual-width nil)
 
 ; EMOJIFY things
 (add-hook 'after-init-hook #'global-emojify-mode)
@@ -1030,13 +1032,10 @@ now being rendered as Emojis. Filter this case out."
 (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
 
 ;;------------- MASTODON
-; current repo here: https://codeberg.org/martianh/mastodon.el
-; (use-package mastodon
-;   :ensure t)
-; (setq mastodon-instance-url "https://connectified.com"
-;       mastodon-active-user "masukomi")
-; (require 'mastodon-async)
-
-
-
-
+;; current repo here: https://codeberg.org/martianh/mastodon.el
+;; better fork here: https://codeberg.org/rougier/mastodon.el/src/branch/alt-timeline/lisp/mastodon-alt-tl.el
+(use-package mastodon
+  :ensure t)
+(setq mastodon-instance-url "https://connectified.com"
+      mastodon-active-user "masukomi")
+(require 'mastodon-async)
