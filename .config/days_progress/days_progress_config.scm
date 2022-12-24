@@ -6,12 +6,12 @@
 
 ; What is the UTC offset for my current time zone?
 (define my-utc-offset -4)
+
 ; What hour of the day do I consider the "start" (in my time zone)?
 (define start-hour-local 9)
 
 ; What hour of the day do I consider the "end" of _my_ day
 (define my-end-hour-local 17)
-
 
 ; What hour of the day do I consider the "end" (in my time zone)?
 (define end-hour-local 21)
