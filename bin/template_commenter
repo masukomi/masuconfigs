@@ -3,7 +3,7 @@
 if ARGV.size == 0
   puts "USAGE: template_commenter <path/to/starting/dir>
        adds comments to the start and end of all the
-       .haml, .rhtml, or .erb files it finds.
+       .haml, .html, .rhtml, or .erb files it finds.
        Comments will make the start and end of each
        template file clear when viewing source on
        rendered pages."
@@ -36,7 +36,7 @@ def parse_directory(directory)
       if item =~ /\.haml$/
         start_content = "/ #{start_content}\n"
         end_content   = "\n/ #{end_content}\n"
-      elsif item =~ /\.rhtml$|\.erb$/
+      elsif item =~ /\.r?html$|\.erb$/
         start_content = "<!-- #{start_content} -->\n"
         end_content = "\n<!-- #{end_content} -->\n"
       else

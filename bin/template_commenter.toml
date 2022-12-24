@@ -1,7 +1,7 @@
 # TooLoo documentation file.
 # Details: https://github.com/masukomi/TooLoo
 name="template_commenter"
-short_description="adds comments to start & end of .haml, .rhtml, & .erb files"
+short_description="adds comments to start & end of .haml, .html, .rhtml, & .erb files"
 
 description="""
 Adds comments to the beginning and end of template files so that
