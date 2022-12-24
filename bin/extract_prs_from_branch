@@ -22,7 +22,7 @@ def usage
          Call with -h to see this message again.
   END
   puts message
-  exit(1)
+  exit(0)
 end
 def choose_repo
   repos_list = `git remote -vv`.split("\n")
