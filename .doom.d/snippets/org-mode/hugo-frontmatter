@@ -3,9 +3,11 @@
 # key: hfm
 # --
 #+title: $1
-#+slug: $2
 #+author: masukomi
-#+lastmod: 2022-11-23
-#+tags[]: $3
-#+toc: f
-#+draft: true
+#+lastmod: `(format-time-string "%Y-%m-%dT%T%z")`
+#+hugo_publishdate: `(format-time-string "%Y-%m-%dT%T%z")`
+#+date: `(format-time-string "%Y-%m-%dT%T%z")`
+#+filetags: $2
+#+toc: headlines 3
+#+draft: false
+#+hugo_section: post
