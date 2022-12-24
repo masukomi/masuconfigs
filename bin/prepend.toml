@@ -14,7 +14,7 @@ Example: a quick Fish Shell loop to add a legal notice to the
 top of every `.rakumod` file in a repo.
 
 ```fish
-for file in (fbn "\.rakumod")
+for file in (fbn "\\.rakumod")
       echo prepending to $file
       prepend legal_notice.txt $file
       git add $file
