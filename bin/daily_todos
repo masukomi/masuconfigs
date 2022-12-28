@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+hey start @daily_todos +email
+echo "Start checking your email: https://fastmail.com/"
+read -p "Hit enter when done" whatever
+hey stop
+
+hey start @daily_todos +job_hunt
+echo "Go check Hired: https://hired.com/"
+read -p "Hit enter when done" whatever
+
+echo "Go check Linked in: https://www.linkedin.com/messaging/"
+read -p "Hit enter when done" whatever
+
+gum confirm "Applying for Jobs today?"
+if [ $? -eq 0 ]; then
+	echo "May the Schwartz be with you."
+	echo "Start here: https://weworkremotely.com/remote-jobs/search?term=ruby&categories%5B%5D=18"
+	read -p "Hit enter when done" whatever
+fi
+gum confirm "Filing for Unemployment Today?"
+if [ $? -eq 0 ]; then
+	hey stop
+	hey start @daily_todos +unemployment
+	echo "Ugh. So sorry."
+	echo "go here: https://uipublic01.labor.vermont.gov/Claimantportal/portal/login.aspx"
+	read -p "Hit enter when done" whatever
+fi
+hey stop
+hey start @daily_todos +github
+echo "Go check github notifications: https://github.com/notifications"
+read -p "Hit enter when done" whatever
+hey stop
