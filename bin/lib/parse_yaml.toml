@@ -1,0 +1,31 @@
+# TooLoo documentation file.
+# Details: https://github.com/masukomi/TooLoo
+name="parse_yaml"
+short_description="a bash function (not script) that parses yaml files"
+
+description="""
+Doesn't technically "Parse" YAML so much as it allows you to extract
+variables from within a known yaml structure.
+"""
+
+#usage_command=""
+
+fallback_usage="""
+Usage: source path/to/parse_yaml.bash
+       eval "$(parse_yaml path/to/yaml/file.yml)"
+
+       then utilize the variable you want.
+
+       see the comments for more details.
+"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/lib/parse_yaml.bash"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+tags=[ "bash", "yaml"  ]
