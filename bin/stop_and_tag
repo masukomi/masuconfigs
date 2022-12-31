@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+stop_output=$(hey stop)
+if [ $? -ne 0 ]; then
+	echo "$stop_output"
+	exit 1
+fi
+
+timer_id=$(echo "$stop_output" | sd ".*?(\d+) at .*" '$1')
+MAYBE_TAGS=$(gum choose --no-limit +wanted +unwanted +required +smile +frown +meh | sd "\n+" " ")
+if [ "$MAYBE_TAGS" == '' ]; then
+	echo "ok, nevermind. No tags added to $timer_id"
+	exit 0
+fi
+hey tag $timer_id $MAYBE_TAGS
+
+

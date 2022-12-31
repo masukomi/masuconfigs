@@ -14,6 +14,10 @@ end
 if test -f /usr/local/share/fish/vendor_completions.d/task.fish
 	source /usr/local/share/fish/vendor_completions.d/task.fish
 end
+if test -f $HOME/workspace/Watson/watson.fish
+	source $HOME/workspace/Watson/watson.fish
+end
+
 
 set -x EDITOR doom
 set -x BAT_PAGER "" # no paging! Only spew!
@@ -63,9 +67,12 @@ abbr -a rca "lcf -p | xargs -I{} sh -c \"echo checking {}; rubocop -A {}\""
 abbr -a rgall "rg --hidden --no-ignore"
 abbr -a rt 'rake test'
 abbr -a rtnw 'env RUBYOPT=W0 rake test'
+abbr -a sat 'stop_and_tag'
 abbr -a sqlf "sqlformat --reindent --keywords upper --identifiers lower"
 abbr -a top "top -o cpu"
 abbr -a unset 'set --erase'
+abbr -a unabbr 'abbr --erase'
+abbr -a watson-day 'watson log -d --no-pager'
 abbr -a ycom 'yadm com -f ~/.local/share/yadm/repo.git/config'
 
 if [ (uname) = "Darwin" ]
@@ -90,10 +97,15 @@ abbr -a dcu "docker-compose up"
 abbr -a dcr "docker-compose run"
 abbr -a dcb "docker-compose build"
 abbr -a do "docker"
+abbr -a dtl "raku -I ~/workspace/TooLoo/lib  ~/workspace/TooLoo/bin/tooloo"
+
 abbr -a berd 'docker-compose exec bin/rspec --format=documentation'
 
 abbr -a sbw 'env SKIP=bad_words,ruby_docs'
 abbr -a sall 'env SKIP=bad_words,rb_tester,rubocopper,ruby_docs'
+
+# hey, local version
+abbr -a heyl 'raku -I lib bin/hey'
 
 # alias vimr /Applications/VimR.app/Contents/Resources/vimr
 abbr -a vfz "mvim (fzf)"

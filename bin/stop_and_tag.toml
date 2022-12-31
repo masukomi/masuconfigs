@@ -1,0 +1,28 @@
+# TooLoo documentation file.
+# Details: https://github.com/masukomi/TooLoo
+name="stop_and_tag"
+short_description="stops a Hey! timer and then gives you choices to tag it with"
+
+description="""
+stops a Hey! timer and then presents you with a standardized list of
+tags to choose from.
+
+The goal is to enable you to look back and determine how much of your
+time was spent on wanted vs unwanted tasks and you felt about the time
+you spent.
+"""
+
+# usage_command="stop_and_tag"
+
+fallback_usage="USAGE: stop_and_tag"
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/stop_and_tag"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+tags=[ "timetracking"  ]
