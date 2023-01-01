@@ -173,6 +173,10 @@ fi
 # https://direnv.net/
 maybrew 'direnv'
 
+# Disk Usage/Free Utility - a better 'df' alternative
+# https://github.com/muesli/duf
+maybrew 'duf'
+
 # Diff that operates at the word level
 # https://os.ghalkes.nl/dwdiff.html
 maybrew 'dwdiff'
