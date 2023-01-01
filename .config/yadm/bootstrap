@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 
-source core_bootstrap_functions.sh
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+source "$SCRIPT_DIR"/core_bootstrap_functions.sh
+
+loaded_key_count=$(ssh-add -l | wc -l)
+if [ $loaded_key_count -eq 0 ]; then
+	echo "No ssh keys loaded. Please load your keys and try again."
+	exit 1
+fi
 
 ssh -T git@github.com 2>&1 | grep "You've successfully authenticated"
 if [ $? -ne 0 ]; then
@@ -35,7 +43,8 @@ if [ "$command_line_tools" == "y" ]; then
 	echo "If that didn't download Command Line Tools for Xcode, then run this:"
 	echo sudo rm -rf /Library/Developer/CommandLineTools
 	echo sudo xcode-select --install
-	read "Hit enter to continue"
+	echo "Hit enter to continue"
+	read whatever
 fi
 
 
