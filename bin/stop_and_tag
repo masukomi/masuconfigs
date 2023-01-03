@@ -1,6 +1,21 @@
 #!/usr/bin/env bash
 
-stop_output=$(hey stop)
+running_output=$(hey running | grep ongoing);
+if [ $? -ne 0 ]; then
+	echo "No ongoing timers to stop."
+	exit 0
+fi
+WHEN_STOP=$(gum choose "now" "5 minutes ago" "10 minutes ago" "custom" | sd "\n+" "")
+if [ "$WHEN_STOP" == "now" ]; then
+	stop_output=$(hey stop)
+elif [ "$WHEN_STOP" == "custom" ]; then
+	echo "enter custom stop time. E.g. 4:00 or 12/22 4:00"
+	read WHEN_STOP
+	stop_output=$(hey stop $WHEN_STOP)
+else
+	stop_output=$(hey stop $WHEN_STOP)
+fi
+
 if [ $? -ne 0 ]; then
 	echo "$stop_output"
 	exit 1
