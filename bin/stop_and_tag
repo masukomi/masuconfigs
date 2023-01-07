@@ -1,19 +1,30 @@
 #!/usr/bin/env bash
 
-running_output=$(hey running | grep ongoing);
+running_output=$(hey running);
+grepped_running=$(echo "$running_output" | grep ongoing)
 if [ $? -ne 0 ]; then
 	echo "No ongoing timers to stop."
 	exit 0
 fi
+running_count=$(echo "$grepped_running" | wc -l | sd " *" "");
+if [ $running_count -eq 1 ]; then
+	stop_id=$(echo "$grepped_running" | sd "│ (\d+) .*" '$1')
+else
+	echo "$running_output"
+	echo ""
+	echo "Which timer?"
+	stop_id=$(gum choose $(echo "$grepped_running" | sd "│ (\d+) .*" '$1' ))
+fi
+
 WHEN_STOP=$(gum choose "now" "5 minutes ago" "10 minutes ago" "custom" | sd "\n+" "")
 if [ "$WHEN_STOP" == "now" ]; then
 	stop_output=$(hey stop)
 elif [ "$WHEN_STOP" == "custom" ]; then
 	echo "enter custom stop time. E.g. 4:00 or 12/22 4:00"
 	read WHEN_STOP
-	stop_output=$(hey stop $WHEN_STOP)
+	stop_output=$(hey stop $stop_id $WHEN_STOP)
 else
-	stop_output=$(hey stop $WHEN_STOP)
+	stop_output=$(hey stop $stop_id $WHEN_STOP)
 fi
 
 if [ $? -ne 0 ]; then
@@ -22,11 +33,13 @@ if [ $? -ne 0 ]; then
 fi
 
 timer_id=$(echo "$stop_output" | sd ".*?(\d+) at .*" '$1')
-MAYBE_TAGS=$(gum choose --no-limit +wanted +unwanted +required +smile +frown +meh | sd "\n+" " ")
+MAYBE_TAGS=$(gum choose --no-limit +wanted +smile +unwanted +frown +required +meh | sd "\n+" " ")
 if [ "$MAYBE_TAGS" == '' ]; then
 	echo "ok, nevermind. No tags added to $timer_id"
 	exit 0
 fi
+echo "Tagging timer $timer_id..."
 hey tag $timer_id $MAYBE_TAGS
+
 
 
