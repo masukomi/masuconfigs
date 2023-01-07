@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+
+function usage {
+    echo "Usage: url2png [-u <url> | -o <path/to/new/png> | -w <window size> | -h]"
+    echo "    -h Display this help message"
+    echo "    -u specify the url to screenshot"
+    echo "    -o specify the name/path to generate the png at"
+    echo "    -w optional window size (ex 1024x768)"
+    echo ""
+    echo "    Output file defaults to ./screenshot.png"
+    echo "    Window size defaults to 1024x768"
+}
+
+if [ $# -eq 0 ]; then
+  usage
+  exit 0
+fi
+
+# Detect the platform (similar to $OSTYPE)
+OS="`uname`"
+case $OS in
+  'Linux')
+    OS='Linux'
+    alias ls='ls --color=auto'
+    ;;
+  'FreeBSD')
+    OS='FreeBSD'
+    alias ls='ls -G'
+    ;;
+  'WindowsNT')
+    OS='Windows'
+    ;;
+  'Darwin')
+    OS='Mac'
+    ;;
+  'SunOS')
+    OS='Solaris'
+    ;;
+  'AIX') ;;
+  *) ;;
+esac
+
+if [ "$OS" == "Mac" ]; then
+  #What the Ever Living F#*K ?!
+  OS="Darwin";
+fi
+
+if [ "$OS" != "Darwin" ] && [ "$OS" != "FreeBSD" ] && [ "$OS" != "Linux" ]; then
+	echo "I only know how to invoke Chrome on MacOS, Linux, and FreeBSD";
+	echo "Sorry."
+	echo "You can edit the invocation code at the end of this if you know"
+	echo "how to invoke it from the command line on $OS"
+	exit 1;
+fi
+
+WINDOW="1024x768"
+while getopts "u:o:w:h" opt; do
+  case ${opt} in
+    u )
+      URL=$OPTARG
+      ;;
+    o )
+      OUTPUT=$OPTARG
+      ;;
+    w )
+      WINDOW=$OPTARG
+      ;;
+    h )
+      usage
+      exit 0
+      ;;
+    \? )
+      echo "Invalid option $OPTARG" 1>&2
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+if [ "$OUTPUT" == "" ]; then
+  OUTPUT="screenshot.png"
+fi
+
+WINDOW=$(echo "$WINDOW" | sed -e "s/x/,/" -e "s/ *//g")
+
+if [ "$URL" == "" ]; then
+  echo "Please specify an url to screenshot."
+  usage
+  exit 1
+elif [[ "$URL" == "http://"* ]] || [[ "$URL" == "https://"* ]]; then
+  # because i can't test != "http://"*
+  # grrr
+  BOGUS=true
+else
+  echo "Please specify a valid http:// or https:// URL"
+  usage
+  exit 1
+fi
+
+
+
+# on linux everything before --headless can be replaced with just
+# chrome
+if [ "$OS" == "Darwin" ]; then
+  if ! test -e /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome ; then
+    echo "I couldn't find Chrome. I expected to find it here:"
+    echo "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"
+    exit 1;
+  fi
+
+  /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+    --headless \
+    --window-size=$WINDOW \
+    --screenshot=$OUTPUT \
+    $URL 2>/dev/null
+else
+  command -v chrome > /dev/null
+  if [ $? -ne 0 ]; then
+    echo "I couldn't find the chrome executable."
+    echo "I expected it to be in your \$PATH"
+    exit 1
+  fi
+
+  chrome
+    --headless \
+    --window-size=$WINDOW \
+    --screenshot=$OUTPUT \
+    $URL 2>/dev/null
+fi
+
