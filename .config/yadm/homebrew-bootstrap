@@ -527,6 +527,11 @@ maybrew 'universal-ctags/universal-ctags/universal-ctags'
 # http://www.fpx.de/fp/Software/UUDeview/
 maybrew 'uudeview'
 
+# Syntax-aware linter for prose
+# https://docs.errata.ai/
+#
+maybrew 'vale'
+
 # Pager/text based browser
 # https://w3m.sourceforge.io/
 maybrew 'w3m'

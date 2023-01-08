@@ -154,11 +154,14 @@
 (package! ox-slack
   :recipe (:host github :repo "masukomi/ox-slack" :branch "main"))
 (package! ox-bb)
+(package! flycheck-vale)
 ;(package! ox-leanpub)
 ; ripgrep (rg)
 (package! rg)
 (package! sqlite3)
 ; (package! mastodon)
+(package! mastodon
+  :recipe (:host codeberg :repo "rougier/mastodon.el" :branch "alt-timeline"))
 (package! private-comments-mode)
 ; (package! example
 ;   :recipe (:host github :repo "masukomi/private-comments-mode"))

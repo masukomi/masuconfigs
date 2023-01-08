@@ -601,6 +601,22 @@
 ;; (setq org-image-actual-width (list 550))
 (setq org-image-actual-width nil)
 
+
+; VALE
+(require 'flycheck-vale)
+(flycheck-define-checker vale
+  "A checker for prose"
+  :command ("vale" "--output" "line"
+            source)
+  :standard-input nil
+  :error-patterns
+  ((error line-start (file-name) ":" line ":" column ":" (id (one-or-more (not (any ":")))) ":" (message) line-end))
+  :modes (markdown-mode org-mode text-mode)
+  )
+(add-to-list 'flycheck-checkers 'vale 'append)
+(flycheck-vale-setup)
+
+
 ; EMOJIFY things
 (add-hook 'after-init-hook #'global-emojify-mode)
 ; found here: https://github.com/bgutter/dotemacs/blob/master/my-init.org
@@ -757,8 +773,8 @@ now being rendered as Emojis. Filter this case out."
 (defun show-denote-dir ()
   "open an dired window on the default denote directory"
   (interactive) ; required to make it accessible via keybdingings
-  (split-window-vertically)
-  (other-window 1)
+  ;; (split-window-vertically)
+  ;; (other-window 1)
   (dired denote-directory))
 
 ;; Denote DOES NOT define any key bindings.  This is for the user to
@@ -1039,3 +1055,6 @@ now being rendered as Emojis. Filter this case out."
 (setq mastodon-instance-url "https://connectified.com"
       mastodon-active-user "masukomi")
 (require 'mastodon-async)
+
+(require 'mastodon-alt-tl)
+(mastodon-alt-tl-activate)
