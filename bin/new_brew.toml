@@ -1,0 +1,32 @@
+# TooLoo documentation file.
+# Details: https://github.com/masukomi/TooLoo
+name="new_brew"
+short_description="generates the command & comments for homebrew-bootstrap"
+
+description="""
+given a package name it'll generate the stuff I want to paste
+into my ~/.config/yadm/homebrew-bootstrap file.
+
+This is unlikely to be useful to anyone but me.
+
+"""
+
+usage_command="new_brew"
+
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/new_brew"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+# can this be included in exports like the static blog generation
+exportable=false
+
+tags=[ "homebrew", "yadm"  ]

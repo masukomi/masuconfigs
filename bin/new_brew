@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+PACKAGE=$1
+
+if [ $# -ne 1 ]; then
+  echo "USAGE: new_brew <package_name>
+       generates text appropriate for adding to my
+       homebrew-bootstrap file.
+
+       This is unlikely to be useful to other people."
+  exit 0
+fi
+
+COMMENT=$(brew info $PACKAGE | head -n 3 | tail -n 2 | sd "^" "# ")
+echo "$COMMENT"
+echo "maybrew '$PACKAGE'
+
+stick that in your ~/.config/yadm/homebrew-bootstrap file"
+
