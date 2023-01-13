@@ -75,7 +75,7 @@ fi
 
 # python needs to come after homebrew
 # because i use `sd` in python-bootstrap which comes from homebrew
-read -p "install python stuff? [y/n]
+read -p "install Python stuff? [y/n]
 " python_installs
 if [ "$python_installs" == "y" ]; then
 	if [ -e $HOME/.config/yadm/python-bootstrap ]; then
@@ -83,13 +83,22 @@ if [ "$python_installs" == "y" ]; then
 	fi
 fi
 
-read -p "install rust stuff? [y/n]
+read -p "install Raku stuff? [y/n]
+" raku_installs
+if [ "$raku_installs" == "y" ]; then
+	if [ -e $HOME/.config/yadm/raku-bootstrap ]; then
+		$HOME/.config/yadm/raku-bootstrap
+	fi
+fi
+
+read -p "install Rust stuff? [y/n]
 " rust_installs
 if [ "$rust_installs" == "y" ]; then
 	if [ -e $HOME/.config/yadm/rust-bootstrap ]; then
 		$HOME/.config/yadm/rust-bootstrap
 	fi
 fi
+
 #### END PACKAGE MANAGER LOADING
 
 
@@ -200,9 +209,15 @@ if ! is_installed "rustc"; then
 fi
 
 # broot is an interactive form of tree
+command -v broot
+if [ $? -ne 0 ]; then
 cargo install broot
+fi
 # ruut also you to easily generate tree diagrams
+command -v ruut
+if [ $? -ne 0 ]; then
 cargo install ruut
+fi
 
 read -p "install chicken scheme stuff? [y/n]:
 " chicken_stuff

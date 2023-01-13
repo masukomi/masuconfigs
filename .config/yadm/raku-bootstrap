@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+
+command -v rakudo 2>&1 > /dev/null
+
+# install homebrew if we don't have it already
+if ! command -v rakudo >/dev/null 2>&1; then
+	echo "Installing rakudo"
+	brew install rakudo-star
+
+	if [ $? -ne 0 ]; then
+		echo "um... installing rakudo-star didn't seem to work?"
+		echo "exiting."
+		exit 1
+	fi
+fi
+
+# manually adding an item?:
+# <output from:  zef info <package> | egrep "Description|Source-url">
+# mayzef "<package>"
+
+
+# mayzef == maybe zef (install)
+# $1 must be package to install
+#
+function mayzef() {
+	if ! is_installed $1; then
+		install_or_die "$1"
+	else
+		echo "-- Skipping $1 (installed already)"
+	fi
+}
+
+function install_or_die() {
+	zef install $1
+	echo ""
+	echo ""
+	echo "-- Installing $1"
+	zef install $1
+	if [ $? -ne 0 ]; then
+		echo "problem installing $1"
+		echo "exiting"
+		exit 1
+	fi
+}
+
+function is_installed() {
+	if zef info $1 | grep "Installed: Yes" > /dev/null; then
+		# the package is installed
+		true
+	else
+		# the package is not installed
+		false
+	fi
+}
+
+
+# Description:	 SQLite access for Raku
+# Source-url:	 http://www.cpan.org/authors/id/C/CT/CTILMES/Perl6/DB-SQLite-0.7.tar.gz
+mayzef "DB::SQLite"
+
+mayzef "fez"
+
+# Description:	 Adds convenience methods to Array
+# NOTE: mine
+# Source-url:	 https://github.com/masukomi/Listicles.git
+mayzef "Listicles"
+
+
+# Description:	 termios routines for Rakudo Perl 6
+# NOTE: required for REPL
+# Source-url:	 git://github.com/krunen/term-termios.git
+mayzef "Term::termios"
+
+# Description:	 ANSI/VT stream parser
+# NOTE: required for REPL
+# Source-url:	 https://github.com/japhb/Terminal-ANSIParser.git
+mayzef "Terminal::ANSIParser"
+
+# Description:	 TOML 1.0.0 compliant Encoding/Decoding
+# Source-url:	 https://github.com/tony-o/raku-toml.git
+mayzef "TOML"
+
+# Description:	 Guarantees that a resource is present in the expected XDG Base Directory directory
+# Note: mine
+# Source-url:	 https://github.com/masukomi/XDG-GuaranteedResources
+mayzef "XDG::GuaranteedResources"
