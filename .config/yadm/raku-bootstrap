@@ -30,7 +30,7 @@ done
 
 
 # manually adding an item?:
-# <output from:  zef info <package> | egrep "Description|Source-url">
+# <output from:  zef info <package> | egrep "Description|Source-url"> | sed -e "s/^/# /g"
 # mayzef "<package>"
 
 
@@ -68,7 +68,9 @@ function is_installed() {
 	fi
 }
 
-
+# Description:	 Run tests through a TAP harness.
+# Source-url:	 https://github.com/Leont/app-prove6.git
+mayzef "App::Prove6"
 
 # Description:	 SQLite access for Raku
 # Source-url:	 http://www.cpan.org/authors/id/C/CT/CTILMES/Perl6/DB-SQLite-0.7.tar.gz
