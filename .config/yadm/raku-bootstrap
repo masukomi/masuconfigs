@@ -3,16 +3,31 @@
 command -v rakudo 2>&1 > /dev/null
 
 # install homebrew if we don't have it already
-if ! command -v rakudo >/dev/null 2>&1; then
+if ! test -e ~/.rakubrew/shims/rakudo; then 
+# if ! command -v rakudo >/dev/null 2>&1; then
 	echo "Installing rakudo"
-	brew install rakudo-star
-
-	if [ $? -ne 0 ]; then
-		echo "um... installing rakudo-star didn't seem to work?"
-		echo "exiting."
-		exit 1
-	fi
+	curl -o ~/bin/rakubrew https://rakubrew.org/macos/rakubrew
+	chmod u+x ~/bin/rakubrew
+	latest_raku=$(rakubrew available | grep "D " | tail -n1 | sed -e 's/^\*//')
+	rakubrew download $latest_raku
+	rakubrew global moar-"$latest_raku"
 fi
+
+echo "regenerating bin paths loader for fish" 
+raku_paths_file=~/.config/fish/raku_paths.fish
+rm $raku_paths_file 2>&1 > /dev/null
+echo "fish_add_path -g" $(rakubrew home)/shims > $raku_paths_file
+find $(rakubrew home) -type d -name 'bin' | while read -r dir
+do
+	echo "fish_add_path -g $dir" >> $raku_paths_file
+
+	# this bit is for us, for the rest of the script to be able to
+	# find zef
+	PATH=$PATH:$dir
+done
+
+
+
 
 # manually adding an item?:
 # <output from:  zef info <package> | egrep "Description|Source-url">
@@ -54,10 +69,18 @@ function is_installed() {
 }
 
 
+
 # Description:	 SQLite access for Raku
 # Source-url:	 http://www.cpan.org/authors/id/C/CT/CTILMES/Perl6/DB-SQLite-0.7.tar.gz
 mayzef "DB::SQLite"
 
+# Description:	 Command Line Time Tracking with a SQLite db.
+# Note: mine
+# Source-url:	 https://github.com/masukomi/hey_3
+mayzef "Hey"
+
+# Description:	 one way to upload your dists to the masses.
+# Source-url:	 https://github.com/tony-o/raku-fez.git
 mayzef "fez"
 
 # Description:	 Adds convenience methods to Array
@@ -66,21 +89,42 @@ mayzef "fez"
 mayzef "Listicles"
 
 
-# Description:	 termios routines for Rakudo Perl 6
-# NOTE: required for REPL
-# Source-url:	 git://github.com/krunen/term-termios.git
-mayzef "Term::termios"
 
-# Description:	 ANSI/VT stream parser
-# NOTE: required for REPL
-# Source-url:	 https://github.com/japhb/Terminal-ANSIParser.git
-mayzef "Terminal::ANSIParser"
+# Description:	 A bag of small text processing tricks
+# Source-url:	 git://github.com/japhb/Text-MiscUtils.git
+mayzef "Text::MiscUtils::Layout"
 
 # Description:	 TOML 1.0.0 compliant Encoding/Decoding
 # Source-url:	 https://github.com/tony-o/raku-toml.git
 mayzef "TOML"
 
+# Description:	 Run tests through a TAP harness.
+# Source-url:	 https://raw.githubusercontent.com/raku/REA/main/archive/A/App%3A%3AProve6/App%3A%3AProve6%3Aver%3C0.0.17%3E%3Aauth%3Ccpan%3ALEONT%3E.tar.gz
+mayzef "App::Prove6"
+
 # Description:	 Guarantees that a resource is present in the expected XDG Base Directory directory
 # Note: mine
 # Source-url:	 https://github.com/masukomi/XDG-GuaranteedResources
 mayzef "XDG::GuaranteedResources"
+
+
+# NOTE: Required for REPL support for install via rakubrew
+# Description:	 Raku bindings to linenoise
+# Source-url:	 https://github.com/raku-community-modules/Linenoise.git
+mayzef "Linenoise"
+
+# NOTE: THE FOLLOWING ARE ONLY REQUIRED IF rakudo-star
+# WAS INSTALLED VIA HOMEBREW.
+# The
+#
+# Description:	 termios routines for Rakudo Perl 6
+# NOTE: required for REPL
+# Source-url:	 git://github.com/krunen/term-termios.git
+mayzef "Term::termios"
+# Description:	 ANSI/VT stream parser
+# NOTE: required for REPL
+# Source-url:	 https://github.com/japhb/Terminal-ANSIParser.git
+mayzef "Terminal::ANSIParser"
+# Description:	 Generalized terminal line editing
+# Source-url:	 https://github.com/japhb/Terminal-LineEditor.git
+mayzef "Terminal::LineEditor"

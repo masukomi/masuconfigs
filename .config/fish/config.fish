@@ -61,7 +61,6 @@ abbr -a gvv 'git remote -vv'
 abbr -a hgrep "history | grep"
 abbr -a lagit "exa -lah --git" # la(h) git
 abbr -a less "less -R"
-abbr -a raku-repl "rlwrap --always-readline raku"
 abbr -a raw "script -q /dev/null"
 abbr -a rca "lcf -p | xargs -I{} sh -c \"echo checking {}; rubocop -A {}\""
 abbr -a rgall "rg --hidden --no-ignore"
@@ -157,13 +156,31 @@ fish_add_path -g -a $HOME/Library/Python/3.9/bin
 set CELLAR (brew --cellar)
 
 # BEGIN RAKU
-# /opt/homebrew/Cellar/rakudo-star/2022.06/share/perl6/site/bin
-brew ls --versions rakudo-star > /dev/null
-if test $status -eq 0
-	for dir in (  find  $CELLAR/rakudo-star/**/*/bin -name bin )
-		fish_add_path -g -a $dir
+# assumes raku install via rakubrew NOT homebrew
+if test -e ~/.rakubrew/shims/rakudo
+	# my raku-bootstrap file pre-generates this file
+	# so that we don't have to add the loop time to every shell prompt
+	if test -e $HOME/.config/fish/raku_paths.fish 
+		source $HOME/.config/fish/raku_paths.fish
+	else
+		echo "WARNING: raku_paths.fish not found"
+		echo "please regenerate it by running"
+	    echo "~/.config/yadm/raku-bootstrap"
 	end
+
+	# # rakubrew init Fish | source
+	# fish_add_path -g -a (rakubrew home)/shims
+	# for dir in (find (rakubrew home) -type d -name 'bin')
+	# 	fish_add_path -g $dir
+	# end
 end
+
+# brew ls --versions rakudo-star > /dev/null
+# if test $status -eq 0
+# 	for dir in (  find  $CELLAR/rakudo-star/**/*/bin -name bin )
+# 		fish_add_path -g -a $dir
+# 	end
+# end
 
 set -l readline_version (brew list readline --versions | sed -e "s/.* //")
 set -x -g CSC_OPTIONS "-I$CELLAR/readline/$readline_version/include -L$CELLAR/readline/$readline_version/lib -Wl,-flat_namespace,-undefined,suppress"
