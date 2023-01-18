@@ -422,7 +422,6 @@ maybrew 'python-tabulate'
 
 if ! is_installed "rakudo-star"; then
 	brew install rakudo-star
-	zef install fez
 fi
 
 if ! is_installed "rbenv"; then
