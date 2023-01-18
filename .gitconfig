@@ -1,7 +1,5 @@
 [include]
 	path = ~/.gitconfig_personal
-[includeIf "gitdir:~/workspace/dutchie/"]
-	path = ~/.gitconfig_dutchie
 [init]
 	# templatedir = ~/.git_template
 	defaultBranch = main
@@ -13,7 +11,7 @@
 	# handle line endings better...
 	# https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings
 	# https://stackoverflow.com/a/18875915/13973
-	autocrlf = input
+	# autocrlf = input
 [color]
 	ui = auto
 	diff = auto
