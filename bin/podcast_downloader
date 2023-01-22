@@ -1,0 +1,150 @@
+#!/usr/bin/env ruby
+
+require 'net/http'
+require 'rss'
+require 'time'
+# require 'open-uri'
+
+trap("SIGINT") { exit! }
+### BEGIN SUPPORT FUNCTIONS 
+def sluggify(text)
+  text.downcase.gsub(/\W+/, '_')
+end
+
+def download_file_name(choice)
+  # rss uses RFC 2822 date format
+  file_date=choice[:date].strftime("%Y-%m-%d")
+  download_file="#{file_date}_#{sluggify(choice[:title])}"
+  extension = File.extname(choice[:url])
+
+  new_file_name="#{download_file}#{extension}"
+end
+
+# GET AND follow redirects
+# SEE DETAILS HERE: https://stackoverflow.com/a/6934503/13973
+def fetch(uri_str, limit = 10)
+  # You should choose better exception.
+  raise ArgumentError, 'HTTP redirect too deep' if limit == 0
+
+  # url = URI.parse(uri_str)
+  url = URI(uri_str)
+  req = Net::HTTP::Get.new(url, { 'User-Agent' => 'Mozilla/5.0 (etc...)' })
+  response = Net::HTTP.start(url.host, url.port, use_ssl: true) { |http| http.request(req) }
+  case response
+  when Net::HTTPSuccess     then response.body
+  when Net::HTTPRedirection then fetch(response['location'], limit - 1)
+  else
+    response.error!
+  end
+end
+### END SUPPORT FUNCTIONS 
+
+### BEGIN FINDING FEED URL
+if ARGV.size == 0
+  puts "USAGE: podcast_downloader <podcast home page url>
+
+       Ex. podcast_downloader https://atp.fm
+       
+       This will attempt to find the linked feed(s)
+       and then find posts in them with downloadable media.
+
+       Note: People do a terrible job of making valid feeds
+       or linking to them correctly. This mostly only 
+       works when folks configure things sensibly."
+
+  exit 0
+end
+
+initial_url_string = ARGV[0]
+page = fetch(initial_url_string) # Net::HTTP.get(initial_uri) # => String
+rss_urls = Hash.new({})
+page.split("\n").each do | line |
+  if /type="application\/rss\+xml"/.match(line)
+    key = rss_urls.size + 1
+    rss_urls[key] = {}
+    rss_urls[key][:url] = line.sub(/.*? href=(?:"|')(.*?)(?:"|').*/, '\1')
+    rss_urls[key][:title] = line.sub(/.*? title=(?:"|')(.*?)(?:"|').*/, '\1')
+  end
+end
+
+
+if rss_urls.size > 0 
+  if rss_urls.size > 1 
+    rss_urls.each do | index, hash |
+      puts "[#{index  }] #{hash[:title]} \n\t#{hash[:url]}"
+    end
+    num=STDIN.gets.chomp.to_i
+    rss_url = rss_urls[num][:url]
+  else 
+    rss_url = rss_urls[1][:url]
+  end
+
+  unless rss_url.start_with? 'http'
+    initial_uri = URI(initial_url_string)
+    prefix = "#{initial_uri.scheme}://#{initial_uri.hostname}"
+    if rss_url.start_with? '/'
+      rss_url = prefix + rss_url
+    else
+      rss_url = prefix + '/' + rss_url
+    end
+  end
+
+  puts "Using #{ rss_urls.size == 1 ? 'only ' : 'chosen '} feed url at: #{rss_url}"
+else
+  STDERR.puts("Couldn't determine RSS url")
+  puts "Please enter a valid RSS url for this podcast or ^c to exit"
+  rss_url=STDIN.gets.chomp
+end
+
+
+### END FINDING FEED URL
+
+
+
+
+#### BEGIN DOWNLOADING FEED
+
+download_choices={}
+counter = 1
+
+
+
+feed_text = fetch(rss_url)
+
+feed = RSS::Parser.parse(feed_text, validate: false)
+
+
+puts " Title: #{feed.channel.title}"
+#       <enclosure url="https://media.transistor.fm/691b82c0/73050ed2.mp3" length="46789624" type="audio/mpeg"/>
+### END DOWNLOADING FEED
+
+
+### BEGIN PRESENTING OPTIONS FROM FEED
+
+feed.items.each do |item|
+  download_choices[counter] = { title: item.title,
+                                url: item&.enclosure&.url,
+                                date: item.pubDate}
+  if item&.enclosure&.url
+    puts "[#{counter}] ✅ Item: #{item.title}"
+  else
+    puts "[#{counter}] ❌ Item: #{item.title}"
+  end
+  counter += 1
+end
+
+puts "Please enter the number of the item you'd like to download or ^c to cancel."
+num=STDIN.gets.chomp.to_i
+chosen_url=download_choices[num][:url]
+puts "You chose: [#{num}] #{chosen_url}"
+
+### END PRESENTING OPTIONS
+
+new_file_name=download_file_name(download_choices[num])
+
+puts "saving to #{new_file_name}"
+command = "curl -o #{new_file_name} #{chosen_url}"
+puts "about to run this: #{command}"
+`#{command}`
+puts "DONE"
+
