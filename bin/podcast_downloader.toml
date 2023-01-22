@@ -12,6 +12,9 @@ media correctly.
 
 Creates a new file with current timestamp + episode title 
 as its name.
+
+PREREQUISITES:
+- rss gem
 """
 
 usage_command="podcast_downloader"

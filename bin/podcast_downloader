@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
 
+# PREREQUISITES
+# - 'rss' gem
+
+
 require 'net/http'
 require 'rss'
 require 'time'
