@@ -1,0 +1,32 @@
+# TooLoo documentation file.
+# Details: https://github.com/masukomi/TooLoo
+name="transcribe_mp3"
+short_description="wrapper to make whisper execution simpler"
+
+description="""
+Switches the python environment with conda to use older python 
+then invokes whisper on the supplied file. 
+
+the end result is the transcription of the mp3 in a variety 
+of file formats.
+"""
+
+usage_command="transcribe_mp3 -h"
+
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/transcribe_mp3"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+# can this be included in exports like the static blog generation
+exportable=false
+
+tags=[ "archive", "audio"  ]

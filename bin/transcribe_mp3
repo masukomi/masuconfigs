@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+function usage {
+	echo "USAGE: transcribe_mp3 -i <path/to/mp3> -o <path/to/output/dir>"
+	exit 0
+}
+
+
+INPUT_FILE=""
+OUTPUT_DIR=""
+
+while getopts "i:o:h" opt; do
+	case $opt in 
+		i)
+			INPUT_FILE=$OPTARG
+			;;
+		o)
+			OUTPUT_DIR=$OPTARG
+			;;
+		h)
+			usage
+			;;
+	esac
+done
+
+conda activate torch-gpu
+
+if [ $? -ne 0 ]; then
+	echo "Problem activating torch-gpu env w/conda"
+	echo "EXITING"
+	exit 1
+fi
+
+
+whisper $INPUT_FILE \
+	--model medium \
+	--language en \
+	--fp16 False
+	--output_dir $OUTPUT_DIR
