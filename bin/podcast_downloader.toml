@@ -4,7 +4,9 @@ name="podcast_downloader"
 short_description="lists episodes of a podcast and downloads one"
 
 description="""
-Used to download a specific episode from a podcast. 
+Used to download a specific episode from a podcast's RSS 
+or ATOM feed. 
+ 
 Doesn't have edge case handling for web pages that 
 fail to link to their podcasts correctly, or podcasts
 feed files that fail to link to their downloadable 
