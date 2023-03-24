@@ -25,3 +25,23 @@ bind '"\e[A": history-search-backward' #up-arrow through history
 bind '"\e[B": history-search-forward' #down-arrow through history
 
 PATH=$PATH:$HOME/Library/Python/3.9/bin
+
+. "$HOME/.cargo/env"
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/masukomi/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/masukomi/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/masukomi/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/masukomi/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
