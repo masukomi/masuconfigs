@@ -16,7 +16,14 @@ NOCOLOR="${ESCAPE}[0m"
 
 if [ "$1" != "" ]; then
   PR_BRANCH=$(echo "$1" | sed -e "s/^.*://")
-  REMOTE=$(echo "$1" | sed -e "s/:.*//")
+  if [ "$1" == *":"* ]; then 
+    REMOTE=$(echo "$1" | sed -e "s/:.*//")
+  elif [ $(git remote | wc -l) -eq 1 ]; then
+    REMOTE=$(git remote)
+  else
+    echo "From which remote?"
+    REMOTE=$(gum choose $(git remote))
+  fi
   git remote | grep $REMOTE
   if [ $? -ne 0 ]; then
     echo $RED"❌ CHECKOUT FAILED \"$REMOTE\" is not a known remote"$NOCOLOR;
