@@ -1,12 +1,6 @@
 
 # set -l start (date +%s)
 
-if test -f $HOME/.config/fish/config_work.fish
-	source $HOME/.config/fish/config_work.fish
-end
-if test -f $HOME/.config/fish/secrets.fish
-	source $HOME/.config/fish/secrets.fish
-end
 
 if test -f /usr/local/share/fish/vendor_completions.d/fd.fish
 	source /usr/local/share/fish/vendor_completions.d/fd.fish
@@ -136,7 +130,9 @@ if test $brewed_python_version
 	fish_add_path -g -a $HOME/Library/Python/$brewed_python_version/bin
 end
 fish_add_path -g -a /Applications
-fish_add_path -g -a /usr/local/opt/coreutils/libexec/gnubin
+fish_add_path -g -p /opt/homebrew/opt/grep/libexec/gnubin
+fish_add_path -g -a /opt/homebrew/opt/gnu-getopt/bin
+fish_add_path -g -a /opt/homebrew/opt/findutils/libexec/gnubin
 fish_add_path -g -a $HOME/.iterm2/
 # fish_add_path -g /usr/bin
 # fish_add_path -g /bin
@@ -280,3 +276,13 @@ set -x NVM_DIR "$HOME/.nvm"
 # Setting PATH for Python 3.11
 # The original version is saved in /Users/masukomi/.config/fish/config.fish.pysave
 set -x PATH "/Library/Frameworks/Python.framework/Versions/3.11/bin" "$PATH"
+
+
+## FINAL OVERRIDES & CUSTOM THINGS
+
+if test -f $HOME/.config/fish/config_work.fish
+	source $HOME/.config/fish/config_work.fish
+end
+if test -f $HOME/.config/fish/secrets.fish
+	source $HOME/.config/fish/secrets.fish
+end

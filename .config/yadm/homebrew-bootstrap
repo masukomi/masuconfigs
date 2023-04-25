@@ -2,7 +2,11 @@
 
 
 # manually adding an item?:
-# <output from:  brew info foo | head -n3 | tail -n2>
+# run maybrewer <homebrew lib>
+#
+# that just does & outputs this: 
+# 
+# # <output from:  brew info foo | head -n3 | tail -n2>
 # maybrew "foo"
 
 # (re)generating list of installed items?:
@@ -213,6 +217,9 @@ maybrew 'fd'
 # https://github.com/mklement0/fileicon
 maybrew 'fileicon'
 
+# Collection of GNU find, xargs, and locate # https://www.gnu.org/software/findutils/
+maybrew 'findutils'
+
 # User-friendly command-line shell for UNIX-like operating systems
 # https://fishshell.com
 maybrew 'fish'
@@ -259,9 +266,15 @@ maybrew 'glade'
 # https://go.dev/
 maybrew 'go'
 
+# GNU grep, egrep and fgrep # https://www.gnu.org/software/grep/
+maybrew 'grep'
+
 # Make JSON greppable
 # https://github.com/tomnomnom/gron
 maybrew 'gron'
+
+# Command-line option parsing utility # https://github.com/util-linux/util-linux
+maybrew 'gnu-getopt'
 
 # Improved top (interactive process viewer)
 # https://htop.dev/
@@ -409,6 +422,9 @@ else
 	echo "-- Skipping postgresql (installed already)"
 fi
 
+# Monitor data's progress through a pipe # https://www.ivarch.com/programs/pv.shtml
+maybrew 'pv'
+
 maybrew "python" # python 3 yo!
 # Program that can automate interactive applications
 if ! is_installed "python"; then
@@ -420,9 +436,6 @@ fi
 # https://pypi.org/project/tabulate/
 maybrew 'python-tabulate'
 
-if ! is_installed "rakudo-star"; then
-	brew install rakudo-star
-fi
 
 if ! is_installed "rbenv"; then
 	if ! is_installed "asdf"; then
@@ -470,6 +483,8 @@ maybrew "readline"
 # For pkg-config to find readline you may need to set:
 #   set -gx PKG_CONFIG_PATH "/usr/local/opt/readline/lib/pkgconfig"
 
+# Perl-powered file rename script with many helpful built-ins # http://plasmasturm.org/code/rename
+maybrew 'rename'
 
 # Search tool like grep and The Silver Searcher
 # https://github.com/BurntSushi/ripgrep
