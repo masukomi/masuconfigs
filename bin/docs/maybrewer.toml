@@ -1,0 +1,33 @@
+# TooLoo documentation file.
+# Details: https://github.com/masukomi/TooLoo
+name="maybrewer"
+short_description="adds description + command for yadm homebrew bootstrap"
+
+description="""
+Used when adding a new homebrew library to the default install.
+Running this command will generate a comment as well as the 
+maybrew `<lib>` line used in my homebrew-bootstrap file.
+
+The output of this command should be inserted into 
+the homebrew-bootstrap file at the appropriate place.
+"""
+
+usage_command=""
+
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/.config/fish/functions/maybrewer.fish"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs/"
+
+# can this be included in exports like the static blog generation
+exportable=false
+
+tags=[ "homebrew", "yadm"  ]
