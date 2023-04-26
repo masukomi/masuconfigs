@@ -1,0 +1,36 @@
+#!/usr/bin/env bash 
+
+MANPAGE=$1
+if [ $# -ne 1 ]; then
+	echo "USAGE: manfile <manpage name>"
+	echo "       Generates an HTML version of the manpage"
+	echo "       and optionally opens it in your browser."
+	exit 1
+fi
+
+man -w $MANPAGE > /dev/null
+if [ $? -eq 1 ]; then
+	exit 1
+fi
+MANFILE=$(man -w $MANPAGE)
+DIRECTIVE=$(gum choose "save" "open" "both")
+FILE=""
+if [ "$DIRECTIVE" == "save" ] || [ "$DIRECTIVE" == "both" ]; then
+	FILE=$(gum input --placeholder "enter path to save html to")
+else
+	T_FILE=$(mktemp /tmp/manfile.XXXXXX)
+	FILE=$T_FILE".html"
+	mv $T_FILE $FILE
+fi
+
+pandoc --from man --to html < "$MANFILE"  > "$FILE"
+if [ "$DIRECTIVE" == "open" ] || [ "$DIRECTIVE" == "both" ]; then
+	open "$FILE"
+	if [ "$DIRECTIVE" == "open" ]; then
+		sleep 1
+		rm "$FILE"
+	fi
+fi
+
+
+
