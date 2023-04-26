@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+require 'set'
+
+files = `git diff --cached --name-only --diff-filter=ACM`.split("\n")
+
+files.each do | file |
+  filename=file
+  if file.end_with? '.rb'
+    valid_code = system("rubocop -A #{filename}")
+    # add any changes to the index
+    system("git add #{filename}")
+    # if valid_code is false / nil then there were remaining problems
+    unless valid_code
+      puts "rubocop still has complaints about #{filename}"
+      exit 2
+    end
+  end
+end
+exit 0
