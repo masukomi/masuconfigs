@@ -37,7 +37,7 @@ echo ""
 #   defmacro     (elixir)
 # grep -rn $WHAT $WHERE 2>/dev/null | ggrep --colour=never "[[:space:]]*defp? $WHAT|[[:space:]]*def self.$WHAT|[[:space:]]*scope :$WHAT|[[:space:]]*defmacro $WHAT" \
 rg -n $WHAT $WHERE 2>/dev/null \
-  | ggrep --colour=never "[[:space:]]*defp? $WHAT|[[:space:]]*def self.$WHAT|[[:space:]]*scope :$WHAT|[[:space:]]*defmacro $WHAT|[[:space:]]*sub $WHAT|[[:space:]]*method $WHAT" \
+  | ggrep -E --colour=never "[[:space:]]*defp? $WHAT|[[:space:]]*def self.$WHAT|[[:space:]]*scope :$WHAT|[[:space:]]*defmacro $WHAT|[[:space:]]*sub $WHAT|[[:space:]]*method $WHAT" \
   | ggrep -v "tags:" \
   | grep -v ".js:" \
   | grep -v ".log:" \
