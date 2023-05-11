@@ -11,10 +11,9 @@ git_root = `git rev-parse --show-toplevel`.strip
 # foo_spec.rb being invoked twice.
 def get_spec_path(file)
   new_path = file
-  unless file.end_with? '_spec.rb'
+  unless is_spec?(file)
     new_path = file.sub(/\.rb$/, '_spec.rb')
     if new_path.include? 'app/'
-      # new_path = "spec/#{new_path.sub(%r{^app/}, '')}"
       new_path = new_path.sub('app/', 'spec/')
     end
     if new_path.include? 'lib/'
@@ -59,8 +58,6 @@ files.each do |file|
 
     tested_files.add full_spec_path
 
-    # normally....
-    # response = system("bundle exec rspec #{spec_subpath}")
     response = system("bundle exec rspec #{spec_subpath}")
     unless response
       puts "spec failed: #{spec_subpath}"
@@ -68,5 +65,3 @@ files.each do |file|
     end
   end rescue nil
 end
-
-exit 0
