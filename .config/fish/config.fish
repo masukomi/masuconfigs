@@ -94,11 +94,19 @@ abbr -a dtl "raku -I ~/workspace/TooLoo/lib  ~/workspace/TooLoo/bin/tooloo"
 
 abbr -a berd 'docker-compose exec bin/rspec --format=documentation'
 
-abbr -a sbw 'env SKIP=bad_words,ruby_docs'
+# skip bad words
+abbr -a sbw 'LEFTHOOK_EXCLUDE=bad_words'
+# no bad words
+abbr -a nbw 'LEFTHOOK_EXCLUDE=bad_words'
 abbr -a sall 'env SKIP=bad_words,rb_tester,rubocopper,ruby_docs'
 
 # hey, local version
 abbr -a heyl 'raku -I lib bin/hey'
+
+# nhook = no hook
+abbr -a nhook 'LEFTHOOK=0'
+# xhook = exclude hook
+abbr -a xhook 'LEFTHOOK_EXCLUDE='
 
 # alias vimr /Applications/VimR.app/Contents/Resources/vimr
 abbr -a vfz "mvim (fzf)"
@@ -131,8 +139,8 @@ if test $brewed_python_version
 end
 fish_add_path -g -a /Applications
 fish_add_path -g -p /opt/homebrew/opt/grep/libexec/gnubin
-fish_add_path -g -a /opt/homebrew/opt/gnu-getopt/bin
-fish_add_path -g -a /opt/homebrew/opt/findutils/libexec/gnubin
+fish_add_path -g -p /opt/homebrew/opt/gnu-getopt/bin
+fish_add_path -g -p /opt/homebrew/opt/findutils/libexec/gnubin
 fish_add_path -g -a $HOME/.iterm2/
 # fish_add_path -g /usr/bin
 # fish_add_path -g /bin
