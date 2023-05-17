@@ -8,6 +8,14 @@ if [ $# -eq 0 ]; then
 	exit 0
 fi
 
-unback=$(echo $1 | sed -e "s/.bak$//")
-mv $1 $unback
+if [ "$1" == "-c" ] ; then
+	shift
+	copy=true
+fi
 
+path=$(echo $1 | sed -e "s/.bak$//")
+if [ "$copy" == true ]; then
+	cp -r $path.bak $path
+else
+	mv $path.bak $path
+fi
