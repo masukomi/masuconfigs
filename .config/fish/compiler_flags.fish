@@ -1,0 +1,20 @@
+set -gx LDFLAGS "-L/opt/homebrew/opt/readline/lib";
+set -gx CPPFLAGS "-I/opt/homebrew/opt/readline/include";
+set -gx PKG_CONFIG_PATH "/opt/homebrew/opt/readline/lib/pkgconfig";
+fish_add_path /opt/homebrew/opt/openssl@3/bin;
+set -gx LDFLAGS "$LDFLAGS -L/opt/homebrew/opt/openssl@3/lib";
+set -gx CPPFLAGS "$CPPFLAGS -I/opt/homebrew/opt/openssl@3/include";
+set -gx PKG_CONFIG_PATH "$PKG_CONFIG_PATH /opt/homebrew/opt/openssl@3/lib/pkgconfig";
+fish_add_path /opt/homebrew/opt/openssl@3/bin;
+set -gx LDFLAGS "$LDFLAGS -L/opt/homebrew/opt/openssl@3/lib";
+set -gx CPPFLAGS "$CPPFLAGS -I/opt/homebrew/opt/openssl@3/include";
+set -gx PKG_CONFIG_PATH "$PKG_CONFIG_PATH /opt/homebrew/opt/openssl@3/lib/pkgconfig";
+fish_add_path /opt/homebrew/opt/llvm/bin;
+set -gx LDFLAGS "$LDFLAGS -L/opt/homebrew/opt/llvm/lib";
+set -gx CPPFLAGS "$CPPFLAGS -I/opt/homebrew/opt/llvm/include";
+fish_add_path /opt/homebrew/opt/libxslt/bin;
+set -gx LDFLAGS "$LDFLAGS -L/opt/homebrew/opt/libxslt/lib";
+set -gx CPPFLAGS "$CPPFLAGS -I/opt/homebrew/opt/libxslt/include";
+set -gx PKG_CONFIG_PATH "$PKG_CONFIG_PATH /opt/homebrew/opt/libxslt/lib/pkgconfig";
+set -gx LDFLAGS "$LDFLAGS -L/opt/homebrew/opt/libxslt/lib";
+set -gx LDFLAGS "$LDFLAGS -L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++"
