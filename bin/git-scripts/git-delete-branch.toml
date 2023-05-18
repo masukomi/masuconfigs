@@ -1,0 +1,40 @@
+# the name of the command or function you're documenting
+name="git-delete-branch"
+# a short (one line) description of what it does
+short_description="helper script to delete a git branch"
+description="""
+A simple tool to help you delete a git tag locally, and on the remote,
+because I can never remember the command to do it on a remote
+If there are multiple remotes it'll ask you which one.
+
+Pre-requisites:
+
+* [Charm's gum](https://github.com/charmbracelet/gum)
+"""
+# if the tool has some sort of usage / help documentation you can
+# invoke, enter it in the usage_command. Otherwise, comment that out,
+# and document it in the fallback_usage. In TOML you can create a
+# multiline string by surrounding it with triple double quotes.
+# """ like this """
+usage_command="git-delete-branch"
+# fallback_usage="""
+# USAGE: fallback_usage is used when
+# usage_command is not present"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/git-delete-branch"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+tags=["git"]
+
+# [[cheats]]
+# [[cheats.bar]]
+# description = "a description of task bar with backtrace_details"
+# template="bar {{arg1}} {{arg2}}"
+# [[cheats.baz]]
+# description = "a description of task baz with backtrace_details"
+# template="bar {{arg1}} {{arg2}}"

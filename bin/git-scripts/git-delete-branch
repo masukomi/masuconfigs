@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+# deletes a git tag locally and (optionally) in a
+# remote chosen from the list of known remotes.
+# Usage: git delete-tag
+
+# requires Charm's Gum
+# https://github.com/charmbracelet/gum
+
+if [ $# -ne 1 ]; then
+	echo "USAGE: git delete-branch <branch-name>"
+	echo "       This will delete it locally, and preset you"
+	echo "       with the option of deleting it in the remote too."
+	exit 0
+fi
+
+BRANCH="$1"
+
+git branch -D "$BRANCH"
+if [ $? -eq 0 ]; then 
+	echo "Updating remotes..."
+	git fetch --all
+	echo "Delete from remote repo too?"
+	CHOICE=$(gum choose "yes" "no")
+	if [ "$CHOICE" == "yes" ]; then
+		echo "Which remote?"
+		REMOTE=$(gum choose $(git remote))
+		git branch -a | grep "remotes/$REMOTE/$BRANCH" 2>&1 > /dev/null
+		if [ $? -eq 0 ]; then
+			git push $REMOTE --delete $BRANCH
+			if [ $? -ne 0 ]; then
+				echo "Well that's weird. Your local copy of $REMOTE has it..." 
+				echo "🤷‍♀️"
+			fi
+		else
+			echo "No need. That branch isn't present in $REMOTE"
+		fi
+	else
+		echo "Ok. Stopping here."
+	fi
+
+	exit 0
+else
+	exit 1
+fi
