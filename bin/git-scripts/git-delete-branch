@@ -16,15 +16,20 @@ fi
 
 BRANCH="$1"
 
-git branch -D "$BRANCH"
+# git branch -D "$BRANCH"
 if [ $? -eq 0 ]; then 
 	echo "Updating remotes..."
 	git fetch --all
 	echo "Delete from remote repo too?"
 	CHOICE=$(gum choose "yes" "no")
 	if [ "$CHOICE" == "yes" ]; then
-		echo "Which remote?"
-		REMOTE=$(gum choose $(git remote))
+		REMOTE_COUNT=$(git remote | wc -l | sed -e 's/[[:space:]]*//g')
+		if [ $REMOTE_COUNT -eq 1 ]; then
+			REMOTE=$(git remote)
+		else
+			echo "Which remote?"
+			REMOTE=$(gum choose $(git remote))
+		fi
 		git branch -a | grep "remotes/$REMOTE/$BRANCH" 2>&1 > /dev/null
 		if [ $? -eq 0 ]; then
 			git push $REMOTE --delete $BRANCH

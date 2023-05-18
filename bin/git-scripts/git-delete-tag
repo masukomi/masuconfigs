@@ -23,8 +23,13 @@ git tag -d "$TAG"
 echo "Delete from remote repo too?"
 CHOICE=$(gum choose "yes" "no")
 if [ "$CHOICE" == "yes" ]; then
-	echo "Which remote?"
-	REMOTE=$(gum choose $(git remote))
+	REMOTE_COUNT=$(git remote | wc -l | sed -e 's/[[:space:]]*//g')
+	if [ $REMOTE_COUNT -eq 1 ]; then
+		REMOTE=$(git remote)
+	else
+		echo "Which remote?"
+		REMOTE=$(gum choose $(git remote))
+	fi
 	git push --delete "$REMOTE" "$TAG"
 else
 	echo "Ok. Stopping here."
