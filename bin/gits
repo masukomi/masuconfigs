@@ -7,8 +7,19 @@ ASSUMED_UNCHANGED=$( git ls-files -v \
 	| sed -e "s/^/\x1b[1;33m⇨\x1b[0m /")
 			# ^^^ insert a bold yellow arrow
 
+UNTRACKED=$(git ls-files -v \
+	| grep --color '^S ' \
+	| sed -e "s/^S /\x1b[1;33m⇨\x1b[0m /")
+			# ^^^ insert a bold yellow arrow
+
 if [ "$ASSUMED_UNCHANGED" != "" ]; then
 	echo ""
 	echo "\x1b[1;37mGit is assuming the following are unchanged:\x1b[0m"
 	echo "$ASSUMED_UNCHANGED"
+fi
+
+if [ "$UNTRACKED" != "" ]; then
+	echo ""
+	echo "\x1b[1;37mGit is excluding changes to:\x1b[0m"
+	echo "$UNTRACKED"
 fi
