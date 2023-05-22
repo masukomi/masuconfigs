@@ -85,6 +85,11 @@
 (package! topsy
   :recipe (:host github :repo "alphapapa/topsy.el"))
 
+; extends org-mode's clickable link support to other modes
+; the built-in version is goto-address mode which works well,
+; but doesn't support as many link types
+(package! orglink)
+
 ; LANGUAGES
 
 ; HTML, JavaScript, CSS
@@ -127,6 +132,11 @@
 
 
 ; -- Org-Mode
+; newer version of org mode broke searching in folder sections
+; Please revisit this ticket and see if it's changed
+; https://github.com/doomemacs/doomemacs/issues/6478
+(package! org-mode :pin "971eb6885ec996c923e955730df3bafbdc244e54")
+
 ; pretty bullets
 (package! org-bullets)
 ; in config: (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
@@ -148,6 +158,22 @@
 (package! ialign)
 ; folding based on indentation
 (package! yafolding)
+; tailing files only better
+; usage: M-x itail RET /file/to/tail
+; customization: M-x customize RET (search for itail)
+;; key        binding
+;; ---        -------
+;; C-c -      itail-remove-last-filter
+;; C-c c      itail-clear
+;; C-c f      itail-toggle-filter
+;; C-c g      itail-add-grep
+;; C-c h      itail-highlight
+;; C-c r      itail-remove-all-filters
+;; C-c s      itail-show-filters
+;; C-c u      itail-unhighlight
+;; C-c C-k    itail-reload
+;; C-c C-c    itail-kill
+(package! itail)
 
 ; APP Support
 (package! ox-hugo) ; hugo file format for org mode

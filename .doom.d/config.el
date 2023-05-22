@@ -79,6 +79,7 @@
 ;;---------------------------------
 ;; General Config
 (add-to-list 'load-path "~/.doom.d/custom")
+(load "eruby-mode")
 
 ;; These are used for a number of things, particularly for GPG configuration,
 ;; some email clients, file templates and snippets.
@@ -97,6 +98,20 @@
 ; stop asking if i really want to quit,
 ; and more importantly those horrible messages.
 (setq confirm-kill-emacs nil) ; 'y-or-n-p
+
+; When CUA mode is enabled, the keys C-x, C-c, C-v, and C-z
+; invoke commands that cut (kill), copy, paste (yank), and undo respectively.
+; https://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html
+;
+; basically to make C-x work like every other app
+; UNFORTUNATELY this completely borks new list item functionality in org-mode
+; and it overrides the C-V functionlity in evil (visual selection block mode)
+;; (cua-mode t)
+
+
+; if you want to be able to edit things that are in your .gitignore
+; try using 'native indexing method for Projectile https://docs.projectile.mx/projectile/configuration.html#:%7E:text=Project%20indexing%20method%20Projectile%20has%20three%20modes%20of,obtain%20the%20list%20of%20files%20in%20a%20project.
+(setq projectile-indexing-method 'native)
 
 ;;;;;;;;;;;;;;;;
 ; stop cluttering my directories with foo.txt~ files
@@ -324,6 +339,10 @@
 (add-hook 'prog-mode-hook #'topsy-mode)
 
 
+;------------
+; make urls clickable
+;(goto-address-mode t)
+; better... use orglink-mode (see packages.el)
 
 ;; ---- Doom Word Wrap
 ;; see https://github.com/hlissner/doom-emacs/blob/3614109c7a0cdd5bc474f095beebe9c126ae8f01/modules/editor/word-wrap/README.org
@@ -440,6 +459,17 @@
 			(private-comments-mode)
 		       )))
 
+(defun sg-toggle-fold ()
+  "Toggle code folding according to indentation of current line."
+  (interactive)
+  (set-selective-display
+  (if selective-display
+    nil
+    (save-excursion
+      (back-to-indentation)
+      (1+ (current-column))))))
+
+
 (with-eval-after-load "private-comments-mode"
   (set-face-background 'private-comments-face "#527568")
   (set-face-foreground 'private-comments-face "#FFFFFF"))
@@ -468,6 +498,16 @@
 ;;---------------------------------
 ;; ORG Configs
 ;;
+;; TEMPORARY HACK
+;; please revisit https://github.com/doomemacs/doomemacs/issues/6478
+;; and see if it's fixed
+(setq org-fold-core-style 'text-properties)
+(after! evil
+   (evil-select-search-module 'evil-search-module 'isearch))
+
+
+
+
 ;;FOR MORE CONFIGS SEE M-x org-customize
 
 (require 'org-mouse)
