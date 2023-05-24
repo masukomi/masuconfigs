@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+
+# cherry pick things from B into A
+trap("SIGINT") { exit! }
+
+if ARGV.size == 0
+  puts <<~END
+USAGE: pick-divergent-names <from_branch> [<num_commits>]
+       finds recent commits with **TITLES** that are not found in 
+       the current branch. Useful when one branch has rebased 
+       and you need the changes from a former branch of that that
+       has not rebased.
+
+       from_branch:    branch to find things to cherry-pick
+       num_commits: how far back in the history of both branches
+                    to look
+END
+  exit 66 #EX_NOINPUT
+end
+
+from_branch = ARGV[0]
+num_lines = ARGV.size > 2 ? ARGV[2].to_i : 50
+
+current_branch=`git current-branch`.chomp
+puts "Will cherry-pick into #{current_branch}."
+puts "Will consider past #{num_lines} commits."
+puts "Hit enter to continue, or ^c to exit."
+STDIN.gets
+
+
+
+
+
+current_branch_lines=`git log -n #{num_lines} --oneline #{current_branch} | sd "^(\w+) \(.*\) " "\1"`.split("\n").reverse.map{|l|  /^(\w+)\s+(.*)/.match(l); [$1, $2]}
+from_branch_lines=`git log -n #{num_lines} --oneline #{from_branch} | sd "^(\w+) \(.*\) " "\1"`.split("\n").reverse.map{|l|  /^(\w+)\s+(.*)/.match(l); [$1, $2]}
+
+current_branch_titles=Set.new(current_branch_lines.map{|x| x[1]})
+from_branch_titles=from_branch_lines.map{|x| x[1]}
+
+
+puts "starting from oldest to newest..." 
+from_branch_titles.each_with_index do | title, index |
+  if current_branch_titles.include? title
+    puts "✅: #{title}"
+  else
+    hash = from_branch_lines[index][0]
+    puts "🚫 #{title}"
+    puts "cherry pick (#{hash}) #{title}\n  from #{from_branch}? [y/n]"
+    response = STDIN.gets.chomp.downcase
+    if response == 'y'
+      puts `git cherry-pick #{hash}`
+    else
+      puts "skipping"
+    end
+  end
+end
+
