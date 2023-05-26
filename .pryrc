@@ -3,11 +3,51 @@ if File.file? work_specific_file
   load work_specific_file
 end
 
+def paths_with(substring)
+  url_helpers_with(:path, substring)
+end
+
+def urls_with(substring)
+  url_helpers_with(:url, substring)
+end
+
+def url_helpers_with(path_or_url, substring)
+  Rails.application.routes.url_helpers.public_methods
+    .map{|x|x.to_s}
+    .select{|x| (x.end_with?(path_or_url == :path ? '_path' : '_url')) \
+                  and x.downcase.include?(substring.downcase)}
+end
+
+def recognize_path(path)
+  Hash[* %w[POST GET PUT PATCH DELETE].map{|verb| 
+            [verb, Rails.application.routes.recognize_path(path, method: verb)]
+          }.flatten 
+      ]
+end
+
+def route_with(substring)
+  Rails.application.routes.routes
+    .map { |r|  r.path.spec.to_s  }
+    .select{|p| p.downcase.include?(substring.downcase)}
+end
+
+if defined?(PryByebug)
+  Pry.commands.alias_command 'c', 'continue'
+  Pry.commands.alias_command 's', 'step'
+  Pry.commands.alias_command 'n', 'next'
+  Pry.commands.alias_command 'f', 'finish'
+end
 
 def helpme
   usage=<<~END
     Available custom functions:
     - backtrace(exception, lines=10)
+    - Mongo.unset(model_class, attribute)
+    - paths_with(substring)
+    - recognize_path(path)
+    - route_with(substring)
+    - urls_with(substring)
+    - url_helpers_with(path_or_url, substring)
     - where_is(klass, method = nil)
     - Where.is_proc(proc)
     - Where.is_method(klass, method_name)
@@ -20,6 +60,10 @@ def helpme
       opens the specified path with your default editor (ENV['EDITOR'])
   END
   puts usage
+  if (work_loaded?() rescue false)
+    puts helpme_work
+
+  end
 end
 
 def backtrace(exception, lines = 10)
@@ -29,7 +73,16 @@ end
 
 # https://gist.github.com/wtaysom/1236979
 #  A little Ruby module for finding the source location where class and methods are defined.
-
+module Mongo
+  class << self
+    def unset(model_class, attribute)
+      raise "model must be a Mongoid::Document" unless model_class.include? Mongoid::Document
+      raise "attribute must be symbol name of attribute" unless attribute.is_a? Symbol
+      # MongoidCollection.all.unset(:attribute_name)
+      model_class.all.unset(attribute)
+    end
+  end
+end
 module Where
   class <<self
     attr_accessor :editor
