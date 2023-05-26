@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Leverages FZF to let you find a local branch or pr
+# Leverages FZF to let you find a local branch
 # using "fuzzy" searching.
 #
 # Usage git pick [-a] [<branch substring>]
@@ -8,7 +8,7 @@
 #   If you supply a branch substring it'll
 #   restrict your results to branches that contain
 #   that substring.
-#   If there is only one, it will switch to it automatically
+#   If there is only one match, it will switch to it automatically
 #
 
 if [ $# -gt 0 ]; then

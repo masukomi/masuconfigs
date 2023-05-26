@@ -1,0 +1,42 @@
+# TooLoo documentation file.
+# Details: https://github.com/masukomi/TooLoo
+name="git-pick"
+short_description="fuzzy finder for git branch switching"
+
+description="""
+Leverages FZF to let you find a local branch using "fuzzy" searching.
+
+pass it a string to rapidly narrow down the initial list
+or automatically switch to it if only one matches.
+"""
+
+# usage_command=""
+
+fallback_usage="""
+Usage git pick [-a] [<branch substring>]
+  -a will let you select from _all_ branches
+     ( not just local ones ). 
+
+  If you supply a branch substring it'll
+  restrict your results to branches that contain
+  that substring.
+
+  use arrows or search refinement to select the 
+  right branch then hit
+  enter on the selected branch to switch to it. 
+
+  If there is only one match, it will switch to it automatically
+"""
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/git-pick"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs"
+
+# can this be included in exports like the static blog generation
+exportable=true
+
+tags=[ "git"  ]
