@@ -3,90 +3,63 @@
 # Leverages FZF to let you find a local branch or pr
 # using "fuzzy" searching.
 #
-# Usage git pick <branch|pr> [branch substring]
+# Usage git pick [-a] [<branch substring>]
+#   -a will let you select from _all_ branches
 #   If you supply a branch substring it'll
 #   restrict your results to branches that contain
 #   that substring.
 #   If there is only one, it will switch to it automatically
 #
-# The PR functionality assumes you've modified your
-# git config so that you can checkout PRs locally
-#
-# [remote "origin"]
-#    fetch = +refs/heads/*:refs/remotes/origin/*
-#    url = git@github.com:joyent/node.git
-#    fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
-#    # ^^^ that last line lets you `git checkout pr/1234`
 
-if [ "$1" == "branch" ] || [ "$1" == "" ]; then
-  if [ $# -gt 1 ]; then
-    all_branches_flag=""
-    if [ "$2" == "-a" ]; then
-      all_branches_flag="-a"
-      shift
-    fi
-    branch_name="$2"
+if [ $# -gt 0 ]; then
+  all_branches_flag=""
+  if [ "$1" == "-a" ]; then
+    all_branches_flag="-a"
+    shift
+  fi
+  branch_name="$1"
 
-
-    lines=$(
+  lines=$(
     git branch $all_branches_flag \
       | grep -v " [[:xdigit:]]\{7\} \[gone\]" \
       | sed -e "s/^*/ /" -e "s/^+/ /" \
       | grep "$branch_name"
-    )
-    line_count=$(echo -n "$lines" | grep -c '^')
-    if [ "$lines" == "" ]; then
-      echo "no branches contain $2"
-      if [ "$all_branches_flag" == "" ]; then
-        echo "try again with -a
-        git pick branch -a $2"
-      fi
-      exit 1
+  )
+  line_count=$(echo -n "$lines" | grep -c '^')
+  if [ "$lines" == "" ]; then
+    echo "no branches contain $2"
+    if [ "$all_branches_flag" == "" ]; then
+      echo "try again with -a
+      git pick branch -a $2"
     fi
-    if [ $line_count -ne 1 ]; then
-      branch=$(
-        echo "$lines" \
-        | fzf \
-        | awk '{print $1}'
-      )
-    else
-      branch=$(echo "$lines" | awk '{print $1}')
-    fi
-
-  else
-    echo "in else" > test.txt
-    branch=$(git branch -v \
-      | grep -v " [[:xdigit:]]\{7\} \[gone\]" \
-      | sed -e "s/^*/ /" -e "s/^+/ /" \
+    exit 1
+  fi
+  if [ $line_count -ne 1 ]; then
+    branch=$(
+      echo "$lines" \
       | fzf \
-      | awk '{print $1}' )
-  fi
-
-  if [ "$branch" != "+" ]; then
-    cleaned_branch=$(echo "$branch" | sd "remotes/.*?/" "")
-    git checkout $cleaned_branch
+      | awk '{print $1}'
+    )
   else
-    echo "That brach is checked out in another worktree."
-    echo "For more info on worktrees go to:"
-    echo "  https://git-scm.com/docs/git-worktree"
-    exit 0
+    branch=$(echo "$lines" | awk '{print $1}')
   fi
 
-elif [ "$1" == "pr" ]; then
-
-  git branch -av \
-    | grep "pr/[[:digit:]]" \
+else # not all branches
+  branch=$(git branch -v \
     | grep -v " [[:xdigit:]]\{7\} \[gone\]" \
     | sed -e "s/^*/ /" -e "s/^+/ /" \
-    | perl -pe "s/remotes\/\S+?\///g" \
     | fzf \
-    | awk '{print $1}' \
-    | xargs git checkout
+    | awk '{print $1}' )
+fi
 
+if [ "$branch" != "+" ]; then
+  cleaned_branch=$(echo "$branch" | sd "remotes/.*?/" "")
+  git checkout $cleaned_branch
 else
-  echo "Unrecognized option"
-  echo "Usage: git pick [branch|pr]"
-  exit 1
+  echo "That brach is checked out in another worktree."
+  echo "For more info on worktrees go to:"
+  echo "  https://git-scm.com/docs/git-worktree"
+  exit 0
 fi
 
 
