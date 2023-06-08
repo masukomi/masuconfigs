@@ -10,6 +10,11 @@
 #   that substring.
 #   If there is only one match, it will switch to it automatically
 #
+ESCAPE=$(printf "\033")
+RED="${ESCAPE}[91m"
+GREEN="${ESCAPE}[92m"
+NOCOLOR="${ESCAPE}[0m"
+
 
 if [ $# -gt 0 ]; then
   all_branches_flag=""
@@ -55,6 +60,13 @@ fi
 if [ "$branch" != "+" ]; then
   cleaned_branch=$(echo "$branch" | sd "remotes/.*?/" "")
   git checkout $cleaned_branch
+
+  if [ $? -eq 0 ]; then
+    echo $GREEN"✅ CHECKOUT SUCCEEDED"$NOCOLOR;
+  else
+    echo $RED"❌ CHECKOUT FAILED"$NOCOLOR;
+  fi
+
 else
   echo "That brach is checked out in another worktree."
   echo "For more info on worktrees go to:"
