@@ -102,6 +102,7 @@
 (package! web-mode)
 (package! typescript-mode)
 (package! tt-mode) ; Perl Template Toolkit & Raku Template6
+(package! json-reformat)
 
 ; -- protobuffers
 (package! protobuf-mode)
