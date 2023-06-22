@@ -81,6 +81,9 @@
 (add-to-list 'load-path "~/.doom.d/custom")
 (load "eruby-mode")
 
+;; cut with fucking command+x like the rest of the world
+(bind-key* (kbd "C-x") 'kill-region)
+
 ;; These are used for a number of things, particularly for GPG configuration,
 ;; some email clients, file templates and snippets.
 (setq user-full-name "Kay Rhodes"
