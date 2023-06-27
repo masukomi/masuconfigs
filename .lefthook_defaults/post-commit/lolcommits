@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+### lolcommits hook (begin) ###
+LANG="en_US.UTF-8" && PATH="$PATH:/Users/masukomi/.rbenv/versions/3.2.2/bin:/opt/homebrew/bin" && if [ ! -d "$GIT_DIR/rebase-merge" ] && [ "$LOLCOMMITS_CAPTURE_DISABLED" != "true" ]; then
+  lolcommits --capture --device "Logitech BRIO"
+  if [ $? -ne 0 ]; then
+    echo "Problem with lolcommits. Rerun manually with --debug"
+    exit 1
+  else
+    sleep 0.25
+    dirname=$(basename $(pwd))
+    filename=$(ls -Rt ~/.lolcommits/$dirname/ | head -n1)
+    filepath=~/.lolcommits/$dirname/$filename
+    echo capture: $filepath
+    imgcat $filepath
+  fi
+else
+  echo "lolcommits prerequisite failed. skipping"
+fi
+###  lolcommits hook (end)  ###
