@@ -1,0 +1,23 @@
+---
+loltext:
+  :enabled: true
+  :message:
+    :color:
+    :font: "/Users/masukomi/Library/Fonts/JetBrainsMono-Bold.ttf"
+    :position: C
+    :size: 35
+    :stroke_color: none
+    :uppercase:
+  :sha:
+    :color:
+    :font: "/Users/masukomi/Library/Fonts/JetBrainsMono-Bold.ttf"
+    :position: S
+    :size: 25
+    :stroke_color: none
+    :uppercase:
+  :overlay:
+    :enabled: true
+    :overlay_colors: "#ffd479"
+    :overlay_percent: 40
+  :border:
+    :enabled: false
