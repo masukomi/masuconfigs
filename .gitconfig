@@ -1,5 +1,8 @@
+
 [include]
 	path = ~/.gitconfig_personal
+[includeIf "gitdir:~/workspace/client/"]
+  path = ~/.gitconfig_work
 [init]
 	# templatedir = ~/.git_template
 	defaultBranch = main
@@ -78,6 +81,7 @@
 	la = !git ls-files -v | grep '^[[:lower:]]'
 	latest-tag = !git tag --sort=v:refname | tail -1
 	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	logme = !git log --pretty=format:\"* %s\" --author `git config user.email`
 	lol = !git --no-pager loll
 	lola = !git --no-pager lolal
 	lolal = log --graph --decorate --pretty=oneline --abbrev-commit --all
@@ -107,9 +111,15 @@
 	subup = submodule foreach git pull origin master
 	tl=log --name-status --pretty=format:'-----------------------------------------%n%h %an %ar %n %s'
 	unadd = reset HEAD
-	unassume = update-index --no-assume-unchanged
+	# assume = update-index --assume-unchanged
+	# unassume = update-index --no-assume-unchanged
+	assume = update-index --skip-worktree
+	unassume = update-index --no-skip-worktree
+
+	untrack = update-index --skip-worktree
+	retrack = update-index --skip-worktree
+
 	unstash = stash pop[push]
-	assume = update-index --assume-unchanged
 	cdiff = difftool --tool=cdiff
 	rand = !"git checkout $(git branch | shuf -n 1)"
 [difftool]
@@ -122,7 +132,7 @@
 #	algorithm = patience
 	# external = cdiff
 [difftool "cdiff"]
-	cmd = ~/workspace/cleandiff/cdiff \"$LOCAL\" \"$REMOTE\"
+	cmd = cdiff \"$LOCAL\" \"$REMOTE\"
 [difftool "cdiff-f"]
 	cmd = cdiff --format=fenestro \"$LOCAL\" \"$REMOTE\"
 [difftool "cdiff-h"]
