@@ -1,20 +1,31 @@
 #!/usr/bin/env bash
 
 ### lolcommits hook (begin) ###
-LANG="en_US.UTF-8" && PATH="$PATH:/Users/masukomi/.rbenv/versions/3.2.2/bin:/opt/homebrew/bin" && if [ ! -d "$GIT_DIR/rebase-merge" ] && [ "$LOLCOMMITS_CAPTURE_DISABLED" != "true" ]; then
-  lolcommits --capture --device "Logitech BRIO"
-  if [ $? -ne 0 ]; then
-    echo "Problem with lolcommits. Rerun manually with --debug"
-    exit 1
+# TODO add in check for .git/rebase-apply or .git/rebase-merge under
+# the repo root if so, skip this. we're rebasing
+root=$(git rev-parse --show-toplevel)
+# echo "checking for..."
+# echo "$root/.git/rebase-apply"
+# echo "$root/.git/rebase-merge"
+#
+
+if [ ! -e "$root/.git/rebase-apply" ] && [ ! -e "$root/.git/rebase-merge" ]; then
+  # LANG="en_US.UTF-8" && PATH="$PATH:/Users/masukomi/.rbenv/versions/3.2.2/bin:/opt/homebrew/bin" && if [ "$LOLCOMMITS_CAPTURE_DISABLED" != "true" ]; then
+  LANG="en_US.UTF-8" && if [ "$LOLCOMMITS_CAPTURE_DISABLED" != "true" ]; then
+    lolcommits --capture --device "Logitech BRIO"
+    if [ $? -ne 0 ]; then
+      echo "Problem with lolcommits. Rerun manually with --debug"
+      exit 1
+    else
+      sleep 0.25
+      dirname=$(basename $(pwd))
+      filename=$(ls -Rt ~/.lolcommits/$dirname/ | head -n1)
+      filepath=~/.lolcommits/$dirname/$filename
+      echo capture: $filepath
+      imgcat $filepath
+    fi
   else
-    sleep 0.25
-    dirname=$(basename $(pwd))
-    filename=$(ls -Rt ~/.lolcommits/$dirname/ | head -n1)
-    filepath=~/.lolcommits/$dirname/$filename
-    echo capture: $filepath
-    imgcat $filepath
+    echo "lolcommits prerequisite failed. skipping"
   fi
-else
-  echo "lolcommits prerequisite failed. skipping"
 fi
 ###  lolcommits hook (end)  ###
