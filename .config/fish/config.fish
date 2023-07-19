@@ -98,7 +98,7 @@ abbr -a berd 'docker-compose exec bin/rspec --format=documentation'
 abbr -a sbw 'LEFTHOOK_EXCLUDE=bad_words'
 # no bad words
 abbr -a nbw 'LEFTHOOK_EXCLUDE=bad_words'
-abbr -a sall 'env SKIP=bad_words,rb_tester,rubocopper,ruby_docs'
+abbr -a sall 'LEFTHOOK=0'
 
 # hey, local version
 abbr -a heyl 'raku -I lib bin/hey'
@@ -156,6 +156,7 @@ fish_add_path -g -p $HOME/.local/bin # haskell stuff installed with Stack
 fish_add_path /usr/local/opt/mongodb-community@4.2/bin
 fish_add_path -g -a $HOME/Library/Python/3.9/bin
 
+fish_add_path -g -a $HOME/workspace/reference/bash/git-fuzzy/bin
 
 set CELLAR (brew --cellar)
 
@@ -164,7 +165,7 @@ set CELLAR (brew --cellar)
 if test -e ~/.rakubrew/shims/rakudo
 	# my raku-bootstrap file pre-generates this file
 	# so that we don't have to add the loop time to every shell prompt
-	if test -e $HOME/.config/fish/raku_paths.fish 
+	if test -e $HOME/.config/fish/raku_paths.fish
 		source $HOME/.config/fish/raku_paths.fish
 	else
 		echo "WARNING: raku_paths.fish not found"
