@@ -1,6 +1,32 @@
 #!/usr/bin/env bash
 
 # an interactive cli tool to help you create commit messages
+# that are not only readable, but follow a standardized
+# format that can be leveraged by scripts to generate changelogs,
+# find specific commits, or anything else you can imagine.
+#
+#-----------------------------------------------------------
+# Example commit message:
+#
+# commit 51e1a7e91588f66510c39431ba1066ccb9746be3 (HEAD -> main)
+# Author: masukomi <masukomi@masukomi.org>
+# Date:   Mon Jul 31 08:04:02 2023 -0400
+#
+#     [search] refactor: switched to official mongodb_meilisearch gem
+#
+#     mongodb_meilisearch has received an official
+#     release, and I was able to switch to that
+#     from the local pre-release copy
+#
+#     TICKET: 66
+#
+#     TAGS: dependencies
+#
+#  Gemfile      |  2 +-
+#  Gemfile.lock | 14 +++++---------
+#  2 files changed, 6 insertions(+), 10 deletions(-)
+#
+#-----------------------------------------------------------
 #
 #
 # Usage: git com [-f <git config file path>]
