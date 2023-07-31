@@ -114,14 +114,18 @@ if [ "$GIT_CONFIG_FILE" == "" ]; then
 	GIT_CONFIG_FILE=$(git rev-parse --show-toplevel)/.git/config
 fi
 
-GIT_COM_TAGS=$(git config $GIT_CONFIG_FILE --get com.tags 2>/dev/null | xargs -n1 | sort -u | xargs)
+# echo $GIT_CONFIG_FILE
+# git config -f $GIT_CONFIG_FILE --get com.ticket-command
+# exit 1
+
+GIT_COM_TAGS=$(git config -f $GIT_CONFIG_FILE --get com.tags 2>/dev/null | xargs -n1 | sort -u | xargs)
 if [ $? != 0 ]; then
 	GIT_COM_TAGS=""
 fi
 
 eval "TAG_CHOICES=($GIT_COM_TAGS)";
 
-GIT_COM_TYPES=$(git config "$GIT_CONFIG_FILE" --get com.types 2>/dev/null \
+GIT_COM_TYPES=$(git config -f "$GIT_CONFIG_FILE" --get com.types 2>/dev/null \
 	| xargs -n1 \
 	| sort -u \
 	| xargs)
@@ -157,7 +161,7 @@ if [[ -n "$TYPES" ]]; then
 		| uniq \
 		| sort \
 		| tr "\n" " " )
-	git config "$GIT_CONFIG_FILE" com.types "$STORABLE_TYPES"
+	git config -f "$GIT_CONFIG_FILE" com.types "$STORABLE_TYPES"
 fi
 clear_last_line
 
@@ -168,11 +172,11 @@ if [ "$SCOPE" == "" ]; then
 	exit 1
 fi
 
-TICKET_COMMAND=$(git config "$GIT_CONFIG_FILE" --get com.ticket-command 2>/dev/null)
+TICKET_COMMAND=$(git config -f "$GIT_CONFIG_FILE" --get com.ticket-command 2>/dev/null)
 if [ $? -ne 0 ] || [ "$TICKET_COMMAND" == "" ]; then
 	TICKET=$(request_ticket_number)
 else
-	TICKET=$(request_ticket_number "$(eval "TICKET_COMMAND")")
+	TICKET=$(request_ticket_number "$(eval "$TICKET_COMMAND")")
 fi
 
 
@@ -216,7 +220,7 @@ if [[ -n "$TAGS" ]]; then
 		| uniq \
 		| sort \
 		| tr "\n" " " )
-	git config "$GIT_CONFIG_FILE" com.tags "$STORABLE_TAGS"
+	git config -f "$GIT_CONFIG_FILE" com.tags "$STORABLE_TAGS"
 fi
 
 echo "commit details: "
