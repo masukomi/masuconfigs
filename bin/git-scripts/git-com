@@ -15,10 +15,18 @@
 #        git config under
 #        com.ticket-command
 #
+#        Note that this is per repo, thus allowing for
+#        different repos with different branch naming
+#        conventions from which you could extract
+#        the ticket number.
+#
 # NOTE: tags are stored under the com.tags key in your
 #       each git repo you use it in. This allows for
 #       different tags for each project
 #       types are stored under the com.types key
+#
+# Pre-requisites:
+# - gum  https://github.com/charmbracelet/gum
 #
 # Inspired by Conventional Commits Standard
 # Alas, as an English speaker
@@ -27,9 +35,8 @@
 # E.g. "fix"?! Fix WHAT?!!?
 #
 # And yes... https://xkcd.com/927/
-
-
-
+# ----------
+# LICENSE INFO
 # Based on code from makers of Charm and Gum
 # requires gum to be installed.
 # https://github.com/charmbracelet/gum
@@ -39,6 +46,7 @@
 # Copyright (c) 2021 Charmbracelet, Inc & 2022 Kay Rhodes A.K.A. masukomi
 # LICENSE
 # https://github.com/charmbracelet/gum/blob/fb4a9e6320e6a52ace2979f87391d582c8d123f6/LICENSE
+
 
 function clear_last_line () {
 	echo -en "\e[1A\e[K" ;printf "\r"
@@ -87,7 +95,11 @@ fi
 
 eval "TAG_CHOICES=($GIT_COM_TAGS)";
 
-GIT_COM_TYPES=$(git config "$GIT_CONFIG_FILE" --get com.types 2>/dev/null | xargs -n1 | sort -u | xargs)
+GIT_COM_TYPES=$(git config "$GIT_CONFIG_FILE" --get com.types 2>/dev/null \
+	| xargs -n1 \
+	| sort -u \
+	| xargs)
+
 if [ "$GIT_COM_TYPES" = "" ]; then
 	GIT_COM_TYPES="fix feat add docs test refactor cleanup"
 fi
