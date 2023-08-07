@@ -116,6 +116,9 @@ alias :q exit
 
 alias lg lazygit
 alias gcurl /usr/local/opt/curl/bin/curl
+alias recursor "tput cvvis" # opposite of tput civis
+# open a "Quicklook" preview of a file: quicklook <path>
+alias quicklook "qlmanage -p"
 
 
 # Convenience
@@ -157,6 +160,8 @@ fish_add_path /usr/local/opt/mongodb-community@4.2/bin
 fish_add_path -g -a $HOME/Library/Python/3.9/bin
 
 fish_add_path -g -a $HOME/workspace/reference/bash/git-fuzzy/bin
+abbr -a gf 'git fuzzy'
+
 
 set CELLAR (brew --cellar)
 
