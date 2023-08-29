@@ -91,6 +91,7 @@
 (package! orglink)
 
 ; LANGUAGES
+(package! crystal-mode)
 
 ; HTML, JavaScript, CSS
 (package! fish-mode)
@@ -116,7 +117,7 @@
 (package! ruby-hash-syntax)
 (package! ruby-tools) ; https://github.com/rejeep/ruby-tools.el
 
-; -- Ruby
+; -- Rust
 (package! rust-mode)
 
 ; -- Schemes
@@ -131,11 +132,12 @@
 ; -- Yaml
 (package! yaml-mode)
 
-
 ; -- Org-Mode
 ; newer version of org mode broke searching in folder sections
 ; Please revisit this ticket and see if it's changed
 ; https://github.com/doomemacs/doomemacs/issues/6478
+; last revisited by me on Aug 29, 2023.
+; last update to ticket was Jan 27, 2023
 (package! org-mode :pin "971eb6885ec996c923e955730df3bafbdc244e54")
 
 ; pretty bullets
@@ -193,3 +195,7 @@
 (package! private-comments-mode)
 ; (package! example
 ;   :recipe (:host github :repo "masukomi/private-comments-mode"))
+
+
+(package! copilot
+  :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))

@@ -368,7 +368,9 @@
       :action (lambda (cand) (find-file cand))))
 
 
-  (add-to-list 'helm-projectile-sources-list helm-source-file-not-found t))
+  (add-to-list 'helm-projectile-sources-list helm-source-file-not-found t)
+  (setq +workspaces-on-switch-project-behavior t)
+  )
 
 
 ; TODO: make this toggleable
@@ -426,7 +428,6 @@
 
 ;; private comments mode
 ;; (autoload 'private-comments-mode "private-comments-mode" nil t)
-
 
 
 ;; avy (jumping to visible text using a char-based decision tree.)
@@ -876,6 +877,11 @@ now being rendered as Emojis. Filter this case out."
 (if (require 'toc-org nil t)
     (progn
       (add-hook 'org-mode-hook 'toc-org-mode))
+      ;(add-hook 'markdown-mode-hook 'toc-org-mode))
+
+
+
+
 
       ;; enable in markdown, too
       ; disabled because it thinks markdown-mode-map is a void
@@ -1101,3 +1107,40 @@ now being rendered as Emojis. Filter this case out."
 
 (require 'mastodon-alt-tl)
 (mastodon-alt-tl-activate)
+
+;; GITHUB Co-pilot
+;; accept completion from copilot and fallback to company
+;; DEFAULT config
+;; (use-package! copilot
+;;   :hook (prog-mode . copilot-mode)
+;;   :bind (:map copilot-completion-map
+;;               ("<tab>" . 'copilot-accept-completion)
+;;               ("TAB" . 'copilot-accept-completion)
+;;               ("C-TAB" . 'copilot-accept-completion-by-word)
+;;               ("C-<tab>" . 'copilot-accept-completion-by-word)))
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<right>" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)))
+;;
+;; (use-package! copilot
+;;   :hook (prog-mode . copilot-mode)
+;;   :bind (:map copilot-completion-map
+;;          "<right>" . 'copilot-accept-completion
+;;          "C-f" . 'copilot-accept-completion
+;;          "M-<right>" . 'copilot-accept-completion-by-word
+;;          "M-f" . 'copilot-accept-completion-by-word
+;;          "C-e" . 'copilot-accept-completion-by-line
+;;          "<end>" . 'copilot-accept-completion-by-line
+;;          "M-n" . 'copilot-next-completion
+;;          "M-p" . 'copilot-previous-completion))
+
+
+;; Strongly recommend to enable childframe option in company module (company +childframe) to prevent overlay conflict.
+;; (company +childframe) ; <-- company is a void function so... 🤷
+
+;; Copilot.el detects the programming language of a buffer based on the major-mode name, stripping the -mode part. Resulting languageId should match table here. You can add unusual major-mode mappings to copilot-major-mode-alist. Without the proper language set suggestions may be of poorer quality.
+
+;; (add-to-list 'copilot-major-mode-alist '("enh-ruby" . "ruby"))
