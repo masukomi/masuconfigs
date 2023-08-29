@@ -189,13 +189,10 @@
 ; ripgrep (rg)
 (package! rg)
 (package! sqlite3)
-; (package! mastodon)
-(package! mastodon
-  :recipe (:host codeberg :repo "rougier/mastodon.el" :branch "alt-timeline"))
 (package! private-comments-mode)
 ; (package! example
 ;   :recipe (:host github :repo "masukomi/private-comments-mode"))
 
-
+;
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))

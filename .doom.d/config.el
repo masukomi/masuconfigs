@@ -486,17 +486,17 @@
 	(dired-hide-details-mode 1))
 (add-hook 'dired-mode-hook 'masu-dired-mode-setup)
 
-(require 'rg)
-
-; NOT lazy loaded.
-; TODO: read the docs to figure out
-; how to load this lazily:
-; https://rgel.readthedocs.io/en/2.2.1/
-;; (rg-enable-default-bindings)
-(global-set-key (kbd "C-c s") #'rg-menu)
-;; (with-eval-after-load 'rg
-;;    ;; Your settings goes here.
-;; )
+; (require 'rg)
+;
+; ; NOT lazy loaded.
+; ; TODO: read the docs to figure out
+; ; how to load this lazily:
+; ; https://rgel.readthedocs.io/en/2.2.1/
+; ;; (rg-enable-default-bindings)
+; (global-set-key (kbd "C-c s") #'rg-menu)
+; ;; (with-eval-after-load 'rg
+; ;;    ;; Your settings goes here.
+; ;; )
 
 
 ;;---------------------------------
@@ -1095,18 +1095,6 @@ now being rendered as Emojis. Filter this case out."
 ;;revert windows on exit - needs winner mode
 (winner-mode)
 (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
-
-;;------------- MASTODON
-;; current repo here: https://codeberg.org/martianh/mastodon.el
-;; better fork here: https://codeberg.org/rougier/mastodon.el/src/branch/alt-timeline/lisp/mastodon-alt-tl.el
-(use-package mastodon
-  :ensure t)
-(setq mastodon-instance-url "https://connectified.com"
-      mastodon-active-user "masukomi")
-(require 'mastodon-async)
-
-(require 'mastodon-alt-tl)
-(mastodon-alt-tl-activate)
 
 ;; GITHUB Co-pilot
 ;; accept completion from copilot and fallback to company
