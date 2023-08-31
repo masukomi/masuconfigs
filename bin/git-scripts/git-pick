@@ -32,10 +32,9 @@ if [ $# -gt 0 ]; then
   )
   line_count=$(echo -n "$lines" | grep -c '^')
   if [ "$lines" == "" ]; then
-    echo "no branches contain $2"
+    echo "$RED 🚫 no branches contain $2$NOCOLOR"
     if [ "$all_branches_flag" == "" ]; then
-      echo "try again with -a
-      git pick branch -a $2"
+      echo "  Maybe try again with -a"
     fi
     exit 1
   fi
