@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+# a script to let you notify slack of a given event.
+# requires SLACK_BOT_URL to be present in the environment.
+# This is used by the CI to notify slack of a given build status.
+# usage: notify_slack.sh <title> [message]
+
+
+TITLE="$1"
+MESSAGE="$2"
+# SLACK_BOT_URL comes from the environment
+
+if [ -z "$SLACK_BOT_URL" ]; then
+	echo "SLACK_BOT_URL not set"
+	exit 78 # EX_CONFIG
+fi
+
+if [ -z "$TITLE" ]; then
+	echo "Usage: notify_slack.sh <title> [message]"
+	exit 64 #EX_USAGE
+fi
+
+# Note markdown isn't an option for a header block. :shrug:
+# and the 'section' type can't have emoji: true. even greater :shrug:
+curl -X POST -H "Content-type: application/json" --data "{
+	'blocks': [
+		{
+			'type': 'header',
+			'text': {
+				'type': 'plain_text',
+				'text': '$TITLE',
+				'emoji': true
+			}
+		},
+		{
+			'type': 'section',
+			'text': {
+				'type': 'mrkdwn',
+				'text': '$MESSAGE'
+			}
+		}
+	]
+}" $SLACK_BOT_URL
