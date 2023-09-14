@@ -65,10 +65,6 @@
 
 ; UI STUFF
 
-(package! darktooth-theme)
-(package! powerline)
-(package! nlinum-relative)
-(package! visual-regexp-steroids)
 ; extends Vline Mode https://www.emacswiki.org/emacs/VlineMode
 (package! col-highlight)
 ;; (column-highlight-mode 0) ; 1 = highlighting, 0 = off
@@ -76,19 +72,25 @@
 ; list-faces-display
 ; shows you a col-highlight face that controls the color of the highlight column
 ; edit that face to change what it looks like.
-(package! rainbow-mode)
-(package! xterm-color)
 
+(package! darktooth-theme)
 (package! emojify)
-; Pins the most recent method signature to the top of the window
-; https://github.com/alphapapa/topsy.el#readme
-(package! topsy
-  :recipe (:host github :repo "alphapapa/topsy.el"))
-
+(package! minimap)
+(package! nlinum-relative)
 ; extends org-mode's clickable link support to other modes
 ; the built-in version is goto-address mode which works well,
 ; but doesn't support as many link types
 (package! orglink)
+(package! powerline)
+; Pins the most recent method signature to the top of the window
+; https://github.com/alphapapa/topsy.el#readme
+(package! topsy
+  :recipe (:host github :repo "alphapapa/topsy.el"))
+(package! rainbow-mode)
+(package! visual-regexp-steroids)
+(package! xterm-color)
+
+
 
 ; LANGUAGES
 (package! crystal-mode)
@@ -196,3 +198,13 @@
 ;
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
+
+;; TEMPORARY (hopefully) Bullshittery
+;; via https://emacs.stackexchange.com/a/75836/30947
+;; (package! transient
+;;       :pin "c2bdf7e12c530eb85476d3aef317eb2941ab9440"
+;;       :recipe (:host github :repo "magit/transient"))
+
+;; (package! with-editor
+;;           :pin "bbc60f68ac190f02da8a100b6fb67cf1c27c53ab"
+;;           :recipe (:host github :repo "magit/with-editor"))
