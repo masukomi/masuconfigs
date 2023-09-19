@@ -153,6 +153,13 @@
 ; https://github.com/doomemacs/doomemacs/issues/3382
 (setq fancy-splash-image "~/.doom.d/images/doom_icon_256x256.png")
 
+; disabling the quote pairing that comes via smartparens
+; https://smartparens.readthedocs.io/en/latest/pair-management.html#el.function.sp-with-modes
+; I don't want it to auto-pair single or double quotes in ruby
+; I have no idea how to just apply this globally, or for multiple modes at once
+(sp-with-modes 'ruby-mode
+  (sp-local-pair "'" nil :actions nil)
+  (sp-local-pair "\"" nil :actions nil))
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -284,16 +291,6 @@
 
 ;; disable the graphical toolbar
 (tool-bar-mode -1)
-(setq whitespace-display-mappings
-  '((space-mark   ?\    [?\xB7]     [?.])  ; space
-    (space-mark   ?\xA0 [?\xA4]     [?_])  ; hard space
-    (newline-mark ?\n   [?\xB6 ?\n] [?$ ?\n])  ; end-of-line
-    (tab-mark   ?\t   [?\xBB ?\t] [?\\ ?\t]))); tab
-
-(setq tab-width 4)
-; indentation guides
-; https://github.com/DarthFennec/highlight-indent-guides
-(setq highlight-indent-guides-method 'fill)
 
 ;; paren mode (highlight all code in the current parens)
 (setq show-paren-delay 0)
@@ -375,20 +372,50 @@
 
 ; TODO: make this toggleable
 ; tab mode
-(setq-default indent-tabs-mode t)
+(setq-default indent-tabs-mode nil)
+; (setq-default indent-tabs-mode t) to turn it back on
 (setq-default tab-width 4)
+; https://github.com/doomemacs/doomemacs/issues/2673#issuecomment-595361339
+(global-whitespace-mode +1)
+; (setq-default global-whitespace-mode nil)
+
+; http://xahlee.info/emacs/emacs/emacs_init_whitespace_mode.html
+;; Make whitespace-mode with very basic background coloring for whitespaces.
+(progn
+  (setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark )))
+
+  (setq whitespace-display-mappings
+        ;; all numbers are unicode codepoint in decimal. e.g. (insert-char 182 1)
+        '(
+          (space-mark 32 [183] [46]) ; SPACE 32 「 」, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+          ;; (tab-mark 9 [9655 9] [92 9]) ; tab
+          (tab-mark 187 [9655 187] [92 187]) ; "right pointing doube angle quotation mark" 187 「»」, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」, 92 「\」
+          )))
+
+
+;; (setq whitespace-display-mappings
+;;   '((space-mark   ?\    [?\xB7]     [?.])  ; space
+;;     (space-mark   ?\xA0 [?\xA4]     [?_])  ; hard space
+;;     ;; (newline-mark ?\n   [?\xB6 ?\n] [?$ ?\n])  ; end-of-line
+;;     (tab-mark   ?\t   [?\xBB ?\t] [?\\ ?\t]))); tab
+
+; indentation guides
+; https://github.com/DarthFennec/highlight-indent-guides
+(setq highlight-indent-guides-method 'fill)
+
+
+
 (defun masu-insert-tab-char ()
   "Insert a tab char. (ASCII 9, \t)"
   (interactive)
   (insert "\t"))
-
 ;; (global-set-key (kbd "TAB") 'masu-insert-tab-char)
-(add-hook 'prog-mode-hook
-          (lambda ()
-            (unless (derived-mode-p 'ruby-mode)
-              (add-hook 'after-init-hook
-		(lambda () (local-set-key (kbd "TAB") #'masu-insert-tab-char))
-			))))
+;; (add-hook 'prog-mode-hook
+;;           (lambda ()
+;;             (unless (derived-mode-p 'ruby-mode)
+;;               (add-hook 'after-init-hook
+;; 		(lambda () (local-set-key (kbd "TAB") #'masu-insert-tab-char))
+;; 			))))
 
 
 
