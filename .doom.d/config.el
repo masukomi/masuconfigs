@@ -376,21 +376,19 @@
 ; (setq-default indent-tabs-mode t) to turn it back on
 (setq-default tab-width 4)
 ; https://github.com/doomemacs/doomemacs/issues/2673#issuecomment-595361339
-(global-whitespace-mode +1)
+;; (global-whitespace-mode +1)
+(global-whitespace-mode t)
 ; (setq-default global-whitespace-mode nil)
 
+; see also...
 ; http://xahlee.info/emacs/emacs/emacs_init_whitespace_mode.html
-;; Make whitespace-mode with very basic background coloring for whitespaces.
-(progn
-  (setq whitespace-style (quote (face spaces tabs newline space-mark tab-mark )))
+(setq whitespace-style (quote (face indentation tabs tab-mark spaces trailing lines-tail)))
+(setq whitespace-display-mappings
+      '(
+        (tab-mark 187 [9655 187] [92 187]) ; "right pointing doube angle quotation mark" 187 「»」, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」, 92 「\」
+        )
+      )
 
-  (setq whitespace-display-mappings
-        ;; all numbers are unicode codepoint in decimal. e.g. (insert-char 182 1)
-        '(
-          (space-mark 32 [183] [46]) ; SPACE 32 「 」, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
-          ;; (tab-mark 9 [9655 9] [92 9]) ; tab
-          (tab-mark 187 [9655 187] [92 187]) ; "right pointing doube angle quotation mark" 187 「»」, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」, 92 「\」
-          )))
 
 
 ;; (setq whitespace-display-mappings
@@ -401,7 +399,9 @@
 
 ; indentation guides
 ; https://github.com/DarthFennec/highlight-indent-guides
-(setq highlight-indent-guides-method 'fill)
+; This can be fill, column, character, or bitmap.
+;; (setq highlight-indent-guides-method 'fill)
+(setq highlight-indent-guides-method 'character)
 
 
 
