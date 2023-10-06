@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: contextify_spec
+# key: contextify
+# --
+context "${1:when}" do
+$>`yas-selected-text`
+end
