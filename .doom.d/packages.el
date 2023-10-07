@@ -95,6 +95,8 @@
 ; LANGUAGES
 (package! crystal-mode)
 
+(package! dockerfile-mode)
+
 ; HTML, JavaScript, CSS
 (package! fish-mode)
 (package! handlebars-mode)
