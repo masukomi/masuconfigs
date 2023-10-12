@@ -3,6 +3,12 @@
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
+; eff you emacs. Stop litering my directories with backup files.
+(make-directory "~/.emacs_backups/" t)
+(make-directory "~/.emacs_autosave/" t)
+(setq auto-save-file-name-transforms '((".*" "~/.emacs_autosave/" t)))
+(setq backup-directory-alist '(("." . "~/.emacs_backups/")))
+
 
 ;; (let ((ob-raku-file "~/workspace/ob-raku/ob-raku.el"))
 ;;  (when (file-exists-p ob-raku-file)
@@ -389,6 +395,8 @@
         )
       )
 
+;; turn on dtrt-indent, which makes it use the right indentation.
+(setq dtrt-indent-global-mode t)
 
 
 ;; (setq whitespace-display-mappings
