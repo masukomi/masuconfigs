@@ -90,6 +90,14 @@
 ;; cut with fucking command+x like the rest of the world
 (bind-key* (kbd "C-x") 'kill-region)
 
+;; don't accept autocomplete with _just_ return (⏎).
+;; require ^-⏎
+; PROBLEM: doesn't work with whatever doom emacs is doing for
+; autocomplete
+; (define-key ac-completing-map (kbd "RET") nil)
+; (define-key ac-completing-map [return] nil)
+; (define-key ac-completing-map [(control return)] 'ac-complete)
+
 ;; These are used for a number of things, particularly for GPG configuration,
 ;; some email clients, file templates and snippets.
 (setq user-full-name "Kay Rhodes"
@@ -967,6 +975,28 @@ now being rendered as Emojis. Filter this case out."
 
 ;;---------------------------------
 ;; LANGUAGE SPECIFIC STUFF
+;;------------- treesittier
+;; NOTE: this tells treesitter where to find language files
+;; BUT it does NOT install them.
+;; You need to run treesit-install-language-grammar and specify the name
+;; of one of the items below in order to use it.
+(setq treesit-language-source-alist
+   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+     (cmake "https://github.com/uyha/tree-sitter-cmake")
+     (css "https://github.com/tree-sitter/tree-sitter-css")
+     (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
+     (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+     (go "https://github.com/tree-sitter/tree-sitter-go")
+     (html "https://github.com/tree-sitter/tree-sitter-html")
+     (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+     (json "https://github.com/tree-sitter/tree-sitter-json")
+     (make "https://github.com/alemuller/tree-sitter-make")
+     (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+     (python "https://github.com/tree-sitter/tree-sitter-python")
+     (toml "https://github.com/tree-sitter/tree-sitter-toml")
+     (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+     (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+     (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 ;;------------- Raku
 ;; see raku-mode https://github.com/Raku/raku-mode
 (define-auto-insert
