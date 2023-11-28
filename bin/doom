@@ -6,8 +6,13 @@
 # run this
 # lsof -c Emacs | grep -E "COMMAND|server"
 
-socket_file=$(lsof -c Emacs | grep server | tr -s " " | cut -d' ' -f8 | tail -n1)
-emacs_lines=$(ps -awx | grep Emacs | grep -v grep | wc -l | sed -e "s/ *//g")
+function get_socket_file {
+  lsof -c Emacs | grep server | tr -s " " | cut -d' ' -f8 | tail -n1
+}
+
+socket_file=$(get_socket_file)
+emacs_lines=$(ps -awx | grep -v grep | grep Emacs | wc -l | sed -e "s/ *//g")
+
 
 # tail -n1 because you can sometimes get multiple lines back
 # and the last one is going to be the one with the most recent PID
@@ -40,6 +45,11 @@ while getopts "nfdh" opt; do
 done
 shift $((OPTIND -1))
 
+if [[ "$DEBUG" == "true" ]]; then
+  echo "socket_file: $socket_file"
+  echo "emacs_lines: $emacs_lines"
+fi
+
 if [[ "$socket_file" != "" ]] && [[ $emacs_lines -eq 0 ]]; then
   # er... that's not good. Emacs didn't exit cleanly.
   # let's clean that up.
@@ -49,9 +59,11 @@ fi
 
 if [[ "$FORCE" == "true" ]] || [[ $emacs_lines -eq 0 ]] || ; then
   echo "starting Emacs server..."
-  killall Emacs 2>&1 >/dev/null
+  2>/dev/null 1>&2 killall Emacs
   emacs --chdir $PWD --execute "(server-start)" $@ > /dev/null 2>&1 &
   disown
+  # emacs --daemon --chdir $PWD --execute "(server-start)"
+  # emacsclient -n $@ --socket-name $(get_socket_file)
 else
   echo "will use client"
   if [[ "$NEW" == "true" ]]; then
@@ -59,13 +71,16 @@ else
     if [[ "$DEBUG" != "true" ]]; then
       emacsclient --create-frame -n $@ --socket-name $socket_file > /dev/null 2>&1
     else
-      emacsclient --create-frame -n $@ --socket-name $socket_file
+      echo "... with debugging"
+      emacsclient --debug-init --create-frame -n $@ --socket-name $socket_file
     fi
   else
     if [[ "$DEBUG" != "true" ]]; then
       emacsclient -n $@ --socket-name $socket_file > /dev/null 2>&1
     else
-      emacsclient -n $@ --socket-name $socket_file
+      echo "... with debugging"
+      emacsclient --debug-init -n $@ --socket-name $socket_file
+      emacsclient --debug-init --create-frame -n $@ --socket-name $socket_file
     fi
   fi
 
