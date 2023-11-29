@@ -21,7 +21,7 @@ A simple bash oneliner that converts `\r\n` or `\r` to `\n`
 
 Useful for performing mass cleanup. Ex.
 
-find . -name "*.foo" -exec newlines '{}' \;
+find . -name "*.foo" -exec newlines '{}' \\;
 
 
 Prerequisites: Perl 5
