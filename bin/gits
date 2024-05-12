@@ -21,5 +21,13 @@ fi
 if [ "$UNTRACKED" != "" ]; then
 	echo ""
 	echo "\x1b[1;37mGit is \x1b[3mnot\x1b[0m\x1b[1;37m tracking changes to:\x1b[0m"
-	echo "$UNTRACKED"
+
+	UNTRACKED_COUNT=$(echo "$UNTRACKED" | wc -l | sed -e "s/^ *//")
+	if [[ $UNTRACKED_COUNT -lt 10 ]]; then
+		echo "$UNTRACKED"
+	else
+		echo "\x1b[1;33;4m$UNTRACKED_COUNT\x1b[0m files."
+		echo "    For a short list run:    git status"
+		echo "    For a detailed list run: git status --untracked-files=all"
+	fi
 fi
