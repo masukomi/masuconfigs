@@ -1,5 +1,23 @@
 #!/usr/bin/env bash
 
+# open the web page for the repo's remote(s)
+#
+# When a repo has only one remote it will open it in the default web
+# browser.
+#
+# When a repo has multiple remotes it'll ask you which one to open.
+#
+# USAGE: cd into a git repo and type git open-remote
+#
+#
+# PREREQUISITES: charm gum
+# https://github.com/charmbracelet/gum
+#
+#
+# Created by masukomi https://masukomi.org
+# distributed under a Creative Commons Zero license.
+
+
 ALL_REMOTES=$(git remote -v | grep --color=none fetch | sed -e "s/[[:space:]]*(fetch)//" | column -t)
 
 function open_url {
