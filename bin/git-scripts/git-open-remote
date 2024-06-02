@@ -30,6 +30,8 @@ function get_url {
 	URL=$(git config --get remote.$REMOTE_NAME.url | sed -e 's/\.git$//')
 	if [[ "$URL" == "http"* ]]; then
 		echo $URL
+	elif [[ "$URL" == "git://"* ]]; then
+		echo "$URL" | sed -e "s/^git:/https:/"
 	else
 		echo "$URL" | sed -e "s/:/\//" -e "s/^.*@/https:\/\//"
 	fi
