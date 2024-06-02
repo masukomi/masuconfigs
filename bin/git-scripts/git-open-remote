@@ -31,6 +31,7 @@ if [ $(echo "$ALL_REMOTES" | wc -l ) -eq 1 ]; then
 	open_url "$ALL_REMOTES"
 else
 	IFS=$'\n' REMOTE_CHOICES=(${ALL_REMOTES})
+	echo "Please choose a remote"
 	REMOTE=$(gum choose  ${REMOTE_CHOICES[@]})
 	echo "opening remote in default browser: $(get_url "$REMOTE")"
 	open_url "$REMOTE"
