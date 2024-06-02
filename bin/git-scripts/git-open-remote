@@ -21,10 +21,17 @@
 ALL_REMOTES=$(git remote -v | grep --color=none fetch | sed -e "s/[[:space:]]*(fetch)//" | column -t)
 
 function open_url {
-	open $(get_url "$1")
+	URL=$(get_url "$1")
+	echo "opening remote in default browser: $URL"
+	open $URL
 }
 function get_url {
-	echo "$1" | sed -e "s/:/\//" -e "s/^.*@/https:\/\//" -e 's/\.git$//'
+	choice=$(echo "$1" | awk '{print $2}')
+	if [[ "$choice" == "http"* ]]; then
+		echo $choice | sed -e 's/\.git$//'
+	else
+		echo "$1" | sed -e "s/:/\//" -e "s/^.*@/https:\/\//" -e 's/\.git$//'
+	fi
 }
 
 if [ $(echo "$ALL_REMOTES" | wc -l ) -eq 1 ]; then
@@ -33,6 +40,5 @@ else
 	IFS=$'\n' REMOTE_CHOICES=(${ALL_REMOTES})
 	echo "Please choose a remote"
 	REMOTE=$(gum choose  ${REMOTE_CHOICES[@]})
-	echo "opening remote in default browser: $(get_url "$REMOTE")"
 	open_url "$REMOTE"
 fi
