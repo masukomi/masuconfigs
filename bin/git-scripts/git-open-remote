@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+ALL_REMOTES=$(git remote -v | grep --color=none fetch | sed -e "s/[[:space:]]*(fetch)//" | column -t)
+
+function open_url {
+	open $(get_url "$1")
+}
+function get_url {
+	echo "$1" | sed -e "s/:/\//" -e "s/^.*@/https:\/\//" -e 's/\.git$//'
+}
+
+if [ $(echo "$ALL_REMOTES" | wc -l ) -eq 1 ]; then
+	open_url "$ALL_REMOTES"
+else
+	IFS=$'\n' REMOTE_CHOICES=(${ALL_REMOTES})
+	REMOTE=$(gum choose  ${REMOTE_CHOICES[@]})
+	echo "opening remote in default browser: $(get_url "$REMOTE")"
+	open_url "$REMOTE"
+fi
