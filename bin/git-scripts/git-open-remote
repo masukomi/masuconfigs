@@ -26,11 +26,12 @@ function open_url {
 	open $URL
 }
 function get_url {
-	choice=$(echo "$1" | awk '{print $2}')
-	if [[ "$choice" == "http"* ]]; then
-		echo $choice | sed -e 's/\.git$//'
+	REMOTE_NAME=$(echo "$1" | awk '{print $1}')
+	URL=$(git config --get remote.$REMOTE_NAME.url | sed -e 's/\.git$//')
+	if [[ "$URL" == "http"* ]]; then
+		echo $URL
 	else
-		echo "$1" | sed -e "s/:/\//" -e "s/^.*@/https:\/\//" -e 's/\.git$//'
+		echo "$URL" | sed -e "s/:/\//" -e "s/^.*@/https:\/\//"
 	fi
 }
 
