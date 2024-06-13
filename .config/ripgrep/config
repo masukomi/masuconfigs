@@ -1,0 +1,4 @@
+# Ripgrep configuration file
+
+--max-columns=80
+--max-columns-preview

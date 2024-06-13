@@ -42,7 +42,7 @@ abbr -a brewed 'is_brewed'
 abbr -a build_tags "~/brew/bin/ctags -R --c++-kinds +p --fields +iaS --extra +q --exclude .rsync_cache ."
 abbr -a colorsave "script -q /dev/null"
 abbr -a doomd 'cd ~/.doom.d'
-abbr -a emacsd 'cd ~/.emacs.d'
+abbr -a emacsd 'cd ~/.config/emacs'
 abbr -a epochmillis "date +%s%N | cut -b1-13"
 abbr -a epochtime "date +%s"
 abbr -a ga 'git add'
@@ -96,8 +96,9 @@ abbr -a berd 'docker-compose exec bin/rspec --format=documentation'
 
 # skip bad words
 abbr -a sbw 'LEFTHOOK_EXCLUDE=bad_words'
-# no bad words
-abbr -a nbw 'LEFTHOOK_EXCLUDE=bad_words'
+# skip fun
+abbr -a sfun 'LEFTHOOK_EXCLUDE=fun'
+# fuck it all...
 abbr -a sall 'LEFTHOOK=0'
 
 # hey, local version
@@ -119,6 +120,12 @@ alias gcurl /usr/local/opt/curl/bin/curl
 alias recursor "tput cvvis" # opposite of tput civis
 # open a "Quicklook" preview of a file: quicklook <path>
 alias quicklook "qlmanage -p"
+
+# "hey" timer functions
+alias work "hey stop 2> /dev/null; hey start @ticketsolve"
+alias breakfast "hey stop 2> /dev/null; hey start @eating + breakfast"
+alias lunch "hey stop 2> /dev/null; hey start @eating + lunch"
+alias dogs "hey stop 2> /dev/null; hey start @dogs +walking"
 
 
 # Convenience
@@ -162,28 +169,35 @@ fish_add_path -g -a $HOME/Library/Python/3.9/bin
 fish_add_path -g -a $HOME/workspace/reference/bash/git-fuzzy/bin
 abbr -a gf 'git fuzzy'
 
+set -x -g RIPGREP_CONFIG_PATH $HOME/.config/ripgrep/config
 
 set CELLAR (brew --cellar)
 
 # BEGIN RAKU
 # assumes raku install via rakubrew NOT homebrew
-if test -e ~/.rakubrew/shims/rakudo
+# if test -e ~/.rakubrew/shims/rakudo
+	# official instructions:
+	~/.rakubrew/bin/rakubrew init Fish | source
+	#
+	#
 	# my raku-bootstrap file pre-generates this file
 	# so that we don't have to add the loop time to every shell prompt
-	if test -e $HOME/.config/fish/raku_paths.fish
-		source $HOME/.config/fish/raku_paths.fish
-	else
-		echo "WARNING: raku_paths.fish not found"
-		echo "please regenerate it by running"
-	    echo "~/.config/yadm/raku-bootstrap"
-	end
+	# if test -e $HOME/.config/fish/raku_paths.fish
+	# 	source $HOME/.config/fish/raku_paths.fish
+	# else
+	# 	echo "WARNING: raku_paths.fish not found"
+	# 	echo "please regenerate it by running"
+	#     echo "~/.config/yadm/raku-bootstrap"
+	# end
+
+	# old attempt follows
 
 	# # rakubrew init Fish | source
 	# fish_add_path -g -a (rakubrew home)/shims
 	# for dir in (find (rakubrew home) -type d -name 'bin')
 	# 	fish_add_path -g $dir
 	# end
-end
+# end
 
 # brew ls --versions rakudo-star > /dev/null
 # if test $status -eq 0
