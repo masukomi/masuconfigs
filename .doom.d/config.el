@@ -391,7 +391,7 @@
 (setq-default tab-width 4)
 ; https://github.com/doomemacs/doomemacs/issues/2673#issuecomment-595361339
 ;; (global-whitespace-mode +1)
-(global-whitespace-mode t)
+;; (global-whitespace-mode t)
 ; (setq-default global-whitespace-mode nil)
 
 ; see also...
@@ -667,7 +667,7 @@
 ;
 ;; (defun org-image-resize (frame)
 ;;   (when (derived-mode-p 'org-mode)
-;;       (if (< (window-total-width) 80)
+;;       (if (< (window-total-qwidth) 80)
 ;;       (setq org-image-actual-width (window-pixel-width))
 ;;     (setq org-image-actual-width (* 80 (window-font-width))))
 ;;       (org-redisplay-inline-images)))
@@ -785,6 +785,22 @@ now being rendered as Emojis. Filter this case out."
 ; (setq plantuml-executable-path "/path/to/your/copy/of/plantuml.bin")
 ; (setq plantuml-default-exec-mode 'executable))
 
+; .dir-locals.el helper methods
+(defun my-reload-dir-locals-for-current-buffer ()
+  "reload dir locals for the current buffer"
+  (interactive)
+  (let ((enable-local-variables :all))
+    (hack-dir-local-variables-non-file-buffer)))
+
+(defun my-reload-dir-locals-for-all-buffer-in-this-directory ()
+  "For every buffer with the same `default-directory` as the
+current buffer's, reload dir-locals."
+  (interactive)
+  (let ((dir default-directory))
+    (dolist (buffer (buffer-list))
+      (with-current-buffer buffer
+        (when (equal default-directory dir)
+          (my-reload-dir-locals-for-current-buffer))))))
 
 ;; active Org-babel languages
 (org-babel-do-load-languages
@@ -951,7 +967,19 @@ now being rendered as Emojis. Filter this case out."
 
    )
 )
-
+;; adding new link type for images
+;; Don't use this for things that'll be rendered by github.
+;; found here: https://emacs.stackexchange.com/a/26638/30947
+(org-add-link-type
+ "image-url"
+ (lambda (path)
+   (let ((img (expand-file-name
+           (concat (md5 path) "." (file-name-extension path))
+           temporary-file-directory)))
+     (if (file-exists-p img)
+     (find-file img)
+       (url-copy-file path img)
+       (find-file img)))))
 
 
 
@@ -980,6 +1008,9 @@ now being rendered as Emojis. Filter this case out."
 ;; BUT it does NOT install them.
 ;; You need to run treesit-install-language-grammar and specify the name
 ;; of one of the items below in order to use it.
+;;
+;; More details can be found here:
+;; https://www.masteringemacs.org/article/how-to-get-started-tree-sitter
 (setq treesit-language-source-alist
    '((bash "https://github.com/tree-sitter/tree-sitter-bash")
      (cmake "https://github.com/uyha/tree-sitter-cmake")
@@ -997,6 +1028,7 @@ now being rendered as Emojis. Filter this case out."
      (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
      (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
      (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+
 ;;------------- Raku
 ;; see raku-mode https://github.com/Raku/raku-mode
 (define-auto-insert
@@ -1171,24 +1203,26 @@ now being rendered as Emojis. Filter this case out."
 ;;               ("TAB" . 'copilot-accept-completion)
 ;;               ("C-TAB" . 'copilot-accept-completion-by-word)
 ;;               ("C-<tab>" . 'copilot-accept-completion-by-word)))
-(use-package! copilot
-  :hook (prog-mode . copilot-mode)
-  :bind (:map copilot-completion-map
-              ("<right>" . 'copilot-accept-completion)
-              ("C-TAB" . 'copilot-accept-completion-by-word)
-              ("C-<tab>" . 'copilot-accept-completion-by-word)))
-;;
 ;; (use-package! copilot
 ;;   :hook (prog-mode . copilot-mode)
 ;;   :bind (:map copilot-completion-map
-;;          "<right>" . 'copilot-accept-completion
-;;          "C-f" . 'copilot-accept-completion
-;;          "M-<right>" . 'copilot-accept-completion-by-word
-;;          "M-f" . 'copilot-accept-completion-by-word
-;;          "C-e" . 'copilot-accept-completion-by-line
-;;          "<end>" . 'copilot-accept-completion-by-line
-;;          "M-n" . 'copilot-next-completion
-;;          "M-p" . 'copilot-previous-completion))
+;;               ("<right>" . 'copilot-accept-completion)
+;;               ("<backtab>" . 'copilot-accept-completion)
+;;               ("C-<tab>" . 'copilot-accept-completion-by-word)))
+;;
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (
+         ;; :map copilot-completion-map
+         ;; ("<right>" . 'copilot-accept-completion)
+         ("C-f" . 'copilot-accept-completion)
+         ("M-<right>" . 'copilot-accept-completion-by-word)
+         ("M-f" . 'copilot-accept-completion-by-word)
+         ("C-e" . 'copilot-accept-completion-by-line)
+         ("<end>" . 'copilot-accept-completion-by-line)
+         ("M-n" . 'copilot-next-completion)
+         ("M-p" . 'copilot-previous-completion)
+         ))
 
 
 ;; Strongly recommend to enable childframe option in company module (company +childframe) to prevent overlay conflict.
