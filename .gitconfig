@@ -14,7 +14,7 @@
 	# handle line endings better...
 	# https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings
 	# https://stackoverflow.com/a/18875915/13973
-	# autocrlf = input
+	autocrlf = input
 [color]
 	ui = auto
 	diff = auto
@@ -56,6 +56,7 @@
 	contains = branch --contains
 	current-branch = rev-parse --abbrev-ref HEAD
 	changed = status -uno
+	changed-lines = diff --stat
 	cherry-pick = cherry-pick -x
 	ci = commit
 	cia = commit --amend
@@ -89,6 +90,7 @@
 	ls = ls-files
 	master-sync = "!f() { echo Syncing $1 with master && git checkout master && git pull && git checkout $1 && git rebase master; }; f"
 	mergecommits = !bash git log $(git merge-base --octopus $(git log -1 -U $1 --pretty=format:%P)).. --boundary
+	modified = !"git status --porcelain | awk 'match($1, \"M\"){print $2}'"
 	# oldest ancestor takes 2 treeishes as params
 	oldest-ancestor = !zsh -c 'diff --old-line-format= --new-line-format= <(git rev-list --first-parent \"${1:-master}\") <(git rev-list --first-parent \"${2:-HEAD}\") | head -1'
 	pdiff = !git difftool $(git merge-base $1 $(git rev-parse --abbrev-ref HEAD))
@@ -164,6 +166,8 @@
 [pull]
 	rebase = false
 	default = current
+[commit]
+	gpgsign = true
 [gpg]
 	program = gpg
 	format = ssh
@@ -188,8 +192,6 @@
 	helper = store
 [checkout]
 	defaultRemote = upstream
-[commit]
-	gpgsign = true
 
 
 
@@ -197,3 +199,5 @@
 
 
 
+[gpg "ssh"]
+	allowedSignersFile = /Users/masukomi/.config/git/allowed_signers
