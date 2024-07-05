@@ -24,18 +24,26 @@ Yes, ~config.el~ is what Doom reads, but this is what creates that.
 #+end_src
 
 * Teaching Emacs how to be a good citizen
-** Stop messing with my directories!
-I loathe the backup files emacs litters your working directories with. They're unsightly and far too easy to accidentally commit to your codebase.
+** Stop crapping in my directories!
+I loathe the backup files emacs litters your working directories with =foo.txt~= autosave files. They're unsightly and far too easy to accidentally commit to your codebase.
 
 Move them to =~/.emacs_backups/= & =~/.emacs_autosave/=
 
 #+begin_src elisp :tangle config.el
 ; eff you emacs. Stop litering my directories with backup files.
-(make-directory "~/.emacs_backups/" t)
-(make-directory "~/.emacs_autosave/" t)
-(setq auto-save-file-name-transforms '((".*" "~/.emacs_autosave/" t)))
-(setq backup-directory-alist '(("." . "~/.emacs_backups/")))
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 #+end_src
+
+If you get really annoyed you can disable auto-save and auto-backup entirely, but that seems like removing an important safeguard to me.
+
+#+begin_src elisp
+(setq auto-save-default nil)
+(setq make-backup-files nil)
+#+end_src
+
 ** Stop being weird about cut
 Everyone else uses ~⌘+x~ or ~^x~. I get that Emacs' way predated fancy GUI OSs, but it sucks to be literally the only app on my computer that refuses to copy & paste with normal shortcuts.
 
@@ -43,19 +51,314 @@ Everyone else uses ~⌘+x~ or ~^x~. I get that Emacs' way predated fancy GUI OSs
 (bind-key* (kbd "C-x") 'kill-region)
 #+end_src
 
+Because someone's going to read the above and think I'm an idiot for not turning on CUA:
 
-* Tell them it was me.
-I don't actually know if I use anything which uses this, but it seems reasonable to fill out.
+When Common User Access (CUA) mode is enabled, the keys C-x, C-c, C-v, and C-z
+invoke commands that cut (kill), copy, paste (yank), and undo respectively. Which is to say, it makes it work like every other app on your computer.
+
+Unfortunately, this completely borks new list item functionality in org-mode
+and it overrides the C-V functionality in evil (visual selection block mode). So, we can't actually run ~(cua-mode t)~
+** Why can't you window?
+For some reason GUI emacs on macOS seems incapable of remembering its window size and it defaults to something ridiculously small.
+
+Note that the sizes here are in characters.
 
 #+begin_src elisp :tangle
-
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets. It is optional.
-(setq user-full-name "masukomi"
-      user-mail-address "masukomi@masukomi.org")
+; kinda-sorta forcing initial window size because it seems incapable
+; of remembering
+(setq default-frame-alist '((left . 106) (width . 106) (fullscreen . fullheight)))
 #+end_src
 
-* I want to be pretty.
+
+* Configuring Doom Itself
+First: Make that splash-screen cuter. I don't really like the "Doom" video game logo, but [[https://github.com/jaidetree][jaidtree]] contributed a really cute Doom monster graphic in [[https://github.com/doomemacs/doomemacs/issues/3382][this GitHub Issue]].
+
+I've stored a few sizes of it in =~/.doom.d/images/=
+
+Doom calls this the ~fancy-splash-image~ and all you need to do is point that variable at an image you like in a size that seems good to you.
+
+#+begin_src elisp :tangle
+(setq fancy-splash-image "~/.doom.d/images/doom_icon_256x256.png")
+#+end_src
+
+* macOS compensation
+
+** PATH variable is non-standard
+#+begin_quote
+On OS X (and perhaps elsewhere) the $PATH environment variable and
+`exec-path' used by a windowed Emacs instance will usually be the
+system-wide default path, rather than that seen in a terminal
+window.
+
+This library allows the user to set Emacs' `exec-path' and $PATH
+from the shell path, so that `shell-command', `compile' and the
+like work as expected. - [[https://melpa.org/#/exec-path-from-shell][exec-path-from-shell docs]]
+#+end_quote
+
+It does some extra gyrations if you're using a non-POSIX compliant shell like [[https://fishshell.com/][fish]] or [[https://www.tcsh.org/][tcsh]], but noting significant.
+
+#+begin_src elisp :tangle
+; https://melpa.org/#/exec-path-from-shell
+(exec-path-from-shell-initialize)
+#+end_src
+
+** allow me to use the option key to type special characters
+For example: if you want to type the degrees symbol (°) on a mac you can type shift+option+8, or an accent grave á with option-e plus the character you want to accent, but it doesn't work in Emacs. It'd probably interfere with a lot of stuff.
+
+In practice, I mostly just use ~insert-char~ to insert special characters, but sometimes it's nice to be able to use the built-in stuff, especially when documenting things with foreign language characters. After enabling it, we'll make it toggleable so that we can still access the normal emacs functions it potentially intersects with.
+
+This ~mac-opt-keymap~ stuff was [[https://www.reddit.com/r/emacs/comments/mpbgx7/comment/gu9opv1/][found here on reddit.]]
+
+
+#+BEGIN_SRC elisp :tangled
+; a macOS specific tweak to allow you to use the option key to
+; type special characters like
+; - an accent grave á <option-e a>
+; - a degree sign ° <option-shift-8>
+;
+; toggle it with C-c m o
+; found here: https://www.reddit.com/r/emacs/comments/mpbgx7/comment/gu9opv1/
+(setq mac-opt-keymap (make-sparse-keymap))
+
+;; equivalent to C-M-x with mac-opt-chars-mode on
+(define-key mac-opt-keymap (kbd "C-≈") 'execute-extended-command)
+#+END_SRC
+
+To toggle this with ~C-c m o~ we need a helper function.
+
+#+BEGIN_SRC elisp :tangled
+(defun mac-toggle-ns-alt-modifier ()
+  (if (not mac-opt-chars-mode)
+      (setq ns-alternate-modifier 'meta)
+    (setq ns-alternate-modifier nil)))
+
+(define-minor-mode mac-opt-chars-mode
+  "Type characters with option as in other Mac applications."
+  :global t
+  :lighter " mac-opt-chars"
+  :keymap mac-opt-keymap
+  (mac-toggle-ns-alt-modifier))
+                                        ; toggle it on and off with C-c m o
+(define-key mac-opt-keymap (kbd "C-c m o") 'mac-opt-chars-mode)
+(define-key global-map (kbd "C-c m o") 'mac-opt-chars-mode)
+#+END_SRC
+
+
+
+
+
+* Projectile
+** I need to edit .dotfiles
+[[https://projectile.mx/][Projectile]] is a project navgiation and management library. It's pretty cool. However, it tries to be a little too smart about things like hidden files. As such it'll never list a project's dotfiles like ~.gitignore~ or ~.env~. We need to tell it to use [[https://docs.projectile.mx/projectile/configuration.html#:%7E:text=Project%20indexing%20method%20Projectile%20has%20three%20modes%20of,obtain%20the%20list%20of%20files%20in%20a%20project]["native" indexing mode]].
+
+#+begin_src elisp :tangle
+;; enable native indexing in Projectile so that we can easily
+;; edit a project's dot files.
+(setq projectile-indexing-method 'native)
+#+end_src
+
+** Not every repo I open is something I'm working on.
+Projectile also, /really/ wants to be helpful. If you open a file that happens to be in a git repo it'll add that repo to your projects list. I look at a /lot/ of open source repos that I have no intention of working in, so this becomes a problem quickly. This will disable that behavior, and require you to add projects manually (~Space-p-a~)
+
+#+begin_src elisp :tangle
+(setq projectile-track-known-projects-automatically nil)
+#+end_src
+
+** I want to create new files, not just edit existing ones.
+
+convince projectile to create new files
+not just find existing ones. All credit to [[https://www.reddit.com/user/hatschipuh/][/u/hatchipuh]]'s helpful [[https://www.reddit.com/r/emacs/comments/3m8i5r/helmprojectile_quickly_findcreate_new_file_in/][answer on reddit.]]
+
+#+begin_src elisp :tangle
+(with-eval-after-load 'helm-projectile
+  (defvar helm-source-file-not-found
+    (helm-build-dummy-source
+        "Create file"
+      :action (lambda (cand) (find-file cand))))
+
+
+  (add-to-list 'helm-projectile-sources-list helm-source-file-not-found t)
+  (setq +workspaces-on-switch-project-behavior t)
+  )
+#+end_src
+
+* Autocompletion
+Autocomplete and I are having a disagreement.
+
+I really want it to stop invoking autocomplete prompts with just the enter key. This screws me constantly when I'm typing and hit return for the end of the line but the prompt appeared while my finger was on its way down.
+
+I /thought/ this was the solution, but it wasn't.
+
+#+begin_src elisp
+;; don't accept autocomplete with _just_ return (⏎).
+;; require ^-⏎
+; PROBLEM:
+; This doesn't work with whatever doom emacs is doing for
+; autocomplete
+(define-key ac-completing-map (kbd "RET") nil)
+(define-key ac-completing-map [return] nil)
+(define-key ac-completing-map [(control return)] 'ac-complete)
+#+end_src
+
+The following /should/ delay it, but doesn't seem to work 🤔. I don't know why, but it's all I've got so I'll keep hoping.
+
+#+begin_src elisp :tangle
+; delay autocomplete a little bit longer
+(setq auto-completion-delay 2)
+#+end_src
+
+* Indentation
+I have strong opinions on [[https://weblog.masukomi.org/2010/07/26/why-you-should-never-indent-code-with-spaces/][Why you should never indent your code with spaces]], but the person responsible for Emacs' default indentation format was… I don't have words. Let's just say they set a default that "no-one" else would ever thing was reasonable, and is completely ignorant of the accessibility features built into the tab character.
+
+By default, when you have a long section of indentation [[https://www.gnu.org/software/emacs/manual/html_node/eintr/Indent-Tabs-Mode.html][Emacs will "helpfully" insert tabs in place of multiple spaces]]. So if you have something indented to the width of 10 spaces it'll use 2 tabs and 2 spaces. 🤦‍♀️
+
+Turn that 💩 off, and while we're at it teach it how many characters worth of width a tab should be displayed as by default.
+
+#+begin_src elisp :tangle
+; stop mixing tabs and spaces when indenting!
+(setq-default indent-tabs-mode nil)
+; i like tabs to be 4 characters wide.
+; the beauty of the tab character is that
+; it can show as 4 chars on mine, and 2 or 20 on yours.
+(setq-default tab-width 4)
+#+end_src
+
+
+Unfortunately, different languages have different default indentation styles, and none of them give a 💩 about accessibility. Alas, you gotta code in whatever style the language uses or you'll piss off your coworkers. That's where [[https://github.com/jscheid/dtrt-indent][dtrt-indent]] comes in. It also helps when your coworkers have gone rogue and come up with their own indentation house-style.
+
+#+begin_quote
+[dtrt-indent is] An Emacs minor mode that guesses the indentation offset originally used for creating source code files and transparently adjusts the corresponding settings in Emacs, making it more convenient to edit foreign files.
+#+end_quote
+
+
+#+BEGIN_SRC elisp :tangled
+;; turn on dtrt-indent, which makes it use the right indentation.
+(setq dtrt-indent-global-mode t)
+#+END_SRC
+
+Now, we can make those leading tabs and spaces visible. So like, when we're using python we can see the correct indentation. This one is thanks to [[http://xahlee.info/emacs/emacs/emacs_init_whitespace_mode.html][Xah Lee]].
+
+#+BEGIN_SRC elisp
+; make leading whitespace visible
+(setq whitespace-style (quote (face indentation tabs tab-mark spaces trailing lines-tail)))
+(setq whitespace-display-mappings
+      '(
+        (tab-mark 187 [9655 187] [92 187]) ; "right pointing doube angle quotation mark" 187 「»」, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」, 92 「\」
+        )
+      )
+#+END_SRC
+
+That's pretty much the setup I had in Vim for ages. Loved it, but there's also [[https://github.com/DarthFennec/highlight-indent-guides][highlight-indent-guides.el]] which is what I've been using instead. It provides subtle - or not so subtle - lines connecting the top and bottom of an indented section. It's nice because sometimes I'll end up with a section that's only 1 space indented instead of 2 and the vertical bars being too close to each other makes it clear I've messed up. Check out the animated screenshot in the README.
+
+The viable options here are: fill, column, character, or bitmap. I'm kinda intrigued by "bitmap". Someone must have done something cool with it.
+
+#+BEGIN_SRC elisp :tangled
+; indentation guides
+(setq highlight-indent-guides-method 'character)
+#+END_SRC
+* Alignment
+[[https://github.com/emacsmirror/ialign][ialign]] is a visual alignment tool, that allows you to select some text, invoke it, enter a regexp, and see what the results will be interactively.
+
+#+BEGIN_SRC elisp :tangled
+;; ialign (interatvie alignment)
+(global-set-key (kbd "C-x l") #'ialign)
+#+END_SRC
+
+* Word Wrapping
+Vim's word wrapping is an effing nightmare with how it screws with arrow key movement. I'm so happy to be free of that.
+
+Doom has a minor mode called [[https://github.com/hlissner/doom-emacs/blob/3614109c7a0cdd5bc474f095beebe9c126ae8f01/modules/editor/word-wrap/README.org
+][+word-wrap-mode]] built in "…which intelligently wraps long lines in the buffer without modifying the buffer content."
+
+It's pretty cool, but for reasons I can't recall, /I no longer have this enabled/. But I kept the details in my old config. 🤔 Maybe it's just trauma from Vim's stupid wrapping. Anyway…
+
+You can enable it in a specific language with this:
+
+#+begin_src elisp
+; enable +word-wrap-mode in C, C++, ObjC, & Java
+(add-hook 'c-mode-common-hook #'+word-wrap-mode)
+#+end_src
+
+Or disable it in a specific /mode/ with this:
+
+#+begin_src elisp
+(add-to-list '+word-wrap-disabled-modes 'emacs-lisp-mode)
+#+end_src
+
+
+Or you can enable it globally with this:
+
+#+begin_src elisp
+(+global-word-wrap-mode +1)
+#+end_src
+
+* Smartparens
+Doom includes [[https://smartparens.readthedocs.io/en/latest/pair-management.html#el.function.sp-with-modes][Smartparens]] which is generally cool but its autocompletion of single and double quotes is absolutely incompatible with my 🧠.
+
+#+begin_src elisp :tangle
+; don't auto-pair single quotes anywhere
+(sp-pair "'" nil :actions nil)
+; don't auto-pair double quotes anywhere
+(sp-pair "\"" "\"" :actions nil)
+; don't auto-pair escaped double quotes either
+(sp-pair "\\\"" "\\\"" :actions nil)
+#+end_src
+
+Here's how you'd disable those in just a specific mode.
+
+#+begin_src elisp
+(sp-with-modes 'ruby-mode
+  (sp-local-pair "'" nil :actions nil)
+  (sp-local-pair "\"" nil :actions nil))
+#+end_src
+
+* Neotree
+[[https://github.com/jaypei/emacs-neotree][Neotree]] An Emacs clone of Vim's NerdTree. I keep forgetting i have it installed. If I ever feel like invoking it, I think it'd be good to have it represent the current state of my working directory, rather than what it happened to look like when I launched it.
+
+#+begin_src elisp :tangle
+; neotree should autorefresh to maintain a current
+; representation of your directories.
+(setq neo-autorefresh t)
+#+end_src
+
+* Yasnippet
+[[https://github.com/joaotavora/yasnippet][Yasnippet]] is a pretty awesome "template system" for Emacs. Somewhere along the way I had a problem with my custom snippets not being loaded at startup.
+
+If custom snippets aren't loading first run this and restart doom.
+
+#+begin_src bash
+cd ~/.doom.d/snippets
+find . -name ".yas-compiled-snippets.el" -exec rm -f '{}' \;
+#+end_src
+
+If THAT doesn't work, you've got other problems but maybe disabling this will
+work as a stopgap:
+
+#+begin_src elisp
+(add-hook 'emacs-startup-hook (lambda () (yas-load-directory "~/doom.d/snippets")))
+#+end_src
+
+* Graphical & GUI things
+** I want to be pretty.
+*** Fonts matter
+[[https://www.jetbrains.com/lp/mono/][JetBrains Mono]] is a lovely monospaced font that really works for me.
+
+#+begin_src elisp :tangle
+(setq doom-font (font-spec :family "JetBrains Mono Medium" :size 20)
+      doom-variable-pitch-font (font-spec :family "Monaco")
+      doom-big-font (font-spec :family "JetBrains Mono Medium"))
+#+end_src
+
+*** Themes matter too
+I'm really enjoying the [[https://github.com/morhetz/gruvbox][gruvbox]] theme. Before that I was using the [[https://github.com/emacsfodder/emacs-theme-darktooth][darktooth theme]].
+
+There's a [[https://github.com/doomemacs/themes][theme megapack]] which links to many good theme repos and has a [[https://github.com/doomemacs/themes/tree/screenshots][screenshots page]] where you can preview everything in the megapack.
+
+#+begin_src elisp :tangle
+(setq doom-theme 'doom-gruvbox)
+#+end_src
+
+*** Absolute & Relative Line Numbers
 
 Line numbers are important. For us Vim expats, relative line numbers save a lot of counting, but we still need to know which line is the the one the error message complained about.
 So, I have /both…/ most of the time.
@@ -65,6 +368,7 @@ So, I have /both…/ most of the time.
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 ;; for both, you gotta get funky.
 (setq display-line-numbers-type t)
+;; commence funkyness…
 (display-line-numbers-mode)
 (nlinum-relative-on)
 (nlinum-relative-setup-evil)               ;; setup for evil
@@ -73,6 +377,31 @@ So, I have /both…/ most of the time.
 (setq nlinum-relative-current-symbol "->") ;; or "" for display current line number
 (setq nlinum-relative-offset 0)            ;; 1 if you want 0, 2, 3...
 #+end_src
+*** Highlighting code in parens
+Not the prettiest, but it's very useful when working in lisp and scheme. This will highlight the contents of a paretheses when you leave the cursor on the start or end one.
+
+#+begin_src elisp :tangle
+; highlight the contents of the selected parentheses
+(setq show-paren-delay 0)
+(setq show-paren-style 'expression)
+(set-face-attribute 'show-paren-match-expression nil
+		    :background "peru"
+		    :foreground "beige")
+(show-paren-mode 1)
+#+end_src
+*** A rainbow of colors!
+auto-highlights css colors like #ffffff with [[https://elpa.gnu.org/packages/rainbow-mode.html][rainbow-mode]]
+
+I haven't figured out how to do this with with straight-use-package
+or if one even should.
+
+#+begin_src elisp :tangle
+; highlight CSS color codes in the color they represent
+(use-package rainbow-mode
+  :hook (prog-mode . rainbow-mode ))
+#+end_src
+
+*** Git change indicator
 
 It's also nice to have a subtle hint that a line has been changed, or added, but not committed. Maybe you didn't mean to change that line. Well, no worries Dear, [[https://github.com/emacsorphanage/git-gutter#readme][git-gutter]] is here, and Doom Emacs is already set up to use it via the [[https://github.com/doomemacs/doomemacs/tree/develop/modules/ui/vc-gutter][vc-gutter]] in ~init.el~ Git Gutter puts thin colored vertical lines in Emacs' gutter that correspond to changed code if you tell it you want to be =+pretty= in the ~init.el~ by saying ~(vc-gutter +pretty)~
 
@@ -82,126 +411,98 @@ There's also [[https://github.com/emacsorphanage/git-gutter-fringe#readme][git-g
 ; display the git gutter
 (global-git-gutter-mode t)
 #+end_src
+*** Wait. What function is this?
+[[https://github.com/alphapapa/topsy.el#readme][Topsy]] is a nifty little utility that keeps the name of the current function pinned to the top of the page when it scrolls off-screen. Every now and then I get a little confused and think it's the /actual/ line, but overall it's a nice little helper.
 
 #+begin_src elisp :tangle
-;;---------------------------------
-;; General Config
-(add-to-list 'load-path "~/.doom.d/custom")
-(load "eruby-mode")
+; enable topsy mode when programming
+(add-hook 'prog-mode-hook #'topsy-mode)
+#+end_src
 
+*** Disable the graphical toolbar
+I'm never going to click on the save icon when I could just hit ⌘-s and Projectile is great for opening things.
 
-;; don't accept autocomplete with _just_ return (⏎).
-;; require ^-⏎
-; PROBLEM: doesn't work with whatever doom emacs is doing for
-; autocomplete
-; (define-key ac-completing-map (kbd "RET") nil)
-; (define-key ac-completing-map [return] nil)
-; (define-key ac-completing-map [(control return)] 'ac-complete)
+#+begin_src elisp :tangle
+;; disable the graphical toolbar
+(tool-bar-mode -1)
+#+end_src
+*** Modeline tweaks
+Modeline is the Emacs equivalent of Vim's "Airline". You can do a lot to configure it. I just set the height though. I'm pretty sure this is in pixels.
 
-;; These are used for a number of things, particularly for GPG configuration,
-;; some email clients, file templates and snippets.
-(setq user-full-name "Kay Rhodes"
-      user-mail-address "masukomi@masukomi.org"
-      org-export-default-language "en-US")
+#+begin_src elisp :tangle
+(setq doom-modeline-height 25)
+#+end_src
 
-; automatically sync buffer with changes in the filesystem
-; Auto Revert will not revert a buffer if it has unsaved changes, or if its file
-; on disk is deleted or renamed.
-; When a buffer is auto-reverted, a message is generated. This can be suppressed
-; by setting auto-revert-verbose to nil.
-; https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Revert.html#Auto-Revert
-(global-auto-revert-mode t)
+Mucking with the colors is potentially cool, but I decided to not bother after futzing with it for a bit. Here's what I had.
 
-; stop asking if i really want to quit,
-; and more importantly those horrible messages.
-(setq confirm-kill-emacs nil) ; 'y-or-n-p
+#+begin_src elisp
+; customize the mode-line (think airline in vim)
+(set-face-attribute 'mode-line nil
+ :background "#6c6f31" ; actually gets used as the foreground
+ :foreground "#314d6f" ; actually....the background
+ :box nil
+ :overline nil
+ :underline nil
+ )
 
-; When CUA mode is enabled, the keys C-x, C-c, C-v, and C-z
-; invoke commands that cut (kill), copy, paste (yank), and undo respectively.
-; https://www.gnu.org/software/emacs/manual/html_node/emacs/CUA-Bindings.html
-;
-; basically to make C-x work like every other app
-; UNFORTUNATELY this completely borks new list item functionality in org-mode
-; and it overrides the C-V functionlity in evil (visual selection block mode)
-;; (cua-mode t)
+(set-face-attribute 'mode-line-inactive nil
+                    :background "#4872a4"
+                    :foreground "#1a283a"
+                    :box nil    ; could do something like '(:line-width 8 :color "#565063")
+                    :overline nil
+                    :underline nil)
+#+end_src
 
+** Command w should be consistent
+Sometimes command+w closes a workspace. Sometimes it closes the window.
+I want it to _only_ get rid of the workspace and _never_ close the window
+(unless maybe it's the only one).
+By default this is mapped to +workspace/close-window-or-workspace
 
-; if you want to be able to edit things that are in your .gitignore
-; try using 'native indexing method for Projectile https://docs.projectile.mx/projectile/configuration.html#:%7E:text=Project%20indexing%20method%20Projectile%20has%20three%20modes%20of,obtain%20the%20list%20of%20files%20in%20a%20project.
-(setq projectile-indexing-method 'native)
+#+begin_src elisp :tangle
+(global-set-key (kbd "s-w")  '+workspace/delete)
+#+end_src
 
-;;;;;;;;;;;;;;;;
-; stop cluttering my directories with foo.txt~ files
-(setq backup-directory-alist '(("." . "~/.emacs-tmp")))
+** Selection Helper
+[[https://github.com/magnars/expand-region.el][expand-region.el]] can "expand" or "contract" the current selection.
 
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
-;---- alternately
-;; disable auto-save and auto-backup
-; (setq auto-save-default nil)
-; (setq make-backup-files nil)
-; neotree enable auto-refresh
-(setq neo-autorefresh t)
+This has been mapped to Ctrl plus + (to expand) and = to get smaller. The same key just with and without holding down shift.
 
-(setq auto-completion-delay 1)
+#+begin_src elisp :tangle
+; Ctrl + =/+ contracts or expands visual selection
+(map! :nv "C-=" #'er/contract-region
+      :nv "C-+" #'er/expand-region)
+#+end_src
 
+** Tab Bar mode
+I don't remember why, but my notes say that I need to set the ~display-buffer-base-action~ to ~nil~ because i use ~tab-bar-mode~
 
-; if custom snippets aren't loading:
-; first run this and restart doom.
-; cd ~/.doom.d/snippets; find . -name ".yas-compiled-snippets.el" -exec rm -f '{}' \;
-;
-; if THAT doesn't work, you've got other problems but maybe disabling this will
-; work as a stopgap:
-;; (add-hook 'emacs-startup-hook (lambda () (yas-load-directory "~/doom.d/snippets")))
+I don't really understand what this does, & I don't want to wrap my head around it at the moment, but I'm pretty sure i should keep it. Here are the docs for [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Window-Choice.html][display-buffer's window choice]] which is one of the few pages that mentions ~display-buffer-base-action~ if you, or future me, feel like figuring this out.
 
+#+begin_src elisp :tangle
+(setq display-buffer-base-action '(nil))
+#+end_src
 
-; https://melpa.org/#/exec-path-from-shell
-(exec-path-from-shell-initialize)
+** Toggling the contents of splits
+[[https://www.emacswiki.org/emacs/buffer-move.el][buffer-move]] allows you to swap contents of splits in a given direction.
 
-;;---------------------------------
-;; Configuring DOOM itself
+If you're in the bottom one, you can use ~buf-move-up~ to swap it with the one above. If you're on the left use ~buf-move-right~, and so on.
 
-; image courtesy of eccentric-j in this GitHub issue
-; https://github.com/doomemacs/doomemacs/issues/3382
-(setq fancy-splash-image "~/.doom.d/images/doom_icon_256x256.png")
+#+begin_src elisp :tangle
+; from the bottom buffer swap its contents with the top
+(global-set-key (kbd "<C-S-up>")     'buf-move-up)
+; and vice-versa
+(global-set-key (kbd "<C-S-down>")     'buf-move-down)
+; and so on…
+(global-set-key (kbd "<C-S-left>")   'buf-move-left)
+(global-set-key (kbd "<C-S-right>")  'buf-move-right)
+#+end_src
 
-; disabling the quote pairing that comes via smartparens
-; https://smartparens.readthedocs.io/en/latest/pair-management.html#el.function.sp-with-modes
-; I don't want it to auto-pair single or double quotes in ruby
-; I have no idea how to just apply this globally, or for multiple modes at once
-(sp-with-modes 'ruby-mode
-  (sp-local-pair "'" nil :actions nil)
-  (sp-local-pair "\"" nil :actions nil))
+If you just want to toggle contents without thinking about direction there's Toggle Window Split. It was created by JeffDWork and shared on the [[https://www.emacswiki.org/emacs/ToggleWindowSplit][Emacs Wiki]]. It swaps the contents of each half of a split window.
 
-;; Here are some additional functions/macros that could help you configure Doom:
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `use-package' for configuring packages
-;; - `after!' for running code after a package has loaded
-;; - `add-load-path!' for adding directories to the `load-path', where Emacs
-;;   looks when you load packages with `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c g k').
-;; This will open documentation for it, including demos of how they are used.
-;;
-;; You can also try 'gd' (or 'C-c g d') to jump to their definition and see how
-;; they are implemented.
+The ~toggle-window-split~ function is bound to the C-x 4 prefix key. Whatever that is.
 
-
-
-
-;;---------------------------------
-;; UI CONFIG
-; kinda-sorta forcing initial window size because it seems incapable
-; of remembering
-(setq default-frame-alist '((left . 106) (width . 106) (fullscreen . fullheight)))
-; main monitor is currently 106 x 60 (characters)
-
-;;;;;;;;;;;;;;;;
+#+begin_src elisp :tangle
 ;; Toggle Window Split by JeffDWork
 ;; found here: https://www.emacswiki.org/emacs/ToggleWindowSplit
 (defun toggle-window-split ()
@@ -230,242 +531,43 @@ There's also [[https://github.com/emacsorphanage/git-gutter-fringe#readme][git-g
 	  (if this-win-2nd (other-window 1))))))
 
 (define-key ctl-x-4-map "t" 'toggle-window-split)
+#+end_src
 
-;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
-;; are the three important ones:
-;;
-;; + `doom-font'
-;; + `doom-variable-pitch-font'
-;; + `doom-big-font' -- used for `doom-big-font-mode'
-;;
-;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
-;; font string. You generally only need these two:
-;; test
-; (setq doom-font (font-spec :family "monospace" :size 20)
-;       doom-variable-pitch-font (font-spec :family "sans"))
-(setq doom-font (font-spec :family "JetBrains Mono Medium" :size 20)
-      doom-variable-pitch-font (font-spec :family "Monaco")
-      doom-big-font (font-spec :family "JetBrains Mono Medium"))
-;; (setq doom-font (font-spec :family "Fira Code Medium" :size 20)
-;;       doom-variable-pitch-font (font-spec :family "Monaco")
-;;       doom-big-font (font-spec :family "Fira Code Medium"))
-;; RESET FONT TO DEFAULT `doom-font` with a call to
-;; doom/reset-font-size
+There's also a ~toggle-frame-split~ function. I've copied it below to have a backup, but I don't have this enabled.
 
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function.
-;; (setq doom-theme 'darktooth)
-(setq doom-theme 'doom-gruvbox)
+#+begin_src elisp
+(defun toggle-frame-split ()
+  "If the frame is split vertically, split it horizontally or vice versa.
+Assumes that the frame is only split into two."
+  (interactive)
+  (unless (= (length (window-list)) 2) (error "Can only toggle a frame split in two"))
+  (let ((split-vertically-p (window-combined-p)))
+    (delete-window) ; closes current window
+    (if split-vertically-p
+        (split-window-horizontally)
+      (split-window-vertically)) ; gives us a split with the other window twice
+    (switch-to-buffer nil))) ; restore the original window in this part of the frame
 
+;; I don't use the default binding of 'C-x 5', so use toggle-frame-split instead
+(global-set-key (kbd "C-x 5") 'toggle-frame-split)
+#+end_src
+** Cursors should follow the actual line
+By default when you tell emacs to go to the end of the line it goes to the end of the /visual/ line, instead of the actual end of the line. I don't know why anyone thought this was a good default.
 
-
-
-(global-set-key (kbd "<C-S-up>")     'buf-move-up)
-
-; sometimes command+w closes a workspace. Sometimes it closes the window.
-; I want it to _only_ get rid of the workspace and _never_ close the window
-; (unless maybe it's the only one).
-; By default this is mapped to +workspace/close-window-or-workspace
-(global-set-key (kbd "s-w")  '+workspace/delete)
-
-; buffer-move stuff
-; https://github.com/lukhas/buffer-move
-;; (global-set-key (kbd "<C-S-up>")     'buf-move-up)
-;; (global-set-key (kbd "<C-S-down>")   'buf-move-down)
-;; (global-set-key (kbd "<C-S-left>")   'buf-move-left)
-;; (global-set-key (kbd "<C-S-right>")  'buf-move-right)
-
-; $ should go to the end of the actual line not
-; the visual line
+#+begin_src elisp :tangle
+; make the cursor go to the actual end of the line
+; instead of the VISUAL end of the line. ugh.
 (setq evil-respect-visual-line-mode nil)
 (global-visual-line-mode t)
+#+end_src
 
-;; disable the graphical toolbar
-(tool-bar-mode -1)
-
-;; paren mode (highlight all code in the current parens)
-(setq show-paren-delay 0)
-(setq show-paren-style 'expression)
-(set-face-attribute 'show-paren-match-expression nil
-		    :background "peru"
-		    :foreground "beige")
-(show-paren-mode 1)
-
-; Ctrl + =/+ contracts or expands visual selection
-(map! :nv "C-=" #'er/contract-region
-      :nv "C-+" #'er/expand-region)
-
-; for tab-bar-mode
-(setq display-buffer-base-action '(nil))
-(setq projectile-track-known-projects-automatically nil)
-;; ;------------
-;; ; customize the mode-line (think airline in vim)
-;; (set-face-attribute 'mode-line nil
-;;  :background "#6c6f31" ; actually gets used as the foreground
-;;  :foreground "#314d6f" ; actually....the background
-;;  :box nil
-;;  :overline nil
-;;  :underline nil
-;;  )
-
-;; (set-face-attribute 'mode-line-inactive nil
-;;                     :background "#4872a4"
-;;                     :foreground "#1a283a"
-;;                     :box nil    ; could do something like '(:line-width 8 :color "#565063")
-;;                     :overline nil
-;;                     :underline nil)
-(setq doom-modeline-height 25)
-
-;------------
-;; (straight-use-package 'rainbow-mode)
-; auto-highlights css colors like #ffffff
-; https://elpa.gnu.org/packages/rainbow-mode.html
-; haven't figured out how to do vvvv with straight-use-package
-; or if one even should
-(use-package rainbow-mode
-  :hook (prog-mode . rainbow-mode ))
-
-; topsy: keeps function signatures pinned to the top as you scroll
-; https://github.com/alphapapa/topsy.el#readme
-(add-hook 'prog-mode-hook #'topsy-mode)
+** Make URLs clickable
+So you /can/ easily make urls clickable with ~(goto-address-mode t)~, /but/ you shouldn't, because there's ~orglink-mode~ which is better. See packages.el to turn that on.
+** Folding
+[[https://github.com/emacsorphanage/yafolding][yafolding]] is Yet Another Folding extension for Emacs which folds code based on indentation. This is helpful for languages like ruby where function bodies aren't bounded by simple things like curly braces. There's a screenshot of it in action in the repo's README.
 
 
-;------------
-; make urls clickable
-;(goto-address-mode t)
-; better... use orglink-mode (see packages.el)
-
-;; ---- Doom Word Wrap
-;; see https://github.com/hlissner/doom-emacs/blob/3614109c7a0cdd5bc474f095beebe9c126ae8f01/modules/editor/word-wrap/README.org
-;
-;; to enable word-wrap in specific languages C/C++/ObjC/Java
-;;(add-hook 'c-mode-common-hook #'+word-wrap-mode)
-;
-;; to enable it globally
-; (+global-word-wrap-mode +1)
-;; to disable global word-wrap in a specific mode (emacs-lisp-mode in this case)
-;; (add-to-list '+word-wrap-disabled-modes 'emacs-lisp-mode)
-
-; convince projectile to create new files
-; not just find existing ones.
-; found here: https://www.reddit.com/r/emacs/comments/3m8i5r/helmprojectile_quickly_findcreate_new_file_in/
-(with-eval-after-load 'helm-projectile
-  (defvar helm-source-file-not-found
-    (helm-build-dummy-source
-        "Create file"
-      :action (lambda (cand) (find-file cand))))
-
-
-  (add-to-list 'helm-projectile-sources-list helm-source-file-not-found t)
-  (setq +workspaces-on-switch-project-behavior t)
-  )
-
-
-; TODO: make this toggleable
-; tab mode
-(setq-default indent-tabs-mode nil)
-; (setq-default indent-tabs-mode t) to turn it back on
-(setq-default tab-width 4)
-; https://github.com/doomemacs/doomemacs/issues/2673#issuecomment-595361339
-;; (global-whitespace-mode +1)
-;; (global-whitespace-mode t)
-; (setq-default global-whitespace-mode nil)
-
-; see also...
-; http://xahlee.info/emacs/emacs/emacs_init_whitespace_mode.html
-(setq whitespace-style (quote (face indentation tabs tab-mark spaces trailing lines-tail)))
-(setq whitespace-display-mappings
-      '(
-        (tab-mark 187 [9655 187] [92 187]) ; "right pointing doube angle quotation mark" 187 「»」, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」, 92 「\」
-        )
-      )
-
-;; turn on dtrt-indent, which makes it use the right indentation.
-(setq dtrt-indent-global-mode t)
-
-
-;; (setq whitespace-display-mappings
-;;   '((space-mark   ?\    [?\xB7]     [?.])  ; space
-;;     (space-mark   ?\xA0 [?\xA4]     [?_])  ; hard space
-;;     ;; (newline-mark ?\n   [?\xB6 ?\n] [?$ ?\n])  ; end-of-line
-;;     (tab-mark   ?\t   [?\xBB ?\t] [?\\ ?\t]))); tab
-
-; indentation guides
-; https://github.com/DarthFennec/highlight-indent-guides
-; This can be fill, column, character, or bitmap.
-;; (setq highlight-indent-guides-method 'fill)
-(setq highlight-indent-guides-method 'character)
-
-
-
-(defun masu-insert-tab-char ()
-  "Insert a tab char. (ASCII 9, \t)"
-  (interactive)
-  (insert "\t"))
-;; (global-set-key (kbd "TAB") 'masu-insert-tab-char)
-;; (add-hook 'prog-mode-hook
-;;           (lambda ()
-;;             (unless (derived-mode-p 'ruby-mode)
-;;               (add-hook 'after-init-hook
-;; 		(lambda () (local-set-key (kbd "TAB") #'masu-insert-tab-char))
-;; 			))))
-
-
-
-; a macOS specific tweak to allow you to use the option key to
-; type special characters like
-; - an accent grave á <option-e a>
-; - a degree sign ° <option-shift-8>
-;
-; toggle it with C-c m o
-; found here: https://www.reddit.com/r/emacs/comments/mpbgx7/comment/gu9opv1/
-(setq mac-opt-keymap (make-sparse-keymap))
-
-;; equivalent to C-M-x with mac-opt-chars-mode on
-(define-key mac-opt-keymap (kbd "C-≈") 'execute-extended-command)
-
-
-(defun mac-toggle-ns-alt-modifier ()
-  (if (not mac-opt-chars-mode)
-      (setq ns-alternate-modifier 'meta)
-    (setq ns-alternate-modifier nil)))
-
-(define-minor-mode mac-opt-chars-mode
-  "Type characters with option as in other Mac applications."
-  :global t
-  :lighter " mac-opt-chars"
-  :keymap mac-opt-keymap
-  (mac-toggle-ns-alt-modifier))
-; toggle it on and off with C-c m o
-(define-key mac-opt-keymap (kbd "C-c m o") 'mac-opt-chars-mode)
-(define-key global-map (kbd "C-c m o") 'mac-opt-chars-mode)
-
-
-;;---------------------------------
-;; UTILITY CONFIG
-;; ialign (interatvie alignment)
-(global-set-key (kbd "C-x l") #'ialign)
-
-;; private comments mode
-;; (autoload 'private-comments-mode "private-comments-mode" nil t)
-
-
-;; avy (jumping to visible text using a char-based decision tree.)
-;; https://github.com/abo-abo/avy
-(map!
- :nv "C-f" #'avy-goto-char
- :nv "C-s" #'avy-goto-char-2
- :nv "C-d" #'avy-goto-line
- )
-; note instructions for this map came from https://github.com/doomemacs/doomemacs/issues/1643
-; which also provides info on finding more info on map
-; In case you're looking for more, you'll find many avy-ified evil motions on
-; the gs prefix, e.g. gsw, gsa (jump to an argument in a comma-delimited
-; argument list), and (a community favorite) g s SPC, which invokes
-; avy-goto-char-timer across all open windows. There's also gs/ for
-; avy-goto-char-timer restricted to the current window. - hlissner
-
+#+BEGIN_SRC elisp :tangled
 ;; yafolding
 ;; https://github.com/emacsorphanage/yafolding
 (defvar yafolding-mode-map
@@ -474,89 +576,125 @@ There's also [[https://github.com/emacsorphanage/git-gutter-fringe#readme][git-g
     (define-key map (kbd "<C-M-return>") #'yafolding-toggle-all)
     (define-key map (kbd "<C-return>") #'yafolding-toggle-element)
     map))
-; we're usually not in yafolding-mode so...
+                                        ; we're usually not in yafolding-mode so...
 (let ((map global-map))
   (define-key map (kbd "C-c f") #'yafolding-toggle-element))
 
 (add-hook 'prog-mode-hook
           (lambda () (progn
-			(yafolding-mode)
-			(private-comments-mode)
+		       (yafolding-mode)
+                       ; private commments is unrelated
+		       (private-comments-mode)
 		       )))
 
 (defun sg-toggle-fold ()
   "Toggle code folding according to indentation of current line."
   (interactive)
   (set-selective-display
-  (if selective-display
-    nil
-    (save-excursion
-      (back-to-indentation)
-      (1+ (current-column))))))
+   (if selective-display
+       nil
+     (save-excursion
+       (back-to-indentation)
+       (1+ (current-column))))))
+       #+END_SRC
 
 
-(with-eval-after-load "private-comments-mode"
-  (set-face-background 'private-comments-face "#527568")
-  (set-face-foreground 'private-comments-face "#FFFFFF"))
+* Code Navigation
+[[https://github.com/abo-abo/avy][avy]] is a way to jump to other visible sections of your code. It creates a visual layer with some overlayed characters and you type the characters next to the bit you want to jump to. There are some browser extensions that do this too, and I've found them very useful.
+
+Instructions for the following code originated in [[https://github.com/doomemacs/doomemacs/issues/1643][this issue in the Doom Emacs repo]].
+
+#+begin_quote
+In case you're looking for more, you'll find many avy-ified evil motions on
+the gs prefix, e.g. gsw, gsa (jump to an argument in a comma-delimited
+argument list), and (a community favorite) g s SPC, which invokes
+avy-goto-char-timer across all open windows. There's also gs/ for
+avy-goto-char-timer restricted to the current window. - hlissner
+#+end_quote
+
+#+BEGIN_SRC elisp :tangled
+;; avy (jumping to visible text using a char-based decision tree.)
+(map!
+ :nv "C-f" #'avy-goto-char
+ :nv "C-s" #'avy-goto-char-2
+ :nv "C-d" #'avy-goto-line
+ )
+#+END_SRC
 
 
-;; dired
-;; found here:: https://wilkesley.org/~ian/xah/emacs/emacs_dired_tips.html
+* Dired
+By default Dired shows you owner permissions info. I /never/ want this. If I care about file permissions I'm in my shell, not dired. This removes them, courtesy of [[http://xahlee.info/emacs/emacs/emacs_dired_tips.html][Xah Lee]].
+
+#+BEGIN_SRC elisp :tangled
+;; dired: hide user permission details
 (defun masu-dired-mode-setup ()
 	"hook for 'dired-mode'"
 	(dired-hide-details-mode 1))
 (add-hook 'dired-mode-hook 'masu-dired-mode-setup)
+#+END_SRC
 
-; (require 'rg)
-;
-; ; NOT lazy loaded.
-; ; TODO: read the docs to figure out
-; ; how to load this lazily:
-; ; https://rgel.readthedocs.io/en/2.2.1/
-; ;; (rg-enable-default-bindings)
-; (global-set-key (kbd "C-c s") #'rg-menu)
-; ;; (with-eval-after-load 'rg
-; ;;    ;; Your settings goes here.
-; ;; )
+* Private Comments
+Sometimes you want to leave a comment in some code but don't want to commit it for everyone else. Maybe it's a reminder of what you were doing. Maybe it's a reminder about something you always stumble over.
 
+That's what [[https://github.com/masukomi/private_comments][Private Comments]] enables. [[https://github.com/masukomi/private-comments-mode#readme][It's emacs extension is here]].
 
-;;---------------------------------
-;; ORG Configs
-;;
-;; TEMPORARY HACK
-;; please revisit https://github.com/doomemacs/doomemacs/issues/6478
-;; and see if it's fixed
+This code controls the colors it's displayed with.
+
+#+BEGIN_SRC elisp :tangled
+(with-eval-after-load "private-comments-mode"
+  (set-face-background 'private-comments-face "#527568")
+  (set-face-foreground 'private-comments-face "#FFFFFF"))
+#+END_SRC
+
+The code that actually enables it is in the pro-mode hook up in my Yafolding section.
+* Org-mode
+The world's greatest writing tool.
+"All hail the power of org-mode."
+"Hail! Hail!"
+
+** Temporary Hacks
+[[https://github.com/doomemacs/doomemacs/issues/6478][There's a bug in evil-search]] where searches in org-mode ignore results in folded sections. What follows is a temporary fix until that bug is fixed. It uses ~isearch~ as the evil search module.
+
+Bug reported: June 20, 2022
+Last time I checked: July 5, 2024
+
+#+begin_src elisp :tangle
 (setq org-fold-core-style 'text-properties)
 (after! evil
    (evil-select-search-module 'evil-search-module 'isearch))
+#+end_src
 
+** Pretty bullet lists please
+[[https://github.com/sabof/org-bullets][org-bullets]] mode takes those boring-ass ASCII characters used for headings and bullets and replaces them with UTF-8 characters that look way better. This is just a visual tweak. The file stores the boring ASCII characters. That way if you an org-mode file with some poor soul who hasn't learned the joys of emacs, or how to make their bullets pretty, they can still read them without issue.
 
-
-
-;;FOR MORE CONFIGS SEE M-x org-customize
-
-(require 'org-mouse)
-;; Org-mouse implements the following features:
-;; * following links with the left mouse button (in Emacs 22)
-;; * subtree expansion/collapse (org-cycle) with the left mouse button
-;; * several context menus on the right mouse button:
-;;    + general text
-;;    + headlines
-;;    + timestamps
-;;    + priorities
-;;    + links
-;;    + tags
-;; * promoting/demoting/moving subtrees with mouse-3
-;;    + if the drag starts and ends in the same line then promote/demote
-;;    + otherwise move the subtree
-;;
-
-(dolist (hook '(text-mode-hook))
-  (add-hook hook (lambda () (flyspell-mode 1))))
-
+#+BEGIN_SRC elisp :tangled
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+END_SRC
 
-; https://github.com/Somelauw/evil-org-mode
+** Keyboards are great, but mice are nice too.
+[[https://github.com/emacs-mirror/emacs/blob/master/lisp/org/org-mouse.el][Org-mouse]] (ships with emacs) implements the following features:
+- following links with the left mouse button (in Emacs 22)
+- subtree expansion/collapse (org-cycle) with the left mouse button
+- several context menus on the right mouse button:
+   + general text
+   + headlines
+   + timestamps
+   + priorities
+   + links
+   + tags
+- promoting/demoting/moving subtrees with mouse-3
+   + if the drag starts and ends in the same line then promote/demote
+   + otherwise move the subtree
+
+#+begin_src elisp :tangled
+(require 'org-mouse)
+#+end_src
+** Make it understand your Vim based muscle memory.
+[[https://github.com/Somelauw/evil-org-mode][evil-org-mode]] provides "Supplemental evil-mode key-bindings to Emacs org-mode."
+
+tl;dr: it makes org-mode work the way us Vim expats expect.
+
+#+BEGIN_SRC elisp :tangled
 (use-package evil-org
   :ensure t
   :after (evil org)
@@ -567,7 +705,198 @@ There's also [[https://github.com/emacsorphanage/git-gutter-fringe#readme][git-g
               (evil-org-set-key-theme '(navigation insert textobjects additional calendar))))
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
-; if that is too slow you can call
+#+END_SRC
+
+** Image links
+Sometimes you want an image that's visible in your document and is /also/ a link to something else. This teaches emacs a new link type called ~image-url~ which downloads temp files locally for emacs to load and display.
+
+Because of this hacky nature, it's not for files that you'll be exporting or sharing with others. This is for personal use only. Maybe in your [[https://protesilaos.com/emacs/denote][Denote]] or [[https://www.orgroam.com/][Org-roam]] files.
+
+⚠ DO NOT USE THIS FOR FILES THAT GitHub WILL RENDER
+
+#+begin_src elisp :tangle
+(org-add-link-type
+ "image-url"
+ (lambda (path)
+   (let ((img (expand-file-name
+           (concat (md5 path) "." (file-name-extension path))
+           temporary-file-directory)))
+     (if (file-exists-p img)
+     (find-file img)
+       (url-copy-file path img)
+       (find-file img)))))
+#+end_src
+
+This downloads the image as a temp file so that emacs can load it visually into the page. That's why it doesn't work on GitHub rendered pages.
+
+
+The full image link tag looks like this:
+
+#+begin_src
+[[image-url:https://d1ra4hr810e003.cloudfront.net/media/27FB7F0C-9885-42A6-9E0C19C35242B5AC/0/D968A2D0-35B8-41C6-A94A0C5C5FCA0725/F0E9E3EC-8F99-4ED8-A40DADEAF7A011A5/dbe669e9-40be-51c9-a9a0-001b0e022be7/thul-IMG_2100.jpg]]
+#+end_src
+
+And here it is in practice. If you're me
+
+[[image-url:https://d1ra4hr810e003.cloudfront.net/media/27FB7F0C-9885-42A6-9E0C19C35242B5AC/0/D968A2D0-35B8-41C6-A94A0C5C5FCA0725/F0E9E3EC-8F99-4ED8-A40DADEAF7A011A5/dbe669e9-40be-51c9-a9a0-001b0e022be7/thul-IMG_2100.jpg][example cat]]
+
+There are also functions to add an image as an overlay or remove one.
+
+#+begin_src elisp :tangle
+(defun image-url-overlays ()
+  "Put image overlays on remote image urls."
+  (interactive)
+  (loop for image-url in (org-element-map (org-element-parse-buffer) 'link
+               (lambda (link)
+                 (when (string= "image-url" (org-element-property :type link))
+                   link)))
+    do
+    (let* ((path (org-element-property :path image-url))
+           (ov (make-overlay (org-element-property :begin image-url)
+                 (org-element-property :end image-url)))
+           (img (create-image (expand-file-name
+                   (concat (md5 path)
+                       "."
+                       (file-name-extension
+                        path))
+                   temporary-file-directory))))
+      (overlay-put ov 'display img)
+      (overlay-put ov 'image-url t))))
+
+(defun image-url-clear-overlays ()
+  "Reove overlays on image-urls."
+  (interactive)
+  (require 'ov)
+  (ov-clear 'image-url))
+#+end_src
+
+
+Found [[https://emacs.stackexchange.com/a/26638/30947][on Stack Exchange]]
+
+** Tables of Contents
+[[https://github.com/snosov1/toc-org/][toc-org]] gives you auto-generated & updated tables of contents for org-mode. It supports markdown-mode too. /However/, Doom's ~init.el~ has [[https://docs.doomemacs.org/v21.12/modules/lang/markdown/][markdown support]] built-in which uses [[https://github.com/ardumont/markdown-toc][markdown-toc]] for generating tables of content in markdown files and if you turn markdown support on in toc-org there are disagreements about ~markdown-mode-map~ so I just leave it off.
+
+Honestly, life is better when I just write in org-mode and export to markdown.
+
+
+
+#+begin_src elisp :tangle
+; enable table of contents generation in org-mode
+(if (require 'toc-org nil t)
+    (progn
+      (add-hook 'org-mode-hook 'toc-org-mode))
+      ;(add-hook 'markdown-mode-hook 'toc-org-mode))
+      ;; enable in markdown, too
+      ; disabled because it thinks markdown-mode-map is a void
+      ; variable
+      ;(add-hook 'markdown-mode-hook 'toc-org-mode))
+      ;(define-key markdown-mode-map (kbd "\C-c\C-o") 'toc-org-markdown-follow-thing-at-point)
+  (warn "toc-org not found"))
+#+end_src
+
+*** Usage
+1. create a heading for your table of contents to live under
+2. with the cursor on that heading, run
+   ~<SPACE m q>~ or ~<org-set-tags-command>~
+3. set the TOC tag.
+4. save. This save, and all future saves update the TOC.
+5. profit!
+
+
+** Org-babel
+Org-babel is a component of org-mode that teaches it how to intellegently handle the content of source code blocks. If your language doesn't have built-in support, there's probably a package for it.
+
+*** ob-raku (raku support)
+The [[https://github.com/masukomi/ob-raku][ob-raku package]] is not currently in melpa. But, it works fine and adds support for [[https://raku.org/][Raku]] to org-mode.
+
+I'm the maintainer of this repo, and - for reasons I've forgotten - I haven't gotten it into melpa yet.
+
+If you want Raku support in your org-mode then just use the following but change the path to your local copy of the repo.
+
+#+begin_src elisp :tangle
+; teach org-babel about Raku
+; ⚠ note that this path is to my local clone of the ob-raku repo.
+(let ((ob-raku-el "~/workspace/reference/emacs/ob-raku/ob-raku.el"))
+ (when (file-exists-p ob-raku-el)
+    (load-file ob-raku-el)
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((shell . t)
+       (raku . t))
+     )
+   )
+)
+#+end_src
+
+Here's where we tell it to load the shell language? I think? I failed to leave myself a note explaining this.
+
+#+begin_src elisp :tangle
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((shell . t))
+ )
+#+end_src
+
+*** Fontified source code blocks
+[[https://orgmode.org/worg/org-contrib/babel/examples/fontify-src-code-blocks.html][theming for org-babel source code blocks]] is possible, but I don't really understand it, and I've got it disabled for the moment.
+
+In theory, the following will format your source code according to the styles you've set up for the language being used.
+
+#+begin_src elisp
+;; fontify code in code blocks
+(setq org-src-fontify-natively t)
+#+end_src
+
+** Sometimes I don't spell gud.
+Enable flyspell in text modes
+
+#+BEGIN_SRC elisp :tangled
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode 1))))
+#+END_SRC
+
+
+
+* General Config
+
+Tell it where to find custom elisp files.
+At the time of writing this consists of
+
+- ~eruby-mode.el~
+- ~ruby-align.el~
+- ~sh-send-line-or-region.el~
+- ~flycheck-standardrb.el~
+- ~screenshot.el~
+
+#+begin_src elisp :tangle
+;;---------------------------------
+;; General Config
+(add-to-list 'load-path "~/.doom.d/custom")
+(load "eruby-mode")
+
+#+end_src
+
+When an external force changes a file I have open in emacs I'd like those changes to be loaded instead of ignored, and accidentally overwritten. Note that [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Revert.html#Auto-Revert][Auto Revert]] will /not/ revert a buffer if it has unsaved changes, or if its file on disk is deleted or renamed.
+
+When a buffer is auto-reverted, a message is generated. This can be suppressed by setting ~auto-revert-verbose~ to ~nil~.
+
+#+begin_src elisp :tangle
+; automatically sync buffer with changes in the filesystem
+(global-auto-revert-mode t)
+#+end_src
+
+By default emacs asks you if you /really/ want to quit, even if there's nothing unsaved. It does this /multiple/ times. Even worse, it then prints out some really uncool "jokes" that probably sounded funny to a young white tech geek decades ago in a society that was fine with being disrespectful to anyone who wasn't a privileged white guy.
+
+Fuck all of that.
+
+#+begin_src elisp :tangle
+(setq confirm-kill-emacs nil) ; 'y-or-n-p
+#+end_src
+
+
+#+begin_src elisp :tangle
+
+
 ;
 ; org-src-fontify-buffer
 ; org-src-fontify-block
@@ -901,63 +1230,12 @@ current buffer's, reload dir-locals."
 ;;                  :jump-to-captured t)))
 
 ;; END DENOTE stuff
-; - toc-org - insert a table of contents in your org & markdown files WITHOUT exporting
-; https://github.com/snosov1/toc-org
-;
-; Usage
-; 1. create a heading for your table of contents to live under
-; 2. with the cursor on that heading, run
-;    <SPACE m q> or <org-set-tags-command>
-; 3. set the TOC tag.
-; 4. save ( this and all future saves update the TOC )
-; 5. profit!
-(if (require 'toc-org nil t)
-    (progn
-      (add-hook 'org-mode-hook 'toc-org-mode))
-      ;(add-hook 'markdown-mode-hook 'toc-org-mode))
 
 
 
-
-
-      ;; enable in markdown, too
-      ; disabled because it thinks markdown-mode-map is a void
-      ; variable
-      ;(add-hook 'markdown-mode-hook 'toc-org-mode))
-      ;(define-key markdown-mode-map (kbd "\C-c\C-o") 'toc-org-markdown-follow-thing-at-point)
-
-  (warn "toc-org not found"))
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((shell . t))
- )
-
-(let ((ob-raku-el "~/workspace/reference/emacs/ob-raku/ob-raku.el"))
- (when (file-exists-p ob-raku-el)
-    (load-file ob-raku-el)
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((shell . t)
-       (raku . t))
-     )
-
-
-   )
-)
 ;; adding new link type for images
 ;; Don't use this for things that'll be rendered by github.
 ;; found here: https://emacs.stackexchange.com/a/26638/30947
-(org-add-link-type
- "image-url"
- (lambda (path)
-   (let ((img (expand-file-name
-           (concat (md5 path) "." (file-name-extension path))
-           temporary-file-directory)))
-     (if (file-exists-p img)
-     (find-file img)
-       (url-copy-file path img)
-       (find-file img)))))
 
 
 
@@ -1232,6 +1510,21 @@ current buffer's, reload dir-locals."
 ;(add-hook 'markdown-mode-hook #'set-markdown-nested)
 #+end_src
 
+#+RESULTS:
+: copilot-previous-completion
+
+* Tell them it was me.
+I don't actually know if I use anything which uses this, but it seems reasonable to fill out.
+
+#+begin_src elisp :tangle
+
+;; These are used for a number of things, particularly for GPG configuration,
+;; some email clients, file templates and snippets.
+(setq user-full-name "Kay Rhodes"
+      user-mail-address "masukomi@masukomi.org"
+      org-export-default-language "en-US")
+#+end_src
+
 * Doom's Helpful Instructions
 Henrik & friends left us many useful instructions, which I'm keeping here, because I don't know what I'm doing.
 
@@ -1301,11 +1594,39 @@ Next we have tips about loading packages.
 ;; they are implemented.
 #+end_src
 
+* I wish I could…
+
+
+
+** rg integration
+I wish I could figure out how to get [[https://rgel.readthedocs.io/en/2.2.1/][rg.el]] (docs link) lazily loaded & working correctly. This is the Emacs package that integrates [[https://github.com/BurntSushi/ripgrep][ripgrep]].
+
+
+#+BEGIN_SRC elisp
+(require 'rg)
+(rg-enable-default-bindings)
+(global-set-key (kbd "C-c s") #'rg-menu)
+(with-eval-after-load 'rg
+  ;; Your settings goes here.
+)
+#+END_SRC
+
 * Junk Drawer
 I've tried and abandoned many things, in my attempt to make emacs work the way I want. What follows is the leftover detritus of those attempts. Things I've decided were probably worth keeping "in case I need them someday" but have subsequently completely forgotten everything about.
 
+** ob-raku
 #+begin_src elisp
-;; (let ((ob-raku-file "~/workspace/ob-raku/ob-raku.el"))
-;;  (when (file-exists-p ob-raku-file)
-;;    (load-file ob-raku-file)))
+(let ((ob-raku-file "~/workspace/ob-raku/ob-raku.el"))
+ (when (file-exists-p ob-raku-file)
+   (load-file ob-raku-file)))
 #+end_src
+
+** a custom tab character insertion
+I made this function to insert a tab character. Why did I make this function. I never use this function.
+
+#+BEGIN_SRC elisp
+(defun masu-insert-tab-char ()
+  "Insert a tab char. (ASCII 9, \t)"
+  (interactive)
+  (insert "\t"))
+#+END_SRC
