@@ -456,6 +456,22 @@ There's a [[https://github.com/doomemacs/themes][theme megapack]] which links to
 (setq doom-theme 'doom-gruvbox)
 #+end_src
 
+*** And cursors
+Doom Emacs sets "faces" differently than normal emacs. I don't really understand why, but there are two methods to use ~custom-set-faces!~ and ~set-face-attribute~
+
+The best overview I've found is [[https://discourse.doomemacs.org/t/how-to-switch-customize-or-write-themes/37][this tutorial]] about customizing themes and faces in Doom.
+
+Without the following I end up with a black cursor with almost black text inside, or vice-versa. It's hard to tell.
+
+#+begin_src elisp :tangle config.el
+(custom-set-faces!
+  '(cursor :background "#AA00FF") ; doesn't seem to work
+  '(cursor :foreground "#FFFFFF")
+        )
+#+end_src
+
+Henrik's advice is to use ~custom-set-faces!~ in most situations, but when you are doing something like configuring a thing that isn't static to begin with (different heading colors of different headings in an org-mode file for example) you should use ~set-face-attribute~. He provides an example [[https://discourse.doomemacs.org/t/how-to-best-change-face-settings-custom-set-faces-or-set-face-attribute/2721][in this thread]].
+
 *** Absolute & Relative Line Numbers
 
 Line numbers are important. For us Vim expats, relative line numbers save a lot of counting, but we still need to know which line is the the one the error message complained about.

@@ -149,6 +149,11 @@ current buffer's, reload dir-locals."
 
 (setq doom-theme 'doom-gruvbox)
 
+(custom-set-faces!
+  '(cursor :background "#AA00FF") ; doesn't seem to work
+  '(cursor :foreground "#FFFFFF")
+        )
+
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 ;; for both, you gotta get funky.
