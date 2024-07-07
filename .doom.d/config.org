@@ -677,6 +677,7 @@ By default when you tell emacs to go to the end of the line it goes to the end o
 
 ** Make URLs clickable
 So you /can/ easily make urls clickable with ~(goto-address-mode t)~, /but/ you shouldn't, because there's ~orglink-mode~ which is better. See packages.el to turn that on.
+
 ** Folding
 [[https://github.com/emacsorphanage/yafolding][yafolding]] is Yet Another Folding extension for Emacs which folds code based on indentation. This is helpful for languages like ruby where function bodies aren't bounded by simple things like curly braces. There's a screenshot of it in action in the repo's README.
 
@@ -1043,11 +1044,11 @@ Org-agenda's todo functionality is pretty cool though. The last line of this blo
 )
 #+end_src
 
-The following /should/ start everything off entirely folded. That is
-to say, just showing headings, with their contents "folded" away.
+The following will start everything off entirely folded. That is
+to say, just showing headings, with their contents "folded" away. I go back and forth on whether this is a good thing or a bad thing. If it's not tangled, I'm currently on the "bad thing" side of the fence. 😉
 
 
-#+begin_src elisp :tangle config.el
+#+begin_src elisp
 (setq
   ; start off with things folded
   ; manually override in a file with
