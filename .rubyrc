@@ -1,202 +1,214 @@
-work_specific_file="#{ENV['HOME']}/.pryrc_work"
-if File.file? work_specific_file
-  load work_specific_file
-end
+if ! defined?($rubyrc_loaded)
+  $rubyrc_loaded = true
 
-def paths_with(substring)
-  url_helpers_with(:path, substring)
-end
-
-def urls_with(substring)
-  url_helpers_with(:url, substring)
-end
-
-def url_helpers_with(path_or_url, substring)
-  Rails.application.routes.url_helpers.public_methods
-    .map{|x|x.to_s}
-    .select{|x| (x.end_with?(path_or_url == :path ? '_path' : '_url')) \
-                  and x.downcase.include?(substring.downcase)}
-end
-
-def recognize_path(path)
-  Hash[* %w[POST GET PUT PATCH DELETE].map{|verb| 
-            [verb, Rails.application.routes.recognize_path(path, method: verb)]
-          }.flatten 
-      ]
-end
-
-def route_with(substring)
-  Rails.application.routes.routes
-    .map { |r|  r.path.spec.to_s  }
-    .select{|p| p.downcase.include?(substring.downcase)}
-end
-
-if defined?(PryByebug)
-  Pry.commands.alias_command 'c', 'continue'
-  Pry.commands.alias_command 's', 'step'
-  Pry.commands.alias_command 'n', 'next'
-  Pry.commands.alias_command 'f', 'finish'
-end
-
-def helpme
-  usage=<<~END
-    Available custom functions:
-    - backtrace(exception, lines=10)
-    - Mongo.unset(model_class, attribute)
-    - paths_with(substring)
-    - recognize_path(path)
-    - route_with(substring)
-    - urls_with(substring)
-    - url_helpers_with(path_or_url, substring)
-    - where_is(klass, method = nil)
-    - Where.is_proc(proc)
-    - Where.is_method(klass, method_name)
-    - Where.is_instance_method(klass, method_name)
-    - Where.are_methods(klass, method_name)
-    - Where.are_instance_methods(klass, method_name)
-    - Where.is_class(klass)
-    - Where.is_class_primarily(klass)
-    - Where.edit(path, line_number=1)
-      opens the specified path with your default editor (ENV['EDITOR'])
-  END
-  puts usage
-  if (work_loaded?() rescue false)
-    puts helpme_work
-
+  puts "loaded ~/.rubyrc"
+  # begin
+  #   raise StandardError.new("WTF?")
+  # rescue StandardError => e
+  #   e.backtrace.each_with_index.map{ | l, i |
+  #     [i, l]
+  #     break if i > 10
+  #   }
+  # end
+  work_specific_file="#{ENV['HOME']}/.pryrc_work"
+  if File.file?(work_specific_file)
+    load work_specific_file
   end
-end
 
-def backtrace(exception, lines = 10)
-  return "that's not an exception" unless exception.is_a? Exception
-  e.backtrace[..lines].each{|b| puts b }
-end
+  def paths_with(substring)
+    url_helpers_with(:path, substring)
+  end
 
-# https://gist.github.com/wtaysom/1236979
-#  A little Ruby module for finding the source location where class and methods are defined.
-module Mongo
-  class << self
-    def unset(model_class, attribute)
-      raise "model must be a Mongoid::Document" unless model_class.include? Mongoid::Document
-      raise "attribute must be symbol name of attribute" unless attribute.is_a? Symbol
-      # MongoidCollection.all.unset(:attribute_name)
-      model_class.all.unset(attribute)
+  def urls_with(substring)
+    url_helpers_with(:url, substring)
+  end
+
+  def url_helpers_with(path_or_url, substring)
+    Rails.application.routes.url_helpers.public_methods
+      .map{|x|x.to_s}
+      .select{|x| (x.end_with?(path_or_url == :path ? '_path' : '_url')) \
+                    and x.downcase.include?(substring.downcase)}
+  end
+
+  def recognize_path(path)
+    Hash[* %w[POST GET PUT PATCH DELETE].map{|verb|
+              [verb, Rails.application.routes.recognize_path(path, method: verb)]
+            }.flatten
+        ]
+  end
+
+  def route_with(substring)
+    Rails.application.routes.routes
+      .map { |r|  r.path.spec.to_s  }
+      .select{|p| p.downcase.include?(substring.downcase)}
+  end
+
+  if defined?(PryByebug)
+    Pry.commands.alias_command 'c', 'continue'
+    Pry.commands.alias_command 's', 'step'
+    Pry.commands.alias_command 'n', 'next'
+    Pry.commands.alias_command 'f', 'finish'
+  end
+
+  def helpme
+    usage=<<~END
+      Available custom functions:
+      - backtrace_deets(exception, lines=10)
+      - Mongo.unset(model_class, attribute)
+      - paths_with(substring)
+      - recognize_path(path)
+      - route_with(substring)
+      - urls_with(substring)
+      - url_helpers_with(path_or_url, substring)
+      - where_is(klass, method = nil)
+      - Where.is_proc(proc)
+      - Where.is_method(klass, method_name)
+      - Where.is_instance_method(klass, method_name)
+      - Where.are_methods(klass, method_name)
+      - Where.are_instance_methods(klass, method_name)
+      - Where.is_class(klass)
+      - Where.is_class_primarily(klass)
+      - Where.edit(path, line_number=1)
+        opens the specified path with your default editor (ENV['EDITOR'])
+    END
+    puts usage
+    if (work_loaded?() rescue false)
+      puts helpme_work
+
     end
   end
-end
-module Where
-  class <<self
-    attr_accessor :editor
 
-    def is_proc(proc)
-      source_location(proc)
-    end
+  def backtrace_deets(exception, lines = 10)
+    return "that's not an exception" unless exception.is_a? Exception
+    e.backtrace[..lines].each{|b| puts b }
+  end
 
-    def is_method(klass, method_name)
-      source_location(klass.method(method_name))
-    end
-
-    def is_instance_method(klass, method_name)
-      source_location(klass.instance_method(method_name))
-    end
-
-    def are_methods(klass, method_name)
-      are_via_extractor(:method, klass, method_name)
-    end
-
-    def are_instance_methods(klass, method_name)
-      are_via_extractor(:method, klass, method_name)
-    end
-
-    def is_class(klass)
-      methods = defined_methods(klass)
-      file_groups = methods.group_by{|sl| sl[0]}
-      file_counts = file_groups.map do |file, sls|
-        lines = sls.map{|sl| sl[1]}
-        count = lines.size
-        line = lines.min
-        {file: file, count: count, line: line}
+  # https://gist.github.com/wtaysom/1236979
+  #  A little Ruby module for finding the source location where class and methods are defined.
+  module Mongo
+    class << self
+      def unset(model_class, attribute)
+        raise "model must be a Mongoid::Document" unless model_class.include? Mongoid::Document
+        raise "attribute must be symbol name of attribute" unless attribute.is_a? Symbol
+        # MongoidCollection.all.unset(:attribute_name)
+        model_class.all.unset(attribute)
       end
-      file_counts.sort_by!{|fc| fc[:count]}
-      source_locations = file_counts.map{|fc| [fc[:file], fc[:line]]}
-      source_locations
     end
+  end
+  module Where
+    class <<self
+      attr_accessor :editor
 
-    # Raises ArgumentError if klass does not have any Ruby methods defined in it.
-    def is_class_primarily(klass)
-      source_locations = is_class(klass)
-      if source_locations.empty?
+      def is_proc(proc)
+        source_location(proc)
+      end
+
+      def is_method(klass, method_name)
+        source_location(klass.method(method_name))
+      end
+
+      def is_instance_method(klass, method_name)
+        source_location(klass.instance_method(method_name))
+      end
+
+      def are_methods(klass, method_name)
+        are_via_extractor(:method, klass, method_name)
+      end
+
+      def are_instance_methods(klass, method_name)
+        are_via_extractor(:method, klass, method_name)
+      end
+
+      def is_class(klass)
         methods = defined_methods(klass)
-        raise ArgumentError, (methods.empty? ?
-          "#{klass} has no methods" :
-          "#{klass} only has built-in methods (#{methods.size} in total)"
+        file_groups = methods.group_by{|sl| sl[0]}
+        file_counts = file_groups.map do |file, sls|
+          lines = sls.map{|sl| sl[1]}
+          count = lines.size
+          line = lines.min
+          {file: file, count: count, line: line}
+        end
+        file_counts.sort_by!{|fc| fc[:count]}
+        source_locations = file_counts.map{|fc| [fc[:file], fc[:line]]}
+        source_locations
+      end
+
+      # Raises ArgumentError if klass does not have any Ruby methods defined in it.
+      def is_class_primarily(klass)
+        source_locations = is_class(klass)
+        if source_locations.empty?
+          methods = defined_methods(klass)
+          raise ArgumentError, (methods.empty? ?
+            "#{klass} has no methods" :
+            "#{klass} only has built-in methods (#{methods.size} in total)"
+          )
+        end
+        source_locations[0]
+      end
+
+      def edit(file, line_number=1)
+        `ENV['EDITOR'] #{file} +#{line_number}`
+      end
+
+    private
+
+      def source_location(method)
+        method.source_location || (
+          method.to_s =~ /: (.*)>/
+          $1
         )
       end
-      source_locations[0]
-    end
 
-    def edit(file, line_number=1)
-      `ENV['EDITOR'] #{file} +#{line_number}`
-    end
-
-  private
-
-    def source_location(method)
-      method.source_location || (
-        method.to_s =~ /: (.*)>/
-        $1
-      )
-    end
-
-    def are_via_extractor(extractor, klass, method_name)
-      methods = klass.ancestors.map do |ancestor|
-        method = ancestor.send(extractor, method_name)
-        if method.owner == ancestor
-          source_location(method)
-        else
-          nil
+      def are_via_extractor(extractor, klass, method_name)
+        methods = klass.ancestors.map do |ancestor|
+          method = ancestor.send(extractor, method_name)
+          if method.owner == ancestor
+            source_location(method)
+          else
+            nil
+          end
         end
+        methods.compact!
+        methods
       end
-      methods.compact!
-      methods
+
+      def defined_methods(klass)
+        methods = klass.methods(false).map{|m| klass.method(m)} +
+          klass.instance_methods(false).map{|m| klass.instance_method(m)}
+        methods.map!(&:source_location)
+        methods.compact!
+        methods
+      end
     end
 
-    def defined_methods(klass)
-      methods = klass.methods(false).map{|m| klass.method(m)} +
-        klass.instance_methods(false).map{|m| klass.instance_method(m)}
-      methods.map!(&:source_location)
-      methods.compact!
-      methods
+    TextMateEditor = lambda do |file, line|
+      `mate "#{file}" -l #{line}`
     end
+
+    NoEditor = lambda do |file, line|
+    end
+
+    @editor = TextMateEditor
   end
 
-  TextMateEditor = lambda do |file, line|
-    `mate "#{file}" -l #{line}`
+  def where_is(klass, method = nil)
+    Where.edit(if method
+      begin
+        Where.is_instance_method(klass, method)
+      rescue NameError
+        Where.is_method(klass, method)
+      end
+    else
+      Where.is_class_primarily(klass)
+    end)
   end
 
-  NoEditor = lambda do |file, line|
-  end
+  if __FILE__ == $0
+    class World
+      def self.carmen
+      end
+    end
 
-  @editor = TextMateEditor
+    where_is(World, :carmen)
+  end
 end
-
-def where_is(klass, method = nil)
-  Where.edit(if method
-    begin
-      Where.is_instance_method(klass, method)
-    rescue NameError
-      Where.is_method(klass, method)
-    end
-  else
-    Where.is_class_primarily(klass)
-  end)
-end
-
-if __FILE__ == $0
-  class World
-    def self.carmen
-    end
-  end
-
-  where_is(World, :carmen)
-end
-
