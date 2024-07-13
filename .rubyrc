@@ -78,9 +78,16 @@ if ! defined?($rubyrc_loaded)
     end
   end
 
-  def backtrace_deets(exception, lines = 10)
+  def backtrace_deets(exception, lines = 10, filtered = true)
     return "that's not an exception" unless exception.is_a? Exception
-    e.backtrace[..lines].each{|b| puts b }
+    return exception.backtrace[..lines] unless filtered
+    response = []
+    exception.backtrace.each do |line|
+      next if line.include?("/ruby/gems") || line.include?("lib/ruby")
+      response << line
+      break if response.size == lines
+    end
+    response
   end
 
   # https://gist.github.com/wtaysom/1236979
