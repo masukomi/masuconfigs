@@ -7,7 +7,7 @@ ASSUMED_UNCHANGED=$( git ls-files -v \
 	| sed -e "s/^/\x1b[1;33m⇨\x1b[0m /")
 			# ^^^ insert a bold yellow arrow
 
-UNTRACKED=$(git ls-files --others -v \
+UNTRACKED=$(git ls-files --others -v --exclude-standard \
 	| grep --color '^? ' \
 	| sed -e "s/^? /\x1b[1;33m⇨\x1b[0m /")
 			# ^^^ insert a bold yellow arrow
@@ -29,5 +29,7 @@ if [ "$UNTRACKED" != "" ]; then
 		echo "\x1b[1;33;4m$UNTRACKED_COUNT\x1b[0m files."
 		echo "    For a short list run:    git status"
 		echo "    For a detailed list run: git status --untracked-files=all"
+		echo "    For an even MORE detailed list with the things"
+		echo "      git typically excludes: git ls-files --others -v"
 	fi
 fi
