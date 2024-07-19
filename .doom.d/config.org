@@ -40,16 +40,20 @@ Yes, ~config.el~ is what Doom reads, but this is what creates that.
 ;;
 #+end_src
 
+#+RESULTS:
+
 * General Config
 
 Tell it where to find custom elisp files.
 At the time of writing this consists of
 
 - ~eruby-mode.el~
-- ~ruby-align.el~
-- ~sh-send-line-or-region.el~
 - ~flycheck-standardrb.el~
+- ~ruby-align.el~
 - ~screenshot.el~
+- ~sh-send-line-or-region.el~
+- ~titlecase.el~
+  This one relies on the [[https://github.com/ap/titlecase][titlecase]] perl script being in your ~exec-path~
 
 #+begin_src elisp :tangle config.el
 ;;---------------------------------
@@ -955,26 +959,6 @@ Enable flyspell in text modes
   (add-hook hook (lambda () (flyspell-mode 1))))
 #+END_SRC
 
-** Sometimes I don't grammar good either.
-[[https://github.com/abingham/flycheck-vale][flycheck-vale]] provides flycheck integration for [[https://github.com/ValeLint/vale][vale]]. Vale is a command-line tool that brings code-like linting to prose.
-
-⚠ if the word its complaining about is the first word in a line it'll bork the indentation (visually only), which is really annoying. Especially if you don't want to change what it's complaining about.
-
-#+begin_src elisp :tangle config.el
-(require 'flycheck-vale)
-(flycheck-define-checker vale
-  "A checker for prose"
-  :command ("vale" "--output" "line"
-            source)
-  :standard-input nil
-  :error-patterns
-  ((error line-start (file-name) ":" line ":" column ":" (id (one-or-more (not (any ":")))) ":" (message) line-end))
-  :modes (markdown-mode org-mode text-mode)
-  )
-(add-to-list 'flycheck-checkers 'vale 'append)
-(flycheck-vale-setup)
-#+end_src
-
 ** Configuring misc things via global org variables
 
 
@@ -1239,9 +1223,56 @@ Packages prefixed with ~ox-*~ are Org-mode eXporter packages. The most common on
 *** Hugo
 ox-hugo is good, but it doesn't know how to generate relative links in Hugo's weird cross-reference way. The trick is that, without reading the frontmatter of the file you're linking to, & pondering how Hugo will interpret that, you don't know the final url of the page you're linking to.
 
-Hugo's solution to that is the [[https://gohugo.io/content-management/cross-references/][ref & relref]] shortcodes. This allows you to create ~ref~ shortcode links.
+Hugo's solution to that is the [[https://gohugo.io/content-management/cross-references/][ref & relref]] shortcodes. This allows you to create ~ref~ shortcode links. To use this I…
 
-#+BEGIN_SRC elisp :tangle config.el
+1. use =C-c l= to insert a link
+2. choose / type =ref:= or =relref:=
+3. hit return, and navigate to the path of the other file under hugo's =content= directory.
+4. select the file I want
+5. enter a description.
+
+When I export it will convert it to a markdown style link with the =ref= / =relref= shortcode.
+
+
+#+begin_src elisp tangle config.el
+(with-eval-after-load 'ox-hugo
+  (org-link-set-parameters
+   "relref"
+   :complete (lambda ()
+               (concat
+                "relref:"
+                (file-name-nondirectory (read-file-name "File: "))
+                )
+               )
+
+   :export (lambda (path description backend)
+             (format "[%s]({{< relref %s >}})" description path  )
+        )
+   )
+
+  (org-link-set-parameters
+   "ref"
+   :complete (lambda ()
+               (concat
+                "ref:"
+                (file-name-nondirectory (read-file-name "File: "))
+                )
+               )
+
+   :export (lambda (path description backend)
+             (format "[%s]({{< ref %s >}})" description path  )
+        )
+   )
+
+)
+#+end_src
+
+Note that there is no =:follow= function set. Clicking on these links in org-mode won't go anywhere. This is intentional because the link is going to the markdown file used when the site is generated, but I don't know where the org-mode file used to generate that markdown file is, and /that/ is the file you'd want to open.
+
+
+If you're using the built-in org-mode support /instead/ of ox-hugo you could use something like this.
+
+#+BEGIN_SRC elisp
 ;; New link type for Org-Hugo internal links
 (with-eval-after-load 'ox-hugo
   (org-link-set-parameters "hugo"
@@ -1258,9 +1289,10 @@ See also the timestamp tweak in the next section.
 (with-eval-after-load 'org
 	;; org-hugo blogging things
 	(setq time-stamp-active t
-		time-stamp-start "#\\+lastmod:[ \t]*"
+		time-stamp-start "#\\+hugo_lastmod:[ \t]*"
 		time-stamp-end "$"
-		time-stamp-format "%04Y-%02m-%02d")
+		time-stamp-format "%04Y-%02m-%02d"
+                org-hugo-auto-set-lastmod t)
 	(add-hook 'before-save-hook 'time-stamp nil)
 	(add-to-list
 		'org-src-lang-modes '("plantuml" . plantuml))
@@ -1935,3 +1967,25 @@ I made this function to insert a tab character. Why did I make this function. I 
   (interactive)
   (insert "\t"))
 #+END_SRC
+
+** Grammar Checking
+[[https://github.com/abingham/flycheck-vale][flycheck-vale]] provides flycheck integration for [[https://github.com/ValeLint/vale][vale]]. Vale is a command-line tool that brings code-like linting to prose.
+
+⚠ if the word its complaining about is the first word in a line it'll bork the indentation (visually only), which is really annoying. Especially if you don't want to change what it's complaining about.
+
+I've disabled it because I wasn't deriving enough value from it and the indentation fuck-ups when I started a line with something like ~NOTE:~ were really annoying.
+
+#+begin_src elisp
+(require 'flycheck-vale)
+(flycheck-define-checker vale
+  "A checker for prose"
+  :command ("vale" "--output" "line"
+            source)
+  :standard-input nil
+  :error-patterns
+  ((error line-start (file-name) ":" line ":" column ":" (id (one-or-more (not (any ":")))) ":" (message) line-end))
+  :modes (markdown-mode org-mode text-mode)
+  )
+(add-to-list 'flycheck-checkers 'vale 'append)
+(flycheck-vale-setup)
+#+end_src

@@ -366,19 +366,6 @@ current buffer's, reload dir-locals."
 (dolist (hook '(text-mode-hook))
   (add-hook hook (lambda () (flyspell-mode 1))))
 
-(require 'flycheck-vale)
-(flycheck-define-checker vale
-  "A checker for prose"
-  :command ("vale" "--output" "line"
-            source)
-  :standard-input nil
-  :error-patterns
-  ((error line-start (file-name) ":" line ":" column ":" (id (one-or-more (not (any ":")))) ":" (message) line-end))
-  :modes (markdown-mode org-mode text-mode)
-  )
-(add-to-list 'flycheck-checkers 'vale 'append)
-(flycheck-vale-setup)
-
   (setq org-export-with-sub-superscripts nil)
 
   ; KEYWORDS
@@ -414,14 +401,6 @@ current buffer's, reload dir-locals."
 
   ; org-log-done adds a timestamp when marking a todo item as done
   org-log-done t
-)
-
-(setq
-  ; start off with things folded
-  ; manually override in a file with
-  ; #+STARTUP: showall
-  ; #+STARTUP: fold
-  org-startup-folded t
 )
 
 (setq
@@ -490,18 +469,13 @@ now being rendered as Emojis. Filter this case out."
   (require 'ox-publish)
   (require 'ox-slack))
 
-;; New link type for Org-Hugo internal links
-(with-eval-after-load 'ox-hugo
-  (org-link-set-parameters "hugo"
-		           :complete (lambda ()
-			               (concat "{{% ref "(file-name-nondirectory (read-file-name "File: "))" %}}"))))
-
 (with-eval-after-load 'org
 	;; org-hugo blogging things
 	(setq time-stamp-active t
-		time-stamp-start "#\\+lastmod:[ \t]*"
+		time-stamp-start "#\\+hugo_lastmod:[ \t]*"
 		time-stamp-end "$"
-		time-stamp-format "%04Y-%02m-%02d")
+		time-stamp-format "%04Y-%02m-%02d"
+                org-hugo-auto-set-lastmod t)
 	(add-hook 'before-save-hook 'time-stamp nil)
 	(add-to-list
 		'org-src-lang-modes '("plantuml" . plantuml))
