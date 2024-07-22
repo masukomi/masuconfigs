@@ -1234,7 +1234,7 @@ Hugo's solution to that is the [[https://gohugo.io/content-management/cross-refe
 When I export it will convert it to a markdown style link with the =ref= / =relref= shortcode.
 
 
-#+begin_src elisp tangle config.el
+#+begin_src elisp :tangle config.el
 (with-eval-after-load 'ox-hugo
   (org-link-set-parameters
    "relref"
