@@ -469,7 +469,7 @@ now being rendered as Emojis. Filter this case out."
   (require 'ox-publish)
   (require 'ox-slack))
 
-(with-eval-after-load 'ox-hugo
+(with-eval-after-load 'org
   (org-link-set-parameters
    "relref"
    :complete (lambda ()

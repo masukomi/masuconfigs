@@ -1235,7 +1235,7 @@ When I export it will convert it to a markdown style link with the =ref= / =relr
 
 
 #+begin_src elisp :tangle config.el
-(with-eval-after-load 'ox-hugo
+(with-eval-after-load 'org
   (org-link-set-parameters
    "relref"
    :complete (lambda ()
