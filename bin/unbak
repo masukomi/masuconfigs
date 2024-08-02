@@ -14,8 +14,13 @@ if [ "$1" == "-c" ] ; then
 fi
 
 path=$(echo $1 | sed -e "s/.bak$//")
-if [ "$copy" == true ]; then
-	cp -r $path.bak $path
+if [ -e $path.bak ]; then
+	if [ "$copy" == true ]; then
+		cp -r $path.bak $path
+	else
+		mv $path.bak $path
+	fi
 else
-	mv $path.bak $path
+	echo "⚠️  path not found: $path.bak"
+	exit 64 # EX_USAGE (64)	   The command was used	incorrectly
 fi
