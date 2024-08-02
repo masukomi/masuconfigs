@@ -1766,6 +1766,12 @@ We're going to disable the rubocop & reek flycheck checkers. Especially rubocop 
   (require 'ruby-tools))
 (setq-default flycheck-disabled-checkers '(ruby-rubocop ruby-reek))
 #+END_SRC
+** YAML
+Oddly, emacs doesn't seem to know that =.yml= is a common file extension for yaml.
+
+#+begin_src elisp :tangle config.el
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+#+end_src
 
 ** Treesitter
 Treesitter is a tool for parsing languages which was integrated into Emacs in version 29. You can learn more about getting started with it on [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][this Mastering Emacs blog post]].

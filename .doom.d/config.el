@@ -749,6 +749,8 @@ now being rendered as Emojis. Filter this case out."
   (require 'ruby-tools))
 (setq-default flycheck-disabled-checkers '(ruby-rubocop ruby-reek))
 
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+
 (setq treesit-language-source-alist
    '((bash "https://github.com/tree-sitter/tree-sitter-bash")
      (cmake "https://github.com/uyha/tree-sitter-cmake")
