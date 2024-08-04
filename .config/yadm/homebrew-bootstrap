@@ -177,6 +177,12 @@ fi
 # https://direnv.net/
 maybrew 'direnv'
 
+# DOCKER THINGS
+maybrew 'docker'
+maybrew 'colima'
+maybrew 'docker-compose'
+
+
 # Disk Usage/Free Utility - a better 'df' alternative
 # https://github.com/muesli/duf
 maybrew 'duf'
