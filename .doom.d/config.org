@@ -236,14 +236,48 @@ To toggle this with ~C-c m o~ we need a helper function.
 
 
 * Projectile
-** I need to edit .dotfiles
-[[https://projectile.mx/][Projectile]] is a project navgiation and management library. It's pretty cool. However, it tries to be a little too smart about things like hidden files. As such it'll never list a project's dotfiles like ~.gitignore~ or ~.env~. We need to tell it to use [[https://docs.projectile.mx/projectile/configuration.html#:%7E:text=Project%20indexing%20method%20Projectile%20has%20three%20modes%20of,obtain%20the%20list%20of%20files%20in%20a%20project]["native" indexing mode]].
+** Stop Hiding Stupid shit
+[[https://projectile.mx/][Projectile]] is a project navgiation and management library. It's pretty cool. However, when you enable ~hybrid~ or ~alien~ indexing methods it uses external tools to get a list of files in your project. It is thus subject to the filtering those tools use.
 
-#+begin_src elisp :tangle config.el
-;; enable native indexing in Projectile so that we can easily
-;; edit a project's dot files.
-(setq projectile-indexing-method 'native)
+By default it reaches out to git and uses
+
+#+begin_src bash
+git ls-files -zco --exclude-standard
 #+end_src
+
+Run that without the ~-z~ flag to be able to read/grep what its outputting.
+
+
+/HOWEVER/ if [[https://github.com/sharkdp/fd][fd]] is installed ~projectile-git-use-fd~ gets set to ~t~ and it uses fd instead. When it invokes fd in order to get a list of commands it uses this
+
+#+begin_src bash
+fd -H -0 -E .git -tf --strip-cwd-prefix
+#+end_src
+
+Run that without the ~-0~ flag to be able to read/grep what its outputting.
+
+fd is too smart for its own good. It does fancy things like considering the contents of ~.gitignore~ However, it also excludes any directories named "tags" and probably some other things I'm unaware of. So, we need to modify that command so that we actually get everything.
+
+We want it to run
+
+#+begin_src
+fd --ignore-file .fdignore --no-ignore -H -0 -E .git -tf --strip-cwd-prefix
+#+end_src
+
+Adding ~--no-ignore~ makes it start outputting /almost everything/. ~.git~ directory and some other things will still be ignored.
+
+Adding ~--ignore-file .fdignore~ counteracts that by filtering out some of the things that ~--no-ignore~ has made appear. fd will /not/ error out if the file doesn't exist. This means we can have per-project ignore files without issue. The ~.fdignore~ file uses the same syntax as ~.gitignore~ and also supports ignore files from other tools like ~rg~ (ripgrep). It's unclear to me if it looks for those files by default or not.
+
+The following /should/ be enough...
+#+begin_src elisp :tangle config.el
+(setq projectile-indexing-method 'hybrid)
+(setq projectile-git-fd-args "--ignore-file .fdignore --no-ignore -H -0 -E .git -tf --strip-cwd-prefix")
+#+end_src
+
+
+/However/ [[https://github.com/doomemacs/doomemacs/blob/84f7eb2affeae9bb5f85379dd8677f2c0a372c83/lisp/doom-projects.el#L174][Doom emacs has hacked the projectile-get-ext-command]] so that it only ever uses the "generic" fall-through which is provided by ~projectile-generic-command~ Doom has /[[https://github.com/doomemacs/doomemacs/blob/84f7eb2affeae9bb5f85379dd8677f2c0a372c83/lisp/doom-projects.el#L198][also/ customized /that/ function]] and in older versions of this file (and thus Doom emacs) the ~projectile-git-fd-args~ were ignored.
+
+
 
 ** Not every repo I open is something I'm working on.
 Projectile also, /really/ wants to be helpful. If you open a file that happens to be in a git repo it'll add that repo to your projects list. I look at a /lot/ of open source repos that I have no intention of working in, so this becomes a problem quickly. This will disable that behavior, and require you to add projects manually (~Space-p-a~)
@@ -527,8 +561,14 @@ There's also [[https://github.com/emacsorphanage/git-gutter-fringe#readme][git-g
 
 #+begin_src elisp :tangle config.el
 ; display the git gutter
+(require 'git-gutter)
+(set-face-foreground 'git-gutter:modified "yellow")
+(set-face-foreground 'git-gutter:added    "blue")
+(set-face-foreground 'git-gutter:deleted  "white")
+
 (global-git-gutter-mode t)
 #+end_src
+
 *** Wait. What function is this?
 [[https://github.com/alphapapa/topsy.el#readme][Topsy]] is a nifty little utility that keeps the name of the current function pinned to the top of the page when it scrolls off-screen. Every now and then I get a little confused and think it's the /actual/ line, but overall it's a nice little helper.
 
@@ -1834,6 +1874,8 @@ Full disclaimer, I set this up, but I never use ediff because [[https://kaleidos
 #+end_src
 
 ** GitHub Copilot
+*I no longer use this*, but maybe you'll find it useful.
+
 I'm really torn about [[https://github.com/features/copilot][GitHub Copilot]]. It drives me kinda buggy in languages I'm comfortable with, but it's helpful when tweaking files in languages I'm /not/ comfortable with. It's also pretty decent about generating boring code that needs to be written but doesn't require much thought. Well, except for the bits that look totally reasonable but are actually errors and you don't notice until you run your tests. You do have tests right?
 
 Plus the company has drunk ALL the AI kool-aid and actually went so far as to imply that Copilot would be a good tool to help avoid developer burnout. Instead of, you know, treating them like humans who actually need time away from work to recover and enjoy their life & people outside of work.
@@ -1842,7 +1884,7 @@ Anyway. Copilot. Made by a company run by capitalist dicks who want to use techn
 
 The most important bit here is mapping ~copilot-accept-completion~ to a key-combo instead of the right arrow or return. Those paths just lead to frustration.
 
-#+begin_src elisp :tangle config.el
+#+begin_src elisp
 (use-package! copilot
   :hook (prog-mode . copilot-mode)
   :bind (

@@ -89,7 +89,8 @@
 (package! rainbow-mode)
 (package! visual-regexp-steroids)
 (package! xterm-color)
-
+(package! git-gutter)
+;; (package! git-gutter-fringe)
 
 
 ; LANGUAGES
@@ -152,6 +153,7 @@
 ; in config: (add-hook 'org-mode-hook (lambda () (org-superstart-mode 1)))
 (package! evil-org)
 (package! ox-clip)
+(package! ox-gfm)
 (package! denote)
 (package! plantuml-mode)
 (package! flycheck-plantuml)
@@ -193,7 +195,7 @@
 (package! ox-slack
   :recipe (:host github :repo "masukomi/ox-slack" :branch "main"))
 (package! ox-bb)
-(package! flycheck-vale)
+;; (package! flycheck-vale)
 ;(package! ox-leanpub)
 ; ripgrep (rg)
 (package! rg)

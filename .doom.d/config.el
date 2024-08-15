@@ -88,9 +88,8 @@ current buffer's, reload dir-locals."
 (define-key mac-opt-keymap (kbd "C-c m o") 'mac-opt-chars-mode)
 (define-key global-map (kbd "C-c m o") 'mac-opt-chars-mode)
 
-;; enable native indexing in Projectile so that we can easily
-;; edit a project's dot files.
-(setq projectile-indexing-method 'native)
+(setq projectile-indexing-method 'hybrid)
+(setq projectile-git-fd-args "--ignore-file .fdignore --no-ignore -H -0 -E .git -tf --strip-cwd-prefix")
 
 (setq projectile-track-known-projects-automatically nil)
 
@@ -180,6 +179,11 @@ current buffer's, reload dir-locals."
   :hook (prog-mode . rainbow-mode ))
 
 ; display the git gutter
+(require 'git-gutter)
+(set-face-foreground 'git-gutter:modified "yellow")
+(set-face-foreground 'git-gutter:added    "blue")
+(set-face-foreground 'git-gutter:deleted  "white")
+
 (global-git-gutter-mode t)
 
 ; enable topsy mode when programming
@@ -787,16 +791,3 @@ now being rendered as Emojis. Filter this case out."
 ;;revert windows on exit - needs winner mode
 (winner-mode)
 (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
-
-(use-package! copilot
-  :hook (prog-mode . copilot-mode)
-  :bind (
-         ;; :map copilot-completion-map
-         ;; ("<right>" . 'copilot-accept-completion)
-         ("C-f" . 'copilot-accept-completion)
-         ("M-<right>" . 'copilot-accept-completion-by-word)
-         ("M-f" . 'copilot-accept-completion-by-word)
-         ("C-e" . 'copilot-accept-completion-by-line)
-         ("<end>" . 'copilot-accept-completion-by-line)
-         ("M-n" . 'copilot-next-completion)
-         ("M-p" . 'copilot-previous-completion)))
