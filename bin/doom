@@ -60,7 +60,12 @@ fi
 if [[ "$FORCE" == "true" ]] || [[ $emacs_lines -eq 0 ]] || ; then
   echo "starting Emacs server..."
   2>/dev/null 1>&2 killall Emacs
-  emacs --chdir $PWD --execute "(server-start)" $@ > /dev/null 2>&1 &
+  if [[ "$DEBUG" != "true" ]]; then
+    emacs --chdir $PWD --execute "(server-start)" $@ > /dev/null 2>&1 &
+  else
+    echo "... with debugging"
+    emacs --debug-init --chdir $PWD --execute "(server-start)" $@ > /dev/null 2>&1 &
+  fi
   disown
   # emacs --daemon --chdir $PWD --execute "(server-start)"
   # emacsclient -n $@ --socket-name $(get_socket_file)
