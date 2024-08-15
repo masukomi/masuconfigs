@@ -2,12 +2,12 @@
 # name: hugo-frontmatter
 # key: hfm
 # --
-#+title: $1
 #+author: masukomi
-#+lastmod: `(format-time-string "%Y-%m-%dT%T%z")`
+#+hugo_auto_set_lastmod: t
 #+hugo_publishdate: `(format-time-string "%Y-%m-%dT%T%z")`
 #+date: `(format-time-string "%Y-%m-%dT%T%z")`
-#+filetags: $2
+#+filetags: $1
 #+toc: headlines 3
 #+draft: false
-#+hugo_section: post
+#+hugo_section: ${2:post}
+#+hugo_custom_front_matter: :summary "I NEED A SUMMARY"

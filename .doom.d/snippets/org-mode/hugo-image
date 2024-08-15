@@ -3,6 +3,6 @@
 # key: himage
 # --
 
-#+ATTR_HTML: :alt $1
-#+ATTR_HTML: :title $2
-[[file:$3]]
+#+ATTR_HTML: :alt $2
+#+ATTR_HTML: :title
+[[file:`(format-time-string "/images/%Y/%m/%d/")`$1]]
