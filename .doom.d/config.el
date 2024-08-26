@@ -178,14 +178,6 @@ current buffer's, reload dir-locals."
 (use-package rainbow-mode
   :hook (prog-mode . rainbow-mode ))
 
-; display the git gutter
-(require 'git-gutter)
-(set-face-foreground 'git-gutter:modified "yellow")
-(set-face-foreground 'git-gutter:added    "blue")
-(set-face-foreground 'git-gutter:deleted  "white")
-
-(global-git-gutter-mode t)
-
 ; enable topsy mode when programming
 (add-hook 'prog-mode-hook #'topsy-mode)
 
@@ -194,7 +186,7 @@ current buffer's, reload dir-locals."
 
 (setq doom-modeline-height 25)
 
-(global-set-key (kbd "s-w")  '+workspace/delete)
+(global-set-key (kbd "s-w")  '+workspace/kill)
 
 ; Ctrl + =/+ contracts or expands visual selection
 (map! :nv "C-=" #'er/contract-region
@@ -332,7 +324,7 @@ current buffer's, reload dir-locals."
       (overlay-put ov 'image-url t))))
 
 (defun image-url-clear-overlays ()
-  "Reove overlays on image-urls."
+  "Remove overlays on image-urls."
   (interactive)
   (require 'ov)
   (ov-clear 'image-url))
@@ -435,35 +427,6 @@ current buffer's, reload dir-locals."
      (setq org-image-actual-width (* 80 (window-font-width))))
        (org-redisplay-inline-images)))
  (add-hook 'window-size-change-functions 'org-image-resize)
-
-(use-package emojify
-  :config
-  (when (member "Segoe UI Emoji" (font-family-list))
-    (set-fontset-font
-     t 'symbol (font-spec :family "Segoe UI Emoji") nil 'prepend))
-  (setq emojify-display-style 'unicode)
-  (setq emojify-emoji-styles '(unicode github))
-  (global-set-key (kbd "C-c .") #'emojify-insert-emoji))
-
-(add-hook 'after-init-hook #'global-emojify-mode)
-(defun my:emojify-inhibit-fix-org-drawers (text beg end)
-  "Since org-mode now uses lower-case :begin:, :end:, etc tags, some of them are
-now being rendered as Emojis. Filter this case out."
-  (and (equal major-mode 'org-mode) (member (downcase text) '(":begin:" ":end:"))))
-
-; made by me
-(defun my:emojify-inhibit-no-inline-escape-emoji (text beg end)
-  "disable creation of emojis starting with = or ~ in org-mode"
-  (and (equal major-mode 'org-mode)
-       (or))
-  (string-prefix-p "=" (downcase te))
-  (string-prefix-p "~" (downcase te)))
-
-
-(with-eval-after-load "emojify"
-	(add-to-list 'emojify-inhibit-functions 'my:emojify-inhibit-fix-org-drawers)
-	(add-to-list 'emojify-inhibit-functions 'my:emojify-inhibit-no-inline-escape-emoji)
-)
 
 (with-eval-after-load 'ox
   (require 'ox-hugo)
@@ -711,22 +674,6 @@ now being rendered as Emojis. Filter this case out."
 ; vvv--- live eex
 (add-to-list 'auto-mode-alist '("\\.leex\\'" . web-mode))
 
-(defun my-web-mode-hook ()
-  "Hooks for Web mode."
-  (setq web-mode-markup-indent-offset 2)
-)
-(add-hook 'web-mode-hook  'my-web-mode-hook)
-
-; because i want HTML & Javascript highlighting in the same file
-(require 'multi-web-mode)
-(setq mweb-default-major-mode 'html-mode)
-(setq mweb-tags
-  '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
-    (js-mode  "<script[^>]*>" "</script>")
-    (css-mode "<style[^>]*>" "</style>")))
-(setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5" "erb"))
-(multi-web-global-mode 1)
-
 ;;------------- LUA
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
 (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
@@ -791,3 +738,6 @@ now being rendered as Emojis. Filter this case out."
 ;;revert windows on exit - needs winner mode
 (winner-mode)
 (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
+
+;; give ourselves a way to see why things keep pausing
+(explain-pause-mode)

@@ -553,21 +553,6 @@ or if one even should.
   :hook (prog-mode . rainbow-mode ))
 #+end_src
 
-*** Git change indicator
-
-It's also nice to have a subtle hint that a line has been changed, or added, but not committed. Maybe you didn't mean to change that line. Well, no worries Dear, [[https://github.com/emacsorphanage/git-gutter#readme][git-gutter]] is here, and Doom Emacs is already set up to use it via the [[https://github.com/doomemacs/doomemacs/tree/develop/modules/ui/vc-gutter][vc-gutter]] in ~init.el~ Git Gutter puts thin colored vertical lines in Emacs' gutter that correspond to changed code if you tell it you want to be =+pretty= in the ~init.el~ by saying ~(vc-gutter +pretty)~
-
-There's also [[https://github.com/emacsorphanage/git-gutter-fringe#readme][git-gutter-fringe]] which is a variant designed to work with ~linum-mode~ but it has its own downsides.
-
-#+begin_src elisp :tangle config.el
-; display the git gutter
-(require 'git-gutter)
-(set-face-foreground 'git-gutter:modified "yellow")
-(set-face-foreground 'git-gutter:added    "blue")
-(set-face-foreground 'git-gutter:deleted  "white")
-
-(global-git-gutter-mode t)
-#+end_src
 
 *** Wait. What function is this?
 [[https://github.com/alphapapa/topsy.el#readme][Topsy]] is a nifty little utility that keeps the name of the current function pinned to the top of the page when it scrolls off-screen. Every now and then I get a little confused and think it's the /actual/ line, but overall it's a nice little helper.
@@ -618,7 +603,7 @@ I want it to _only_ get rid of the workspace and _never_ close the window
 By default this is mapped to +workspace/close-window-or-workspace
 
 #+begin_src elisp :tangle config.el
-(global-set-key (kbd "s-w")  '+workspace/delete)
+(global-set-key (kbd "s-w")  '+workspace/kill)
 #+end_src
 
 ** Selection Helper
@@ -826,6 +811,7 @@ Last time I checked: July 5, 2024
 ** Pretty bullet lists please
 [[https://github.com/sabof/org-bullets][org-bullets]] mode takes those boring-ass ASCII characters used for headings and bullets and replaces them with UTF-8 characters that look way better. This is just a visual tweak. The file stores the boring ASCII characters. That way if you an org-mode file with some poor soul who hasn't learned the joys of emacs, or how to make their bullets pretty, they can still read them without issue.
 
+
 #+BEGIN_SRC elisp :tangle config.el
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
@@ -907,7 +893,7 @@ There are also functions to add an image as an overlay or remove one, but I've h
       (overlay-put ov 'image-url t))))
 
 (defun image-url-clear-overlays ()
-  "Reove overlays on image-urls."
+  "Remove overlays on image-urls."
   (interactive)
   (require 'ov)
   (ov-clear 'image-url))
@@ -920,7 +906,6 @@ Found [[https://emacs.stackexchange.com/a/26638/30947][on Stack Exchange]]
 [[https://github.com/snosov1/toc-org/][toc-org]] gives you auto-generated & updated tables of contents for org-mode. It supports markdown-mode too. /However/, Doom's ~init.el~ has [[https://docs.doomemacs.org/v21.12/modules/lang/markdown/][markdown support]] built-in which uses [[https://github.com/ardumont/markdown-toc][markdown-toc]] for generating tables of content in markdown files and if you turn markdown support on in toc-org there are disagreements about ~markdown-mode-map~ so I just leave it off.
 
 Honestly, life is better when I just write in org-mode and export to markdown.
-
 
 
 #+begin_src elisp :tangle config.el
@@ -1182,46 +1167,6 @@ This will auto-resize ALL images whenever the window is resized
 
 (add-hook 'window-size-change-functions 'org-image-resize)
 #+end_src
-** Slack / GitHub Style emoji
-The [[https://github.com/iqbalansari/emacs-emojify][emacs-emojify]] offers support for Slack / GitHub style emojis, as well as easy insertion of other emojis.
-
-By default it handles ascii, unicode, and "github" style emojis. This is controlled from the ~emojify-emoji-styles~ & ~emojify-display-style~ variables. I only want to display unicode emojis, but I want to be able to type ~:smile:~ and get the smile emoji without having to open a picker.
-
-
-First you need the emojify package loaded. See ~packages.el~
-Found in [[https://github.com/bgutter/dotemacs/blob/master/my-init.org][bgutter's config file]]
-
-Then you turn it on everywhere, except where you don't want it.
-#+BEGIN_SRC elisp :tangle config.el
-(use-package emojify
-  :config
-  (when (member "Segoe UI Emoji" (font-family-list))
-    (set-fontset-font
-     t 'symbol (font-spec :family "Segoe UI Emoji") nil 'prepend))
-  (setq emojify-display-style 'unicode)
-  (setq emojify-emoji-styles '(unicode github))
-  (global-set-key (kbd "C-c .") #'emojify-insert-emoji))
-
-(add-hook 'after-init-hook #'global-emojify-mode)
-(defun my:emojify-inhibit-fix-org-drawers (text beg end)
-  "Since org-mode now uses lower-case :begin:, :end:, etc tags, some of them are
-now being rendered as Emojis. Filter this case out."
-  (and (equal major-mode 'org-mode) (member (downcase text) '(":begin:" ":end:"))))
-
-; made by me
-(defun my:emojify-inhibit-no-inline-escape-emoji (text beg end)
-  "disable creation of emojis starting with = or ~ in org-mode"
-  (and (equal major-mode 'org-mode)
-       (or))
-  (string-prefix-p "=" (downcase te))
-  (string-prefix-p "~" (downcase te)))
-
-
-(with-eval-after-load "emojify"
-	(add-to-list 'emojify-inhibit-functions 'my:emojify-inhibit-fix-org-drawers)
-	(add-to-list 'emojify-inhibit-functions 'my:emojify-inhibit-no-inline-escape-emoji)
-)
-#+END_SRC
 ** Exporters
 Packages prefixed with ~ox-*~ are Org-mode eXporter packages. The most common ones are [[https://orgmode.org/worg/exporters/ox-overview.html][listed on the Org-mode site]] but there are quite a few others. Here are the ones I use.
 
@@ -1747,21 +1692,6 @@ Also of note is ~mweb-tags~ which teaches it how to find the CSS or JavaScript s
 ; vvv--- live eex
 (add-to-list 'auto-mode-alist '("\\.leex\\'" . web-mode))
 
-(defun my-web-mode-hook ()
-  "Hooks for Web mode."
-  (setq web-mode-markup-indent-offset 2)
-)
-(add-hook 'web-mode-hook  'my-web-mode-hook)
-
-; because i want HTML & Javascript highlighting in the same file
-(require 'multi-web-mode)
-(setq mweb-default-major-mode 'html-mode)
-(setq mweb-tags
-  '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
-    (js-mode  "<script[^>]*>" "</script>")
-    (css-mode "<style[^>]*>" "</style>")))
-(setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5" "erb"))
-(multi-web-global-mode 1)
 #+end_src
 
 ** Lua
@@ -1805,6 +1735,14 @@ We're going to disable the rubocop & reek flycheck checkers. Especially rubocop 
 (after! 'ruby-mode
   (require 'ruby-tools))
 (setq-default flycheck-disabled-checkers '(ruby-rubocop ruby-reek))
+#+END_SRC
+
+Rubocop /should/ be disabled via ~package.el~ but I don't trust that
+fucker to not come back. I'm keeping this around, but not "tangled"
+for the moment.
+
+#+BEGIN_SRC elisp
+(remove-hook 'ruby-mode-hook #'rubocop-mode)
 #+END_SRC
 ** YAML
 Oddly, emacs doesn't seem to know that =.yml= is a common file extension for yaml.
@@ -1873,41 +1811,19 @@ Full disclaimer, I set this up, but I never use ediff because [[https://kaleidos
 (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
 #+end_src
 
-** GitHub Copilot
-*I no longer use this*, but maybe you'll find it useful.
+* Misc / Troubleshooting
+After a recent upgrade, I started having trouble with the system pausing as I was typing. Very annoying. This is what [[https://github.com/lastquestion/explain-pause-mode][explain-pause-mode]] was designed to help with. It's loaded via =package.el=
 
-I'm really torn about [[https://github.com/features/copilot][GitHub Copilot]]. It drives me kinda buggy in languages I'm comfortable with, but it's helpful when tweaking files in languages I'm /not/ comfortable with. It's also pretty decent about generating boring code that needs to be written but doesn't require much thought. Well, except for the bits that look totally reasonable but are actually errors and you don't notice until you run your tests. You do have tests right?
+#+begin_quote
+=explain-pause-mode= is very lightweight; you can leave it running all the time. Turn it on after requiring it
+#+end_quote
 
-Plus the company has drunk ALL the AI kool-aid and actually went so far as to imply that Copilot would be a good tool to help avoid developer burnout. Instead of, you know, treating them like humans who actually need time away from work to recover and enjoy their life & people outside of work.
-
-Anyway. Copilot. Made by a company run by capitalist dicks who want to use technology instead of just being decent human beings.
-
-The most important bit here is mapping ~copilot-accept-completion~ to a key-combo instead of the right arrow or return. Those paths just lead to frustration.
-
-#+begin_src elisp
-(use-package! copilot
-  :hook (prog-mode . copilot-mode)
-  :bind (
-         ;; :map copilot-completion-map
-         ;; ("<right>" . 'copilot-accept-completion)
-         ("C-f" . 'copilot-accept-completion)
-         ("M-<right>" . 'copilot-accept-completion-by-word)
-         ("M-f" . 'copilot-accept-completion-by-word)
-         ("C-e" . 'copilot-accept-completion-by-line)
-         ("<end>" . 'copilot-accept-completion-by-line)
-         ("M-n" . 'copilot-next-completion)
-         ("M-p" . 'copilot-previous-completion)))
+#+begin_src elisp :tangle config.el
+;; give ourselves a way to see why things keep pausing
+(explain-pause-mode)
 #+end_src
 
-It is "strongly recommended" that you enable "childframe" option in "company module" to prevent overlay conflict. I don't know what that means and the instruction of calling ~(company +childframe)~ doesn't work because "company" is a "void" function. So, fuck it.
-
-Copilot detects the language to use based on the current major-mode's name. It takes it and strips the ~-mode~ part. Sometimes that doesn't work well though, and it gives you crappy suggestions. To compensate you can give it a mapping to work with.
-
-For example, if you use [[https://github.com/zenspider/enhanced-ruby-mode][enhanced-ruby-mode]] instead of the built-in ruby-mode you'd want to add this. I don't, so this bit isn't currently tangled.
-
-#+begin_src elisp
-(add-to-list 'copilot-major-mode-alist '("enh-ruby" . "ruby"))
-#+end_src
+run =explain-pause-top= to see its "top"-like output as you work.
 
 
 * Doom's Helpful Instructions
@@ -1999,6 +1915,86 @@ I wish I could figure out how to get [[https://rgel.readthedocs.io/en/2.2.1/][rg
 * Junk Drawer
 I've tried and abandoned many things, in my attempt to make emacs work the way I want. What follows is the leftover detritus of those attempts. Things I've decided were probably worth keeping "in case I need them someday" but have subsequently completely forgotten everything about.
 
+** GitHub Copilot
+*I no longer use this*, but maybe you'll find it useful.
+
+I'm really torn about [[https://github.com/features/copilot][GitHub Copilot]]. It drives me kinda buggy in languages I'm comfortable with, but it's helpful when tweaking files in languages I'm /not/ comfortable with. It's also pretty decent about generating boring code that needs to be written but doesn't require much thought. Well, except for the bits that look totally reasonable but are actually errors and you don't notice until you run your tests. You do have tests right?
+
+Plus the company has drunk ALL the AI kool-aid and actually went so far as to imply that Copilot would be a good tool to help avoid developer burnout. Instead of, you know, treating them like humans who actually need time away from work to recover and enjoy their life & people outside of work.
+
+Anyway. Copilot. Made by a company run by capitalist dicks who want to use technology instead of just being decent human beings.
+
+The most important bit here is mapping ~copilot-accept-completion~ to a key-combo instead of the right arrow or return. Those paths just lead to frustration.
+
+#+begin_src elisp
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (
+         ;; :map copilot-completion-map
+         ;; ("<right>" . 'copilot-accept-completion)
+         ("C-f" . 'copilot-accept-completion)
+         ("M-<right>" . 'copilot-accept-completion-by-word)
+         ("M-f" . 'copilot-accept-completion-by-word)
+         ("C-e" . 'copilot-accept-completion-by-line)
+         ("<end>" . 'copilot-accept-completion-by-line)
+         ("M-n" . 'copilot-next-completion)
+         ("M-p" . 'copilot-previous-completion)))
+#+end_src
+
+It is "strongly recommended" that you enable "childframe" option in "company module" to prevent overlay conflict. I don't know what that means and the instruction of calling ~(company +childframe)~ doesn't work because "company" is a "void" function. So, fuck it.
+
+Copilot detects the language to use based on the current major-mode's name. It takes it and strips the ~-mode~ part. Sometimes that doesn't work well though, and it gives you crappy suggestions. To compensate you can give it a mapping to work with.
+
+For example, if you use [[https://github.com/zenspider/enhanced-ruby-mode][enhanced-ruby-mode]] instead of the built-in ruby-mode you'd want to add this. I don't, so this bit isn't currently tangled.
+
+#+begin_src elisp
+(add-to-list 'copilot-major-mode-alist '("enh-ruby" . "ruby"))
+#+end_src
+
+** Slack / GitHub Style emoji
+NOTE: currently disabled because i haven't managed to get it working, but want to.
+
+
+The [[https://github.com/iqbalansari/emacs-emojify][emacs-emojify]] offers support for Slack / GitHub style emojis, as well as easy insertion of other emojis.
+
+By default it handles ascii, unicode, and "github" style emojis. This is controlled from the ~emojify-emoji-styles~ & ~emojify-display-style~ variables. I only want to display unicode emojis, but I want to be able to type ~:smile:~ and get the smile emoji without having to open a picker.
+
+
+First you need the emojify package loaded. See ~packages.el~
+Found in [[https://github.com/bgutter/dotemacs/blob/master/my-init.org][bgutter's config file]]
+
+Then you turn it on everywhere, except where you don't want it.
+#+BEGIN_SRC elisp
+(use-package emojify
+  :config
+  (when (member "Segoe UI Emoji" (font-family-list))
+    (set-fontset-font
+     t 'symbol (font-spec :family "Segoe UI Emoji") nil 'prepend))
+  (setq emojify-display-style 'unicode)
+  (setq emojify-emoji-styles '(unicode github))
+  (global-set-key (kbd "C-c .") #'emojify-insert-emoji))
+
+(add-hook 'after-init-hook #'global-emojify-mode)
+(defun my:emojify-inhibit-fix-org-drawers (text beg end)
+  "Since org-mode now uses lower-case :begin:, :end:, etc tags, some of them are
+now being rendered as Emojis. Filter this case out."
+  (and (equal major-mode 'org-mode) (member (downcase text) '(":begin:" ":end:"))))
+
+; made by me
+(defun my:emojify-inhibit-no-inline-escape-emoji (text beg end)
+  "disable creation of emojis starting with = or ~ in org-mode"
+  (and (equal major-mode 'org-mode)
+       (or))
+  (string-prefix-p "=" (downcase te))
+  (string-prefix-p "~" (downcase te)))
+
+
+(with-eval-after-load "emojify"
+	(add-to-list 'emojify-inhibit-functions 'my:emojify-inhibit-fix-org-drawers)
+	(add-to-list 'emojify-inhibit-functions 'my:emojify-inhibit-no-inline-escape-emoji)
+)
+#+END_SRC
+
 ** ob-raku
 #+begin_src elisp
 (let ((ob-raku-file "~/workspace/ob-raku/ob-raku.el"))
@@ -2036,4 +2032,30 @@ I've disabled it because I wasn't deriving enough value from it and the indentat
   )
 (add-to-list 'flycheck-checkers 'vale 'append)
 (flycheck-vale-setup)
+#+end_src
+
+** Multi-Web Mode
+In theory this will give you syntax highlighting of JavaScript & HTML
+when you get an HTML file  with JavaScript embedded in it. In practice
+it does do the highlighting correctly, but typing is very problematic,
+especially when typing in a JavaScript section. Not worth the
+frustration.
+
+
+#+begin_src elisp
+(defun my-web-mode-hook ()
+  "Hooks for Web mode."
+  (setq web-mode-markup-indent-offset 2)
+)
+(add-hook 'web-mode-hook  'my-web-mode-hook)
+
+; because i want HTML & Javascript highlighting in the same file
+(require 'multi-web-mode)
+(setq mweb-default-major-mode 'html-mode)
+(setq mweb-tags
+  '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
+    (js-mode  "<script[^>]*>" "</script>")
+    (css-mode "<style[^>]*>" "</style>")))
+(setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5" "erb"))
+(multi-web-global-mode 1)
 #+end_src
