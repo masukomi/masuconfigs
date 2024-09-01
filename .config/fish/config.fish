@@ -16,6 +16,7 @@ end
 set -x EDITOR doom
 set -x BAT_PAGER "" # no paging! Only spew!
 set -x vmm_use_secure_cookies false
+set -x HOMEBREW_PREFIX /opt/homebrew
 
 ## LLVM
 
@@ -84,6 +85,10 @@ abbr -a gcm "git commit -m"
 abbr -a its "git status -uno"
 # abbr -a ag "ag -p ~/.ignore"
 
+# docker-compose for official docker
+# fish_add_path -g -a $HOME/.docker/cli-plugins/
+# docker-compose for homebrew
+fish_add_path -g -a $HOMEBREW_PREFIX/lib/docker/cli-plugins/
 abbr -a dc "docker-compose"
 abbr -a dce "docker-compose exec"
 abbr -a dcu "docker-compose up"
@@ -126,6 +131,11 @@ alias work "hey stop 2> /dev/null; hey start @ticketsolve"
 alias breakfast "hey stop 2> /dev/null; hey start @eating + breakfast"
 alias lunch "hey stop 2> /dev/null; hey start @eating + lunch"
 alias dogs "hey stop 2> /dev/null; hey start @dogs +walking"
+alias bb "hey stop 2> /dev/null; hey start @backup_brain"
+alias dg "hey stop 2> /dev/null; hey start @devgood"
+
+# Tailscale
+alias tailscale  /Applications/Tailscale.app/Contents/MacOS/Tailscale
 
 
 # Convenience
@@ -136,8 +146,8 @@ alias dogs "hey stop 2> /dev/null; hey start @dogs +walking"
 # by adding ./bin to the PATH
 # ruby developers can skip using "bundle exec"
 fish_add_path -g ./bin
-fish_add_path -g -p /opt/homebrew/bin
-fish_add_path -g -p /opt/homebrew/sbin
+fish_add_path -g -p $HOMEBREW_PREFIX/bin
+fish_add_path -g -p $HOMEBREW_PREFIX/sbin
 # (which fish | sed "s/\/fish//")
 fish_add_path -g . $HOME/bin $HOME/bin/git-scripts $HOME/bin/git-scripts/hooks /usr/local/bin $PATH
 # vvv make python 3 found before macOSs python 2.7
@@ -148,9 +158,9 @@ if test $brewed_python_version
 	fish_add_path -g -a $HOME/Library/Python/$brewed_python_version/bin
 end
 fish_add_path -g -a /Applications
-fish_add_path -g -p /opt/homebrew/opt/grep/libexec/gnubin
-fish_add_path -g -p /opt/homebrew/opt/gnu-getopt/bin
-fish_add_path -g -p /opt/homebrew/opt/findutils/libexec/gnubin
+fish_add_path -g -p $HOMEBREW_PREFIX/opt/grep/libexec/gnubin
+fish_add_path -g -p $HOMEBREW_PREFIX/opt/gnu-getopt/bin
+fish_add_path -g -p $HOMEBREW_PREFIX/opt/findutils/libexec/gnubin
 fish_add_path -g -a $HOME/.iterm2/
 # fish_add_path -g /usr/bin
 # fish_add_path -g /bin
@@ -214,7 +224,7 @@ fish_add_path -g -a $CELLAR/chicken/5.0.0/bin
 set -x -g JAVA_HOME (ls $CELLAR/openjdk | sed -e "s/\///" | sort | tail -n 1)
 fish_add_path -g -a $JAVA_HOME/bin
 # newer bash in path
-fish_add_path -g -p /opt/homebrew/opt/bash/bin
+fish_add_path -g -p $HOMEBREW_PREFIX/opt/bash/bin
 ## Racket
 fish_add_path -g /Applications/Racket*/bin
 
@@ -228,6 +238,10 @@ set -x CLASSPATH ".:$ANTLRPATH:$CLASSPATH"
 alias antlr4 "java -Xmx500M -cp \"$ANTLRPATH:\$CLASSPATH\" org.antlr.v4.Tool"
 alias grun "java -Xmx500M -cp \"$ANTLRPATH:\$CLASSPATH\" org.antlr.v4.gui.TestRig"
 # END JAVA & Antlr
+
+# BEGIN RUBY
+set -x OBJC_DISABLE_INITIALIZE_FORK_SAFETY "YES"
+# END RUBY
 
 # RUST
 fish_add_path -g $HOME/.cargo/bin
@@ -305,6 +319,8 @@ set -x NVM_DIR "$HOME/.nvm"
 # The original version is saved in /Users/masukomi/.config/fish/config.fish.pysave
 set -x PATH "/Library/Frameworks/Python.framework/Versions/3.11/bin" "$PATH"
 
+set -x KINDLE_HOME $HOME/Library/Containers/com.amazon.Kindle/Data/Library/Application\ Support/Kindle/My\ Kindle\ Content
+
 
 ## FINAL OVERRIDES & CUSTOM THINGS
 
@@ -314,3 +330,4 @@ end
 if test -f $HOME/.config/fish/secrets.fish
 	source $HOME/.config/fish/secrets.fish
 end
+
