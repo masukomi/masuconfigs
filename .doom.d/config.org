@@ -44,6 +44,7 @@ Yes, ~config.el~ is what Doom reads, but this is what creates that.
 
 * General Config
 
+** custom elisp files
 Tell it where to find custom elisp files.
 At the time of writing this consists of
 
@@ -63,6 +64,7 @@ At the time of writing this consists of
 
 #+end_src
 
+** auto-reloading files changed on disk
 When an external force changes a file I have open in emacs I'd like those changes to be loaded instead of ignored, and accidentally overwritten. Note that [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Revert.html#Auto-Revert][Auto Revert]] will /not/ revert a buffer if it has unsaved changes, or if its file on disk is deleted or renamed.
 
 When a buffer is auto-reverted, a message is generated. This can be suppressed by setting ~auto-revert-verbose~ to ~nil~.
@@ -72,6 +74,7 @@ When a buffer is auto-reverted, a message is generated. This can be suppressed b
 (global-auto-revert-mode t)
 #+end_src
 
+** killing bigoted old humor
 By default emacs asks you if you /really/ want to quit, even if there's nothing unsaved. It does this /multiple/ times. Even worse, it then prints out some really uncool "jokes" that probably sounded funny to a young white tech geek decades ago in a society that was fine with being disrespectful to anyone who wasn't a privileged white guy.
 
 Fuck all of that.
@@ -79,6 +82,14 @@ Fuck all of that.
 #+begin_src elisp :tangle config.el
 (setq confirm-kill-emacs nil) ; 'y-or-n-p
 #+end_src
+
+** Fonts
+If the fonts are weird in the status bar ("Airline") at the bottom run the following command and then restart emacs.
+
+#+begin_src
+nerd-icons-install-fonts
+#+end_src
+
 
 * Tell them it was me.
 I don't actually know if I use anything which uses this, but it seems reasonable to fill out.
@@ -126,6 +137,7 @@ invoke commands that cut (kill), copy, paste (yank), and undo respectively. Whic
 
 Unfortunately, this completely borks new list item functionality in org-mode
 and it overrides the C-V functionality in evil (visual selection block mode). So, we can't actually run ~(cua-mode t)~
+
 ** Why can't you window?
 For some reason GUI emacs on macOS seems incapable of remembering its window size and it defaults to something ridiculously small.
 
@@ -136,6 +148,7 @@ Note that the sizes here are in characters.
 ; of remembering
 (setq default-frame-alist '((left . 106) (width . 106) (fullscreen . fullheight)))
 #+end_src
+
 ** Make it easy to reload .dir-locals.el
 Directory specific variables are stored in ~.dir-locals.el~ files. These are especially important for setting project-specific variables and things like that. Alas, it doesn't seem that Emacs has a way to easily reload these if you've modified them after loading.
 
@@ -274,10 +287,7 @@ The following /should/ be enough...
 (setq projectile-git-fd-args "--ignore-file .fdignore --no-ignore -H -0 -E .git -tf --strip-cwd-prefix")
 #+end_src
 
-
 /However/ [[https://github.com/doomemacs/doomemacs/blob/84f7eb2affeae9bb5f85379dd8677f2c0a372c83/lisp/doom-projects.el#L174][Doom emacs has hacked the projectile-get-ext-command]] so that it only ever uses the "generic" fall-through which is provided by ~projectile-generic-command~ Doom has /[[https://github.com/doomemacs/doomemacs/blob/84f7eb2affeae9bb5f85379dd8677f2c0a372c83/lisp/doom-projects.el#L198][also/ customized /that/ function]] and in older versions of this file (and thus Doom emacs) the ~projectile-git-fd-args~ were ignored.
-
-
 
 ** Not every repo I open is something I'm working on.
 Projectile also, /really/ wants to be helpful. If you open a file that happens to be in a git repo it'll add that repo to your projects list. I look at a /lot/ of open source repos that I have no intention of working in, so this becomes a problem quickly. This will disable that behavior, and require you to add projects manually (~Space-p-a~)
@@ -287,7 +297,6 @@ Projectile also, /really/ wants to be helpful. If you open a file that happens t
 #+end_src
 
 ** I want to create new files, not just edit existing ones.
-
 convince projectile to create new files
 not just find existing ones. All credit to [[https://www.reddit.com/user/hatschipuh/][/u/hatchipuh]]'s helpful [[https://www.reddit.com/r/emacs/comments/3m8i5r/helmprojectile_quickly_findcreate_new_file_in/][answer on reddit.]]
 
@@ -306,7 +315,7 @@ not just find existing ones. All credit to [[https://www.reddit.com/user/hatschi
 ** Git integration
 Projectile integrates with git to figure out what files are in your project.
 
-The cache is always wrong after switching branches. If we use [[https://magit.vc/][magit]] (loaded via ~init.el~)to switch branches in our project, then we can auto-invalidate it.
+The cache is always wrong after switching branches. If we use [[https://magit.vc/][magit]] (loaded via ~init.el~)to switch branches in our project, then we can auto-invalidate it. Now, if only I used magit.
 
 #+begin_src elisp :tangle config.el
 (defun run-projectile-invalidate-cache (&rest _args)
@@ -529,6 +538,7 @@ So, I have /both…/ most of the time.
 (setq nlinum-relative-current-symbol "->") ;; or "" for display current line number
 (setq nlinum-relative-offset 0)            ;; 1 if you want 0, 2, 3...
 #+end_src
+
 *** Highlighting code in parens
 Not the prettiest, but it's very useful when working in lisp and scheme. This will highlight the contents of a paretheses when you leave the cursor on the start or end one.
 
@@ -551,6 +561,38 @@ or if one even should.
 ; highlight CSS color codes in the color they represent
 (use-package rainbow-mode
   :hook (prog-mode . rainbow-mode ))
+#+end_src
+*** Highlighting common comment keywords
+
+[[https://github.com/tarsius/hl-todo][hl-todo-mode]] enables highlighting of common keywords
+
+You can customize the keywords it highlights & their faces as follows. Note that this is different from the official source repo instructions because ht-todo is ALSO a module
+in [[https://github.com/doomemacs/doomemacs][Doom Emacs]]. Here is [[https://github.com/doomemacs/doomemacs/blob/b6815045828e80e1e301b11b900673593d61e419/modules/ui/hl-todo/README.org#L2][The Readme]] from the Doom Emacs repo.
+
+There are also keybindings to jump between TODO items & show all of them.
+
+By default it'll highlight the following words. If you're viewing this in Emacs with hl-todo-mode enabled, this list should provide an example of the colors they'll have too.
+
+- TODO
+- HACK
+- FIXME
+- REVIEW
+- NOTE
+- DEPRECATED
+- BUG
+- XXX
+
+#+begin_src elisp
+(after! hl-todo
+  (setq hl-todo-keyword-faces
+        `(("FOO"  . ,(face-foreground "MY COLOUR HEX CODE"))
+          ("BAR" . ,(face-foreground 'my-colour-var)))))
+#+end_src
+
+
+#+begin_src elisp :tangle config.el
+; enable highlighting of common comment keywords
+(global-hl-todo-mode t)
 #+end_src
 
 
@@ -742,7 +784,6 @@ So you /can/ easily make urls clickable with ~(goto-address-mode t)~, /but/ you 
        (1+ (current-column))))))
        #+END_SRC
 
-
 * Code Navigation
 [[https://github.com/abo-abo/avy][avy]] is a way to jump to other visible sections of your code. It creates a visual layer with some overlayed characters and you type the characters next to the bit you want to jump to. There are some browser extensions that do this too, and I've found them very useful.
 
@@ -764,7 +805,6 @@ avy-goto-char-timer restricted to the current window. - hlissner
  :nv "C-d" #'avy-goto-line
  )
 #+END_SRC
-
 
 * Dired
 By default Dired shows you owner permissions info. I /never/ want this. If I care about file permissions I'm in my shell, not dired. This removes them, courtesy of [[http://xahlee.info/emacs/emacs/emacs_dired_tips.html][Xah Lee]].
@@ -788,6 +828,12 @@ This code controls the colors it's displayed with.
 (with-eval-after-load "private-comments-mode"
   (set-face-background 'private-comments-face "#527568")
   (set-face-foreground 'private-comments-face "#FFFFFF"))
+#+END_SRC
+
+If private-comments-mode isn't working as expected, setting this to ~t~ will give you some more errors.
+
+#+BEGIN_SRC elisp :tangle config.el
+(setq private-comments-mode-display-warnings nil)
 #+END_SRC
 
 The code that actually enables it is in the pro-mode hook up in my Yafolding section.
@@ -1824,7 +1870,6 @@ After a recent upgrade, I started having trouble with the system pausing as I wa
 #+end_src
 
 run =explain-pause-top= to see its "top"-like output as you work.
-
 
 * Doom's Helpful Instructions
 Henrik & friends left us many useful instructions, which I'm keeping here, because I don't know what I'm doing.
