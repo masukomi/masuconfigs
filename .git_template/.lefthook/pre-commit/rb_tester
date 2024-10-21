@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'set'
-
 files = `git diff --cached --name-only --diff-filter=ACM`.split("\n")
 tested_files = Set.new
 git_root = `git rev-parse --show-toplevel`.strip
@@ -12,12 +10,12 @@ git_root = `git rev-parse --show-toplevel`.strip
 def get_spec_path(file)
   new_path = file
   unless is_spec?(file)
-    new_path = file.sub(/\.rb$/, '_spec.rb')
-    if new_path.include? 'app/'
-      new_path = new_path.sub('app/', 'spec/')
+    new_path = file.sub(/\.rb$/, "_spec.rb")
+    if new_path.include? "app/"
+      new_path = new_path.sub("app/", "spec/")
     end
-    if new_path.include? 'lib/'
-      new_path = new_path.sub('lib/', 'spec/')
+    if new_path.include? "lib/"
+      new_path = new_path.sub("lib/", "spec/")
     end
   end
   new_path
@@ -39,7 +37,6 @@ def get_inner_root(file)
   file.sub(/spec\/.*/, "")
 end
 
-
 files.each do |file|
   filename = file
   next unless is_ruby? file
@@ -48,20 +45,23 @@ files.each do |file|
   next unless is_spec?(filename)
 
   full_spec_path = "#{git_root}/#{filename}"
-  Dir.chdir(get_inner_root(full_spec_path)) do
-    spec_subpath = get_spec_subpath(full_spec_path)
-    next unless File.exist?(spec_subpath) && !tested_files.include?(spec_subpath)
+  begin
+    Dir.chdir(get_inner_root(full_spec_path)) do
+      spec_subpath = get_spec_subpath(full_spec_path)
+      next unless File.exist?(spec_subpath) && tested_files.exclude?(spec_subpath)
 
-    valid_code = system("ruby -c #{spec_subpath}")
-    exit 2 unless valid_code
+      valid_code = system("ruby -c #{spec_subpath}")
+      exit 2 unless valid_code
 
+      tested_files.add full_spec_path
 
-    tested_files.add full_spec_path
-
-    response = system("bundle exec rspec #{spec_subpath}")
-    unless response
-      puts "spec failed: #{spec_subpath}"
-      exit 1
+      response = system("bundle exec rspec #{spec_subpath}")
+      unless response
+        puts "spec failed: #{spec_subpath}"
+        exit 1
+      end
     end
-  end rescue nil
+  rescue
+    nil
+  end
 end
