@@ -1030,6 +1030,30 @@ Enable flyspell in text modes
   (add-hook hook (lambda () (flyspell-mode 1))))
 #+END_SRC
 
+** word counts
+To see the number of words per org-mode tree section (part of your outline) run ~org-wc-display~
+
+To have a running count use [[https://github.com/bnbeckwith/wc-mode][wc-mode]] (Word Count Mode). wc-mode can insert word counts in your modeline, which is nice when you're writing long-form text. Normally you just invoke ~wc~ (an alias for ~wc-count~ ), but you can also have it just running on a loop in the background. The linked web page has a readme with formatting instructions.
+
+Formatting is stored in ~wc-modeline-format~ and the default is ~WC[%W%w/%tw]~
+
+Which is the letters WC followed by square brackets containing
+- original word count before changes
+- change in words
+- a slash
+- total words in buffer.
+
+However, I wanted something simpler.
+
+Because Doom emacs comes with a custom mode-line we need to insert this into that otherwise we'll never see it except in the default "vanilla" modeline when we manually invoke ~wc~. Also ~wc~ invocation uses a different formatting.
+
+
+#+begin_src elisp :tangle config.el
+; add wc-mode to doom modeline
+(setq wc-modeline-format "words: %tw") ; simpler output than the default
+(add-to-list 'global-mode-string '("" wc-buffer-stats))
+#+end_src
+
 ** Configuring misc things via global org variables
 
 
@@ -1864,7 +1888,9 @@ After a recent upgrade, I started having trouble with the system pausing as I wa
 =explain-pause-mode= is very lightweight; you can leave it running all the time. Turn it on after requiring it
 #+end_quote
 
-#+begin_src elisp :tangle config.el
+This is currently disabled because it occasionally crashes, & I don't need it running all the time anyway.
+
+#+begin_src
 ;; give ourselves a way to see why things keep pausing
 (explain-pause-mode)
 #+end_src

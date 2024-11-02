@@ -54,6 +54,7 @@
 ; (package! avy) it's installed by default so no need for it here
 ;                check out the gs prefix for many doom specific avy jump things
 (package! evil-surround)
+(package! expand-region)
 (package! buffer-move)
 (package! reformatter)
 ; Shows keyboard macros or latest interactive commands as emacs lisp.
@@ -74,8 +75,8 @@
 ; edit that face to change what it looks like.
 
 (package! darktooth-theme)
-(package! emojify)
-(package! minimap)
+;; (package! emojify)
+;; (package! minimap)
 (package! nlinum-relative)
 ; extends org-mode's clickable link support to other modes
 ; the built-in version is goto-address mode which works well,
@@ -84,22 +85,26 @@
 (package! powerline)
 ; Pins the most recent method signature to the top of the window
 ; https://github.com/alphapapa/topsy.el#readme
-(package! topsy
-  :recipe (:host github :repo "alphapapa/topsy.el"))
+;; (package! topsy
+;;   :recipe (:host github :repo "alphapapa/topsy.el"))
 (package! rainbow-mode)
-(package! visual-regexp-steroids)
+;; (package! visual-regexp-steroids)
 (package! xterm-color)
-(package! git-gutter)
+; (package! git-gutter)
 ;; (package! git-gutter-fringe)
 
 
 ; LANGUAGES
+; Crystal
 (package! crystal-mode)
 
+; Docker
 (package! dockerfile-mode)
 
-; HTML, JavaScript, CSS
+; Fish shell
 (package! fish-mode)
+
+; HTML, JavaScript, CSS
 (package! handlebars-mode)
 (package! htmlize)
 (package! multi-web-mode)
@@ -118,9 +123,10 @@
 (package! ob-raku)
 
 ; -- Ruby
+(package! rubocop :disable t) ; arg fuck off rubocop!
 (package! rspec-mode)
-(package! ruby-hash-syntax)
-(package! ruby-tools) ; https://github.com/rejeep/ruby-tools.el
+;; (package! ruby-hash-syntax)
+;; (package! ruby-tools) ; https://github.com/rejeep/ruby-tools.el
 
 ; -- Rust
 (package! rust-mode)
@@ -156,9 +162,10 @@
 (package! ox-gfm)
 (package! denote)
 (package! plantuml-mode)
-(package! flycheck-plantuml)
+; (package! flycheck-plantuml)
 (package! org-attach-screenshot)
 (package! org-wc)
+(package! wc-mode)
 (package! toc-org) ; table of contents generator
 
 ; UTILITIES
@@ -198,15 +205,29 @@
 ;; (package! flycheck-vale)
 ;(package! ox-leanpub)
 ; ripgrep (rg)
-(package! rg)
-(package! sqlite3)
-(package! private-comments-mode)
+;; (package! rg)
+;; (package! sqlite3)
+
+;; what normal people would use...
+;; (package! private-comments-mode)
+;; when I'm working on it...
+(package! my-package
+  :recipe (:local-repo "~/workspace/private-comments-mode"
+           ;; the following is to avoid having to run 'doom sync' every time you
+           ;; change the package.
+           :build (:not compile)
+                       ))
+
+(package! explain-pause-mode
+  :recipe (:host github :repo "lastquestion/explain-pause-mode"))
+
+
 ; (package! example
 ;   :recipe (:host github :repo "masukomi/private-comments-mode"))
 
 ;
-(package! copilot
-  :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
+;; (package! copilot
+;;   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
 
 ;; TEMPORARY (hopefully) Bullshittery
 ;; via https://emacs.stackexchange.com/a/75836/30947

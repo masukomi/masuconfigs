@@ -178,6 +178,9 @@ current buffer's, reload dir-locals."
 (use-package rainbow-mode
   :hook (prog-mode . rainbow-mode ))
 
+; enable highlighting of common comment keywords
+(global-hl-todo-mode t)
+
 ; enable topsy mode when programming
 (add-hook 'prog-mode-hook #'topsy-mode)
 
@@ -282,6 +285,8 @@ current buffer's, reload dir-locals."
   (set-face-background 'private-comments-face "#527568")
   (set-face-foreground 'private-comments-face "#FFFFFF"))
 
+(setq private-comments-mode-display-warnings nil)
+
 (setq org-fold-core-style 'text-properties)
 (after! evil
    (evil-select-search-module 'evil-search-module 'isearch))
@@ -361,6 +366,10 @@ current buffer's, reload dir-locals."
 
 (dolist (hook '(text-mode-hook))
   (add-hook hook (lambda () (flyspell-mode 1))))
+
+; add wc-mode to doom modeline
+(setq wc-modeline-format "words: %tw") ; simpler output than the default
+(add-to-list 'global-mode-string '("" wc-buffer-stats))
 
   (setq org-export-with-sub-superscripts nil)
 
@@ -738,6 +747,3 @@ current buffer's, reload dir-locals."
 ;;revert windows on exit - needs winner mode
 (winner-mode)
 (add-hook 'ediff-after-quit-hook-internal 'winner-undo)
-
-;; give ourselves a way to see why things keep pausing
-(explain-pause-mode)
