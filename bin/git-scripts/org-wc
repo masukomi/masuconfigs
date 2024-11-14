@@ -2,6 +2,7 @@
 
 git log --stat -n1 | grep --color=never  "^ *.*\.org *|" > /dev/null
 
+# test if the grep matched anything
 if [ $? -eq 0 ]; then
 	printf "\033[1mChanges:\033[0m\n"
 	script -q  /dev/null git log --stat=60 -n1 \
@@ -9,7 +10,11 @@ if [ $? -eq 0 ]; then
 		| sed -e "s/^ */         /"
 
 	printf "\n\033[1mWord Counts:\033[0m\n"
-	git log --name-only -n1 --format="" | xargs wc -w
+	git log --name-only -n1 --format="" \
+		| xargs wc -w \
+		| numfmt --grouping
+
+	#numfmt is not a POSIX utility. It comes from GNU coreutils
 else
 	echo "No .org files in last commit."
 fi
