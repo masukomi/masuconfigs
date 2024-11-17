@@ -8,16 +8,25 @@ end
 if test -f /usr/local/share/fish/vendor_completions.d/task.fish
 	source /usr/local/share/fish/vendor_completions.d/task.fish
 end
-if test -f $HOME/workspace/Watson/watson.fish
-	source $HOME/workspace/Watson/watson.fish
-end
+# if test -f $HOME/workspace/Watson/watson.fish
+# 	source $HOME/workspace/Watson/watson.fish
+# end
 
 
 set -x EDITOR doom
 set -x BAT_PAGER "" # no paging! Only spew!
 set -x vmm_use_secure_cookies false
 set -x HOMEBREW_PREFIX /opt/homebrew
+set -x XDG_CONFIG_HOME $HOME/.config
 
+# NORMAL (unix) XDG DATA HOME
+set -x XDG_DATA_HOME $HOME/.local/share
+# APPLE's stupid XDG DATA HOME with it's stupid space
+# set -x XDG_DATA_HOME $HOME/Library/Application\ Support
+# I dunno what the unix standard is for caches and It's probably best
+# to stick with apple's anyway if there's any cleanup stuff that
+# happens related to it.
+set -x XDG_CACHE_HOME $HOME/Library/Caches
 ## LLVM
 
 
@@ -76,6 +85,7 @@ if [ (uname) = "Darwin" ]
 end
 
 #abbr -a git hub
+abbr -a bb 'cd ~/workspace/backup_brain'
 abbr -a be 'bundle exec'
 # abbr -a clojure "java -cp ~/workspace/clojure-1.5.1/clojure-1.5.1.jar clojure.main"
 #eval (thefuck --alias | tr '\n' ';')
@@ -113,6 +123,9 @@ abbr -a heyl 'raku -I lib bin/hey'
 abbr -a nhook 'LEFTHOOK=0'
 # xhook = exclude hook
 abbr -a xhook 'LEFTHOOK_EXCLUDE='
+
+# nfm = number format
+abbr -a nfm 'numfmt --grouping'
 
 # alias vimr /Applications/VimR.app/Contents/Resources/vimr
 abbr -a vfz "mvim (fzf)"
