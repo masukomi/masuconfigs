@@ -90,7 +90,6 @@ If the fonts are weird in the status bar ("Airline") at the bottom run the follo
 nerd-icons-install-fonts
 #+end_src
 
-
 * Tell them it was me.
 I don't actually know if I use anything which uses this, but it seems reasonable to fill out.
 
@@ -859,8 +858,15 @@ Last time I checked: July 5, 2024
 
 
 #+BEGIN_SRC elisp :tangle config.el
+; pretty bullets in org-mode
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
+
+** Shift-select like all the other editors
+#+begin_src elisp :tangle config.el
+; enable shift selection
+(setq org-support-shift-select t)
+#+end_src
 
 ** Keyboards are great, but mice are nice too.
 [[https://github.com/emacs-mirror/emacs/blob/master/lisp/org/org-mouse.el][Org-mouse]] (ships with emacs) implements the following features:
@@ -1047,12 +1053,13 @@ However, I wanted something simpler.
 
 Because Doom emacs comes with a custom mode-line we need to insert this into that otherwise we'll never see it except in the default "vanilla" modeline when we manually invoke ~wc~. Also ~wc~ invocation uses a different formatting.
 
-
 #+begin_src elisp :tangle config.el
 ; add wc-mode to doom modeline
 (setq wc-modeline-format "words: %tw") ; simpler output than the default
 (add-to-list 'global-mode-string '("" wc-buffer-stats))
 #+end_src
+
+To set a new goal run
 
 ** Configuring misc things via global org variables
 

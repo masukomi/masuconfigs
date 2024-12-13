@@ -291,7 +291,11 @@ current buffer's, reload dir-locals."
 (after! evil
    (evil-select-search-module 'evil-search-module 'isearch))
 
+; pretty bullets in org-mode
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+; enable shift selection
+(setq org-support-shift-select t)
 
 (require 'org-mouse)
 
