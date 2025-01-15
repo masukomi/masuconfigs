@@ -1,0 +1,83 @@
+#!/usr/bin/env sh
+
+set -e
+
+EPUB_PATH=$1
+
+if [ "$EPUB_PATH" == "" ]; then
+    read -p "Path to .epub file." EPUB_PATH
+fi
+
+if [ ! -e $EPUB_PATH ]; then
+  echo "Can't find: $EPUB_PATH"
+  exit 64
+fi
+
+STARTING_DIR=$(pwd)
+
+## version of making temp dir that works on linux AND macos (BSD)
+
+mytmpdir=$(mktemp -d 2>/dev/null || mktemp -d -t 'mytmpdir')
+
+cd $mytmpdir
+
+echo "Unzipping: $EPUB_PATH"
+
+unzip "$EPUB_PATH"
+
+echo "Cleaning…"
+# Cleanup OceanOfPDF.com bullshit
+rg -i OceanofPDF > /dev/null
+ocean_of_pdf=$?
+
+if [ $ocean_of_pdf -eq 0 ]; then
+    echo "I see this is from OceanofPDF.com. Ok. gimme a sec…"
+
+    if [ -e OEBPS/Text ]; then
+        FILE_PATH='OEBPS/Text/*.xhtml'
+    else
+        FILE_PATH="*.html"
+    fi
+    # no "" around $FILE_PATH so that it'll expand. Otherwise it'll look for a file with exactly
+    # the wildcard name which it'll never find.
+    perl -pi -e 's/<div style="float: none; margin: 10px 0px 10px 0px; text-align: center;"><p><a href="https:\/\/oceanofpdf.com"><i>OceanofPDF.com<\/i><\/a><\/p><\/div>//g' $FILE_PATH
+fi
+
+read -p "Delete old .epub? [y/n]
+" DELETE_Y_N
+
+if [ "$DELETE_Y_N" == "y" ]; then
+    rm $EPUB_PATH
+
+    if [ $? -eq 0 ]; then
+        echo "Deleted"
+    else
+        echo "Error encountered deleting original .epub"
+    fi
+else
+    echo "Won't delete original"
+fi
+
+# what shall we call the new file
+NEW_EPUB_NAME=""
+while [ "$NEW_EPUB_NAME" == "" ]; do
+    read -p "New .epub name: " NEW_EPUB_NAME
+done
+# add a .epub in case I forgot it.
+if [[ "$NEW_EPUB_NAME" != *".epub" ]]; then
+  NEW_EPUB_NAME="$NEW_EPUB_NAME".epub
+fi
+
+EPUB_DIR=$(dirname "$EPUB_PATH")
+NEW_EPUB_PATH="$EPUB_DIR/$NEW_EPUB_NAME"
+
+# Zip it back up
+zip -0Xq "$NEW_EPUB_PATH" mimetype
+zip -Xr9Dq "$NEW_EPUB_PATH" * -x *.DS_Store
+
+echo "New .epub at $NEW_EPUB_PATH"
+
+cd "$STARTING_DIR"
+rm -rf $mytmpdir
+
+echo "DONE."
