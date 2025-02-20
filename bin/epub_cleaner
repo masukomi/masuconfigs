@@ -35,6 +35,8 @@ if [ $ocean_of_pdf -eq 0 ]; then
 
     if [ -e OEBPS/Text ]; then
         FILE_PATH='OEBPS/Text/*.xhtml'
+    elif [ -e text ]; then
+        FILE_PATH='text/*.html'
     else
         FILE_PATH="*.html"
     fi
