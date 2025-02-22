@@ -1,0 +1,108 @@
+#!/usr/bin/env ruby
+
+gem "paint"
+require 'paint'
+
+# cancel quietly via ^c
+trap("SIGINT") { exit! }
+
+#---------------------
+# Functions
+def get_valid_die(max)
+  valid_dice= [4,6,8,10]
+
+  user_die = STDIN.gets.strip.to_i
+  user_die = 10 if user_die == 0 && max >= 10
+  return user_die if valid_dice.include?(user_die) && user_die <= max
+  puts "It's got to be a valid die type."
+  get_valid_die(max)
+
+end
+def get_chaos()
+  chaos=STDIN.gets.strip.to_i
+  chaos = 10 if chaos == 0
+  return chaos if chaos > 0 && chaos < 11
+  puts "1-10 please (0 counts as 10):"
+  get_chaos()
+end
+
+def section_and_entry(die_size)
+  [rand(1..die_size), rand(1..6)]
+end
+
+def which_character
+  puts Paint["Character List Die Size [4,6,8,10]?", :white, :bright, :underline]
+  die_size = get_valid_die(10)
+  section, entry = section_and_entry(die_size)
+  puts "Charater: Section #{section}, Entry #{entry}"
+end
+
+def which_thread
+  putc "\n"
+  puts Paint["Threads List Die Size [4,6,8,10]?", :white, :bright, :underline]
+  die_size = get_valid_die(10)
+  section, entry = section_and_entry(die_size)
+  puts "Thread: Section #{section}, Entry #{entry}"
+end
+
+def y_or_n()
+  input = STDIN.gets.strip.downcase
+  if ! %w(y n).include? input
+    puts "y or n please."
+    y_slash_n
+  end
+  input == "y"
+end
+
+def adjust_scene
+  initial_roll = rand(1..10)
+  secondary_roll = nil
+  if initial_roll > 6
+    initial_roll = rand(1..6)
+    secondary_roll = rand(1..6) while (secondary_roll.nil? || secondary_roll == initial_roll)
+  end
+
+  adjustments = [
+    "Remove A Character",
+    "Add A Character",
+    "Reduce / Remove An Activity",
+    "Increase an Activity",
+    "Remove An Object",
+    "Add An Object"
+  ]
+  puts adjustments[initial_roll - 1]
+  puts adjustments[secondary_roll - 1] if secondary_roll
+
+  puts Paint["Want Charater Choice? [y/n]:", :white, :bright, :underline]
+  which_character if y_or_n()
+  puts Paint["Want Thread Choice? [y/n]:", :white, :bright, :underline]
+  which_thread if y_or_n()
+
+end
+
+#---------------------
+# Procedural Stuff
+
+if ARGV[0]
+  chaos = ARGV[0].strip.to_i
+else
+  puts "Current Chaos Level? [1-10]:"
+  chaos = get_chaos()
+end
+
+random_number = rand(1..10)
+puts "Random Number: #{random_number} vs Chaos Level #{chaos}"
+if random_number > chaos
+  puts "Proceed as expected"
+else
+  if random_number % 2 == 0
+    puts "Interrupted scene"
+    which_character()
+    which_thread()
+  else
+    puts "Altered Scene"
+    adjust_scene()
+  end
+end
+
+puts "Have Fun…"
