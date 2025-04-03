@@ -456,6 +456,10 @@ Here's how you'd disable those in just a specific mode.
   (sp-local-pair "\"" nil :actions nil))
 #+end_src
 
+#+begin_src elisp :tangle config.el
+(add-hook 'org-mode-hook #'turn-off-smartparens-mode)
+#+end_src
+
 * Neotree
 [[https://github.com/jaypei/emacs-neotree][Neotree]] An Emacs clone of Vim's NerdTree. I keep forgetting i have it installed. If I ever feel like invoking it, I think it'd be good to have it represent the current state of my working directory, rather than what it happened to look like when I launched it.
 
@@ -623,14 +627,14 @@ Mucking with the colors is potentially cool, but I decided to not bother after f
 ; customize the mode-line (think airline in vim)
 (set-face-attribute 'mode-line nil
  :background "#6c6f31" ; actually gets used as the foreground
- :foreground "#314d6f" ; actually....the background
+ :foreground "#27271a" ; actually....the background
  :box nil
  :overline nil
  :underline nil
  )
 
 (set-face-attribute 'mode-line-inactive nil
-                    :background "#4872a4"
+                    :background "#31446f"
                     :foreground "#1a283a"
                     :box nil    ; could do something like '(:line-width 8 :color "#565063")
                     :overline nil

@@ -138,6 +138,8 @@ current buffer's, reload dir-locals."
 ; don't auto-pair escaped double quotes either
 (sp-pair "\\\"" "\\\"" :actions nil)
 
+(add-hook 'org-mode-hook #'turn-off-smartparens-mode)
+
 ; neotree should autorefresh to maintain a current
 ; representation of your directories.
 (setq neo-autorefresh t)
