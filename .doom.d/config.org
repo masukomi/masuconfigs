@@ -83,7 +83,7 @@ Fuck all of that.
 (setq confirm-kill-emacs nil) ; 'y-or-n-p
 #+end_src
 
-** Fonts
+** Font Icons
 If the fonts are weird in the status bar ("Airline") at the bottom run the following command and then restart emacs.
 
 #+begin_src
@@ -618,13 +618,13 @@ I'm never going to click on the save icon when I could just hit ⌘-s and Projec
 Modeline is the Emacs equivalent of Vim's "Airline". You can do a lot to configure it. I just set the height though. I'm pretty sure this is in pixels.
 
 #+begin_src elisp :tangle config.el
+;; Modeline tweaks (think Airline in vim)
 (setq doom-modeline-height 25)
 #+end_src
 
 Mucking with the colors is potentially cool, but I decided to not bother after futzing with it for a bit. Here's what I had.
 
-#+begin_src elisp
-; customize the mode-line (think airline in vim)
+#+begin_src elisp :tangle config.el
 (set-face-attribute 'mode-line nil
  :background "#6c6f31" ; actually gets used as the foreground
  :foreground "#27271a" ; actually....the background

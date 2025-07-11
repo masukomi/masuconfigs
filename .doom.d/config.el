@@ -189,7 +189,23 @@ current buffer's, reload dir-locals."
 ;; disable the graphical toolbar
 (tool-bar-mode -1)
 
+;; Modeline tweaks (think Airline in vim)
 (setq doom-modeline-height 25)
+
+(set-face-attribute 'mode-line nil
+ :background "#6c6f31" ; actually gets used as the foreground
+ :foreground "#27271a" ; actually....the background
+ :box nil
+ :overline nil
+ :underline nil
+ )
+
+(set-face-attribute 'mode-line-inactive nil
+                    :background "#31446f"
+                    :foreground "#1a283a"
+                    :box nil    ; could do something like '(:line-width 8 :color "#565063")
+                    :overline nil
+                    :underline nil)
 
 (global-set-key (kbd "s-w")  '+workspace/kill)
 
