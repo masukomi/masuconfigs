@@ -37,7 +37,12 @@
 
 ; kinda-sorta forcing initial window size because it seems incapable
 ; of remembering
-(setq default-frame-alist '((left . 106) (width . 106) (fullscreen . fullheight)))
+(setq default-frame-alist '(
+                            (left . 106)
+                            (width . 106)
+                            (fullscreen . fullheight)
+                            (right-divider-width . 8)
+                            ))
 
 ; .dir-locals.el helper methods
 (defun my-reload-dir-locals-for-current-buffer ()
