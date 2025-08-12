@@ -3,7 +3,7 @@
 ;; DO NOT READ THIS. DO NOT EDIT THIS.
 ;; READ config.org instead!
 ;;
-;; This is a file generated from a literate programing source file located at
+;; This is a file generated on ${date} from a literate programing source file located at
 ;; https://github.com/masukomi/masuconfigs/blob/master/.doom.d/config.org
 ;;
 ;; config.org HAS ALL OF THE JUICY DETAILS
@@ -528,6 +528,29 @@ current buffer's, reload dir-locals."
     org-hide-emphasis-markers t
 )
 
+(defun insert-entity (character)
+        "Insert the org entity (if any) that corresponds to the typed character"
+        (interactive "sEnter character: ")
+
+        ; uses the code in custom/maybe-insert-org-entity.el
+        (setq entity-name (modi/org-entity-get-name character))
+        (if entity-name
+          (progn
+                (setq entity-name (concat "\\" entity-name "{}"))
+                (insert entity-name)
+                (message (concat "Inserted `org-entity' "
+                                (propertize entity-name
+                                        'face 'font-lock-function-name-face)
+                                " for the symbol "
+                                (propertize pressed-key
+                                        'face 'font-lock-function-name-face)
+                                ".")))
+          (message "Unable to find the org-entity for %s"
+                           character)
+          )
+    )
+
+;display inline images and cache them
   (setq org-display-remote-inline-images 'cache)
 
 (setq
