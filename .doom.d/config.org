@@ -61,6 +61,7 @@ At the time of writing this consists of
 ;; General Config
 (add-to-list 'load-path "~/.doom.d/custom")
 (load "eruby-mode")
+(load "maybe-insert-org-entity")
 
 #+end_src
 
@@ -1412,6 +1413,10 @@ I prefer it when org-mode just shows italic text as italic without the slashes t
 I want to be able to type asterisks around things without having it bold
 and without having to remember \ast{} or whatever the org entity is for
 the emphasis marker (or whatever) I want to include is.
+
+Alternately you could insert a zero width space between the asterisks and
+the word it might want to try and bold: *​shrug​* That certainly /looks/ better
+but it's not advised for reasons I'm unaware of.
 
 This function does that. Invoke it, enter the character you want it to
 find and insert the org entity for, and it'll do that.

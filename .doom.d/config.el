@@ -15,6 +15,7 @@
 ;; General Config
 (add-to-list 'load-path "~/.doom.d/custom")
 (load "eruby-mode")
+(load "maybe-insert-org-entity")
 
 ; automatically sync buffer with changes in the filesystem
 (global-auto-revert-mode t)
