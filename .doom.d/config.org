@@ -50,6 +50,7 @@ At the time of writing this consists of
 
 - ~eruby-mode.el~
 - ~flycheck-standardrb.el~
+- ~maybe-insert-org-entity.el~
 - ~ruby-align.el~
 - ~screenshot.el~
 - ~sh-send-line-or-region.el~
@@ -850,9 +851,12 @@ If private-comments-mode isn't working as expected, setting this to ~t~ will giv
 
 The code that actually enables it is in the pro-mode hook up in my Yafolding section.
 * Org-mode
-The world's greatest writing tool.
-"All hail the power of org-mode."
-"Hail! Hail!"
+#+begin_src text tangle config.el
+; Org-mode
+; The world's greatest writing tool.
+; "All hail the power of org-mode."
+; "Hail! Hail!"
+#+end_src
 
 ** Temporary Hacks
 [[https://github.com/doomemacs/doomemacs/issues/6478][There's a bug in evil-search]] where searches in org-mode ignore results in folded sections. What follows is a temporary fix until that bug is fixed. It uses ~isearch~ as the evil search module.
@@ -899,6 +903,7 @@ Last time I checked: July 5, 2024
 #+begin_src elisp :tangle config.el
 (require 'org-mouse)
 #+end_src
+
 ** Make it understand your Vim based muscle memory.
 [[https://github.com/Somelauw/evil-org-mode][evil-org-mode]] provides "Supplemental evil-mode key-bindings to Emacs org-mode."
 
@@ -906,7 +911,6 @@ tl;dr: it makes org-mode work the way us Vim expats expect.
 
 #+BEGIN_SRC elisp :tangle config.el
 (use-package evil-org
-  :ensure t
   :after (evil org)
   :config
   (add-hook 'org-mode-hook 'evil-org-mode)
@@ -917,10 +921,6 @@ tl;dr: it makes org-mode work the way us Vim expats expect.
   (evil-org-agenda-set-keys))
 #+END_SRC
 
-
-#+begin_src elisp :tangle config.el
-
-#+end_src
 
 This downloads the image as a temp file so that emacs can load it visually into the page. That's why it doesn't work on GitHub rendered pages.
 
@@ -1075,8 +1075,6 @@ Because Doom emacs comes with a custom mode-line we need to insert this into tha
 To set a new goal run
 
 ** Configuring misc things via global org variables
-
-
 First let's disable the interpretation of ~_~ and ~^~ as subscript & superscript
 which causes issues when exporting as markdown.
 
@@ -1128,6 +1126,15 @@ Org acutally uses this variable only under rare circumstances, like when filing 
 
 Next we'll configure all the default files. As noted below, I don't actually use the notes stuff, because I use [[https://protesilaos.com/emacs/denote][Denote]] (see below). I like having good defaults though.
 
+** org-agenda
+Oddly this doesn't have a default keybinding, but ~C-c a~ is what the community seems to have settled on as a default. So, let's enable that.
+
+#+BEGIN_SRC elisp :tangle config.el
+
+(global-set-key (kbd "C-c a") 'org-agenda)
+
+#+END_SRC
+
 Org-agenda's todo functionality is pretty cool though. The last line of this block adds a timestamp when marking a TODO item as done.
 
 #+begin_src elisp :tangle config.el
@@ -1142,89 +1149,6 @@ Org-agenda's todo functionality is pretty cool though. The last line of this blo
   org-log-done t
 )
 #+end_src
-
-The following will start everything off entirely folded. That is
-to say, just showing headings, with their contents "folded" away. I go back and forth on whether this is a good thing or a bad thing. If it's not tangled, I'm currently on the "bad thing" side of the fence. 😉
-
-
-#+begin_src elisp
-(setq
-  ; start off with things folded
-  ; manually override in a file with
-  ; #+STARTUP: showall
-  ; #+STARTUP: fold
-  org-startup-folded t
-)
-#+end_src
-
-You can override this by adding a "showall" or "fold" instruction to a file's frontmatter.
-
-#+begin_src
-#+STARTUP: showall
-#+end_src
-
-This was discussed earlier. It's used by org-babel to make your code blocks look good.
-
-#+begin_src elisp :tangle config.el
-(setq
-    ; syntax highlighting within org blocks
-    org-src-fontify-natively t
-)
-#+end_src
-
-I prefer it when org-mode just shows italic text as italic without the slashes that caused it to be italic. If you set this to ~nil~ it'll show the slashes that italicized it or asterisks that bolded it, or whatever.
-
-#+begin_src elisp :tangle config.el
-(setq
-    ; Non-nil mean font-lock should hide the emphasis marker characters.
-    ; e.g. / / for italics disappear
-    org-hide-emphasis-markers t
-)
-#+end_src
-
-Org can display remote images inline, but it's disabled by default, and as far as I can tell, it's not documented & it's only mentioned in release notes and online discussions. If you dig about ~16,000 into the source file you'll find it though. 🤦‍♀️
-
-Your options are:
-- ~skip~ - don't display them
-- ~download~ - always download and display remote images
-- ~cache~ - Display remote images, and open them in separate buffers for caching. This will also silently update the image buffer when a file change is detected.
-- ~t~ - mentioned the inline docs, but not explained & not obvious from nearby code either.
-
-
-#+begin_src elisp :tangle config.el
-  (setq org-display-remote-inline-images 'cache)
-#+end_src
-
-Once you've got an image to display there's a question of how-wide. Preferably this is defined in an ~#+ATTR.*~ keyword by the image tag. For example: ~#+ATTR_HTML: :width 300px~
-
-Without an ATTR hint it'll default to showing them at their original size. However, in my experience images are frequently /significantly/ larger than they need to be. ~org-image-actual-width~ is what controls the default behavior.
-
-- ~nil~ - use the original image width
-- non-nil & non-number - use the original image width. Why would you ever set this?
-- an integer - defaults to the number specified (in pixels)
-
-Note that this is overwritten by the ~auto-image-resize~ function later on (if I have it turned on). But again, good defaults are important.
-
-~#+STARTUP: inlineimages~ is related according to my notes, but I
-don't know why or how.
-
-#+begin_src elisp :tangle config.el
-(setq
-  org-image-actual-width nil
-  ; see auto-image-resize function below which will override this
-  ; related #+STARTUP: inlineimages
-)
-#+end_src
-
-** org-agenda
-Oddly this doesn't have a default keybinding, but ~C-c a~ is what the community seems to have settled on as a default. So, let's enable that.
-
-#+BEGIN_SRC elisp :tangle config.el
-
-(global-set-key (kbd "C-c a") 'org-agenda)
-
-#+END_SRC
-
 
 ** Automatic Image resizing
 Same idea as "responsive design" in CSS. With this images will fill the width of the page regardless of what your page width is. This code comes from [[https://stackoverflow.com/a/73426792/13973][a Stack Overflow answer]].
@@ -1450,6 +1374,102 @@ Default Key Bindings:
 - ~C-c C-c~  plantuml-preview: renders a PlantUML diagram from the current buffer in the best supported format
 - ~C-u C-c C-c~  plantuml-preview in other window
 - ~C-u C-u C-c C-c~ plantuml-preview in other frame
+** Folding
+
+The following will start everything off entirely folded. That is
+to say, just showing headings, with their contents "folded" away. I go back and forth on whether this is a good thing or a bad thing. If it's not tangled, I'm currently on the "bad thing" side of the fence. 😉
+
+
+#+begin_src elisp
+(setq
+  ; start off with things folded
+  ; manually override in a file with
+  ; #+STARTUP: showall
+  ; #+STARTUP: fold
+  org-startup-folded t
+)
+#+end_src
+
+You can override this by adding a "showall" or "fold" instruction to a file's frontmatter.
+
+#+begin_src
+#+STARTUP: showall
+#+end_src
+
+** Emphasis Markers
+I prefer it when org-mode just shows italic text as italic without the slashes that caused it to be italic. If you set this to ~nil~ it'll show the slashes that italicized it or asterisks that bolded it, or whatever.
+
+#+begin_src elisp :tangle config.el
+(add-hook 'org-mode-hook 'org-appear-mode)
+
+(setq
+    ; Non-nil mean font-lock should hide the emphasis marker characters.
+    ; e.g. / / for italics disappear
+    org-hide-emphasis-markers t
+)
+#+end_src
+
+** Special Characters / Org Entities
+#+begin_src elisp tangle config.el
+(defun insert-entity (character)
+        "Insert the org entity (if any) that corresponds to the typed character"
+        (interactive "sEnter character:")
+
+        ; uses the code in maybe-insert-org-entity.el
+        (setq entity-name (modi/org-entity-get-name character))
+        (if entity-name
+          (progn
+                (setq entity-name (concat "\\" entity-name "{}"))
+                (insert entity-name)
+                (message (concat "Inserted `org-entity' "
+                                (propertize entity-name
+                                        'face 'font-lock-function-name-face)
+                                " for the symbol "
+                                (propertize pressed-key
+                                        'face 'font-lock-function-name-face)
+                                ".")))
+          (message "Unable to find the org-entity for %s"
+                           character)
+          )
+    )
+#+end_src
+
+
+** Images
+Org can display remote images inline, but it's disabled by default, and as far as I can tell, it's not documented & it's only mentioned in release notes and online discussions. If you dig about ~16,000 into the source file you'll find it though. 🤦‍♀️
+
+Your options are:
+- ~skip~ - don't display them
+- ~download~ - always download and display remote images
+- ~cache~ - Display remote images, and open them in separate buffers for caching. This will also silently update the image buffer when a file change is detected.
+- ~t~ - mentioned the inline docs, but not explained & not obvious from nearby code either.
+
+
+#+begin_src elisp :tangle config.el
+  (setq org-display-remote-inline-images 'cache)
+#+end_src
+
+Once you've got an image to display there's a question of how-wide. Preferably this is defined in an ~#+ATTR.*~ keyword by the image tag. For example: ~#+ATTR_HTML: :width 300px~
+
+Without an ATTR hint it'll default to showing them at their original size. However, in my experience images are frequently /significantly/ larger than they need to be. ~org-image-actual-width~ is what controls the default behavior.
+
+- ~nil~ - use the original image width
+- non-nil & non-number - use the original image width. Why would you ever set this?
+- an integer - defaults to the number specified (in pixels)
+
+Note that this is overwritten by the ~auto-image-resize~ function later on (if I have it turned on). But again, good defaults are important.
+
+~#+STARTUP: inlineimages~ is related according to my notes, but I
+don't know why or how.
+
+#+begin_src elisp :tangle config.el
+(setq
+  org-image-actual-width nil
+  ; see auto-image-resize function below which will override this
+  ; related #+STARTUP: inlineimages
+)
+#+end_src
+
 
 * Evil Mode
 ** evil-surround

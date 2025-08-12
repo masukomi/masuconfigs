@@ -157,6 +157,12 @@
 ; alternative org-superstar adds fancyness to unordered lists
 ; (package! org-superstar)
 ; in config: (add-hook 'org-mode-hook (lambda () (org-superstart-mode 1)))
+
+; Make invisible parts of Org elements appear visible. Usually emphasis markers.
+; See https://github.com/awth13/org-appear for docs.
+(package! org-appear
+  :recipe (:host github
+           :repo "awth13/org-appear"))
 (package! evil-org)
 (package! ox-clip)
 (package! ox-gfm)

@@ -323,7 +323,6 @@ current buffer's, reload dir-locals."
 (require 'org-mouse)
 
 (use-package evil-org
-  :ensure t
   :after (evil org)
   :config
   (add-hook 'org-mode-hook 'evil-org-mode)
@@ -332,8 +331,6 @@ current buffer's, reload dir-locals."
               (evil-org-set-key-theme '(navigation insert textobjects additional calendar))))
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
-
-
 
 (defun image-url-overlays ()
   "Put image overlays on remote image urls."
@@ -424,6 +421,8 @@ current buffer's, reload dir-locals."
   org-directory "~/.config/org/"
 )
 
+(global-set-key (kbd "C-c a") 'org-agenda)
+
 (setq
   org-default-notes-file (concat org-directory "notes.org")
   +org-capture-notes-file (concat org-directory "notes.org")
@@ -434,27 +433,6 @@ current buffer's, reload dir-locals."
   ; org-log-done adds a timestamp when marking a todo item as done
   org-log-done t
 )
-
-(setq
-    ; syntax highlighting within org blocks
-    org-src-fontify-natively t
-)
-
-(setq
-    ; Non-nil mean font-lock should hide the emphasis marker characters.
-    ; e.g. / / for italics disappear
-    org-hide-emphasis-markers t
-)
-
-  (setq org-display-remote-inline-images 'cache)
-
-(setq
-  org-image-actual-width nil
-  ; see auto-image-resize function below which will override this
-  ; related #+STARTUP: inlineimages
-)
-
-(global-set-key (kbd "C-c a") 'org-agenda)
 
  (defun org-image-resize (frame)
    (when (derived-mode-p 'org-mode)
@@ -541,6 +519,22 @@ current buffer's, reload dir-locals."
    (plantuml . t)))
 
 (setq org-plantuml-jar-path "/opt/homebrew/opt/plantuml/libexec/plantuml.jar")
+
+(add-hook 'org-mode-hook 'org-appear-mode)
+
+(setq
+    ; Non-nil mean font-lock should hide the emphasis marker characters.
+    ; e.g. / / for italics disappear
+    org-hide-emphasis-markers t
+)
+
+  (setq org-display-remote-inline-images 'cache)
+
+(setq
+  org-image-actual-width nil
+  ; see auto-image-resize function below which will override this
+  ; related #+STARTUP: inlineimages
+)
 
 ; a port of Tim Pope's surround.vim
 (use-package evil-surround
