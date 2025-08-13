@@ -870,7 +870,9 @@ Last time I checked: July 5, 2024
    (evil-select-search-module 'evil-search-module 'isearch))
 #+end_src
 
-[[https://github.com/doomemacs/doomemacs/issues/8227][There's a bug ?in evil-org?]] where hitting tab does things it shouldn't. (folds/unfolds the next block, demotes the subheader (whatever that means), or simply fails to tab to the next field.
+[[https://github.com/doomemacs/doomemacs/issues/8227][There's a bug ?in evil-org?]] where hitting tab does things it shouldn't. (folds/unfolds the next block, demotes the subheader (whatever that means), or simply fails to tab to the next field. [[https://github.com/doomemacs/doomemacs/issues/7733#issuecomment-1999838498][Some kind soul]] figured out this ugly workaround.
+
+Henrik [[https://github.com/doomemacs/doomemacs/pull/7739][thought it was fixed…]]
 
 #+begin_src elisp :tangle config.el
 (defun my/org-tab-conditional ()
