@@ -870,6 +870,21 @@ Last time I checked: July 5, 2024
    (evil-select-search-module 'evil-search-module 'isearch))
 #+end_src
 
+[[https://github.com/doomemacs/doomemacs/issues/8227][There's a bug ?in evil-org?]] where hitting tab does things it shouldn't. (folds/unfolds the next block, demotes the subheader (whatever that means), or simply fails to tab to the next field.
+
+#+begin_src elisp :tangle config.el
+(defun my/org-tab-conditional ()
+  (interactive)
+  (if (yas-active-snippets)
+      (yas-next-field-or-maybe-expand)
+    (org-cycle)))
+
+(map! :after evil-org
+      :map evil-org-mode-map
+      :i "<tab>" #'my/org-tab-conditional)
+#+end_src
+
+
 ** Pretty bullet lists please
 [[https://github.com/sabof/org-bullets][org-bullets]] mode takes those boring-ass ASCII characters used for headings and bullets and replaces them with UTF-8 characters that look way better. This is just a visual tweak. The file stores the boring ASCII characters. That way if you an org-mode file with some poor soul who hasn't learned the joys of emacs, or how to make their bullets pretty, they can still read them without issue.
 
@@ -1415,7 +1430,7 @@ and without having to remember \ast{} or whatever the org entity is for
 the emphasis marker (or whatever) I want to include is.
 
 Alternately you could insert a zero width space between the asterisks and
-the word it might want to try and bold: *​shrug​* That certainly /looks/ better
+the word(s) it might want to try and bold: *​shrug​* That certainly /looks/ better
 but it's not advised for reasons I'm unaware of.
 
 This function does that. Invoke it, enter the character you want it to

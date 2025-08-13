@@ -315,6 +315,16 @@ current buffer's, reload dir-locals."
 (after! evil
    (evil-select-search-module 'evil-search-module 'isearch))
 
+(defun my/org-tab-conditional ()
+  (interactive)
+  (if (yas-active-snippets)
+      (yas-next-field-or-maybe-expand)
+    (org-cycle)))
+
+(map! :after evil-org
+      :map evil-org-mode-map
+      :i "<tab>" #'my/org-tab-conditional)
+
 ; pretty bullets in org-mode
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
