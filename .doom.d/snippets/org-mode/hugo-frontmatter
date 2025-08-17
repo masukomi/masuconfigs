@@ -10,4 +10,6 @@
 #+toc: headlines 3
 #+draft: false
 #+hugo_section: ${2:post}
-#+hugo_custom_front_matter: :summary "I NEED A SUMMARY"
+#+hugo_paired_shortcodes: spoiler
+#+hugo_custom_front_matter: :summary "SUMMARIZE ME & set og_image vvv"
+#+hugo_custom_front_matter: :og_image "`(format-time-string "/images/%Y/%m/%d/")`"

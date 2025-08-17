@@ -209,7 +209,7 @@
   :recipe (:host github :repo "masukomi/ox-slack" :branch "main"))
 (package! ox-bb)
 ;; (package! flycheck-vale)
-;(package! ox-leanpub)
+(package! ox-leanpub)
 ; ripgrep (rg)
 ;; (package! rg)
 ;; (package! sqlite3)
