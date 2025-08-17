@@ -4,7 +4,7 @@
 ;; READ config.org instead!
 ;;
 ;; This is a file generated on ${date} from a literate programing source file located at
-;; https://github.com/masukomi/masuconfigs/blob/master/.doom.d/config.org
+;; https://github.com/masukomi/masuconfigs/blob/master/.config/doom/config.org
 ;;
 ;; config.org HAS ALL OF THE JUICY DETAILS
 ;; Future me: You should make any changes there and regenerate it from Emacs org-mode
@@ -62,7 +62,7 @@ current buffer's, reload dir-locals."
         (when (equal default-directory dir)
           (my-reload-dir-locals-for-current-buffer))))))
 
-(setq fancy-splash-image "~/.doom.d/images/doom_icon_256x256.png")
+(setq fancy-splash-image "~/.config/doom/images/doom_icon_256x256.png")
 
 ; https://melpa.org/#/exec-path-from-shell
 (exec-path-from-shell-initialize)
@@ -597,7 +597,7 @@ current buffer's, reload dir-locals."
 (setq denote-date-format nil) ; read doc string
 
 (setq denote-link-fontify-backlinks t)
-(add-hook 'find-file-hook #'denote-link-buttonize-buffer)
+(add-hook 'text-mode-hook #'denote-fontify-links-mode-maybe)
 (setq denote-dired-rename-expert nil)
 
 

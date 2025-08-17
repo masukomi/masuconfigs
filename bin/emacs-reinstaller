@@ -41,7 +41,7 @@ brew uninstall --ignore-dependencies emacs
 
 
 
-brew install emacs-plus --with-native-comp --with-imagemagick
+brew install emacs-plus --with-imagemagick
 if [ $? -ne 0 ]; then
 	echo "problem installing emacs-plus --with-native-comp --with-imagemagic"
 	echo "exiting"

@@ -15,4 +15,3 @@
 --type-set=css:ext:css,scss,scssc,less,sass
 --nolog
 --type-set=crystal:ext:cr
---ignore-file=is:tags

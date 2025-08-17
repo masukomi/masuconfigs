@@ -497,9 +497,9 @@ if ! filereadable(".vimrc") || len(split(getcwd(), "/")) == 2
 	" split single line statements into multi-line gS
 	Plug 'AndrewRadev/splitjoin.vim'
 	" racket / scheme / lisp
-	Plug 'bhurlow/vim-parinfer'
+	" Plug 'bhurlow/vim-parinfer'
 	Plug 'wlangstroth/vim-racket'
-	Plug 'ds26gte/scmindent'
+	" Plug 'ds26gte/scmindent'
 
 	Plug 'dylon/vim-antlr'
 
@@ -684,8 +684,8 @@ if ! filereadable(".vimrc") || len(split(getcwd(), "/")) == 2
 	autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
 
 	" ds26gte/scmindent
-	autocmd BufEnter *.rkt,*.scm :setlocal filetype=scheme
-	autocmd filetype lisp,scheme setlocal equalprg=scmindent.rkt
+	" autocmd BufEnter *.rkt,*.scm :setlocal filetype=scheme
+	" autocmd filetype lisp,scheme setlocal equalprg=scmindent.rkt
 	"-------------------
 	" masukomi/rainbow_parentheses.vim
 	augroup RainbowParentheses

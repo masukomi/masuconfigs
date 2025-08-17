@@ -33,7 +33,7 @@ Yes, ~config.el~ is what Doom reads, but this is what creates that.
 ;; READ config.org instead!
 ;;
 ;; This is a file generated on ${date} from a literate programing source file located at
-;; https://github.com/masukomi/masuconfigs/blob/master/.doom.d/config.org
+;; https://github.com/masukomi/masuconfigs/blob/master/.config/doom/config.org
 ;;
 ;; config.org HAS ALL OF THE JUICY DETAILS
 ;; Future me: You should make any changes there and regenerate it from Emacs org-mode
@@ -42,14 +42,6 @@ Yes, ~config.el~ is what Doom reads, but this is what creates that.
 #+end_src
 
 * General Config
-** Leader Key
-
-You /shouldn't/ have to do this, but for some reason mine got unset when I reinstalled everything.
-
-#+begin_src elisp :tangle config.el
-(setq doom-leader-key "SPC")      ; global leader
-(setq doom-localleader-key ",")   ; local leader (default)
-#+end_src
 
 ** custom elisp files
 Tell it where to find custom elisp files.
@@ -67,7 +59,7 @@ At the time of writing this consists of
 #+begin_src elisp :tangle config.el
 ;;---------------------------------
 ;; General Config
-(add-to-list 'load-path "~/.doom.d/custom")
+(add-to-list 'load-path "~/.config/doom/custom")
 (load "eruby-mode")
 (load "maybe-insert-org-entity")
 
@@ -191,12 +183,12 @@ current buffer's, reload dir-locals."
 * Configuring Doom Itself
 First: Make that splash-screen cuter. I don't really like the "Doom" video game logo, but [[https://github.com/jaidetree][jaidtree]] contributed a really cute Doom monster graphic in [[https://github.com/doomemacs/doomemacs/issues/3382][this GitHub Issue]].
 
-I've stored a few sizes of it in =~/.doom.d/images/=
+I've stored a few sizes of it in =~/.config/doom/images/=
 
 Doom calls this the ~fancy-splash-image~ and all you need to do is point that variable at an image you like in a size that seems good to you.
 
 #+begin_src elisp :tangle config.el
-(setq fancy-splash-image "~/.doom.d/images/doom_icon_256x256.png")
+(setq fancy-splash-image "~/.config/doom/images/doom_icon_256x256.png")
 #+end_src
 
 * macOS compensation
@@ -491,7 +483,7 @@ Here's how you'd disable those in just a specific mode.
 If custom snippets aren't loading first run this and restart doom.
 
 #+begin_src bash
-cd ~/.doom.d/snippets
+cd ~/.config/doom/snippets
 find . -name ".yas-compiled-snippets.el" -exec rm -f '{}' \;
 #+end_src
 
@@ -1632,7 +1624,7 @@ You can control its placement with the ~denote-link-backlinks-display-buffer-act
 
 I have no idea where i found ~denote-link-fontify-backlinks~, but my notes claim that "By default, we fontify backlinks in their bespoke buffer." It doesn't appear in the docs though. I do know that it's definitely "fontified" (highlighted the different sections differently) in the backlinks buffer, so it appears to be working.
 
-Org-mode is going to display links as "buttons" straight out of the box, but if you use markdown or plain-text files you'll need to add a hook to the ~denote-link-buttonize-buffer~ function. I don't need this, but it seemed nice to have in case I /do/ use some non-org files in Denote. Hah, as if!.
+Org-mode is going to display links as "buttons" straight out of the box, but if you use markdown or plain-text files you'll need to add a hook to the ~denote-fontify-links-mode-maybe~ function. I don't need this, but it seemed nice to have in case I /do/ use some non-org files in Denote. Hah, as if!.
 
 I failed to leave myself a note about ~denote-dired-rename-expert~ I have no idea what it does and it's not in the docs.
 
@@ -1645,7 +1637,7 @@ If you use Denote files in directories all over your computer you can say ~(add-
 
 #+BEGIN_SRC elisp :tangle config.el
 (setq denote-link-fontify-backlinks t)
-(add-hook 'find-file-hook #'denote-link-buttonize-buffer)
+(add-hook 'text-mode-hook #'denote-fontify-links-mode-maybe)
 (setq denote-dired-rename-expert nil)
 
 

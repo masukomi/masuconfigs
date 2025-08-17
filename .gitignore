@@ -23,7 +23,6 @@ external_gitconfig
 .config/yadm/repo.git
 .doom.d/custom.el
 .vim/plugged-coding/*
-tags
 temp*
 foo.*
 test.*

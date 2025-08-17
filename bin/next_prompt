@@ -1,5 +1,18 @@
 #!/usr/bin/env ruby
 
+# Uses Mythic GME 2.0 logic for determining what happens
+# at the start of the next scene
+
+# TODO: ALL THE THINGS
+# I fear this is going to spiral and needs a db for
+# lists of characters
+# lists of threads
+# multiple lists of descriptors & subjects (or just GME 2 style)
+# Rails?
+# ultimately i want just click a button "next scene"
+# and it knows how many characters you have and how many threads
+# spits all those out, and then asks if you want a prompt (looping until happy)
+
 gem "paint"
 require 'paint'
 
@@ -14,7 +27,7 @@ def get_valid_die(max)
   user_die = STDIN.gets.strip.to_i
   user_die = 10 if user_die == 0 && max >= 10
   return user_die if valid_dice.include?(user_die) && user_die <= max
-  puts "It's got to be a valid die type."
+  puts Paint["It's got to be a valid die type.", :red]
   get_valid_die(max)
 
 end
@@ -22,7 +35,7 @@ def get_chaos()
   chaos=STDIN.gets.strip.to_i
   chaos = 10 if chaos == 0
   return chaos if chaos > 0 && chaos < 11
-  puts "1-10 please (0 counts as 10):"
+  puts Paint["1-10 please (0 counts as 10):", :red]
   get_chaos()
 end
 
@@ -48,8 +61,8 @@ end
 def y_or_n()
   input = STDIN.gets.strip.downcase
   if ! %w(y n).include? input
-    puts "y or n please."
-    y_slash_n
+    puts Paint["y or n please.", :red]
+    return y_or_n
   end
   input == "y"
 end
@@ -77,7 +90,6 @@ def adjust_scene
   which_character if y_or_n()
   puts Paint["Want Thread Choice? [y/n]:", :white, :bright, :underline]
   which_thread if y_or_n()
-
 end
 
 #---------------------
@@ -103,6 +115,13 @@ else
     puts "Altered Scene"
     adjust_scene()
   end
+end
+
+
+puts Paint["Want Prompt Numbers? [y/n]:", :white, :bright, :underline]
+while y_or_n()
+  puts "#{rand(1..100)}, #{rand(1..100)}"
+  puts Paint["Want Prompt Numbers? [y/n]:", :white, :bright, :underline]
 end
 
 puts "Have Fun…"
