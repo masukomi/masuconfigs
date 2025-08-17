@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: allow_receive_with
+# key: arw
+# --
+allow($1).to(
+  receive($2)
+    .with($3)
+    .and_return($4)
+)

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: translate
+# key: translate
+# --
+<%= I18n.t("$0") %>

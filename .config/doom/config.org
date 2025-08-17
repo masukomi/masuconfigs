@@ -42,6 +42,14 @@ Yes, ~config.el~ is what Doom reads, but this is what creates that.
 #+end_src
 
 * General Config
+** Leader Key
+
+You /shouldn't/ have to do this, but for some reason mine got unset when I reinstalled everything.
+
+#+begin_src elisp :tangle config.el
+(setq doom-leader-key "SPC")      ; global leader
+(setq doom-localleader-key ",")   ; local leader (default)
+#+end_src
 
 ** custom elisp files
 Tell it where to find custom elisp files.

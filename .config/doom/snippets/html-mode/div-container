@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: div-container
+# key: dcc
+# --
+<div class="container">
+  $0
+</div>

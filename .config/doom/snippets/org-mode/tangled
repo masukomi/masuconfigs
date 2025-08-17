@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: tangled
+# key: tangled
+# --
+
+#+BEGIN_SRC ${1:elisp} :tangled
+`(if (string-suffix-p "\n" yas-selected-text)
+     yas-selected-text
+   (concat yas-selected-text "\n"))`#+END_SRC
+$0

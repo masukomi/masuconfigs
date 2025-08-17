@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: div-row-col-col
+# key: drcc
+# --
+<div class="row">
+  <div class="col$1">
+    $0
+  </div>
+  <div class="col$2">
+  </div>
+</div>

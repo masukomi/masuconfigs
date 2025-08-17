@@ -13,7 +13,7 @@
 
 ;;---------------------------------
 ;; General Config
-(add-to-list 'load-path "~/.doom.d/custom")
+(add-to-list 'load-path "~/.config/doom/custom")
 (load "eruby-mode")
 (load "maybe-insert-org-entity")
 

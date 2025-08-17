@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: guaranteed debugger
+# key: ddebugger
+# --
+require 'debug'; debugger
