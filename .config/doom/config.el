@@ -325,6 +325,32 @@ current buffer's, reload dir-locals."
       :map evil-org-mode-map
       :i "<tab>" #'my/org-tab-conditional)
 
+  (setq org-export-with-sub-superscripts nil)
+
+  ; KEYWORDS
+  (setq
+    org-todo-keywords
+    '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
+    (sequence "[ ](T)" "|" "[X](D)")
+    (sequence "|" "OKAY(o)" "YES(y)" "NO(n)"))
+
+    org-todo-keyword-faces '(
+    ("TODO"    :foreground "#7c7c75" :weight normal :underline t)
+    ("WAITING"  :foreground "#9f7efe" :weight normal :underline t)
+    ("INPROGRESS"  :foreground "#0098dd" :weight normal :underline t)
+    ("DONE"    :foreground "#50a14f" :weight normal :underline t)
+    ("CANCELLED"  :foreground "#ff6480" :weight normal :underline t)
+    )
+  )
+
+(setq
+  org-agenda-files '("~/Documents/notes/"
+                     "~/.config/org/")
+  ; DEBATING if ^^ and vvv should be the same directory
+  ; org-directory needs to be set before org loads
+  org-directory "~/.config/org/"
+)
+
 ; pretty bullets in org-mode
 (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
@@ -406,32 +432,6 @@ current buffer's, reload dir-locals."
 (setq wc-modeline-format "words: %tw") ; simpler output than the default
 (add-to-list 'global-mode-string '("" wc-buffer-stats))
 
-  (setq org-export-with-sub-superscripts nil)
-
-  ; KEYWORDS
-  (setq
-    org-todo-keywords
-    '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
-    (sequence "[ ](T)" "|" "[X](D)")
-    (sequence "|" "OKAY(o)" "YES(y)" "NO(n)"))
-
-    org-todo-keyword-faces '(
-    ("TODO"    :foreground "#7c7c75" :weight normal :underline t)
-    ("WAITING"  :foreground "#9f7efe" :weight normal :underline t)
-    ("INPROGRESS"  :foreground "#0098dd" :weight normal :underline t)
-    ("DONE"    :foreground "#50a14f" :weight normal :underline t)
-    ("CANCELLED"  :foreground "#ff6480" :weight normal :underline t)
-    )
-  )
-
-(setq
-  org-agenda-files '("~/Documents/notes/"
-                     "~/.config/org/")
-  ; DEBATING if ^^ and vvv should be the same directory
-  ; org-directory needs to be set before org loads
-  org-directory "~/.config/org/"
-)
-
 (global-set-key (kbd "C-c a") 'org-agenda)
 
 (setq
@@ -444,14 +444,6 @@ current buffer's, reload dir-locals."
   ; org-log-done adds a timestamp when marking a todo item as done
   org-log-done t
 )
-
- (defun org-image-resize (frame)
-   (when (derived-mode-p 'org-mode)
-       (if (< (window-total-qwidth) 80)
-       (setq org-image-actual-width (window-pixel-width))
-     (setq org-image-actual-width (* 80 (window-font-width))))
-       (org-redisplay-inline-images)))
- (add-hook 'window-size-change-functions 'org-image-resize)
 
 (with-eval-after-load 'ox
   (require 'ox-hugo)
@@ -569,6 +561,14 @@ current buffer's, reload dir-locals."
   ; see auto-image-resize function below which will override this
   ; related #+STARTUP: inlineimages
 )
+
+ (defun org-image-resize (frame)
+   (when (derived-mode-p 'org-mode)
+       (if (< (window-total-qwidth) 80)
+       (setq org-image-actual-width (window-pixel-width))
+     (setq org-image-actual-width (* 80 (window-font-width))))
+       (org-redisplay-inline-images)))
+ (add-hook 'window-size-change-functions 'org-image-resize)
 
 ; a port of Tim Pope's surround.vim
 (use-package evil-surround

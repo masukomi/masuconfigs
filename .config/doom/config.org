@@ -759,7 +759,7 @@ By default when you tell emacs to go to the end of the line it goes to the end o
 (global-visual-line-mode t)
 #+end_src
 
-** Make URLs clickable
+** Make URLs clickable outside of org-mode
 So you /can/ easily make urls clickable with ~(goto-address-mode t)~, /but/ you shouldn't, because there's ~orglink-mode~ which is better. See packages.el to turn that on.
 
 ** Folding
@@ -886,6 +886,57 @@ Henrik [[https://github.com/doomemacs/doomemacs/pull/7739][thought it was fixed�
       :i "<tab>" #'my/org-tab-conditional)
 #+end_src
 
+** Configuring misc things via global org variables
+First let's disable the interpretation of ~_~ and ~^~ as subscript & superscript
+which causes issues when exporting as markdown.
+
+
+#+begin_src elisp :tangle config.el
+  (setq org-export-with-sub-superscripts nil)
+#+end_src
+
+Then we'll define our "todo keywords" and tell org-mode what colors we want them displayed in.
+
+#+begin_src elisp :tangle config.el
+  ; KEYWORDS
+  (setq
+    org-todo-keywords
+    '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
+    (sequence "[ ](T)" "|" "[X](D)")
+    (sequence "|" "OKAY(o)" "YES(y)" "NO(n)"))
+
+    org-todo-keyword-faces '(
+    ("TODO"    :foreground "#7c7c75" :weight normal :underline t)
+    ("WAITING"  :foreground "#9f7efe" :weight normal :underline t)
+    ("INPROGRESS"  :foreground "#0098dd" :weight normal :underline t)
+    ("DONE"    :foreground "#50a14f" :weight normal :underline t)
+    ("CANCELLED"  :foreground "#ff6480" :weight normal :underline t)
+    )
+  )
+#+end_src
+
+The information to be shown in org-agenda is normally collected from /all/ the agenda files. The ~org-agenda-files~ variable defines where those files are stored. If it's a string, instead of a list, they'll all be stored in the same file.
+
+In my case =~/Documents/notes= is where all my Denote (see below) files go.
+
+~org-directory~ defines where org files are typically located. It needs to be defined before org loads.
+
+#+begin_quote
+Org acutally uses this variable only under rare circumstances, like when filing remember notes in an interactive way and prompting you for an Org file to put the note into. - [[https://orgmode.org/worg/org-configs/org-customization-guide.html][Org customization guide]]
+#+end_quote
+
+
+#+begin_src elisp :tangle config.el
+(setq
+  org-agenda-files '("~/Documents/notes/"
+                     "~/.config/org/")
+  ; DEBATING if ^^ and vvv should be the same directory
+  ; org-directory needs to be set before org loads
+  org-directory "~/.config/org/"
+)
+#+end_src
+
+Next we'll configure all the default files. As noted below, I don't actually use the notes stuff, because I use [[https://protesilaos.com/emacs/denote][Denote]] (see below). I like having good defaults though.
 
 ** Pretty bullet lists please
 [[https://github.com/sabof/org-bullets][org-bullets]] mode takes those boring-ass ASCII characters used for headings and bullets and replaces them with UTF-8 characters that look way better. This is just a visual tweak. The file stores the boring ASCII characters. That way if you an org-mode file with some poor soul who hasn't learned the joys of emacs, or how to make their bullets pretty, they can still read them without issue.
@@ -1091,58 +1142,6 @@ Because Doom emacs comes with a custom mode-line we need to insert this into tha
 
 To set a new goal run
 
-** Configuring misc things via global org variables
-First let's disable the interpretation of ~_~ and ~^~ as subscript & superscript
-which causes issues when exporting as markdown.
-
-
-#+begin_src elisp :tangle config.el
-  (setq org-export-with-sub-superscripts nil)
-#+end_src
-
-Then we'll define our "todo keywords" and tell org-mode what colors we want them displayed in.
-
-#+begin_src elisp :tangle config.el
-  ; KEYWORDS
-  (setq
-    org-todo-keywords
-    '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
-    (sequence "[ ](T)" "|" "[X](D)")
-    (sequence "|" "OKAY(o)" "YES(y)" "NO(n)"))
-
-    org-todo-keyword-faces '(
-    ("TODO"    :foreground "#7c7c75" :weight normal :underline t)
-    ("WAITING"  :foreground "#9f7efe" :weight normal :underline t)
-    ("INPROGRESS"  :foreground "#0098dd" :weight normal :underline t)
-    ("DONE"    :foreground "#50a14f" :weight normal :underline t)
-    ("CANCELLED"  :foreground "#ff6480" :weight normal :underline t)
-    )
-  )
-#+end_src
-
-The information to be shown in org-agenda is normally collected from /all/ the agenda files. The ~org-agenda-files~ variable defines where those files are stored. If it's a string, instead of a list, they'll all be stored in the same file.
-
-In my case =~/Documents/notes= is where all my Denote (see below) files go.
-
-~org-directory~ defines where org files are typically located. It needs to be defined before org loads.
-
-#+begin_quote
-Org acutally uses this variable only under rare circumstances, like when filing remember notes in an interactive way and prompting you for an Org file to put the note into. - [[https://orgmode.org/worg/org-configs/org-customization-guide.html][Org customization guide]]
-#+end_quote
-
-
-#+begin_src elisp :tangle config.el
-(setq
-  org-agenda-files '("~/Documents/notes/"
-                     "~/.config/org/")
-  ; DEBATING if ^^ and vvv should be the same directory
-  ; org-directory needs to be set before org loads
-  org-directory "~/.config/org/"
-)
-#+end_src
-
-Next we'll configure all the default files. As noted below, I don't actually use the notes stuff, because I use [[https://protesilaos.com/emacs/denote][Denote]] (see below). I like having good defaults though.
-
 ** org-agenda
 Oddly this doesn't have a default keybinding, but ~C-c a~ is what the community seems to have settled on as a default. So, let's enable that.
 
@@ -1167,37 +1166,6 @@ Org-agenda's todo functionality is pretty cool though. The last line of this blo
 )
 #+end_src
 
-** Automatic Image resizing
-Same idea as "responsive design" in CSS. With this images will fill the width of the page regardless of what your page width is. This code comes from [[https://stackoverflow.com/a/73426792/13973][a Stack Overflow answer]].
-
-I had this enabled, and I /think/ it mostly worked, but then I disabled it for some reason I don't remember. I don't use a lot of images in my documents so I'd forgotten all about this.
-
-This will resize down whenever the window is < 80 columns
-
-#+begin_src elisp :tangle config.el
-
- (defun org-image-resize (frame)
-   (when (derived-mode-p 'org-mode)
-       (if (< (window-total-qwidth) 80)
-       (setq org-image-actual-width (window-pixel-width))
-     (setq org-image-actual-width (* 80 (window-font-width))))
-       (org-redisplay-inline-images)))
- (add-hook 'window-size-change-functions 'org-image-resize)
-#+end_src
-
-This will auto-resize ALL images whenever the window is resized
-#+begin_src elisp
-(defun org-image-resize (frame)
-  (when (derived-mode-p 'org-mode)
-      (setq org-image-actual-width
-	    ; (window-pixel-width)
-	    ; give it a 20 pixels bufer
-	    (- (window-pixel-width) 60)
-	    )
-      (org-redisplay-inline-images)))
-
-(add-hook 'window-size-change-functions 'org-image-resize)
-#+end_src
 ** Exporters
 Packages prefixed with ~ox-*~ are Org-mode eXporter packages. The most common ones are [[https://orgmode.org/worg/exporters/ox-overview.html][listed on the Org-mode site]] but there are quite a few others. Here are the ones I use.
 
@@ -1205,6 +1173,8 @@ Packages prefixed with ~ox-*~ are Org-mode eXporter packages. The most common on
   technically Hugo CAN render org-mode files, but it doesn't do a very good job. Much better to write in org-mode and export to Hugo's markdown flavor with the ~ox-hugo~ exporter.
 - [[https://github.com/jkitchin/ox-clip][ox-clip]]
   copies selected regions in org-mode as formatted text on the clipboard that can be pasted into other applications.
+- [[https://github.com/zzamboni/ox-leanpub][ox-leanpub]]
+  Exports the file to [[https://leanpub.com/markua/read][Markua]], a markdown variant designed to facilitate the creation of books and used by Leanpub.
 - [[https://github.com/emacsmirror/org/blob/master/lisp/ox-md.el][ox-md]]
   exports to standard Markdown
 - [[https://github.com/larstvei/ox-gfm][ox-gfm]]
@@ -1300,7 +1270,6 @@ See also the timestamp tweak in the next section.
 
 ** Time Stamps, & Graphs, inline images
 
-
 #+begin_src elisp :tangle config.el
 (with-eval-after-load 'org
 	;; org-hugo blogging things
@@ -1392,7 +1361,6 @@ Default Key Bindings:
 - ~C-u C-c C-c~  plantuml-preview in other window
 - ~C-u C-u C-c C-c~ plantuml-preview in other frame
 ** Folding
-
 The following will start everything off entirely folded. That is
 to say, just showing headings, with their contents "folded" away. I go back and forth on whether this is a good thing or a bad thing. If it's not tangled, I'm currently on the "bad thing" side of the fence. 😉
 
@@ -1462,7 +1430,6 @@ find and insert the org entity for, and it'll do that.
     )
 #+end_src
 
-
 ** Images
 Org can display remote images inline, but it's disabled by default, and as far as I can tell, it's not documented & it's only mentioned in release notes and online discussions. If you dig about ~16,000 into the source file you'll find it though. 🤦‍♀️
 
@@ -1499,6 +1466,37 @@ don't know why or how.
 )
 #+end_src
 
+** Automatic Image resizing
+Same idea as "responsive design" in CSS. With this images will fill the width of the page regardless of what your page width is. This code comes from [[https://stackoverflow.com/a/73426792/13973][a Stack Overflow answer]].
+
+I had this enabled, and I /think/ it mostly worked, but then I disabled it for some reason I don't remember. I don't use a lot of images in my documents so I'd forgotten all about this.
+
+This will resize down whenever the window is < 80 columns
+
+#+begin_src elisp :tangle config.el
+
+ (defun org-image-resize (frame)
+   (when (derived-mode-p 'org-mode)
+       (if (< (window-total-qwidth) 80)
+       (setq org-image-actual-width (window-pixel-width))
+     (setq org-image-actual-width (* 80 (window-font-width))))
+       (org-redisplay-inline-images)))
+ (add-hook 'window-size-change-functions 'org-image-resize)
+#+end_src
+
+This will auto-resize ALL images whenever the window is resized
+#+begin_src elisp
+(defun org-image-resize (frame)
+  (when (derived-mode-p 'org-mode)
+      (setq org-image-actual-width
+	    ; (window-pixel-width)
+	    ; give it a 20 pixels bufer
+	    (- (window-pixel-width) 60)
+	    )
+      (org-redisplay-inline-images)))
+
+(add-hook 'window-size-change-functions 'org-image-resize)
+#+end_src
 
 * Evil Mode
 ** evil-surround
