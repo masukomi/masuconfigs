@@ -62,7 +62,7 @@ At the time of writing this consists of
 (add-to-list 'load-path "~/.config/doom/custom")
 (load "eruby-mode")
 (load "maybe-insert-org-entity")
-
+(load "fediverse-links")
 #+end_src
 
 ** auto-reloading files changed on disk
@@ -1497,6 +1497,11 @@ This will auto-resize ALL images whenever the window is resized
 
 (add-hook 'window-size-change-functions 'org-image-resize)
 #+end_src
+** Fediverse Links
+The functions in [[file:custom/fediverse-links.el][custom/fediverse-links.el]] teach org-mode how to recognize fediverse usernames like ~@username@domain~ and create links from them when they're preceded by ~fedi:~
+
+Thus ~fedi:@me@example.com~ becomes a clickable link to ~https://example.com/@me~
+
 
 * Evil Mode
 ** evil-surround

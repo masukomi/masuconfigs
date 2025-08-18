@@ -16,6 +16,7 @@
 (add-to-list 'load-path "~/.config/doom/custom")
 (load "eruby-mode")
 (load "maybe-insert-org-entity")
+(load "fediverse-links")
 
 ; automatically sync buffer with changes in the filesystem
 (global-auto-revert-mode t)
