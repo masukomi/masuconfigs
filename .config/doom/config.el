@@ -446,6 +446,9 @@ current buffer's, reload dir-locals."
   org-log-done t
 )
 
+  ; enable ox-leanpub functionality
+  (use-package! ox-leanpub :after org)
+
 (with-eval-after-load 'ox
   (require 'ox-hugo)
   (require 'ox-gfm nil t)

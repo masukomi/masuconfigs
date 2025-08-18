@@ -1175,6 +1175,11 @@ Packages prefixed with ~ox-*~ are Org-mode eXporter packages. The most common on
   copies selected regions in org-mode as formatted text on the clipboard that can be pasted into other applications.
 - [[https://github.com/zzamboni/ox-leanpub][ox-leanpub]]
   Exports the file to [[https://leanpub.com/markua/read][Markua]], a markdown variant designed to facilitate the creation of books and used by Leanpub.
+
+  #+begin_src elisp :tangle config.el
+  ; enable ox-leanpub functionality
+  (use-package! ox-leanpub :after org)
+  #+end_src
 - [[https://github.com/emacsmirror/org/blob/master/lisp/ox-md.el][ox-md]]
   exports to standard Markdown
 - [[https://github.com/larstvei/ox-gfm][ox-gfm]]
