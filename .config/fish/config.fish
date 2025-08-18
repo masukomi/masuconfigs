@@ -27,6 +27,11 @@ set -x XDG_DATA_HOME $HOME/.local/share
 # to stick with apple's anyway if there's any cleanup stuff that
 # happens related to it.
 set -x XDG_CACHE_HOME $HOME/Library/Caches
+
+set -x DOOMDIR $XDG_CONFIG_HOME/doom
+abbr -a doomd "cd $DOOMDIR"
+
+
 ## LLVM
 
 
@@ -51,7 +56,6 @@ abbr -a berss "bundle exec rails server -u puma -b 'ssl://0.0.0.0:9292?key=$HOME
 abbr -a brewed 'is_brewed'
 abbr -a build_tags "~/brew/bin/ctags -R --c++-kinds +p --fields +iaS --extra +q --exclude .rsync_cache ."
 abbr -a colorsave "script -q /dev/null"
-abbr -a doomd 'cd ~/.doom.d'
 abbr -a emacsd 'cd ~/.config/emacs'
 abbr -a epochmillis "date +%s%N | cut -b1-13"
 abbr -a epochtime "date +%s"
