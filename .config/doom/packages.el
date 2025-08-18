@@ -85,8 +85,8 @@
 (package! powerline)
 ; Pins the most recent method signature to the top of the window
 ; https://github.com/alphapapa/topsy.el#readme
-;; (package! topsy
-;;   :recipe (:host github :repo "alphapapa/topsy.el"))
+(package! topsy
+  :recipe (:host github :repo "alphapapa/topsy.el"))
 (package! rainbow-mode)
 ;; (package! visual-regexp-steroids)
 (package! xterm-color)
