@@ -209,7 +209,13 @@
   :recipe (:host github :repo "masukomi/ox-slack" :branch "main"))
 (package! ox-bb)
 ;; (package! flycheck-vale)
-(package! ox-leanpub)
+;; (package! ox-leanpub)
+;; ox-leanpub commit dd21c99705bc3863c43e05c9d24ab33646789711
+;; from 2023 has broken support for specifying a directory
+;; mine vvv fixes that
+(package! ox-leanpub
+  :recipe (:host gitlab :repo "masukomi/ox-leanpub" :branch "output_dir_bugs"))
+
 ; ripgrep (rg)
 ;; (package! rg)
 ;; (package! sqlite3)
