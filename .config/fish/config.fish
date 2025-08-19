@@ -59,6 +59,7 @@ abbr -a colorsave "script -q /dev/null"
 abbr -a emacsd 'cd ~/.config/emacs'
 abbr -a epochmillis "date +%s%N | cut -b1-13"
 abbr -a epochtime "date +%s"
+abbr -a espansod "$HOME/Library/Application\ Support/espanso"
 abbr -a ga 'git add'
 abbr -a gb 'git branch'
 abbr -a gbb 'git bisect bad'

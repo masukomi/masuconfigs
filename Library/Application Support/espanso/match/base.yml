@@ -1,0 +1,94 @@
+# espanso match file
+
+# For a complete introduction, visit the official docs at: https://espanso.org/docs/
+
+# You can use this file to define the base matches (aka snippets)
+# that will be available in every application when using espanso.
+
+# Matches are substitution rules: when you type the "trigger" string
+# it gets replaced by the "replace" string.
+matches:
+  # Simple text replacement
+  - trigger: ":jocat"
+    replace: "[I Like Girls](https://youtu.be/Y2Y5KVtU810) - JoCat"
+
+  - trigger: ":espanso"
+    replace: "Hi there2!"
+
+  # uncommon characters
+  - trigger: ":..."
+    replace: "…"
+  - trigger: ":?!"
+    replace: "‽"
+
+  # Fractions
+  - trigger: ":1/10"
+    replace: "⅒"
+  - trigger: ":1/9"
+    replace: "⅑"
+  - trigger: ":1/8"
+    replace: "⅛"
+  - trigger: ":1/7"
+    replace: "⅐"
+  - trigger: ":1/6"
+    replace: "⅙"
+  - trigger: ":1/5"
+    replace: "⅙"
+  - trigger: ":1/4"
+    replace: "¼"
+  - trigger: ":1/3"
+    replace: "⅓"
+  - trigger: ":1/2"
+    replace: "½"
+
+  # Esperanto Stuff
+  # - lower case
+  - trigger: ":cx"
+    replace: "ĉ"
+  - trigger: ":gx"
+    replace: "ĝ"
+  - trigger: ":hx"
+    replace: "ĥ"
+  - trigger: ":jx"
+    replace: "ĵ"
+  - trigger: ":sx"
+    replace: "ŝ"
+  - trigger: ":ux"
+    replace: "ŭ"
+  # - upper case
+  - trigger: ":CX"
+    replace: "Ĉ"
+  - trigger: ":GX"
+    replace: "Ĝ"
+  - trigger: ":HX"
+    replace: "Ĥ"
+  - trigger: ":JX"
+    replace: "Ĵ"
+  - trigger: ":SX"
+    replace: "Ŝ"
+  - trigger: ":UX"
+    replace: "Ŭ"
+
+  # NOTE: espanso uses YAML to define matches, so pay attention to the indentation!
+
+  # But matches can also be dynamic:
+
+  # Print the current date
+  - trigger: ":date"
+    replace: "{{mydate}}"
+    vars:
+      - name: mydate
+        type: date
+        params:
+          format: "%m/%d/%Y"
+
+  # Print the output of a shell command
+  - trigger: ":shell"
+    replace: "{{output}}"
+    vars:
+      - name: output
+        type: shell
+        params:
+          cmd: "echo 'Hello from your shell'"
+
+  # And much more! For more information, visit the docs: https://espanso.org/docs/
