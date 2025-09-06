@@ -66,6 +66,8 @@
 
 ; UI STUFF
 
+; icons everywhere! https://github.com/domtronn/all-the-icons.el
+(package! all-the-icons)
 ; extends Vline Mode https://www.emacswiki.org/emacs/VlineMode
 (package! col-highlight)
 ;; (column-highlight-mode 0) ; 1 = highlighting, 0 = off
@@ -95,16 +97,23 @@
 
 
 ; LANGUAGES
-; Crystal
+; -- Crystal
 (package! crystal-mode)
 
-; Docker
+; -- Docker
 (package! dockerfile-mode)
 
-; Fish shell
+; -- Fennel
+; https://github.com/emacsmirror/fennel-mode#readme
+(package! fennel-mode)
+; LSP language server for fennel
+(package! fennel-ls
+  :recipe (:host sourcehut :repo "xerool/fennel-ls"))
+
+; -- Fish shell
 (package! fish-mode)
 
-; HTML, JavaScript, CSS
+; -- HTML, JavaScript, CSS
 (package! handlebars-mode)
 (package! htmlize)
 (package! multi-web-mode)
@@ -114,6 +123,16 @@
 (package! typescript-mode)
 (package! tt-mode) ; Perl Template Toolkit & Raku Template6
 (package! json-reformat)
+
+(package! erb-mode
+  :recipe (:host github :repo "qdzhang/erb-mode"))
+
+; -- Language Server Protocol (lsp) stuff
+(package! lsp-mode) ; https://emacs-lsp.github.io/lsp-mode/
+(package! lsp-ui) ; https://emacs-lsp.github.io/lsp-ui/
+
+; -- Lua
+(package! lua-mode)
 
 ; -- protobuffers
 (package! protobuf-mode)
@@ -213,8 +232,10 @@
 ;; ox-leanpub commit dd21c99705bc3863c43e05c9d24ab33646789711
 ;; from 2023 has broken support for specifying a directory
 ;; mine vvv fixes that
+ ;; (package! ox-leanpub
+ ;;   :recipe (:host gitlab :repo "masukomi/ox-leanpub" :branch "output_dir_bugs"))
 (package! ox-leanpub
-  :recipe (:host gitlab :repo "masukomi/ox-leanpub" :branch "output_dir_bugs"))
+  :recipe (:local-repo "~/workspace/ox-leanpub"))
 
 ; ripgrep (rg)
 ;; (package! rg)
@@ -223,7 +244,7 @@
 ;; what normal people would use...
 ;; (package! private-comments-mode)
 ;; when I'm working on it...
-(package! my-package
+(package! private-comments-mode
   :recipe (:local-repo "~/workspace/private-comments-mode"
            ;; the following is to avoid having to run 'doom sync' every time you
            ;; change the package.
