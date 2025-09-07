@@ -12,8 +12,11 @@ matches:
   - trigger: ":jocat"
     replace: "[I Like Girls](https://youtu.be/Y2Y5KVtU810) - JoCat"
 
-  - trigger: ":espanso"
-    replace: "Hi there2!"
+  - trigger: ":betalink"
+    replace: "https://weblog.masukomi.org/2025/08/17/looking-for-beta-readers/"
+
+  - trigger: ":warning"
+    replace: "⚠️"
 
   # uncommon characters
   - trigger: ":..."
@@ -40,6 +43,25 @@ matches:
     replace: "⅓"
   - trigger: ":1/2"
     replace: "½"
+
+  # Mathy Things
+  - trigger: ":>="
+    replace: "≥"
+  - trigger: ":<="
+    replace: "≤"
+  - trigger: ":chevron"
+    replace: "»"
+  - trigger: ":right-chevron"
+    replace: "»"
+  - trigger: ":left-chevron"
+    replace: "«"
+
+  # TUI things
+  - trigger: ":right-angle"
+    replace: "›"
+  - trigger: ":left-angle"
+    replace: "‹"
+
 
   # Esperanto Stuff
   # - lower case
@@ -74,7 +96,7 @@ matches:
   # But matches can also be dynamic:
 
   # Print the current date
-  - trigger: ":date"
+  - trigger: ":today"
     replace: "{{mydate}}"
     vars:
       - name: mydate
