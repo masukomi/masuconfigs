@@ -56,12 +56,25 @@ matches:
   - trigger: ":left-chevron"
     replace: "«"
 
-  # TUI things
+  # Arrow-ish things
   - trigger: ":right-angle"
     replace: "›"
   - trigger: ":left-angle"
     replace: "‹"
-
+  - trigger: "->"
+    replace: "→"
+  - trigger: "<-"
+    replace: "←"
+  - trigger: ":clockwise"
+    replace: "↻"
+  - trigger: ":deosil"
+    replace: "↻"
+  - trigger: ":counter-clockwise"
+    replace: "↺"
+  - trigger: ":anti-clockwise"
+    replace: "↺"
+  - trigger: ":widdershins"
+    replace: "↺"
 
   # Esperanto Stuff
   # - lower case
