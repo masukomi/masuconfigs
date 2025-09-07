@@ -540,14 +540,27 @@ So, I have /both…/ most of the time.
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 ;; for both, you gotta get funky.
 (setq display-line-numbers-type t)
+#+end_src
+
+#+begin_src elisp
 ;; commence funkyness…
-(display-line-numbers-mode)
-(nlinum-relative-on)
+;; (global-display-line-numbers-mode 1)
+;; Alternatively, to use it only in programming modes:
+;; (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+;; old way -> (display-line-numbers-mode)
+
+;; Alternatively, to use it only in programming modes:
+; (add-hook 'prog-mode-hook #'nlinum-mode)
+;; old way (nlinum-relative-on)
+#+end_src
+
+#+begin_src elisp :tangle config.el
+(global-nlinum-mode 1)
 (nlinum-relative-setup-evil)               ;; setup for evil
-(add-hook 'prog-mode-hook 'nlinum-relative-mode)
 (setq nlinum-relative-redisplay-delay 0)   ;; delay
-(setq nlinum-relative-current-symbol "->") ;; or "" for display current line number
+(setq nlinum-relative-current-symbol "→") ;; or "" for display current line number
 (setq nlinum-relative-offset 0)            ;; 1 if you want 0, 2, 3...
+(nlinum-relative-on)                       ;; turn on relative line numbers
 #+end_src
 
 *** Highlighting code in parens
@@ -779,12 +792,7 @@ So you /can/ easily make urls clickable with ~(goto-address-mode t)~, /but/ you 
 (let ((map global-map))
   (define-key map (kbd "C-c f") #'yafolding-toggle-element))
 
-(add-hook 'prog-mode-hook
-          (lambda () (progn
-		       (yafolding-mode)
-                       ; private commments is unrelated
-		       (private-comments-mode)
-		       )))
+(add-hook 'prog-mode-hook (lambda () (yafolding-mode)))
 
 (defun sg-toggle-fold ()
   "Toggle code folding according to indentation of current line."
@@ -820,14 +828,101 @@ avy-goto-char-timer restricted to the current window. - hlissner
 #+END_SRC
 
 * Dired
-By default Dired shows you owner permissions info. I /never/ want this. If I care about file permissions I'm in my shell, not dired. This removes them, courtesy of [[http://xahlee.info/emacs/emacs/emacs_dired_tips.html][Xah Lee]].
+By default Dired shows you owner permissions info. I /never/ want this. If I care about file permissions I'm in my shell, not dired. This removes them, /however/ the moment it opens a new buffer it resets this to ~nil~, and despite reading tons of blog posts, and stack overflow answers, and talking to an LLM, I can /not/ convince this to stay toggled on.
+
+Adding ~(dired-hide-details-mode t)~ to the ~'dired-mode-hook~ /used/ to work. Now, after upgrading emacs, it doesn't, so I have introduced the following 🐄💩 to "fix" it. 🤦‍♀️
 
 #+BEGIN_SRC elisp :tangle config.el
+(require 'dired)
+; BEGIN FUCKING INSANITY SHOULD NOT EXIST
+; DELETE ME
+; redefining dired-hide-details-update-invisibility-spec
+; so that it ALWAYS believes hide details is on
+(defun dired-hide-details-update-invisibility-spec ()
+
+  ;; (funcall (if dired-hide-details-mode
+  ;;              'add-to-invisibility-spec
+  ;;            'remove-from-invisibility-spec)
+  ;;          'dired-hide-details-detail)
+  (funcall (if t
+               'add-to-invisibility-spec
+             'remove-from-invisibility-spec)
+           'dired-hide-details-detail)
+  ;; (funcall (if (and dired-hide-details-mode
+  ;;       	    dired-hide-details-hide-information-lines)
+  ;;              'add-to-invisibility-spec
+  ;;            'remove-from-invisibility-spec)
+  ;;          'dired-hide-details-information)
+  (funcall (if (and t
+        	    dired-hide-details-hide-information-lines)
+               'add-to-invisibility-spec
+             'remove-from-invisibility-spec)
+           'dired-hide-details-information)
+  ;; (funcall (if (and dired-hide-details-mode
+  ;;       dired-hide-details-hide-absolute-location)
+  ;;        #'add-to-invisibility-spec
+  ;;      #'remove-from-invisibility-spec)
+  ;;    'dired-hide-details-absolute-location)
+  (funcall (if t
+         #'add-to-invisibility-spec
+       #'remove-from-invisibility-spec)
+     'dired-hide-details-absolute-location)
+
+  ;; (funcall (if (and dired-hide-details-mode
+  ;;       dired-hide-details-hide-symlink-targets
+  ;;       (not (derived-mode-p 'wdired-mode)))
+  ;;        'add-to-invisibility-spec
+  ;;      'remove-from-invisibility-spec)
+  ;;    'dired-hide-details-link))
+  (funcall (if (and t
+        dired-hide-details-hide-symlink-targets
+        (not (derived-mode-p 'wdired-mode)))
+         'add-to-invisibility-spec
+       'remove-from-invisibility-spec)
+     'dired-hide-details-link))
+
+; redefining dired-hide-details-mode
+; such that it never removes the hook
+(define-minor-mode dired-hide-details-mode
+  "Toggle visibility of detailed information in current Dired buffer.
+When this minor mode is enabled, details such as file ownership and
+permissions are hidden from view.
+
+See options: `dired-hide-details-hide-symlink-targets',
+`dired-hide-details-hide-information-lines' and
+`dired-hide-details-hide-absolute-location'."
+  :group 'dired
+  (unless (derived-mode-p '(dired-mode wdired-mode))
+    (error "Not a Dired buffer"))
+  (dired-hide-details-update-invisibility-spec)
+  ;; (if dired-hide-details-mode
+      (add-hook 'wdired-mode-hook
+        'dired-hide-details-update-invisibility-spec
+        nil
+        t)
+    ;; (remove-hook 'wdired-mode-hook
+    ;;   'dired-hide-details-update-invisibility-spec
+    ;;   t)
+  ;; )
+)
+; and now make it call our stupid redefined function becasue
+; - for reasons I don't understand, and don't feel like diagnosing anymore -
+; 🤔 huh? clue maybe? 🤦‍♀️
+; it's not being called.
+(add-hook 'dired-mode-hook (lambda () (dired-hide-details-update-invisibility-spec)))
+
+; END FUCKING INSANITY SHOULD NOT EXIST
+
 ;; dired: hide user permission details
-(defun masu-dired-mode-setup ()
-	"hook for 'dired-mode'"
-	(dired-hide-details-mode 1))
-(add-hook 'dired-mode-hook 'masu-dired-mode-setup)
+; this SHOULD be all that's needed, but it isn't
+(add-hook 'dired-mode-hook (lambda () (dired-hide-details-mode t)))
+
+#+END_SRC
+
+=treemacs-icons-dired= gives us pretty icons, and it's much faster than =all-the-icons=. Also =all-the-icons-dired= is buggy.
+
+#+BEGIN_SRC elisp :tangle config.el
+(add-hook 'dired-mode-hook (lambda () (treemacs-icons-dired-mode)))
 #+END_SRC
 
 * Private Comments
@@ -849,8 +944,14 @@ If private-comments-mode isn't working as expected, setting this to ~t~ will giv
 (setq private-comments-mode-display-warnings nil)
 #+END_SRC
 
+Now, wire it into =prog-mode=
+#+begin_src elisp :tangle config.el
+(add-hook 'prog-mode-hook (lambda () (private-comments-mode)))
+#+end_src
+
 The code that actually enables it is in the pro-mode hook up in my Yafolding section.
 * Org-mode
+
 #+begin_src text tangle config.el
 ; Org-mode
 ; The world's greatest writing tool.
@@ -1609,7 +1710,7 @@ Keywords can be anything. The examples are emacs, philosophy, politics, economic
 (setq denote-allow-multi-word-keywords nil)
 #+END_SRC
 
-When we create a new note ( ~C-c n n~ ) , I want it to be in org-mode - duh - and that's the default. And i want it to prompt me for a title, and then keywords. In the "frontmatter" it's going to set a date format. By default it's setting it based on the file type. A decision I don't understand, but don't have an opinion about either. I go with the defaults.
+When we create a new note ( ~C-c n n~ ) , I want it to be in org-mode - duh - and that's the default. And I want it to prompt me for a title, and then keywords. In the "frontmatter" it's going to set a date format. By default it's setting it based on the file type. A decision I don't understand, but don't have an opinion about either. I go with the defaults.
 
 - For Org, an inactive timestamp is used, such as =[2022-06-30 Wed 15:31]= .
 - For Markdown, the RFC3339 standard is applied: =2022-06-30T15:48:00+03:00= .
@@ -1630,7 +1731,7 @@ Backlinks (links to the current file) can be can be displayed in a buffer. The c
 
 You can control its placement with the ~denote-link-backlinks-display-buffer-action~ /but/ the docs warn that mucking with that is advanced. I don't know jack about emacs internals, so I'm not touching that.
 
-I have no idea where i found ~denote-link-fontify-backlinks~, but my notes claim that "By default, we fontify backlinks in their bespoke buffer." It doesn't appear in the docs though. I do know that it's definitely "fontified" (highlighted the different sections differently) in the backlinks buffer, so it appears to be working.
+I have no idea where I found ~denote-link-fontify-backlinks~, but my notes claim that "By default, we fontify backlinks in their bespoke buffer." It doesn't appear in the docs though. I do know that it's definitely "fontified" (highlighted the different sections differently) in the backlinks buffer, so it appears to be working.
 
 Org-mode is going to display links as "buttons" straight out of the box, but if you use markdown or plain-text files you'll need to add a hook to the ~denote-fontify-links-mode-maybe~ function. I don't need this, but it seemed nice to have in case I /do/ use some non-org files in Denote. Hah, as if!.
 
@@ -1649,14 +1750,19 @@ If you use Denote files in directories all over your computer you can say ~(add-
 (setq denote-dired-rename-expert nil)
 
 
+(add-hook 'dired-mode-hook #'denote-dired-mode)
+#+END_SRC
 
+
+I used to specify it this way, but I'm trying to debug some dired stuff.
+#+begin_src elisp
 (setq denote-dired-directories
       (list denote-directory
             (thread-last denote-directory (expand-file-name "attachments"))
                                           (expand-file-name "~/Documents/notes")
             ))
 (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)
-#+END_SRC
+#+end_src
 
 #+begin_quote
 While it is possible to use the generic denote command to maintain a journal, [Denote Provides] an optional set of convenience options and commands as part of ~denote-journal-extras.el~.
@@ -1808,12 +1914,12 @@ I'm using ~reformatter~ to auto-format Elixir code. You can find out more detail
       :init
       (add-to-list 'exec-path "~/workspace/reference/elixir/elixir-ls/release"))
 #+end_src
-** Fennel (disabled)
+** Fennel
 [[https://fennel-lang.org/][Fennel]] "…is a programming language that brings together the simplicity, speed, and reach of Lua with the flexibility of a lisp syntax and macro system."
 
-I keep thinking it'd be really cool to integrate this into some of my personal projects, but I've never done it. That's why this code isn't being "tangled" into my config.
+This is the required config for [[https://github.com/emacsmirror/fennel-mode#readme][fennel-mode]] but [[https://git.sr.ht/~xerool/fennel-ls][fennel-ls]] (language server) is also being loaded.
 
-#+begin_src elisp
+#+begin_src elisp :tangle config.el
 ;;------------- FENNEL
 (autoload 'fennel-mode "/path/to/fennel-mode/fennel-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.fnl\\'" . fennel-mode))

@@ -166,14 +166,13 @@ current buffer's, reload dir-locals."
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 ;; for both, you gotta get funky.
 (setq display-line-numbers-type t)
-;; commence funkyness…
-(display-line-numbers-mode)
-(nlinum-relative-on)
+
+(global-nlinum-mode 1)
 (nlinum-relative-setup-evil)               ;; setup for evil
-(add-hook 'prog-mode-hook 'nlinum-relative-mode)
 (setq nlinum-relative-redisplay-delay 0)   ;; delay
-(setq nlinum-relative-current-symbol "->") ;; or "" for display current line number
+(setq nlinum-relative-current-symbol "→") ;; or "" for display current line number
 (setq nlinum-relative-offset 0)            ;; 1 if you want 0, 2, 3...
+(nlinum-relative-on)                       ;; turn on relative line numbers
 
 ; highlight the contents of the selected parentheses
 (setq show-paren-delay 0)
@@ -276,12 +275,7 @@ current buffer's, reload dir-locals."
 (let ((map global-map))
   (define-key map (kbd "C-c f") #'yafolding-toggle-element))
 
-(add-hook 'prog-mode-hook
-          (lambda () (progn
-		       (yafolding-mode)
-                       ; private commments is unrelated
-		       (private-comments-mode)
-		       )))
+(add-hook 'prog-mode-hook (lambda () (yafolding-mode)))
 
 (defun sg-toggle-fold ()
   "Toggle code folding according to indentation of current line."
@@ -300,17 +294,99 @@ current buffer's, reload dir-locals."
  :nv "C-d" #'avy-goto-line
  )
 
+(require 'dired)
+; BEGIN FUCKING INSANITY SHOULD NOT EXIST
+; DELETE ME
+; redefining dired-hide-details-update-invisibility-spec
+; so that it ALWAYS believes hide details is on
+(defun dired-hide-details-update-invisibility-spec ()
+
+  ;; (funcall (if dired-hide-details-mode
+  ;;              'add-to-invisibility-spec
+  ;;            'remove-from-invisibility-spec)
+  ;;          'dired-hide-details-detail)
+  (funcall (if t
+               'add-to-invisibility-spec
+             'remove-from-invisibility-spec)
+           'dired-hide-details-detail)
+  ;; (funcall (if (and dired-hide-details-mode
+  ;;       	    dired-hide-details-hide-information-lines)
+  ;;              'add-to-invisibility-spec
+  ;;            'remove-from-invisibility-spec)
+  ;;          'dired-hide-details-information)
+  (funcall (if (and t
+        	    dired-hide-details-hide-information-lines)
+               'add-to-invisibility-spec
+             'remove-from-invisibility-spec)
+           'dired-hide-details-information)
+  ;; (funcall (if (and dired-hide-details-mode
+  ;;       dired-hide-details-hide-absolute-location)
+  ;;        #'add-to-invisibility-spec
+  ;;      #'remove-from-invisibility-spec)
+  ;;    'dired-hide-details-absolute-location)
+  (funcall (if t
+         #'add-to-invisibility-spec
+       #'remove-from-invisibility-spec)
+     'dired-hide-details-absolute-location)
+
+  ;; (funcall (if (and dired-hide-details-mode
+  ;;       dired-hide-details-hide-symlink-targets
+  ;;       (not (derived-mode-p 'wdired-mode)))
+  ;;        'add-to-invisibility-spec
+  ;;      'remove-from-invisibility-spec)
+  ;;    'dired-hide-details-link))
+  (funcall (if (and t
+        dired-hide-details-hide-symlink-targets
+        (not (derived-mode-p 'wdired-mode)))
+         'add-to-invisibility-spec
+       'remove-from-invisibility-spec)
+     'dired-hide-details-link))
+
+; redefining dired-hide-details-mode
+; such that it never removes the hook
+(define-minor-mode dired-hide-details-mode
+  "Toggle visibility of detailed information in current Dired buffer.
+When this minor mode is enabled, details such as file ownership and
+permissions are hidden from view.
+
+See options: `dired-hide-details-hide-symlink-targets',
+`dired-hide-details-hide-information-lines' and
+`dired-hide-details-hide-absolute-location'."
+  :group 'dired
+  (unless (derived-mode-p '(dired-mode wdired-mode))
+    (error "Not a Dired buffer"))
+  (dired-hide-details-update-invisibility-spec)
+  ;; (if dired-hide-details-mode
+      (add-hook 'wdired-mode-hook
+        'dired-hide-details-update-invisibility-spec
+        nil
+        t)
+    ;; (remove-hook 'wdired-mode-hook
+    ;;   'dired-hide-details-update-invisibility-spec
+    ;;   t)
+  ;; )
+)
+; and now make it call our stupid redefined function becasue
+; - for reasons I don't understand, and don't feel like diagnosing anymore -
+; 🤔 huh? clue maybe? 🤦‍♀️
+; it's not being called.
+(add-hook 'dired-mode-hook (lambda () (dired-hide-details-update-invisibility-spec)))
+
+; END FUCKING INSANITY SHOULD NOT EXIST
+
 ;; dired: hide user permission details
-(defun masu-dired-mode-setup ()
-	"hook for 'dired-mode'"
-	(dired-hide-details-mode 1))
-(add-hook 'dired-mode-hook 'masu-dired-mode-setup)
+; this SHOULD be all that's needed, but it isn't
+(add-hook 'dired-mode-hook (lambda () (dired-hide-details-mode t)))
+
+(add-hook 'dired-mode-hook (lambda () (treemacs-icons-dired-mode)))
 
 (with-eval-after-load "private-comments-mode"
   (set-face-background 'private-comments-face "#527568")
   (set-face-foreground 'private-comments-face "#FFFFFF"))
 
 (setq private-comments-mode-display-warnings nil)
+
+(add-hook 'prog-mode-hook (lambda () (private-comments-mode)))
 
 (setq org-fold-core-style 'text-properties)
 (after! evil
@@ -605,13 +681,7 @@ current buffer's, reload dir-locals."
 (setq denote-dired-rename-expert nil)
 
 
-
-(setq denote-dired-directories
-      (list denote-directory
-            (thread-last denote-directory (expand-file-name "attachments"))
-                                          (expand-file-name "~/Documents/notes")
-            ))
-(add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)
+(add-hook 'dired-mode-hook #'denote-dired-mode)
 
 (defun denote-dated-journal ()
   "Create an entry tagged 'journal', while prompting for a title."
@@ -728,6 +798,10 @@ current buffer's, reload dir-locals."
       (elixir-mode . lsp)
       :init
       (add-to-list 'exec-path "~/workspace/reference/elixir/elixir-ls/release"))
+
+;;------------- FENNEL
+(autoload 'fennel-mode "/path/to/fennel-mode/fennel-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.fnl\\'" . fennel-mode))
 
 ;;------------- HTML
 (require 'web-mode)
