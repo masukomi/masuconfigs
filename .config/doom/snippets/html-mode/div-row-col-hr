@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: div-row-col-hr
+# key: drch
+# --
+<div class="row">
+  <div class="col">
+    <hr />
+  </div>
+</div>
