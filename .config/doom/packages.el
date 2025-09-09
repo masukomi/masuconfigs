@@ -185,6 +185,7 @@
 (package! evil-org)
 (package! ox-clip)
 (package! ox-gfm)
+(package! ox-pandoc)
 (package! denote)
 (package! plantuml-mode)
 ; (package! flycheck-plantuml)
