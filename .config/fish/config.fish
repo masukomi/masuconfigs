@@ -329,7 +329,8 @@ if test -d (brew --prefix)"/share/fish/vendor_completions.d"
     set -gx fish_complete_path $fish_complete_path (brew --prefix)/share/fish/vendor_completions.d
 end
 
-set -x NVM_DIR "$HOME/.nvm"
+# NVM shit
+set -x NVM_DIR "$XDG_CONFIG_HOME/nvm"
 
 # echo "fish config startup time: " (math (date +%s) - $start) "s"
 

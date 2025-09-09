@@ -28,6 +28,10 @@ PATH=$PATH:$HOME/Library/Python/3.9/bin
 
 . "$HOME/.cargo/env"
 
+export NVM_DIR="$HOME/.config/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 __conda_setup="$('/Users/masukomi/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
