@@ -66,8 +66,8 @@
 
 ; UI STUFF
 
-; icons everywhere! https://github.com/domtronn/all-the-icons.el
-(package! all-the-icons)
+; treemacs-icons-dired gives icons by each file in dired
+(package! treemacs-icons-dired)
 ; extends Vline Mode https://www.emacswiki.org/emacs/VlineMode
 (package! col-highlight)
 ;; (column-highlight-mode 0) ; 1 = highlighting, 0 = off
@@ -244,12 +244,12 @@
 ;; what normal people would use...
 ;; (package! private-comments-mode)
 ;; when I'm working on it...
-(package! private-comments-mode
-  :recipe (:local-repo "~/workspace/private-comments-mode"
-           ;; the following is to avoid having to run 'doom sync' every time you
-           ;; change the package.
-           :build (:not compile)
-                       ))
+;; (package! private-comments-mode
+;;   :recipe (:local-repo "~/workspace/private-comments-mode"
+;;            ;; the following is to avoid having to run 'doom sync' every time you
+;;            ;; change the package.
+;;            :build (:not compile)
+;;                        ))
 
 (package! explain-pause-mode
   :recipe (:host github :repo "lastquestion/explain-pause-mode"))

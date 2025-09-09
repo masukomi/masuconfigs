@@ -932,7 +932,9 @@ That's what [[https://github.com/masukomi/private_comments][Private Comments]] e
 
 This code controls the colors it's displayed with.
 
-#+BEGIN_SRC elisp :tangle config.el
+⚠ Current /Not/ tangled because I borked my local copy of pc server while hacking on it.
+
+#+BEGIN_SRC elisp
 (with-eval-after-load "private-comments-mode"
   (set-face-background 'private-comments-face "#527568")
   (set-face-foreground 'private-comments-face "#FFFFFF"))
@@ -940,12 +942,12 @@ This code controls the colors it's displayed with.
 
 If private-comments-mode isn't working as expected, setting this to ~t~ will give you some more errors.
 
-#+BEGIN_SRC elisp :tangle config.el
+#+BEGIN_SRC elisp
 (setq private-comments-mode-display-warnings nil)
 #+END_SRC
 
 Now, wire it into =prog-mode=
-#+begin_src elisp :tangle config.el
+#+begin_src elisp
 (add-hook 'prog-mode-hook (lambda () (private-comments-mode)))
 #+end_src
 

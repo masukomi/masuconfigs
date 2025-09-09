@@ -380,14 +380,6 @@ See options: `dired-hide-details-hide-symlink-targets',
 
 (add-hook 'dired-mode-hook (lambda () (treemacs-icons-dired-mode)))
 
-(with-eval-after-load "private-comments-mode"
-  (set-face-background 'private-comments-face "#527568")
-  (set-face-foreground 'private-comments-face "#FFFFFF"))
-
-(setq private-comments-mode-display-warnings nil)
-
-(add-hook 'prog-mode-hook (lambda () (private-comments-mode)))
-
 (setq org-fold-core-style 'text-properties)
 (after! evil
    (evil-select-search-module 'evil-search-module 'isearch))
