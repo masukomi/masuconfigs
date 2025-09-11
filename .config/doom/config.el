@@ -170,7 +170,7 @@ current buffer's, reload dir-locals."
 (global-nlinum-mode 1)
 (nlinum-relative-setup-evil)               ;; setup for evil
 (setq nlinum-relative-redisplay-delay 0)   ;; delay
-(setq nlinum-relative-current-symbol "→") ;; or "" for display current line number
+(setq nlinum-relative-current-symbol "»") ;; or "" for display current line number
 (setq nlinum-relative-offset 0)            ;; 1 if you want 0, 2, 3...
 (nlinum-relative-on)                       ;; turn on relative line numbers
 
