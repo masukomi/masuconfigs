@@ -32,9 +32,11 @@ if ! defined?($rubyrc_loaded)
 
   def recognize_path(path)
     Hash[* %w[POST GET PUT PATCH DELETE].map{|verb|
-              [verb, Rails.application.routes.recognize_path(path, method: verb)]
-            }.flatten
-        ]
+              [verb,
+               (Rails.application.routes.recognize_path(path, method: verb) rescue nil)
+              ]
+          }.flatten
+    ].reject{|k, v| v.nil?}
   end
 
   def route_with(substring)
