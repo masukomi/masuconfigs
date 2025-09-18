@@ -1092,8 +1092,8 @@ tl;dr: it makes org-mode work the way us Vim expats expect.
   (evil-org-agenda-set-keys))
 #+END_SRC
 
-
-This downloads the image as a temp file so that emacs can load it visually into the page. That's why it doesn't work on GitHub rendered pages.
+** Images
+The following code downloads the image as a temp file so that emacs can load it visually into the page. That's why it doesn't work on GitHub rendered pages.
 
 The full image link tag looks like this:
 
