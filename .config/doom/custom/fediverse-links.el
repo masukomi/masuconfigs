@@ -32,7 +32,10 @@
   "Return the exported URL for the fedi link."
   (let ((url (fedi--make-url path)))
     (cond
-     ((eq backend 'html)  (org-html-escape url))   ; keep the normal <a href>
+     ; <a href="https://example.com/@foo">@foo@example.com</a>
+     ((eq backend 'html)  (format "<a href=\"%s\">%s</a>" url path))
+     ((eq backend 'md)  (format "[%s](%s)" path url))
+     ((eq backend 'markua)  (format "[%s](%s)" path url))
      (t url))))                                      ; plain string otherwise
 
 ;; Install the link type into Org
