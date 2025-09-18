@@ -438,32 +438,6 @@ See options: `dired-hide-details-hide-symlink-targets',
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
-(defun image-url-overlays ()
-  "Put image overlays on remote image urls."
-  (interactive)
-  (loop for image-url in (org-element-map (org-element-parse-buffer) 'link
-               (lambda (link)
-                 (when (string= "image-url" (org-element-property :type link))
-                   link)))
-    do
-    (let* ((path (org-element-property :path image-url))
-           (ov (make-overlay (org-element-property :begin image-url)
-                 (org-element-property :end image-url)))
-           (img (create-image (expand-file-name
-                   (concat (md5 path)
-                       "."
-                       (file-name-extension
-                        path))
-                   temporary-file-directory))))
-      (overlay-put ov 'display img)
-      (overlay-put ov 'image-url t))))
-
-(defun image-url-clear-overlays ()
-  "Remove overlays on image-urls."
-  (interactive)
-  (require 'ov)
-  (ov-clear 'image-url))
-
 ; enable table of contents generation in org-mode
 (if (require 'toc-org nil t)
     (progn
@@ -500,6 +474,9 @@ See options: `dired-hide-details-hide-symlink-targets',
 ; add wc-mode to doom modeline
 (setq wc-modeline-format "words: %tw") ; simpler output than the default
 (add-to-list 'global-mode-string '("" wc-buffer-stats))
+
+; enable it when opening an org-mode file
+(add-hook 'org-mode-hook 'wc-mode)
 
 (global-set-key (kbd "C-c a") 'org-agenda)
 
@@ -595,12 +572,10 @@ See options: `dired-hide-details-hide-symlink-targets',
 
 (setq org-plantuml-jar-path "/opt/homebrew/opt/plantuml/libexec/plantuml.jar")
 
-(add-hook 'org-mode-hook 'org-appear-mode)
-
 (setq
     ; Non-nil mean font-lock should hide the emphasis marker characters.
     ; e.g. / / for italics disappear
-    org-hide-emphasis-markers t
+    org-hide-emphasis-markers nil
 )
 
 (defun insert-entity (character)
@@ -634,13 +609,39 @@ See options: `dired-hide-details-hide-symlink-targets',
   ; related #+STARTUP: inlineimages
 )
 
- (defun org-image-resize (frame)
+(defun image-url-overlays ()
+  "Put image overlays on remote image urls."
+  (interactive)
+  (loop for image-url in (org-element-map (org-element-parse-buffer) 'link
+               (lambda (link)
+                 (when (string= "image-url" (org-element-property :type link))
+                   link)))
+    do
+    (let* ((path (org-element-property :path image-url))
+           (ov (make-overlay (org-element-property :begin image-url)
+                 (org-element-property :end image-url)))
+           (img (create-image (expand-file-name
+                   (concat (md5 path)
+                       "."
+                       (file-name-extension
+                        path))
+                   temporary-file-directory))))
+      (overlay-put ov 'display img)
+      (overlay-put ov 'image-url t))))
+
+(defun image-url-clear-overlays ()
+  "Remove overlays on image-urls."
+  (interactive)
+  (require 'ov)
+  (ov-clear 'image-url))
+
+ (defun masu-org-image-resize (frame)
    (when (derived-mode-p 'org-mode)
        (if (< (window-total-qwidth) 80)
        (setq org-image-actual-width (window-pixel-width))
      (setq org-image-actual-width (* 80 (window-font-width))))
        (org-redisplay-inline-images)))
- (add-hook 'window-size-change-functions 'org-image-resize)
+ (add-hook 'window-size-change-functions 'masu-org-image-resize)
 
 ; a port of Tim Pope's surround.vim
 (use-package evil-surround
