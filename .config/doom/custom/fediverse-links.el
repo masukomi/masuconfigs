@@ -35,7 +35,6 @@
      ; <a href="https://example.com/@foo">@foo@example.com</a>
      ((eq backend 'html)  (format "<a href=\"%s\">%s</a>" url path))
      ((eq backend 'md)  (format "[%s](%s)" path url))
-     ((eq backend 'markua)  (format "[%s](%s)" path url))
      (t url))))                                      ; plain string otherwise
 
 ;; Install the link type into Org
