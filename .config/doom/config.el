@@ -578,6 +578,10 @@ See options: `dired-hide-details-hide-symlink-targets',
     org-hide-emphasis-markers nil
 )
 
+; load the new emphasis marker face in custom/org-emphasis-marker-face.el
+(require 'org) ; just to guarantee it's been loaded before we monkeypatch it
+(load "org-emphasis-marker-face")
+
 (defun insert-entity (character)
         "Insert the org entity (if any) that corresponds to the typed character"
         (interactive "sEnter character: ")

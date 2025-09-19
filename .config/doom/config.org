@@ -50,6 +50,7 @@ At the time of writing this consists of
 - ~eruby-mode.el~
 - ~flycheck-standardrb.el~
 - ~maybe-insert-org-entity.el~
+- ~org-emphasis-marker-face.el~
 - ~ruby-align.el~
 - ~screenshot.el~
 - ~sh-send-line-or-region.el~
@@ -1446,7 +1447,9 @@ You can override this by adding a "showall" or "fold" instruction to a file's fr
 #+end_src
 
 ** Emphasis Markers
-I prefer it when org-mode just shows italic text as italic without the slashes that caused it to be italic. If you set this to ~nil~ it'll show the slashes that italicized it or asterisks that bolded it, or whatever.
+I prefer it when org-mode just shows italic text as italic without the slashes that caused it to be italic, but this makes it difficult to insert characters at the begging / end of an emphasized block. I always end up on the "wrong" side of the invisible character.
+
+If you set this to ~nil~ it'll show the slashes that italicized it or asterisks that bolded it, or whatever.
 
 #+begin_src elisp :tangle config.el
 
@@ -1457,7 +1460,18 @@ I prefer it when org-mode just shows italic text as italic without the slashes t
 )
 #+end_src
 
-If you set the above to ~t~ to hide emphasis markers, then you might want to try enabling [[https://github.com/awth13/org-appear][org-appear-mode]].
+
+But, having them visible still sucks. That's where this lovely little hack by Matthew Newton comes into play. It makes the emphasis markers use different - dimmer - face. Unfortunately it does this by hacking a core function. So, this may break in the future.
+
+#+begin_src elisp :tangle config.el
+; load the new emphasis marker face in custom/org-emphasis-marker-face.el
+(require 'org) ; just to guarantee it's been loaded before we monkeypatch it
+(load "org-emphasis-marker-face")
+#+end_src
+
+
+
+If you set ~org-hide-emphasis-markers t~ to hide emphasis markers, then you might want to try enabling [[https://github.com/awth13/org-appear][org-appear-mode]].
 
 #+begin_src elisp
 (add-hook 'org-mode-hook 'org-appear-mode)
