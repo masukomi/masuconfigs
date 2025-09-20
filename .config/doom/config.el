@@ -380,6 +380,8 @@ See options: `dired-hide-details-hide-symlink-targets',
 
 (add-hook 'dired-mode-hook (lambda () (treemacs-icons-dired-mode)))
 
+(load "titlecase")
+
 (setq org-fold-core-style 'text-properties)
 (after! evil
    (evil-select-search-module 'evil-search-module 'isearch))

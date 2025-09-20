@@ -55,7 +55,6 @@ At the time of writing this consists of
 - ~screenshot.el~
 - ~sh-send-line-or-region.el~
 - ~titlecase.el~
-  This one relies on the [[https://github.com/ap/titlecase][titlecase]] perl script being in your ~exec-path~
 
 #+begin_src elisp :tangle config.el
 ;;---------------------------------
@@ -416,34 +415,6 @@ The viable options here are: fill, column, character, or bitmap. I'm kinda intri
 ;; ialign (interatvie alignment)
 (global-set-key (kbd "C-x l") #'ialign)
 #+END_SRC
-
-* Word Wrapping
-Vim's word wrapping is an effing nightmare with how it screws with arrow key movement. I'm so happy to be free of that.
-
-Doom has a minor mode called [[https://github.com/hlissner/doom-emacs/blob/3614109c7a0cdd5bc474f095beebe9c126ae8f01/modules/editor/word-wrap/README.org
-][+word-wrap-mode]] built in "…which intelligently wraps long lines in the buffer without modifying the buffer content."
-
-It's pretty cool, but for reasons I can't recall, /I no longer have this enabled/. But I kept the details in my old config. 🤔 Maybe it's just trauma from Vim's stupid wrapping. Anyway…
-
-You can enable it in a specific language with this:
-
-#+begin_src elisp
-; enable +word-wrap-mode in C, C++, ObjC, & Java
-(add-hook 'c-mode-common-hook #'+word-wrap-mode)
-#+end_src
-
-Or disable it in a specific /mode/ with this:
-
-#+begin_src elisp
-(add-to-list '+word-wrap-disabled-modes 'emacs-lisp-mode)
-#+end_src
-
-
-Or you can enable it globally with this:
-
-#+begin_src elisp
-(+global-word-wrap-mode +1)
-#+end_src
 
 * Smartparens
 Doom includes [[https://smartparens.readthedocs.io/en/latest/pair-management.html#el.function.sp-with-modes][Smartparens]] which is generally cool but its autocompletion of single and double quotes is absolutely incompatible with my 🧠.
@@ -953,6 +924,43 @@ Now, wire it into =prog-mode=
 #+end_src
 
 The code that actually enables it is in the pro-mode hook up in my Yafolding section.
+* Text Stuff
+** Word Wrapping
+Vim's word wrapping is an effing nightmare with how it screws with arrow key movement. I'm so happy to be free of that.
+
+Doom has a minor mode called [[https://github.com/hlissner/doom-emacs/blob/3614109c7a0cdd5bc474f095beebe9c126ae8f01/modules/editor/word-wrap/README.org
+][+word-wrap-mode]] built in "…which intelligently wraps long lines in the buffer without modifying the buffer content."
+
+It's pretty cool, but for reasons I can't recall, /I no longer have this enabled/. But I kept the details in my old config. 🤔 Maybe it's just trauma from Vim's stupid wrapping. Anyway…
+
+You can enable it in a specific language with this:
+
+#+begin_src elisp
+; enable +word-wrap-mode in C, C++, ObjC, & Java
+(add-hook 'c-mode-common-hook #'+word-wrap-mode)
+#+end_src
+
+Or disable it in a specific /mode/ with this:
+
+#+begin_src elisp
+(add-to-list '+word-wrap-disabled-modes 'emacs-lisp-mode)
+#+end_src
+
+
+Or you can enable it globally with this:
+
+#+begin_src elisp
+(+global-word-wrap-mode +1)
+#+end_src
+
+** Titlecase
+Titlecase relies on the [[https://github.com/ap/titlecase][titlecase]] perl script being in your ~exec-path~
+
+It converts "words like these" into "Words Like These". I find it useful because I keep writing chapter titles with the wrong case.
+
+#+begin_src elisp :tangle config.el
+(load "titlecase")
+#+end_src
 * Org-mode
 
 #+begin_src text tangle config.el
