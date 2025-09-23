@@ -181,7 +181,11 @@ current buffer's, reload dir-locals."
 #+end_src
 
 * Configuring Doom Itself
-First: Make that splash-screen cuter. I don't really like the "Doom" video game logo, but [[https://github.com/jaidetree][jaidtree]] contributed a really cute Doom monster graphic in [[https://github.com/doomemacs/doomemacs/issues/3382][this GitHub Issue]].
+First: Make that splash-screen cuter.
+
+[[https://discourse.doomemacs.org/t/how-to-change-your-splash-screen/57][Instructions on how to modify the splash screen.]]
+
+I don't really like the "Doom" video game logo, but [[https://github.com/jaidetree][jaidtree]] contributed a really cute Doom monster graphic in [[https://github.com/doomemacs/doomemacs/issues/3382][this GitHub Issue]].
 
 I've stored a few sizes of it in =~/.config/doom/images/=
 
@@ -1081,7 +1085,8 @@ Next we'll configure all the default files. As noted below, I don't actually use
    + otherwise move the subtree
 
 #+begin_src elisp :tangle config.el
-(require 'org-mouse)
+(with-eval-after-load 'org
+    (require 'org-mouse))
 #+end_src
 
 ** Make it understand your Vim based muscle memory.
@@ -1418,10 +1423,10 @@ Now that we've got PlantUML installed & the paths configured we need to finish i
 
 #+begin_src elisp :tangle config.el
 ;; active Org-babel languages
-(org-babel-do-load-languages 'org-babel-load-languages
- '(;; other Babel languages
-   (plantuml . t)))
-
+(with-eval-after-load 'org
+    (org-babel-do-load-languages 'org-babel-load-languages
+    '(;; other Babel languages
+      (plantuml . t))))
 (setq org-plantuml-jar-path "/opt/homebrew/opt/plantuml/libexec/plantuml.jar")
 #+end_src
 
@@ -1473,8 +1478,8 @@ But, having them visible still sucks. That's where this lovely little hack by Ma
 
 #+begin_src elisp :tangle config.el
 ; load the new emphasis marker face in custom/org-emphasis-marker-face.el
-(require 'org) ; just to guarantee it's been loaded before we monkeypatch it
-(load "org-emphasis-marker-face")
+(with-eval-after-load 'org
+  (load "org-emphasis-marker-face"))
 #+end_src
 
 
@@ -1535,7 +1540,7 @@ Your options are:
 
 #+begin_src elisp :tangle config.el
 ;display inline images and cache them
-  (setq org-display-remote-inline-images 'cache)
+(setq org-display-remote-inline-images 'cache)
 #+end_src
 
 Once you've got an image to display there's a question of how-wide. Preferably this is defined in an ~#+ATTR.*~ keyword by the image tag. For example: ~#+ATTR_HTML: :width 300px~

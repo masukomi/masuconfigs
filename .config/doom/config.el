@@ -428,7 +428,8 @@ See options: `dired-hide-details-hide-symlink-targets',
 ; enable shift selection
 (setq org-support-shift-select t)
 
-(require 'org-mouse)
+(with-eval-after-load 'org
+    (require 'org-mouse))
 
 (use-package evil-org
   :after (evil org)
@@ -568,10 +569,10 @@ See options: `dired-hide-details-hide-symlink-targets',
 (setq plantuml-default-exec-mode 'jar)
 
 ;; active Org-babel languages
-(org-babel-do-load-languages 'org-babel-load-languages
- '(;; other Babel languages
-   (plantuml . t)))
-
+(with-eval-after-load 'org
+    (org-babel-do-load-languages 'org-babel-load-languages
+    '(;; other Babel languages
+      (plantuml . t))))
 (setq org-plantuml-jar-path "/opt/homebrew/opt/plantuml/libexec/plantuml.jar")
 
 (setq
@@ -581,8 +582,8 @@ See options: `dired-hide-details-hide-symlink-targets',
 )
 
 ; load the new emphasis marker face in custom/org-emphasis-marker-face.el
-(require 'org) ; just to guarantee it's been loaded before we monkeypatch it
-(load "org-emphasis-marker-face")
+(with-eval-after-load 'org
+  (load "org-emphasis-marker-face"))
 
 (defun insert-entity (character)
         "Insert the org entity (if any) that corresponds to the typed character"
@@ -607,7 +608,7 @@ See options: `dired-hide-details-hide-symlink-targets',
     )
 
 ;display inline images and cache them
-  (setq org-display-remote-inline-images 'cache)
+(setq org-display-remote-inline-images 'cache)
 
 (setq
   org-image-actual-width nil
