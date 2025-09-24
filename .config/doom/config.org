@@ -1451,6 +1451,9 @@ to say, just showing headings, with their contents "folded" away. I go back and 
   ; #+STARTUP: fold
   org-startup-folded t
 )
+; set the character shown when something is folded
+; normally this is three periods (not an ellipsis)
+(setq org-ellipsis "⤵")
 #+end_src
 
 You can override this by adding a "showall" or "fold" instruction to a file's frontmatter.
@@ -1458,6 +1461,8 @@ You can override this by adding a "showall" or "fold" instruction to a file's fr
 #+begin_src
 #+STARTUP: showall
 #+end_src
+
+
 
 ** Emphasis Markers
 I prefer it when org-mode just shows italic text as italic without the slashes that caused it to be italic, but this makes it difficult to insert characters at the begging / end of an emphasized block. I always end up on the "wrong" side of the invisible character.
@@ -1663,7 +1668,6 @@ Check out the [[https://github.com/tpope/vim-surround][surround.vim README]] bet
 #+begin_src elisp :tangle config.el
 ; a port of Tim Pope's surround.vim
 (use-package evil-surround
-  :ensure t
   :config
   (global-evil-surround-mode 1))
 
@@ -1921,7 +1925,6 @@ I'm using ~reformatter~ to auto-format Elixir code. You can find out more detail
 
 #+begin_src elisp :tangle config.el
 (use-package reformatter
-  :ensure t
   :config
   ; Adds a reformatter configuration called "+elixir-format"
   ; This uses "mix format -"
@@ -1946,7 +1949,6 @@ I'm using ~reformatter~ to auto-format Elixir code. You can find out more detail
 ; NECESSARY LSP bits vvvv
 (use-package lsp-mode
       :commands lsp
-      :ensure t
       :diminish lsp-mode
       :hook
       (elixir-mode . lsp)

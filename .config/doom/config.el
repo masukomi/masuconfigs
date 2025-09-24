@@ -652,7 +652,6 @@ See options: `dired-hide-details-hide-symlink-targets',
 
 ; a port of Tim Pope's surround.vim
 (use-package evil-surround
-  :ensure t
   :config
   (global-evil-surround-mode 1))
 
@@ -767,7 +766,6 @@ See options: `dired-hide-details-hide-symlink-targets',
 (setq web-mode-engines-alist '(("elixir" . "\\.ex\\'")))
 
 (use-package reformatter
-  :ensure t
   :config
   ; Adds a reformatter configuration called "+elixir-format"
   ; This uses "mix format -"
@@ -792,7 +790,6 @@ See options: `dired-hide-details-hide-symlink-targets',
 ; NECESSARY LSP bits vvvv
 (use-package lsp-mode
       :commands lsp
-      :ensure t
       :diminish lsp-mode
       :hook
       (elixir-mode . lsp)
