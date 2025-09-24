@@ -623,21 +623,24 @@ Modeline is the Emacs equivalent of Vim's "Airline". You can do a lot to configu
 
 Mucking with the colors is potentially cool, but I decided to not bother after futzing with it for a bit. Here's what I had.
 
-#+begin_src elisp :tangle config.el
-(set-face-attribute 'mode-line nil
- :background "#6c6f31" ; actually gets used as the foreground
- :foreground "#27271a" ; actually....the background
- :box nil
- :overline nil
- :underline nil
- )
+NOTE: The ~set-face-attribute~ method of setting faces works, but for reasons I don't understand /doesn't/ work during the initial load of my config file, but the ~custom-set-faces~ method documented on [[https://github.com/seagle0128/doom-modeline][the doom-modeline repo]] does.
 
-(set-face-attribute 'mode-line-inactive nil
+#+begin_src elisp :tangle config.el
+(custom-set-faces
+ '(mode-line ((t (
+
+                    :background "#6c6f31" ; actually gets used as the foreground
+                    :foreground "#27271a" ; actually....the background
+                    :box nil
+                    :overline nil
+                    :underline nil))))
+ '(mode-line-inactive ((t (
+
                     :background "#31446f"
                     :foreground "#1a283a"
                     :box nil    ; could do something like '(:line-width 8 :color "#565063")
                     :overline nil
-                    :underline nil)
+                    :underline nil)))))
 #+end_src
 
 ** Command w should be consistent
@@ -1443,7 +1446,7 @@ The following will start everything off entirely folded. That is
 to say, just showing headings, with their contents "folded" away. I go back and forth on whether this is a good thing or a bad thing. If it's not tangled, I'm currently on the "bad thing" side of the fence. 😉
 
 
-#+begin_src elisp
+#+begin_src elisp :tangle config.el
 (setq
   ; start off with things folded
   ; manually override in a file with

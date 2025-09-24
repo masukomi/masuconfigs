@@ -198,20 +198,21 @@ current buffer's, reload dir-locals."
 ;; Modeline tweaks (think Airline in vim)
 (setq doom-modeline-height 25)
 
-(set-face-attribute 'mode-line nil
- :background "#6c6f31" ; actually gets used as the foreground
- :foreground "#27271a" ; actually....the background
- :box nil
- :overline nil
- :underline nil
- )
+(custom-set-faces
+ '(mode-line ((t (
 
-(set-face-attribute 'mode-line-inactive nil
+                    :background "#6c6f31" ; actually gets used as the foreground
+                    :foreground "#27271a" ; actually....the background
+                    :box nil
+                    :overline nil
+                    :underline nil))))
+ '(mode-line-inactive ((t (
+
                     :background "#31446f"
                     :foreground "#1a283a"
                     :box nil    ; could do something like '(:line-width 8 :color "#565063")
                     :overline nil
-                    :underline nil)
+                    :underline nil)))))
 
 (global-set-key (kbd "s-w")  '+workspace/kill)
 
@@ -574,6 +575,17 @@ See options: `dired-hide-details-hide-symlink-targets',
     '(;; other Babel languages
       (plantuml . t))))
 (setq org-plantuml-jar-path "/opt/homebrew/opt/plantuml/libexec/plantuml.jar")
+
+(setq
+  ; start off with things folded
+  ; manually override in a file with
+  ; #+STARTUP: showall
+  ; #+STARTUP: fold
+  org-startup-folded t
+)
+; set the character shown when something is folded
+; normally this is three periods (not an ellipsis)
+(setq org-ellipsis "⤵")
 
 (setq
     ; Non-nil mean font-lock should hide the emphasis marker characters.
