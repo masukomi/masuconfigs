@@ -1004,8 +1004,8 @@ Henrik [[https://github.com/doomemacs/doomemacs/pull/7739][thought it was fixed�
       :map evil-org-mode-map
       :i "<tab>" #'my/org-tab-conditional)
 #+end_src
-
-** Configuring misc things via global org variables
+** Beautification
+*** Configuring misc things via global org variables
 First let's disable the interpretation of ~_~ and ~^~ as subscript & superscript
 which causes issues when exporting as markdown.
 
@@ -1018,20 +1018,23 @@ Then we'll define our "todo keywords" and tell org-mode what colors we want them
 
 #+begin_src elisp :tangle config.el
   ; KEYWORDS
-  (setq
-    org-todo-keywords
-    '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
-    (sequence "[ ](T)" "|" "[X](D)")
-    (sequence "|" "OKAY(o)" "YES(y)" "NO(n)"))
+  (with-eval-after-load 'org
+    (setq
+        org-todo-keywords
+        '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
+        (sequence "[ ](T)" "|" "[X](D)")
+        (sequence "|" "OKAY(o)" "YES(y)" "NO(n)"))
 
-    org-todo-keyword-faces '(
-    ("TODO"    :foreground "#7c7c75" :weight normal :underline t)
-    ("WAITING"  :foreground "#9f7efe" :weight normal :underline t)
-    ("INPROGRESS"  :foreground "#0098dd" :weight normal :underline t)
-    ("DONE"    :foreground "#50a14f" :weight normal :underline t)
-    ("CANCELLED"  :foreground "#ff6480" :weight normal :underline t)
-    )
-  )
+        ; NOTE: commented out because this is superceded by
+        ; org-modern-todo-faces
+        ;; org-todo-keyword-faces '(
+        ;; ("TODO"        :foreground "#7c7c75" :weight normal :underline t)
+        ;; ("INPROGRESS"  :foreground "#0098dd" :weight normal :underline t)
+        ;; ("WAITING"     :foreground "#9f7efe" :weight normal :underline t)
+        ;; ("DONE"        :foreground "#50a14f" :weight normal :underline t)
+        ;; ("CANCELLED"   :foreground "#ff6480" :weight normal :underline t)
+        ;; )
+    ))
 #+end_src
 
 The information to be shown in org-agenda is normally collected from /all/ the agenda files. The ~org-agenda-files~ variable defines where those files are stored. If it's a string, instead of a list, they'll all be stored in the same file.
@@ -1057,14 +1060,125 @@ Org acutally uses this variable only under rare circumstances, like when filing 
 
 Next we'll configure all the default files. As noted below, I don't actually use the notes stuff, because I use [[https://protesilaos.com/emacs/denote][Denote]] (see below). I like having good defaults though.
 
-** Pretty bullet lists please
+*** Pretty bullet lists please
 [[https://github.com/sabof/org-bullets][org-bullets]] mode takes those boring-ass ASCII characters used for headings and bullets and replaces them with UTF-8 characters that look way better. This is just a visual tweak. The file stores the boring ASCII characters. That way if you an org-mode file with some poor soul who hasn't learned the joys of emacs, or how to make their bullets pretty, they can still read them without issue.
 
 
 #+BEGIN_SRC elisp :tangle config.el
 ; pretty bullets in org-mode
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 #+END_SRC
+
+*** Headings
+#+begin_src elisp :tangle config.el
+;; Resize Org headings
+(add-hook 'org-mode-hook
+          (lambda ()
+            (dolist (face '((org-level-1 . 1.35)
+                            (org-level-2 . 1.3)
+                            (org-level-3 . 1.2)
+                            (org-level-4 . 1.1)
+                            (org-level-5 . 1.1)
+                            (org-level-6 . 1.1)
+                            (org-level-7 . 1.1)
+                            (org-level-8 . 1.1)))
+                    ;(set-face-attribute (car face) nil :font "Jost" :weight 'bold :height (cdr face))
+                    (set-face-attribute (car face) nil
+                                        :font "Kefa"
+                                        :weight 'bold
+                                        :height (cdr face)))))
+#+end_src
+*** Modern Styling
+[[https://github.com/minad/org-modern][org-modern]] replaces a lot of old-school ASCII graphical stuff with clean looking modern alternatives. This is set up in ~packages.el~
+
+Note that the [[https://github.com/rougier/svg-tag-mode][svg-tag-mode]] has notably prettier tags, /but/ is incompatible with org-modern, and I want more than just org-modern's tag styling.
+
+#+begin_src elisp :tangle config.el
+(with-eval-after-load 'org (global-org-modern-mode))
+
+(with-eval-after-load 'org
+    (setq
+
+        org-modern-todo-faces '(
+        ("TODO"        :foreground "#dfe1e1"
+                         :background "#7f8080"
+                         :weight normal
+                         :underline nil)
+        ("INPROGRESS"    :foreground "#dfe1e1"
+                         :background "#0098dd"
+                         :weight normal
+                         :underline nil)
+        ("WAITING"       :foreground "#dfe1e1"
+                         :background "#9f7efe"
+                         :weight normal
+                         :underline nil)
+        ("DONE"          :foreground "#dfe1e1"
+                         :background "#50a14f"
+                         :weight normal :underline nil)
+        ("CANCELLED"     :foreground "#dfe1e1"
+                         :background "#ff6480" :weight normal
+                         :underline nil)
+        )
+    )
+    ;; Add frame borders and window dividers
+    (modify-all-frames-parameters
+    '((right-divider-width . 40)
+    (internal-border-width . 40)))
+    (dolist (face '(window-divider
+                    window-divider-first-pixel
+                    window-divider-last-pixel))
+            (face-spec-reset-face face)
+            (set-face-foreground face (face-attribute 'default :background)))
+
+    (set-face-background 'fringe (face-attribute 'default :background))
+
+    (setq
+    ;; Edit settings
+    org-auto-align-tags nil
+    org-tags-column 0
+    org-catch-invisible-edits 'show-and-error
+    org-special-ctrl-a/e t
+    org-insert-heading-respect-content t
+
+    ; bullets
+    ; can be nil, 'fold, or 'replace
+    ; nil is default, 'fold looks like daughtering triangles
+    org-modern-star 'replace
+    ;; org-modern-fold-stars
+    ; define the characters before headings to denote folded or not
+    ; note that the 3rd pair tends to not exist in many fonts
+    ;; '(("▶" . "▼") ("▷" . "▽") ("⯈" . "⯆") ("▹" . "▿") ("▸" . "▾"))
+    ; define the characters used before different heading levels in org mode
+    org-modern-replace-stars "◉○◈◇✩"
+    ;; Org styling, hide markup etc.
+    org-hide-emphasis-markers t
+    ;org-pretty-entities t
+    org-agenda-tags-column 0
+    ;org-ellipsis "⤵"
+
+    ;; Agenda styling
+    org-agenda-tags-column 0
+    org-agenda-block-separator ?─
+
+    )
+)
+
+#+end_src
+
+EXAMPLES (These will only display correctly in emacs)
+
+****  Todo Labels & Tags
+***** DONE  show examples of =org-modern= :emacs:graphics:
+***** INPROGRESS view this in org-mode
+***** WAITING foo ~bar~
+***** CANCELLED bar
+**** Priorities
+***** WAITING
+**** Timestamps
+- DAY <2025-09-28 Sun>
+- Day Range <2025-09-28 Sun>--<2025-09-30 Tue>
+- Time Range <2025-09-28 Sun 10:11-11:12>
+- Time Stamp <2025-09-28 Sun 10:11>
 
 ** Shift-select like all the other editors
 #+begin_src elisp :tangle config.el
@@ -1466,7 +1580,6 @@ You can override this by adding a "showall" or "fold" instruction to a file's fr
 #+end_src
 
 
-
 ** Emphasis Markers
 I prefer it when org-mode just shows italic text as italic without the slashes that caused it to be italic, but this makes it difficult to insert characters at the begging / end of an emphasized block. I always end up on the "wrong" side of the invisible character.
 
@@ -1535,6 +1648,14 @@ find and insert the org entity for, and it'll do that.
           )
     )
 #+end_src
+
+/And/ Because we're not masochistic, and would like to see the character instead of its org-entities representation (ex \alpha instead of ~\​alpha~) we're going to turn on ~org-pretty-entities~
+
+#+begin_src elisp :tangle config.el
+; show the things an org-entity represents instead of the escaped version
+(setq org-pretty-entities t)
+#+end_src
+
 
 ** Images
 Org can display remote images inline, but it's disabled by default, and as far as I can tell, it's not documented & it's only mentioned in release notes and online discussions. If you dig about ~16,000 into the source file you'll find it though. 🤦‍♀️

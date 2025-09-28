@@ -400,20 +400,23 @@ See options: `dired-hide-details-hide-symlink-targets',
   (setq org-export-with-sub-superscripts nil)
 
   ; KEYWORDS
-  (setq
-    org-todo-keywords
-    '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
-    (sequence "[ ](T)" "|" "[X](D)")
-    (sequence "|" "OKAY(o)" "YES(y)" "NO(n)"))
+  (with-eval-after-load 'org
+    (setq
+        org-todo-keywords
+        '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
+        (sequence "[ ](T)" "|" "[X](D)")
+        (sequence "|" "OKAY(o)" "YES(y)" "NO(n)"))
 
-    org-todo-keyword-faces '(
-    ("TODO"    :foreground "#7c7c75" :weight normal :underline t)
-    ("WAITING"  :foreground "#9f7efe" :weight normal :underline t)
-    ("INPROGRESS"  :foreground "#0098dd" :weight normal :underline t)
-    ("DONE"    :foreground "#50a14f" :weight normal :underline t)
-    ("CANCELLED"  :foreground "#ff6480" :weight normal :underline t)
-    )
-  )
+        ; NOTE: commented out because this is superceded by
+        ; org-modern-todo-faces
+        ;; org-todo-keyword-faces '(
+        ;; ("TODO"        :foreground "#7c7c75" :weight normal :underline t)
+        ;; ("INPROGRESS"  :foreground "#0098dd" :weight normal :underline t)
+        ;; ("WAITING"     :foreground "#9f7efe" :weight normal :underline t)
+        ;; ("DONE"        :foreground "#50a14f" :weight normal :underline t)
+        ;; ("CANCELLED"   :foreground "#ff6480" :weight normal :underline t)
+        ;; )
+    ))
 
 (setq
   org-agenda-files '("~/Documents/notes/"
@@ -424,7 +427,93 @@ See options: `dired-hide-details-hide-symlink-targets',
 )
 
 ; pretty bullets in org-mode
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+;; Resize Org headings
+(add-hook 'org-mode-hook
+          (lambda ()
+            (dolist (face '((org-level-1 . 1.35)
+                            (org-level-2 . 1.3)
+                            (org-level-3 . 1.2)
+                            (org-level-4 . 1.1)
+                            (org-level-5 . 1.1)
+                            (org-level-6 . 1.1)
+                            (org-level-7 . 1.1)
+                            (org-level-8 . 1.1)))
+                    ;(set-face-attribute (car face) nil :font "Jost" :weight 'bold :height (cdr face))
+                    (set-face-attribute (car face) nil
+                                        :font "Kefa"
+                                        :weight 'bold
+                                        :height (cdr face)))))
+
+(with-eval-after-load 'org (global-org-modern-mode))
+
+(with-eval-after-load 'org
+    (setq
+
+        org-modern-todo-faces '(
+        ("TODO"        :foreground "#dfe1e1"
+                         :background "#7f8080"
+                         :weight normal
+                         :underline nil)
+        ("INPROGRESS"    :foreground "#dfe1e1"
+                         :background "#0098dd"
+                         :weight normal
+                         :underline nil)
+        ("WAITING"       :foreground "#dfe1e1"
+                         :background "#9f7efe"
+                         :weight normal
+                         :underline nil)
+        ("DONE"          :foreground "#dfe1e1"
+                         :background "#50a14f"
+                         :weight normal :underline nil)
+        ("CANCELLED"     :foreground "#dfe1e1"
+                         :background "#ff6480" :weight normal
+                         :underline nil)
+        )
+    )
+    ;; Add frame borders and window dividers
+    (modify-all-frames-parameters
+    '((right-divider-width . 40)
+    (internal-border-width . 40)))
+    (dolist (face '(window-divider
+                    window-divider-first-pixel
+                    window-divider-last-pixel))
+            (face-spec-reset-face face)
+            (set-face-foreground face (face-attribute 'default :background)))
+
+    (set-face-background 'fringe (face-attribute 'default :background))
+
+    (setq
+    ;; Edit settings
+    org-auto-align-tags nil
+    org-tags-column 0
+    org-catch-invisible-edits 'show-and-error
+    org-special-ctrl-a/e t
+    org-insert-heading-respect-content t
+
+    ; bullets
+    ; can be nil, 'fold, or 'replace
+    ; nil is default, 'fold looks like daughtering triangles
+    org-modern-star 'replace
+    ;; org-modern-fold-stars
+    ; define the characters before headings to denote folded or not
+    ; note that the 3rd pair tends to not exist in many fonts
+    ;; '(("▶" . "▼") ("▷" . "▽") ("⯈" . "⯆") ("▹" . "▿") ("▸" . "▾"))
+    ; define the characters used before different heading levels in org mode
+    org-modern-replace-stars "◉○◈◇✩"
+    ;; Org styling, hide markup etc.
+    org-hide-emphasis-markers t
+    ;org-pretty-entities t
+    org-agenda-tags-column 0
+    ;org-ellipsis "⤵"
+
+    ;; Agenda styling
+    org-agenda-tags-column 0
+    org-agenda-block-separator ?─
+
+    )
+)
 
 ; enable shift selection
 (setq org-support-shift-select t)
@@ -618,6 +707,9 @@ See options: `dired-hide-details-hide-symlink-targets',
                            character)
           )
     )
+
+; show the things an org-entity represents instead of the escaped version
+(setq org-pretty-entities t)
 
 ;display inline images and cache them
 (setq org-display-remote-inline-images 'cache)

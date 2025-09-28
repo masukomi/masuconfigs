@@ -171,7 +171,7 @@
 (package! org-mode :pin "971eb6885ec996c923e955730df3bafbdc244e54")
 
 ; pretty bullets
-(package! org-bullets)
+;; (package! org-bullets)
 ; in config: (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 ; alternative org-superstar adds fancyness to unordered lists
 ; (package! org-superstar)
@@ -183,8 +183,12 @@
   :recipe (:host github
            :repo "awth13/org-appear"))
 (package! evil-org)
+(package! org-hide-drawers)
+(package! org-modern)
 (package! ox-clip)
 (package! ox-gfm)
+; ox-pandoc has a lot of configuration stuff
+; https://github.com/kawabata/ox-pandoc
 (package! ox-pandoc)
 (package! denote)
 (package! plantuml-mode)
