@@ -1060,15 +1060,6 @@ Org acutally uses this variable only under rare circumstances, like when filing 
 
 Next we'll configure all the default files. As noted below, I don't actually use the notes stuff, because I use [[https://protesilaos.com/emacs/denote][Denote]] (see below). I like having good defaults though.
 
-*** Pretty bullet lists please
-[[https://github.com/sabof/org-bullets][org-bullets]] mode takes those boring-ass ASCII characters used for headings and bullets and replaces them with UTF-8 characters that look way better. This is just a visual tweak. The file stores the boring ASCII characters. That way if you an org-mode file with some poor soul who hasn't learned the joys of emacs, or how to make their bullets pretty, they can still read them without issue.
-
-
-#+BEGIN_SRC elisp :tangle config.el
-; pretty bullets in org-mode
-;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-#+END_SRC
-
 *** Headings
 #+begin_src elisp :tangle config.el
 ;; Resize Org headings
@@ -1172,10 +1163,12 @@ EXAMPLES (These will only display correctly in emacs)
 ***** INPROGRESS view this in org-mode
 ***** WAITING foo ~bar~
 ***** CANCELLED bar
-**** Priorities
-***** WAITING
+**** [X] [1/2] checklists
+- [ ] unchecked
+- [X] checked
 **** Timestamps
-- DAY <2025-09-28 Sun>
+- CLOSED: [2025-09-28 Sun 17:01]
+- DAY <2025-10-01 Wed>
 - Day Range <2025-09-28 Sun>--<2025-09-30 Tue>
 - Time Range <2025-09-28 Sun 10:11-11:12>
 - Time Stamp <2025-09-28 Sun 10:11>

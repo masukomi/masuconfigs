@@ -426,9 +426,6 @@ See options: `dired-hide-details-hide-symlink-targets',
   org-directory "~/.config/org/"
 )
 
-; pretty bullets in org-mode
-;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
 ;; Resize Org headings
 (add-hook 'org-mode-hook
           (lambda ()
