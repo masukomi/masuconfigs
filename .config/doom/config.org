@@ -981,13 +981,28 @@ It converts "words like these" into "Words Like These". I find it useful because
 [[https://github.com/doomemacs/doomemacs/issues/6478][There's a bug in evil-search]] where searches in org-mode ignore results in folded sections. What follows is a temporary fix until that bug is fixed. It uses ~isearch~ as the evil search module.
 
 Bug reported: June 20, 2022
-Last time I checked: July 5, 2024
+Last time I checked: <2025-09-28 Sun>
+
+There are 2 valid solutions:
+
+#+begin_src elisp
+;; Configuration A
+(setq org-fold-core-style 'overlays)
+(evil-select-search-module 'evil-search-module 'evil-search)
+
+;; Configuration B
+(setq org-fold-core-style 'text-properties)
+(evil-select-search-module 'evil-search-module 'isearch)
+#+end_src
+
+I've been using the 2nd. I don't recall why.
 
 #+begin_src elisp :tangle config.el
 (setq org-fold-core-style 'text-properties)
 (after! evil
    (evil-select-search-module 'evil-search-module 'isearch))
 #+end_src
+
 
 [[https://github.com/doomemacs/doomemacs/issues/8227][There's a bug ?in evil-org?]] where hitting tab does things it shouldn't. (folds/unfolds the next block, demotes the subheader (whatever that means), or simply fails to tab to the next field. [[https://github.com/doomemacs/doomemacs/issues/7733#issuecomment-1999838498][Some kind soul]] figured out this ugly workaround.
 
@@ -1004,6 +1019,8 @@ Henrik [[https://github.com/doomemacs/doomemacs/pull/7739][thought it was fixedâ
       :map evil-org-mode-map
       :i "<tab>" #'my/org-tab-conditional)
 #+end_src
+
+
 ** Beautification
 *** Configuring misc things via global org variables
 First let's disable the interpretation of ~_~ and ~^~ as subscript & superscript
@@ -1059,7 +1076,6 @@ Org acutally uses this variable only under rare circumstances, like when filing 
 #+end_src
 
 Next we'll configure all the default files. As noted below, I don't actually use the notes stuff, because I use [[https://protesilaos.com/emacs/denote][Denote]] (see below). I like having good defaults though.
-
 *** Headings
 #+begin_src elisp :tangle config.el
 ;; Resize Org headings
@@ -1172,13 +1188,83 @@ EXAMPLES (These will only display correctly in emacs)
 - Day Range <2025-09-28 Sun>--<2025-09-30 Tue>
 - Time Range <2025-09-28 Sun 10:11-11:12>
 - Time Stamp <2025-09-28 Sun 10:11>
+*** Drawer Styling
+I haven't found a way to customize the face of a drawer's content, but you can tweak the face of lines that define its boundaries.
+
+#+begin_src elisp :tangle config.el
+; make your drawer indicator hot pink
+(use-package evil-org
+  :after (evil org)
+  :config
+  (add-hook 'evil-org-mode-hook
+            (lambda ()
+              (set-face-attribute 'org-drawer nil :foreground "hot pink")
+              )))
+
+#+end_src
+*** Custom Block Styling
+If you look in =org-fontify-meta-lines-and-blocks-1= in =org.el= there's a =cond=  with a lot of stuff, but most importantly these two clues
+
+#+begin_src elisp
+((string= block-type "quote")
+	      (add-face-text-property
+	       bol-after-beginline beg-of-endline 'org-quote t))
+((string= block-type "verse")
+	      (add-face-text-property
+	       bol-after-beginline beg-of-endline 'org-verse t))
+#+end_src
+
+I'm not seeing any way to pass in custom block types to test for, and the =org-fontify-meta-lines-and-blocks-1= function is /huge/  and wildly violating the idea that a function should only do one thing. This does SO many things, so I'm not thrilled with the idea of monkeypatching it.
+
+BUT there is a kinda gross workaround. I suspect most folks never use "verse" blocks, so you could repurpose =#+begin_verse= for whatever you want and customize the =org-verse=  face.
+
+#+begin_src elisp :tangle custom.el
+; a stupid hack because I'll never normally use a "verse" block
+; but it's one of the few you can customize the styling for. So, I'm repurposing them.
+(with-eval-after-load 'org
+  (set-face-attribute 'org-verse nil
+                      :foreground "#c0abfe"
+                      :background "#333333"
+        )
+  )
+#+end_src
+
+#+begin_verse
+This is example text in a verse block.
+It's here to test the face set above.
+#+end_verse
+
+BUT I don't want these verse blocks to ever be exported, and I don't want to have to put them in a heading that isn't exported. I just want them free-floating metadata.
+
+So, we need to exclude them from export
+#+begin_src elisp :tangle config.el
+; stop verse blocks from exporting
+(defun masu-exclude-verse-blocks (text backend info)
+  "Remove verse blocks from all exports."
+  "")
+
+
+(add-to-list 'org-export-filter-verse-block-functions
+         'masu-exclude-verse-blocks)
+#+end_src
+
+*Note*: normally an exclude filter function tests which backend is being exported to and limits itself, or does something custom based on that.
+
+#+begin_src elisp
+(defun my-html-filter-src-blocks (text backend info)
+  "Remove source blocks from html export."
+  (when (org-export-derived-backend-p backend 'html)
+    "[removed source block]"))
+#+end_src
+
+For the full list of ~org-export-filter-*~ options look at the ~org-export-options-alist~ constant in =lisp/ox.el=
+
 
 ** Shift-select like all the other editors
 #+begin_src elisp :tangle config.el
 ; enable shift selection
 (setq org-support-shift-select t)
 #+end_src
-
 ** Keyboards are great, but mice are nice too.
 [[https://github.com/emacs-mirror/emacs/blob/master/lisp/org/org-mouse.el][Org-mouse]] (ships with emacs) implements the following features:
 - following links with the left mouse button (in Emacs 22)
@@ -1741,7 +1827,7 @@ This will resize down whenever the window is < 80 columns
 
  (defun masu-org-image-resize (frame)
    (when (derived-mode-p 'org-mode)
-       (if (< (window-total-qwidth) 80)
+       (if (< (window-total-width) 80)
        (setq org-image-actual-width (window-pixel-width))
      (setq org-image-actual-width (* 80 (window-font-width))))
        (org-redisplay-inline-images)))

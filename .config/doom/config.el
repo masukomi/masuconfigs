@@ -512,6 +512,24 @@ See options: `dired-hide-details-hide-symlink-targets',
     )
 )
 
+; make your drawer indicator hot pink
+(use-package evil-org
+  :after (evil org)
+  :config
+  (add-hook 'evil-org-mode-hook
+            (lambda ()
+              (set-face-attribute 'org-drawer nil :foreground "hot pink")
+              )))
+
+; stop verse blocks from exporting
+(defun masu-exclude-verse-blocks (text backend info)
+  "Remove verse blocks from all exports."
+  "")
+
+
+(add-to-list 'org-export-filter-verse-block-functions
+         'masu-exclude-verse-blocks)
+
 ; enable shift selection
 (setq org-support-shift-select t)
 
@@ -745,7 +763,7 @@ See options: `dired-hide-details-hide-symlink-targets',
 
  (defun masu-org-image-resize (frame)
    (when (derived-mode-p 'org-mode)
-       (if (< (window-total-qwidth) 80)
+       (if (< (window-total-width) 80)
        (setq org-image-actual-width (window-pixel-width))
      (setq org-image-actual-width (* 80 (window-font-width))))
        (org-redisplay-inline-images)))
