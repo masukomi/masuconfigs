@@ -1243,9 +1243,13 @@ So, we need to exclude them from export
   "Remove verse blocks from all exports."
   "")
 
-
-(add-to-list 'org-export-filter-verse-block-functions
-         'masu-exclude-verse-blocks)
+(use-package org
+  :after org
+  :config
+  (add-hook 'org-mode-hook
+    (lambda ()
+     (add-to-list 'org-export-filter-verse-block-functions
+         'masu-exclude-verse-blocks))))
 #+end_src
 
 *Note*: normally an exclude filter function tests which backend is being exported to and limits itself, or does something custom based on that.
@@ -1658,7 +1662,20 @@ You can override this by adding a "showall" or "fold" instruction to a file's fr
 #+STARTUP: showall
 #+end_src
 
+"Do What I Mean". It has never made sense to me that telling it to fold when your cursor is in the content of a fold, doesn't fold it. This simple function just does the manual steps required to jump up to the prior heading and toggle the fold. Then I map it to ~z c~
 
+
+#+begin_src elisp :tangle config.el
+(defun masu/fold-current ()
+  (interactive)
+   (progn
+     (outline-previous-visible-heading 1)
+     (org-cycle)))
+
+(map! :after org
+      :map org-mode-map
+      :nv "z c" #'masu/fold-current)
+#+end_src
 ** Emphasis Markers
 I prefer it when org-mode just shows italic text as italic without the slashes that caused it to be italic, but this makes it difficult to insert characters at the begging / end of an emphasized block. I always end up on the "wrong" side of the invisible character.
 

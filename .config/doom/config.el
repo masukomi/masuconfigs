@@ -526,9 +526,13 @@ See options: `dired-hide-details-hide-symlink-targets',
   "Remove verse blocks from all exports."
   "")
 
-
-(add-to-list 'org-export-filter-verse-block-functions
-         'masu-exclude-verse-blocks)
+(use-package org
+  :after org
+  :config
+  (add-hook 'org-mode-hook
+    (lambda ()
+     (add-to-list 'org-export-filter-verse-block-functions
+         'masu-exclude-verse-blocks))))
 
 ; enable shift selection
 (setq org-support-shift-select t)
@@ -690,6 +694,16 @@ See options: `dired-hide-details-hide-symlink-targets',
 ; set the character shown when something is folded
 ; normally this is three periods (not an ellipsis)
 (setq org-ellipsis "⤵")
+
+(defun masu/fold-current ()
+  (interactive)
+   (progn
+     (outline-previous-visible-heading 1)
+     (org-cycle)))
+
+(map! :after org
+      :map org-mode-map
+      :nv "z c" #'masu/fold-current)
 
 (setq
     ; Non-nil mean font-lock should hide the emphasis marker characters.
