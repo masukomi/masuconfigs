@@ -119,6 +119,7 @@ Move them to =~/.emacs_backups/= & =~/.emacs_autosave/=
 
 If you get really annoyed you can disable auto-save and auto-backup entirely, but that seems like removing an important safeguard to me.
 
+⚠️ NOT tangled
 #+begin_src elisp
 (setq auto-save-default nil)
 (setq make-backup-files nil)
@@ -283,21 +284,50 @@ Run that without the ~-0~ flag to be able to read/grep what its outputting.
 
 fd is too smart for its own good. It does fancy things like considering the contents of ~.gitignore~ However, it also excludes any directories named "tags" and probably some other things I'm unaware of. So, we need to modify that command so that we actually get everything.
 
-We want it to run
+#+begin_src elisp :tangle config.el
+(setq projectile-indexing-method 'hybrid)
+(setq projectile-git-fd-args "--no-ignore -H -0 -E .git -tf --strip-cwd-prefix")
+#+end_src
+
+Adding ~--no-ignore~ makes it start outputting /almost everything/. ~.git~ directory and some other things will still be ignored.
+
+Unfortunately, there /will/ be cases where it's /not/ ignoring things it should, like =*.idea= files or =vendor= directories. So, now we need to filter the mostly unfiltered output of =fd=.
+
+***  filtering out unwanted stuff
+**** .projectile
+[[https://docs.projectile.mx/projectile/projects.html#ignoring-files][Documented here]] the ~.projectile~ file functions much like a ~.gitignore~ or ~.fdignore~
+
+**** .fdignore
+Note: this is the strategy I employed before learning about ~.projectile~ HOWEVER in most cases you don't need this. Just create a =~/.config/fd/ignore= file that will be used by =fd= as a global ignore file.
+
+
+If we're /not/ using ~.projectile~ and we're not using a global fd ignore file, or we want to override that file with something more specific to the project, then we want it to run
 
 #+begin_src
 fd --ignore-file .fdignore --no-ignore -H -0 -E .git -tf --strip-cwd-prefix
 #+end_src
 
-Adding ~--no-ignore~ makes it start outputting /almost everything/. ~.git~ directory and some other things will still be ignored.
 
 Adding ~--ignore-file .fdignore~ counteracts that by filtering out some of the things that ~--no-ignore~ has made appear. fd will /not/ error out if the file doesn't exist. This means we can have per-project ignore files without issue. The ~.fdignore~ file uses the same syntax as ~.gitignore~ and also supports ignore files from other tools like ~rg~ (ripgrep). It's unclear to me if it looks for those files by default or not.
 
-The following /should/ be enough...
-#+begin_src elisp :tangle config.el
-(setq projectile-indexing-method 'hybrid)
+The following /should/ be enough BUT we need to compensate for the fact that =fd= throws an error when you tell it to use an ignore file that doesn't exist.
+
+NOTE the ~setq~ line here is just overwriting the one set above. The one above should be disabled.
+
+⚠️ NOT tangled
+#+begin_src elisp
 (setq projectile-git-fd-args "--ignore-file .fdignore --no-ignore -H -0 -E .git -tf --strip-cwd-prefix")
+
+(defun ensure-fd-ignore ()
+  (let ((fd-ignore-file (concat (projectile-acquire-root) ".fdignore")))
+    (if (not (file-exists-p fd-ignore-file))
+        (write-region "" nil fd-ignore-file)
+        )
+    )
+  )
+(add-hook 'projectile-after-switch-project-hook #'ensure-fd-ignore)
 #+end_src
+
 
 /However/ [[https://github.com/doomemacs/doomemacs/blob/84f7eb2affeae9bb5f85379dd8677f2c0a372c83/lisp/doom-projects.el#L174][Doom emacs has hacked the projectile-get-ext-command]] so that it only ever uses the "generic" fall-through which is provided by ~projectile-generic-command~ Doom has /[[https://github.com/doomemacs/doomemacs/blob/84f7eb2affeae9bb5f85379dd8677f2c0a372c83/lisp/doom-projects.el#L198][also/ customized /that/ function]] and in older versions of this file (and thus Doom emacs) the ~projectile-git-fd-args~ were ignored.
 
@@ -346,6 +376,7 @@ I really want it to stop invoking autocomplete prompts with just the enter key. 
 
 I /thought/ this was the solution, but it wasn't.
 
+⚠️ NOT tangled
 #+begin_src elisp
 ;; don't accept autocomplete with _just_ return (⏎).
 ;; require ^-⏎
@@ -395,6 +426,7 @@ Unfortunately, different languages have different default indentation styles, an
 
 Now, we can make those leading tabs and spaces visible. So like, when we're using python we can see the correct indentation. This one is thanks to [[http://xahlee.info/emacs/emacs/emacs_init_whitespace_mode.html][Xah Lee]].
 
+⚠️ NOT tangled
 #+BEGIN_SRC elisp
 ; make leading whitespace visible
 (setq whitespace-style (quote (face indentation tabs tab-mark spaces trailing lines-tail)))
@@ -435,6 +467,7 @@ Doom includes [[https://smartparens.readthedocs.io/en/latest/pair-management.htm
 
 Here's how you'd disable those in just a specific mode.
 
+⚠️ NOT tangled
 #+begin_src elisp
 (sp-with-modes 'ruby-mode
   (sp-local-pair "'" nil :actions nil)
@@ -467,6 +500,7 @@ find . -name ".yas-compiled-snippets.el" -exec rm -f '{}' \;
 If THAT doesn't work, you've got other problems but maybe disabling this will
 work as a stopgap:
 
+⚠️ NOT tangled
 #+begin_src elisp
 (add-hook 'emacs-startup-hook (lambda () (yas-load-directory "~/doom.d/snippets")))
 #+end_src
@@ -519,6 +553,7 @@ So, I have /both…/ most of the time.
 (setq display-line-numbers-type t)
 #+end_src
 
+⚠️ NOT tangled
 #+begin_src elisp
 ;; commence funkyness…
 ;; (global-display-line-numbers-mode 1)
@@ -583,6 +618,7 @@ By default it'll highlight the following words. If you're viewing this in Emacs 
 - BUG
 - XXX
 
+⚠️ NOT tangled
 #+begin_src elisp
 (after! hl-todo
   (setq hl-todo-keyword-faces
@@ -726,6 +762,7 @@ The ~toggle-window-split~ function is bound to the C-x 4 prefix key. Whatever th
 
 There's also a ~toggle-frame-split~ function. I've copied it below to have a backup, but I don't have this enabled.
 
+⚠️ NOT tangled
 #+begin_src elisp
 (defun toggle-frame-split ()
   "If the frame is split vertically, split it horizontally or vice versa.
@@ -914,6 +951,7 @@ This code controls the colors it's displayed with.
 
 ⚠ Current /Not/ tangled because I borked my local copy of pc server while hacking on it.
 
+⚠️ NOT tangled
 #+BEGIN_SRC elisp
 (with-eval-after-load "private-comments-mode"
   (set-face-background 'private-comments-face "#527568")
@@ -922,11 +960,14 @@ This code controls the colors it's displayed with.
 
 If private-comments-mode isn't working as expected, setting this to ~t~ will give you some more errors.
 
+⚠️ NOT tangled
 #+BEGIN_SRC elisp
 (setq private-comments-mode-display-warnings nil)
 #+END_SRC
 
 Now, wire it into =prog-mode=
+
+⚠️ NOT tangled
 #+begin_src elisp
 (add-hook 'prog-mode-hook (lambda () (private-comments-mode)))
 #+end_src
@@ -943,6 +984,7 @@ It's pretty cool, but for reasons I can't recall, /I no longer have this enabled
 
 You can enable it in a specific language with this:
 
+⚠️ NOT tangled
 #+begin_src elisp
 ; enable +word-wrap-mode in C, C++, ObjC, & Java
 (add-hook 'c-mode-common-hook #'+word-wrap-mode)
@@ -950,6 +992,7 @@ You can enable it in a specific language with this:
 
 Or disable it in a specific /mode/ with this:
 
+⚠️ NOT tangled
 #+begin_src elisp
 (add-to-list '+word-wrap-disabled-modes 'emacs-lisp-mode)
 #+end_src
@@ -957,6 +1000,7 @@ Or disable it in a specific /mode/ with this:
 
 Or you can enable it globally with this:
 
+⚠️ NOT tangled
 #+begin_src elisp
 (+global-word-wrap-mode +1)
 #+end_src
@@ -986,6 +1030,7 @@ Last time I checked: <2025-09-28 Sun>
 
 There are 2 valid solutions:
 
+⚠️ NOT tangled
 #+begin_src elisp
 ;; Configuration A
 (setq org-fold-core-style 'overlays)
@@ -1207,6 +1252,7 @@ I haven't found a way to customize the face of a drawer's content, but you can t
 *** Custom Block Styling
 If you look in =org-fontify-meta-lines-and-blocks-1= in =org.el= there's a =cond=  with a lot of stuff, but most importantly these two clues
 
+⚠️ NOT tangled
 #+begin_src elisp
 ((string= block-type "quote")
 	      (add-face-text-property
@@ -1256,6 +1302,7 @@ So, we need to exclude them from export
 
 *Note*: normally an exclude filter function tests which backend is being exported to and limits itself, or does something custom based on that.
 
+⚠️ NOT tangled
 #+begin_src elisp
 (defun my-html-filter-src-blocks (text backend info)
   "Remove source blocks from html export."
@@ -1377,6 +1424,7 @@ In theory, the following will format your source code according to the styles yo
 
 It's not "tangled" here because I set it later in a batch.
 
+⚠️ NOT tangled
 #+begin_src elisp
 ;; fontify code in code blocks
 (setq org-src-fontify-natively t)
@@ -1536,6 +1584,7 @@ Note that there is no =:follow= function set. Clicking on these links in org-mod
 
 If you're using the built-in org-mode support /instead/ of ox-hugo you could use something like this.
 
+⚠️ NOT tangled
 #+BEGIN_SRC elisp
 ;; New link type for Org-Hugo internal links
 (with-eval-after-load 'ox-hugo
@@ -1640,16 +1689,19 @@ Default Key Bindings:
 - ~C-u C-u C-c C-c~ plantuml-preview in other frame
 ** Folding
 *** Remember fold state
-This script will remember the fold state /if/ the file has been modified since the last time. If you open it up, muck with fold state, but don't change anything else, it won't remember the fold changes.
+This script (~custom/org-fold-restore.el~) will remember the fold state /if/ the file has been modified since the last time. If you open it up, muck with fold state, but don't change anything else, it won't remember the fold changes.
 
 #+begin_src elisp :tangle config.el
 (load "org-fold-restore")
 #+end_src
+
+Note: this works by storing the fold state in a file with that same name as the file you're working on with =.fold= appended. So, the fold file for this document is =config.org.fold=
 *** fold everything by default?
 The following will start everything off entirely folded. That is
 to say, just showing headings, with their contents "folded" away. I go back and forth on whether this is a good thing or a bad thing. If it's not tangled, I'm currently on the "bad thing" side of the fence. 😉
 
 
+⚠️ NOT tangled
 #+begin_src elisp
 (setq
   ; start off with things folded
@@ -1672,6 +1724,7 @@ I really like the look of the following, but there are 1, or two bugs in org-mod
 
 So, alas, I'm not tangling this into the config anymore.
 
+⚠️ NOT tangled
 #+begin_src elisp
 ; set the character shown when something is folded
 ; normally this is three periods (not an ellipsis)
@@ -1720,6 +1773,7 @@ But, having them visible still sucks. That's where this lovely little hack by Ma
 
 If you set ~org-hide-emphasis-markers t~ to hide emphasis markers, then you might want to try enabling [[https://github.com/awth13/org-appear][org-appear-mode]].
 
+⚠️ NOT tangled
 #+begin_src elisp
 (add-hook 'org-mode-hook 'org-appear-mode)
 #+end_src
@@ -1815,7 +1869,7 @@ The full image link tag looks like this:
 [[image-url:https://example.com/cat.jpg]]
 #+end_src
 
-And here it is in practice. If you're me, clicking this replaces the current buffer with an image of a cat. If you're reading this on GitHub it isn't going to work.
+And here it is in practice. If your system is configured like mine, clicking this replaces the current buffer with an image of a cat. If you're reading this on GitHub it isn't going to work.
 
 [[image-url:https://d1ra4hr810e003.cloudfront.net/media/27FB7F0C-9885-42A6-9E0C19C35242B5AC/0/D968A2D0-35B8-41C6-A94A0C5C5FCA0725/F0E9E3EC-8F99-4ED8-A40DADEAF7A011A5/dbe669e9-40be-51c9-a9a0-001b0e022be7/thul-IMG_2100.jpg][example cat]]
 
@@ -1872,6 +1926,7 @@ This will auto-resize ALL images whenever the window is resized. I had this enab
 
 NOTE: /Either/ enable this, or the one above, but not both.
 
+⚠️ NOT tangled
 #+begin_src elisp
 (defun masu-org-image-resize-with-window (frame)
   (when (derived-mode-p 'org-mode)
@@ -2035,6 +2090,7 @@ If you use Denote files in directories all over your computer you can say ~(add-
 
 
 I used to specify it this way, but I'm trying to debug some dired stuff.
+⚠️ NOT tangled
 #+begin_src elisp
 (setq denote-dired-directories
       (list denote-directory
@@ -2272,6 +2328,7 @@ Rubocop /should/ be disabled via ~package.el~ but I don't trust that
 fucker to not come back. I'm keeping this around, but not "tangled"
 for the moment.
 
+⚠️ NOT tangled
 #+BEGIN_SRC elisp
 (remove-hook 'ruby-mode-hook #'rubocop-mode)
 #+END_SRC
@@ -2363,6 +2420,7 @@ Henrik & friends left us many useful instructions, which I'm keeping here, becau
 
 First we have instructions about fonts & such.
 
+⚠️ NOT tangled
 #+begin_src elisp
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
@@ -2393,6 +2451,7 @@ First we have instructions about fonts & such.
 
 Next we have tips about loading packages.
 
+⚠️ NOT tangled
 #+begin_src elisp
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
@@ -2435,6 +2494,7 @@ Next we have tips about loading packages.
 I wish I could figure out how to get [[https://rgel.readthedocs.io/en/2.2.1/][rg.el]] (docs link) lazily loaded & working correctly. This is the Emacs package that integrates [[https://github.com/BurntSushi/ripgrep][ripgrep]].
 
 
+⚠️ NOT tangled
 #+BEGIN_SRC elisp
 (require 'rg)
 (rg-enable-default-bindings)
@@ -2458,6 +2518,7 @@ Anyway. Copilot. Made by a company run by capitalist dicks who want to use techn
 
 The most important bit here is mapping ~copilot-accept-completion~ to a key-combo instead of the right arrow or return. Those paths just lead to frustration.
 
+⚠️ NOT tangled
 #+begin_src elisp
 (use-package! copilot
   :hook (prog-mode . copilot-mode)
@@ -2479,6 +2540,7 @@ Copilot detects the language to use based on the current major-mode's name. It t
 
 For example, if you use [[https://github.com/zenspider/enhanced-ruby-mode][enhanced-ruby-mode]] instead of the built-in ruby-mode you'd want to add this. I don't, so this bit isn't currently tangled.
 
+⚠️ NOT tangled
 #+begin_src elisp
 (add-to-list 'copilot-major-mode-alist '("enh-ruby" . "ruby"))
 #+end_src
@@ -2496,6 +2558,7 @@ First you need the emojify package loaded. See ~packages.el~
 Found in [[https://github.com/bgutter/dotemacs/blob/master/my-init.org][bgutter's config file]]
 
 Then you turn it on everywhere, except where you don't want it.
+⚠️ NOT tangled
 #+BEGIN_SRC elisp
 (use-package emojify
   :config
@@ -2528,6 +2591,7 @@ now being rendered as Emojis. Filter this case out."
 #+END_SRC
 
 ** ob-raku
+⚠️ NOT tangled
 #+begin_src elisp
 (let ((ob-raku-file "~/workspace/ob-raku/ob-raku.el"))
  (when (file-exists-p ob-raku-file)
@@ -2537,6 +2601,7 @@ now being rendered as Emojis. Filter this case out."
 ** a custom tab character insertion
 I made this function to insert a tab character. Why did I make this function. I never use this function.
 
+⚠️ NOT tangled
 #+BEGIN_SRC elisp
 (defun masu-insert-tab-char ()
   "Insert a tab char. (ASCII 9, \t)"
@@ -2551,6 +2616,7 @@ I made this function to insert a tab character. Why did I make this function. I 
 
 I've disabled it because I wasn't deriving enough value from it and the indentation fuck-ups when I started a line with something like ~NOTE:~ were really annoying.
 
+⚠️ NOT tangled
 #+begin_src elisp
 (require 'flycheck-vale)
 (flycheck-define-checker vale
@@ -2574,6 +2640,7 @@ especially when typing in a JavaScript section. Not worth the
 frustration.
 
 
+⚠️ NOT tangled
 #+begin_src elisp
 (defun my-web-mode-hook ()
   "Hooks for Web mode."

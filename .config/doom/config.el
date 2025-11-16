@@ -96,7 +96,7 @@ current buffer's, reload dir-locals."
 (define-key global-map (kbd "C-c m o") 'mac-opt-chars-mode)
 
 (setq projectile-indexing-method 'hybrid)
-(setq projectile-git-fd-args "--ignore-file .fdignore --no-ignore -H -0 -E .git -tf --strip-cwd-prefix")
+(setq projectile-git-fd-args "--no-ignore -H -0 -E .git -tf --strip-cwd-prefix")
 
 (setq projectile-track-known-projects-automatically nil)
 
