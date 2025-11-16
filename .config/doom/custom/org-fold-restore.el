@@ -7,6 +7,34 @@
     (with-temp-file (concat buffer-file-name ".fold")
       (prin1 state (current-buffer)))))
 
+;; TODO move .fold files into temporary-file-directory
+;; I'm thinking generate a sha256 hash of the
+;; ?absolute path? to the current file
+;; then save <hash>.fold in temporary-file-directory/folds/
+;;
+;; BETTER
+;; in the following I think teh files in the git repo
+;; are a backup of the one in temporary-file-directory/folds/
+;; on save one in the temp directory gets modified.
+;; on commit it gets copied into git.
+;;
+;; if it is a file in a git repo
+;; add an post-commit hook that
+;; - for each new / modified .org file in the commit
+;;   - creates <relative path>.fold
+;;   - shoves it in a fold states branch
+;;   - commits it
+;; for each deleted .org file in the commit
+;;   - sees if <relative path>.fold exists in fold states
+;;   - deletes it if it does
+;; for each moved .org file in the commit
+;;   - recalculates the name of the <relative path>.fold file
+;;   - deletes the old one
+;;   - adds the new / current one
+;;
+;; BETTER BETTER
+;; shove the metadata in the private comments server
+;; and read it back from there
 (defun org-fold-restore-state ()
   (let* ((file-base buffer-file-name)
          (file-dot-fold (concat file-base ".fold")))
