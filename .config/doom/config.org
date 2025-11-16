@@ -51,6 +51,7 @@ At the time of writing this consists of
 - ~flycheck-standardrb.el~
 - ~maybe-insert-org-entity.el~
 - ~org-emphasis-marker-face.el~
+- ~org-fold-restore.el~
 - ~ruby-align.el~
 - ~screenshot.el~
 - ~sh-send-line-or-region.el~
@@ -1038,7 +1039,7 @@ Then we'll define our "todo keywords" and tell org-mode what colors we want them
   (with-eval-after-load 'org
     (setq
         org-todo-keywords
-        '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
+        '((sequence "TODO(t)" "INPROGRESS(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
         (sequence "[ ](T)" "|" "[X](D)")
         (sequence "|" "OKAY(o)" "YES(y)" "NO(n)"))
 
@@ -1066,6 +1067,7 @@ Org acutally uses this variable only under rare circumstances, like when filing 
 
 
 #+begin_src elisp :tangle config.el
+; where to look for my denote files & org-agenda files
 (setq
   org-agenda-files '("~/Documents/notes/"
                      "~/.config/org/")
@@ -1111,7 +1113,7 @@ Note that the [[https://github.com/rougier/svg-tag-mode][svg-tag-mode]] has nota
                          :background "#7f8080"
                          :weight normal
                          :underline nil)
-        ("INPROGRESS"    :foreground "#dfe1e1"
+        ("STARTED"       :foreground "#dfe1e1"
                          :background "#0098dd"
                          :weight normal
                          :underline nil)
@@ -1413,8 +1415,6 @@ Because Doom emacs comes with a custom mode-line we need to insert this into tha
 ; enable it when opening an org-mode file
 (add-hook 'org-mode-hook 'wc-mode)
 #+end_src
-
-
 ** org-agenda
 Oddly this doesn't have a default keybinding, but ~C-c a~ is what the community seems to have settled on as a default. So, let's enable that.
 
@@ -1639,11 +1639,18 @@ Default Key Bindings:
 - ~C-u C-c C-c~  plantuml-preview in other window
 - ~C-u C-u C-c C-c~ plantuml-preview in other frame
 ** Folding
+*** Remember fold state
+This script will remember the fold state /if/ the file has been modified since the last time. If you open it up, muck with fold state, but don't change anything else, it won't remember the fold changes.
+
+#+begin_src elisp :tangle config.el
+(load "org-fold-restore")
+#+end_src
+*** fold everything by default?
 The following will start everything off entirely folded. That is
 to say, just showing headings, with their contents "folded" away. I go back and forth on whether this is a good thing or a bad thing. If it's not tangled, I'm currently on the "bad thing" side of the fence. 😉
 
 
-#+begin_src elisp :tangle config.el
+#+begin_src elisp
 (setq
   ; start off with things folded
   ; manually override in a file with
@@ -1651,9 +1658,6 @@ to say, just showing headings, with their contents "folded" away. I go back and 
   ; #+STARTUP: fold
   org-startup-folded t
 )
-; set the character shown when something is folded
-; normally this is three periods (not an ellipsis)
-(setq org-ellipsis "⤵")
 #+end_src
 
 You can override this by adding a "showall" or "fold" instruction to a file's frontmatter.
@@ -1661,7 +1665,20 @@ You can override this by adding a "showall" or "fold" instruction to a file's fr
 #+begin_src
 #+STARTUP: showall
 #+end_src
+*** visual styling
+I really like the look of the following, but there are 1, or two bugs in org-mode related to it.
+1. if the folded block has a trailing newline it displays a missing character box instead of this. So far I haven't found anyone who can explain why or how to fix.
+2. if you unfold a block with your cursor on said "missing character box" your cursor will jump to the /end/ of it instead of staying on the heading.
 
+So, alas, I'm not tangling this into the config anymore.
+
+#+begin_src elisp
+; set the character shown when something is folded
+; normally this is three periods (not an ellipsis)
+(setq org-ellipsis "⤵")
+#+end_src
+
+*** No, not like that.
 "Do What I Mean". It has never made sense to me that telling it to fold when your cursor is in the content of a fold, doesn't fold it. This simple function just does the manual steps required to jump up to the prior heading and toggle the fold. Then I map it to ~z c~
 
 

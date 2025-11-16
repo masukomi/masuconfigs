@@ -403,7 +403,7 @@ See options: `dired-hide-details-hide-symlink-targets',
   (with-eval-after-load 'org
     (setq
         org-todo-keywords
-        '((sequence "TODO(t)" "INPROGRESS(i)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
+        '((sequence "TODO(t)" "INPROGRESS(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")
         (sequence "[ ](T)" "|" "[X](D)")
         (sequence "|" "OKAY(o)" "YES(y)" "NO(n)"))
 
@@ -418,6 +418,7 @@ See options: `dired-hide-details-hide-symlink-targets',
         ;; )
     ))
 
+; where to look for my denote files & org-agenda files
 (setq
   org-agenda-files '("~/Documents/notes/"
                      "~/.config/org/")
@@ -453,7 +454,7 @@ See options: `dired-hide-details-hide-symlink-targets',
                          :background "#7f8080"
                          :weight normal
                          :underline nil)
-        ("INPROGRESS"    :foreground "#dfe1e1"
+        ("STARTED"       :foreground "#dfe1e1"
                          :background "#0098dd"
                          :weight normal
                          :underline nil)
@@ -684,16 +685,7 @@ See options: `dired-hide-details-hide-symlink-targets',
       (plantuml . t))))
 (setq org-plantuml-jar-path "/opt/homebrew/opt/plantuml/libexec/plantuml.jar")
 
-(setq
-  ; start off with things folded
-  ; manually override in a file with
-  ; #+STARTUP: showall
-  ; #+STARTUP: fold
-  org-startup-folded t
-)
-; set the character shown when something is folded
-; normally this is three periods (not an ellipsis)
-(setq org-ellipsis "⤵")
+(load "org-fold-restore")
 
 (defun masu/fold-current ()
   (interactive)
