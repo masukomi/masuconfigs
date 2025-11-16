@@ -1,0 +1,6 @@
+gems/*
+tmp/*
+log/*
+.idea/*
+*.bak
+vendor/*
