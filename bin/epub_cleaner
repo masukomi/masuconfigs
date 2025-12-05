@@ -19,11 +19,12 @@ STARTING_DIR=$(pwd)
 
 mytmpdir=$(mktemp -d 2>/dev/null || mktemp -d -t 'mytmpdir')
 
-cd $mytmpdir
-
 echo "Unzipping: $EPUB_PATH"
 
-unzip "$EPUB_PATH"
+unzip -d $mytmpdir "$EPUB_PATH"
+
+#echo "cding to $mytmpdir"
+cd $mytmpdir
 
 echo "Cleaning…"
 # Cleanup OceanOfPDF.com bullshit
@@ -33,17 +34,57 @@ ocean_of_pdf=$?
 if [ $ocean_of_pdf -eq 0 ]; then
     echo "I see this is from OceanofPDF.com. Ok. gimme a sec…"
 
-    if [ -e OEBPS/Text ]; then
+    if compgen -G "OEBPS/Text/*.xhtml" > /dev/null; then
         FILE_PATH='OEBPS/Text/*.xhtml'
-    elif [ -e text ]; then
+    elif compgen -G "OEBPS/*.xhtml" > /dev/null; then
+        FILE_PATH='OEBPS/*.xhtml'
+    elif compgen -G "text/*.html" > /dev/null; then
         FILE_PATH='text/*.html'
-    else
+    elif compgen -G "*.xhtml" > /dev/null; then
+        FILE_PATH="*.xhtml";
+    elif compgen -G "*.html" > /dev/null; then
         FILE_PATH="*.html"
+    else
+        echo "Unable to find expected content in expanded .epub file"
+        exit 70;
     fi
     # no "" around $FILE_PATH so that it'll expand. Otherwise it'll look for a file with exactly
     # the wildcard name which it'll never find.
-    perl -pi -e 's/<div style="float: none; margin: 10px 0px 10px 0px; text-align: center;"><p><a href="https:\/\/oceanofpdf.com"><i>OceanofPDF.com<\/i><\/a><\/p><\/div>//g' $FILE_PATH
+    REGEX_STRING='s/<div style="float: none; margin: 10px 0px 10px 0px; text-align: center;"><p><a href="https:\/\/oceanofpdf.com"><i>OceanofPDF.com<\/i><\/a><\/p><\/div>//g'
+    echo "REGEX_STRING: $REGEX_STRING"
+    echo "FILE_PATH: $FILE_PATH"
+    perl -pi -e "$REGEX_STRING" $FILE_PATH
+    if compgen -G "*.xhtml" > /dev/null; then
+        FILE_PATH="*.xhtml";
+        perl -pi -e "$REGEX_STRING" $FILE_PATH
+    fi
+    if [ -e oceanofpdf.com ]; then
+        rm oceanofpdf.com
+    fi
 fi
+
+
+# what shall we call the new file
+NEW_EPUB_NAME=""
+while [ "$NEW_EPUB_NAME" == "" ]; do
+    read -p "New .epub name: " NEW_EPUB_NAME
+done
+# add a .epub in case I forgot it.
+if [[ "$NEW_EPUB_NAME" != *".epub" ]]; then
+  NEW_EPUB_NAME="$NEW_EPUB_NAME".epub
+fi
+
+#EPUB_DIR=$(dirname "$EPUB_PATH")
+EPUB_DIR="$STARTING_DIR"
+NEW_EPUB_PATH="$EPUB_DIR/$NEW_EPUB_NAME"
+NEW_TEMP_EPUB_PATH="$NEW_EPUB_PATH.tmp"
+# Zip it back up
+zip -0Xq "$NEW_TEMP_EPUB_PATH" mimetype
+zip -Xr9Dq "$NEW_TEMP_EPUB_PATH" * -x *.DS_Store
+
+echo "New .epub at $NEW_EPUB_PATH"
+
+cd "$STARTING_DIR"
 
 read -p "Delete old .epub? [y/n]
 " DELETE_Y_N
@@ -59,27 +100,7 @@ if [ "$DELETE_Y_N" == "y" ]; then
 else
     echo "Won't delete original"
 fi
-
-# what shall we call the new file
-NEW_EPUB_NAME=""
-while [ "$NEW_EPUB_NAME" == "" ]; do
-    read -p "New .epub name: " NEW_EPUB_NAME
-done
-# add a .epub in case I forgot it.
-if [[ "$NEW_EPUB_NAME" != *".epub" ]]; then
-  NEW_EPUB_NAME="$NEW_EPUB_NAME".epub
-fi
-
-EPUB_DIR=$(dirname "$EPUB_PATH")
-NEW_EPUB_PATH="$EPUB_DIR/$NEW_EPUB_NAME"
-
-# Zip it back up
-zip -0Xq "$NEW_EPUB_PATH" mimetype
-zip -Xr9Dq "$NEW_EPUB_PATH" * -x *.DS_Store
-
-echo "New .epub at $NEW_EPUB_PATH"
-
-cd "$STARTING_DIR"
+mv $NEW_TEMP_EPUB_PATH $NEW_EPUB_PATH
 rm -rf $mytmpdir
 
 echo "DONE."
