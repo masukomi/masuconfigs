@@ -195,6 +195,9 @@ fish_add_path /usr/local/opt/mongodb-community@4.2/bin
 fish_add_path -g -a $HOME/Library/Python/3.9/bin
 
 fish_add_path -g -a $HOME/workspace/reference/bash/git-fuzzy/bin
+set -x -g IDF_PATH $HOME/esp/esp-idf
+set -x -g IDF_TOOLS_PATH $HOME/.config/espressif
+
 abbr -a gf 'git fuzzy'
 
 set -x -g RIPGREP_CONFIG_PATH $HOME/.config/ripgrep/config

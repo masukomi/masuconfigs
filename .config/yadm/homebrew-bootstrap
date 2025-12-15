@@ -4,8 +4,8 @@
 # manually adding an item?:
 # run maybrewer <homebrew lib>
 #
-# that just does & outputs this: 
-# 
+# that just does & outputs this:
+#
 # # <output from:  brew info foo | head -n3 | tail -n2>
 # maybrew "foo"
 
@@ -172,6 +172,11 @@ if [ $? -ne 0 ]; then
 else
 	echo "-- Skipping devutils (installed already)"
 fi
+
+# dfu-util is a host side implementation of the DFU 1.0 and DFU 1.1 specifications of the USB forum. DFU is intended to download and upload firmware to/from devices connected over USB.
+# https://dfu-util.sourceforge.net/
+# Installing because of Espressif IDF Framework for working with
+maybrew 'dfu-util'
 
 # Load/unload environment variables based on $PWD
 # https://direnv.net/
@@ -393,6 +398,12 @@ maybrew 'moreutils'
 # MIME mail packing and unpacking
 # https://web.archive.org/web/20190220145801/ftp.andrew.cmu.edu/pub/mpack/
 maybrew 'mpack'
+
+# Ninja is a small build system
+# https://ninja-build.org/
+# Installing because of Espressif IDF Framework for working with
+# ESP32 Chips
+maybrew 'ninja'
 
 # Prompt theme engine for any shell
 # https://ohmyposh.dev
