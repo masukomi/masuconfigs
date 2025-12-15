@@ -66,9 +66,11 @@ if [[ "$FORCE" == "true" ]] || [[ $emacs_lines -eq 0 ]] || ; then
     echo "… with debugging"
     emacs --debug-init --chdir $PWD --execute "(server-start)" $@ > /dev/null 2>&1 &
   fi
-  disown
-  sleep 5
-  emacsclient --eval "(x-focus-frame nil)"
+  if [ $? -eq 0 ]; then
+    disown
+    sleep 8
+    emacsclient --eval "(x-focus-frame nil)"
+  fi
   # emacs --daemon --chdir $PWD --execute "(server-start)"
   # emacsclient -n $@ --socket-name $(get_socket_file)
 else
@@ -92,7 +94,7 @@ else
   fi
 
   if [ $? -eq 0 ]; then
-    sleep 5
+    sleep 8
     echo "Bringing it to the front…"
     emacsclient --eval "(x-focus-frame nil)"
   else
