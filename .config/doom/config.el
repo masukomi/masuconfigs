@@ -471,9 +471,13 @@ See options: `dired-hide-details-hide-symlink-targets',
         )
     )
     ;; Add frame borders and window dividers
+    ; this is critically useful for anyone
+    ; who uses the mouse to the divider
+    ; between frames
     (modify-all-frames-parameters
-    '((right-divider-width . 40)
-    (internal-border-width . 40)))
+        '((right-divider-width . 10)
+        (internal-border-width . 10)))
+
     (dolist (face '(window-divider
                     window-divider-first-pixel
                     window-divider-last-pixel))
@@ -806,6 +810,21 @@ See options: `dired-hide-details-hide-symlink-targets',
 
 
 (add-hook 'dired-mode-hook #'denote-dired-mode)
+
+(with-eval-after-load 'dired
+  (require 'dired-x)
+  ;; Set dired-x global variables here.  For example:
+  ;; (setq dired-x-hands-off-my-keys nil)
+  )
+(add-hook 'dired-mode-hook
+          (lambda ()
+            ;; Set dired-x buffer-local variables here.  For example:
+            ;; (dired-omit-mode 1)
+            (setq-default dired-omit-files-p t)
+            (setq dired-omit-files
+              (concat dired-omit-files "\\.pdf$\\|\\.fold$"))
+              ; .fold files are created by org-fold-restore
+            ))
 
 (defun denote-dated-journal ()
   "Create an entry tagged 'journal', while prompting for a title."

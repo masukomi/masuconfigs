@@ -1,6 +1,6 @@
 :DOC-CONFIG:
 # Tangle by default to config.el, which is the most common case
-#+property: header-args:emacs-lisp :tangle config.el
+#+property: header-args :emacs-lisp :tangle config.el
 #+property: header-args :mkdirp yes :comments no
 #+startup: fold
 :END:
@@ -972,7 +972,7 @@ Now, wire it into =prog-mode=
 (add-hook 'prog-mode-hook (lambda () (private-comments-mode)))
 #+end_src
 
-The code that actually enables it is in the pro-mode hook up in my Yafolding section.
+The code that actually enables it is in the pro-mode hook up in my yafolding section.
 * Text Stuff
 ** Word Wrapping
 Vim's word wrapping is an effing nightmare with how it screws with arrow key movement. I'm so happy to be free of that.
@@ -1175,9 +1175,13 @@ Note that the [[https://github.com/rougier/svg-tag-mode][svg-tag-mode]] has nota
         )
     )
     ;; Add frame borders and window dividers
+    ; this is critically useful for anyone
+    ; who uses the mouse to the divider
+    ; between frames
     (modify-all-frames-parameters
-    '((right-divider-width . 40)
-    (internal-border-width . 40)))
+        '((right-divider-width . 10)
+        (internal-border-width . 10)))
+
     (dolist (face '(window-divider
                     window-divider-first-pixel
                     window-divider-last-pixel))
@@ -2086,8 +2090,31 @@ If you use Denote files in directories all over your computer you can say ~(add-
 
 
 (add-hook 'dired-mode-hook #'denote-dired-mode)
+
+(with-eval-after-load 'dired
+  (require 'dired-x)
+  ;; Set dired-x global variables here.  For example:
+  ;; (setq dired-x-hands-off-my-keys nil)
+  )
+(add-hook 'dired-mode-hook
+          (lambda ()
+            ;; Set dired-x buffer-local variables here.  For example:
+            ;; (dired-omit-mode 1)
+            (setq-default dired-omit-files-p t)
+            (setq dired-omit-files
+              (concat dired-omit-files "\\.pdf$\\|\\.fold$"))
+              ; .fold files are created by org-fold-restore
+            ))
 #+END_SRC
 
+
+#+begin_quote
+Note: by default, dired-omit-files regexp filters out special directories . and ... If you don't want this behavior, you can just override defaults (instead of inheriting them with concat):
+
+~(setq dired-omit-files "^\\.[^.]\\|\\.pdf$\\|\\.tex$")~
+
+The regexp ~^\\.[^.]~ will match any string of length 2+ starting with a dot where second character is any character except the dot itself. It's not perfect (will not match filenames like "..foo"), but should be ok most of the time.  - Via [[https://stackoverflow.com/a/14850863/13973][Stack Overflow]]
+#+end_quote
 
 I used to specify it this way, but I'm trying to debug some dired stuff.
 ⚠️ NOT tangled

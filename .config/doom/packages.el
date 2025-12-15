@@ -68,6 +68,7 @@
 
 ; treemacs-icons-dired gives icons by each file in dired
 (package! treemacs-icons-dired)
+
 ; extends Vline Mode https://www.emacswiki.org/emacs/VlineMode
 (package! col-highlight)
 ;; (column-highlight-mode 0) ; 1 = highlighting, 0 = off
@@ -102,6 +103,9 @@
 
 ; -- Docker
 (package! dockerfile-mode)
+
+; -- Elisp
+(package! elisp-autofmt)
 
 ; -- Fennel
 ; https://github.com/emacsmirror/fennel-mode#readme
@@ -168,7 +172,8 @@
 ; https://github.com/doomemacs/doomemacs/issues/6478
 ; last revisited by me on Aug 29, 2023.
 ; last update to ticket was Jan 27, 2023
-(package! org-mode :pin "971eb6885ec996c923e955730df3bafbdc244e54")
+;
+(package! org-mode) ; :pin "971eb6885ec996c923e955730df3bafbdc244e54")
 
 ; pretty bullets
 ;; (package! org-bullets)
