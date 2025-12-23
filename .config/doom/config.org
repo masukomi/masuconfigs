@@ -716,6 +716,7 @@ NOTE: The ~set-face-attribute~ method of setting faces works, but for reasons I 
       centaur-tabs-set-icons t
       centaur-tabs-set-bar 'under ; or 'left or 'under
       centaur-tabs-set-modified-marker t
+      centaur-tabs-enable-key-bindings t
       centaur-tabs-icon-type 'nerd-icons)  ; or 'all-the-icons
 ; centaur-tabs-change-fonts "arial" 160
 
@@ -730,7 +731,22 @@ The default behaviour from the =centaur-tabs-forward/backward= functions is to g
 
 [[https://github.com/ema2159/centaur-tabs?tab=readme-ov-file#buffer-reordering-thanks-to-jixiuf][Automatic Buffer Reordering]] relative to last visited tab is also available.
 
-It also supports [[https://github.com/winterTTr/ace-jump-mode][Ace-Jump]] and [[https://github.com/abo-abo/avy][Avy]] style numbered tab jump interactions. To use it, interactively call the =centaur-tabs-ace-jump= function. While on Ace-jump mode, you can press =?=  to display a menu showing the possible actions available.
+
+It also supports [[https://github.com/winterTTr/ace-jump-mode][Ace-Jump]] and [[https://github.com/abo-abo/avy][Avy]] style numbered tab jump interactions. To use it, interactively call the =centaur-tabs-ace-jump= function. I've got this bound to =g t= hen in normal mode.
+
+While on Ace-jump mode, you can press =?=  to display a menu showing the possible actions available.
+
+*** Key bindings
+In addition to the =g t= binding to enable the ace-jump style numbers centaur-tabs has a number of built in keybindings prefixed by ~<C-c t>~
+
+If you want to enable a series of key bindings with different tab managing functions, put the following in your configuration before the package is loaded (if you use =use-package=, this should go in the =:init=  section):
+
+#+begin_src lisp
+(setq centaur-tabs-enable-key-bindings t)
+#+end_src
+
+This will enable a series of key bindings for centaur-tabs prefixed by “C-c t”.
+
 
 ** Command w should be consistent
 Sometimes command+w closes a workspace. Sometimes it closes the window.

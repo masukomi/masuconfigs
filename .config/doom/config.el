@@ -243,6 +243,7 @@ current buffer's, reload dir-locals."
       centaur-tabs-set-icons t
       centaur-tabs-set-bar 'under ; or 'left or 'under
       centaur-tabs-set-modified-marker t
+      centaur-tabs-enable-key-bindings t
       centaur-tabs-icon-type 'nerd-icons)  ; or 'all-the-icons
 ; centaur-tabs-change-fonts "arial" 160
 
