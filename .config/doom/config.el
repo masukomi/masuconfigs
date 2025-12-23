@@ -214,6 +214,41 @@ current buffer's, reload dir-locals."
                     :overline nil
                     :underline nil)))))
 
+(use-package nerd-icons
+  :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is recommended
+  ;; but you can use any other Nerd Font if you want
+  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+  (nerd-icons-font-family "JetBrains Mono Medium")
+  )
+
+(use-package centaur-tabs
+  :demand
+  :config
+  (centaur-tabs-mode t)
+  :hook
+  (dired-mode . centaur-tabs-local-mode) ; disable in dired
+  :bind
+  (:map evil-normal-state-map
+        ("g t" . centaur-tabs-ace-jump))
+
+  )
+  ; the default key binding
+  ;; ("C-<prior>" . centaur-tabs-backward)
+  ;; ("C-<next>" . centaur-tabs-forward)
+
+(setq centaur-tabs-style "box"
+      centaur-tabs-height 32
+      centaur-tabs-set-icons t
+      centaur-tabs-set-bar 'under ; or 'left or 'under
+      centaur-tabs-set-modified-marker t
+      centaur-tabs-icon-type 'nerd-icons)  ; or 'all-the-icons
+; centaur-tabs-change-fonts "arial" 160
+
+; group them by which projectile project we're in
+(centaur-tabs-group-by-projectile-project)
+
 (global-set-key (kbd "s-w")  '+workspace/kill)
 
 ; Ctrl + =/+ contracts or expands visual selection
@@ -660,16 +695,7 @@ See options: `dired-hide-details-hide-symlink-targets',
 	(add-hook 'before-save-hook 'time-stamp nil)
 	(add-to-list
 		'org-src-lang-modes '("plantuml" . plantuml))
-	(org-add-link-type
-		"image-url"
-		(lambda (path)
-		(let ((img (expand-file-name
-				(concat (md5 path) "." (file-name-extension path))
-				temporary-file-directory)))
-		(if (file-exists-p img)
-		(find-file img)
-			(url-copy-file path img)
-			(find-file img)))))
+
 
   )
 
@@ -744,6 +770,18 @@ See options: `dired-hide-details-hide-symlink-targets',
   ; see auto-image-resize function below which will override this
   ; related #+STARTUP: inlineimages
 )
+
+(with-eval-after-load 'org
+  (org-add-link-type
+    "image-url"
+    (lambda (path)
+    (let ((img (expand-file-name
+                    (concat (md5 path) "." (file-name-extension path))
+                    temporary-file-directory)))
+        (if (file-exists-p img)
+        (find-file img)
+                (url-copy-file path img)
+                (find-file img))))))
 
 (defun image-url-overlays ()
   "Put image overlays on remote image urls."

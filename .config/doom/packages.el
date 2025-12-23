@@ -66,9 +66,7 @@
 
 ; UI STUFF
 
-; treemacs-icons-dired gives icons by each file in dired
-(package! treemacs-icons-dired)
-
+(package! centaur-tabs)
 ; extends Vline Mode https://www.emacswiki.org/emacs/VlineMode
 (package! col-highlight)
 ;; (column-highlight-mode 0) ; 1 = highlighting, 0 = off
@@ -80,12 +78,17 @@
 (package! darktooth-theme)
 ;; (package! emojify)
 ;; (package! minimap)
+(package! nerd-icons)
 (package! nlinum-relative)
 ; extends org-mode's clickable link support to other modes
 ; the built-in version is goto-address mode which works well,
 ; but doesn't support as many link types
 (package! orglink)
 (package! powerline)
+
+; treemacs-icons-dired gives icons by each file in dired
+(package! treemacs-icons-dired)
+
 ; Pins the most recent method signature to the top of the window
 ; https://github.com/alphapapa/topsy.el#readme
 (package! topsy

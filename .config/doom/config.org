@@ -679,6 +679,58 @@ NOTE: The ~set-face-attribute~ method of setting faces works, but for reasons I 
                     :overline nil
                     :underline nil)))))
 #+end_src
+*** Icons
+[[https://github.com/rainstormstudio/nerd-icons.el][nerd-icons.el]]
+
+#+begin_src elisp :tangle config.el
+(use-package nerd-icons
+  :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is recommended
+  ;; but you can use any other Nerd Font if you want
+  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+  (nerd-icons-font-family "JetBrains Mono Medium")
+  )
+#+end_src
+*** Tabs!
+[[https://github.com/ema2159/centaur-tabs#readme][Centaur Tabs]]
+
+#+begin_src elisp :tangle config.el
+(use-package centaur-tabs
+  :demand
+  :config
+  (centaur-tabs-mode t)
+  :hook
+  (dired-mode . centaur-tabs-local-mode) ; disable in dired
+  :bind
+  (:map evil-normal-state-map
+        ("g t" . centaur-tabs-ace-jump))
+
+  )
+  ; the default key binding
+  ;; ("C-<prior>" . centaur-tabs-backward)
+  ;; ("C-<next>" . centaur-tabs-forward)
+
+(setq centaur-tabs-style "box"
+      centaur-tabs-height 32
+      centaur-tabs-set-icons t
+      centaur-tabs-set-bar 'under ; or 'left or 'under
+      centaur-tabs-set-modified-marker t
+      centaur-tabs-icon-type 'nerd-icons)  ; or 'all-the-icons
+; centaur-tabs-change-fonts "arial" 160
+
+; group them by which projectile project we're in
+(centaur-tabs-group-by-projectile-project)
+#+end_src
+
+*Note*
+You /can/ [[https://github.com/ema2159/centaur-tabs?tab=readme-ov-file#buffer-groups][modify the way buffers are grouped]].
+
+The default behaviour from the =centaur-tabs-forward/backward= functions is to go through all the tabs in the current group and then change the group. If this is something that is to desired to be changed the =centaur-tabs-cycle-scope=  custom must be changed. [[https://github.com/ema2159/centaur-tabs?tab=readme-ov-file#tab-cycling][Instructions Here]].
+
+[[https://github.com/ema2159/centaur-tabs?tab=readme-ov-file#buffer-reordering-thanks-to-jixiuf][Automatic Buffer Reordering]] relative to last visited tab is also available.
+
+It also supports [[https://github.com/winterTTr/ace-jump-mode][Ace-Jump]] and [[https://github.com/abo-abo/avy][Avy]] style numbered tab jump interactions. To use it, interactively call the =centaur-tabs-ace-jump= function. While on Ace-jump mode, you can press =?=  to display a menu showing the possible actions available.
 
 ** Command w should be consistent
 Sometimes command+w closes a workspace. Sometimes it closes the window.
@@ -1599,7 +1651,7 @@ If you're using the built-in org-mode support /instead/ of ox-hugo you could use
 
 See also the timestamp tweak in the next section.
 
-** Time Stamps, & Graphs, inline images
+** Time Stamps, & Graphs
 
 #+begin_src elisp :tangle config.el
 (with-eval-after-load 'org
@@ -1612,28 +1664,10 @@ See also the timestamp tweak in the next section.
 	(add-hook 'before-save-hook 'time-stamp nil)
 	(add-to-list
 		'org-src-lang-modes '("plantuml" . plantuml))
-	(org-add-link-type
-		"image-url"
-		(lambda (path)
-		(let ((img (expand-file-name
-				(concat (md5 path) "." (file-name-extension path))
-				temporary-file-directory)))
-		(if (file-exists-p img)
-		(find-file img)
-			(url-copy-file path img)
-			(find-file img)))))
+
 
   )
 #+end_src
-
-*** Image links
-Sometimes you want an image that's visible in your document and is /also/ a link to something else. This teaches emacs a new link type called ~image-url~ which downloads temp files locally for emacs to load and display.
-
-Because of this hacky nature, it's not for files that you'll be exporting or sharing with others. This is for personal use only. Maybe in your [[https://protesilaos.com/emacs/denote][Denote]] (see below) or [[https://www.orgroam.com/][Org-roam]] files.
-
-This is enabled via the ~(org-add-link-type "image-url"…)~ call above.
-
-⚠ DO NOT USE THIS FOR FILES THAT GitHub WILL RENDER
 
 *** PlantUML
 [[https://plantuml.com/][PlantUML]] is a kind-of 🤯 mind-blowingly capable text to graph system. It blows Mermaid.js out of the water. [[https://github.com/skuro/plantuml-mode][PlantUML mode]] is the emacs tool. In the last section we informed org-mode that ~plantuml~ was a supported source language.
@@ -1716,11 +1750,8 @@ to say, just showing headings, with their contents "folded" away. I go back and 
 )
 #+end_src
 
-You can override this by adding a "showall" or "fold" instruction to a file's frontmatter.
+You can override this by adding a =showall= or =fold= instruction to a file's frontmatter: ~#+STARTUP: showall~
 
-#+begin_src
-#+STARTUP: showall
-#+end_src
 *** visual styling
 I really like the look of the following, but there are 1, or two bugs in org-mode related to it.
 1. if the folded block has a trailing newline it displays a missing character box instead of this. So far I haven't found anyone who can explain why or how to fix.
@@ -1827,8 +1858,10 @@ find and insert the org entity for, and it'll do that.
 (setq org-pretty-entities t)
 #+end_src
 
-
 ** Images
+To toggle inlined images in org-mode use ~z i~ That's the binding for ~(org-toggle-inline-images)~
+
+*** Remote Images
 Org can display remote images inline, but it's disabled by default, and as far as I can tell, it's not documented & it's only mentioned in release notes and online discussions. If you dig about ~16,000 into the source file you'll find it though. 🤦‍♀️
 
 Your options are:
@@ -1853,8 +1886,9 @@ Without an ATTR hint it'll default to showing them at their original size. Howev
 
 Note that this is overwritten by the ~auto-image-resize~ function later on (if I have it turned on). But again, good defaults are important.
 
-~#+STARTUP: inlineimages~ is related according to my notes, but I
-don't know why or how.
+The variable ~org-startup-with-inline-images~ can be set within a buffer with the ~STARTUP~ options =inlineimages= and =noinlineimages=
+
+Add either ~#+STARTUP: inlineimages~ or ~#+STARTUP: noinlineimages~ to guarantee startup behavior one way or the other in a given file.
 
 #+begin_src elisp :tangle config.el
 (setq
@@ -1864,9 +1898,14 @@ don't know why or how.
 )
 #+end_src
 
-** Viewable Remote Image URLs
-The following code downloads the image as a temp file so that emacs can load it visually into the page. That's why it doesn't work on GitHub rendered pages.
+*** Viewable Remote Images that link to URLs
+Sometimes you want an image that's visible in your document and is /also/ a link to something else.
 
+This teaches emacs a new link type called ~image-url~ which downloads temp files locally for emacs to load and display.
+
+Because of this hacky nature, it's not for files that you'll be exporting or sharing with others. This is for personal use only. Maybe in your [[https://protesilaos.com/emacs/denote][Denote]] (see below) or [[https://www.orgroam.com/][Org-roam]] files.
+
+⚠️ DO NOT USE THIS FOR FILES THAT GitHub WILL RENDER
 The full image link tag looks like this:
 
 #+begin_src
@@ -1876,6 +1915,24 @@ The full image link tag looks like this:
 And here it is in practice. If your system is configured like mine, clicking this replaces the current buffer with an image of a cat. If you're reading this on GitHub it isn't going to work.
 
 [[image-url:https://d1ra4hr810e003.cloudfront.net/media/27FB7F0C-9885-42A6-9E0C19C35242B5AC/0/D968A2D0-35B8-41C6-A94A0C5C5FCA0725/F0E9E3EC-8F99-4ED8-A40DADEAF7A011A5/dbe669e9-40be-51c9-a9a0-001b0e022be7/thul-IMG_2100.jpg][example cat]]
+
+
+The following code downloads the image as a temp file so that emacs can load it visually into the page. That's why it doesn't work on GitHub rendered pages.
+
+#+begin_src elisp :tangle config.el
+(with-eval-after-load 'org
+  (org-add-link-type
+    "image-url"
+    (lambda (path)
+    (let ((img (expand-file-name
+                    (concat (md5 path) "." (file-name-extension path))
+                    temporary-file-directory)))
+        (if (file-exists-p img)
+        (find-file img)
+                (url-copy-file path img)
+                (find-file img))))))
+#+end_src
+
 
 There are also functions to add an image as an overlay or remove one, but I've had trouble getting them to work.
 
@@ -1910,7 +1967,7 @@ There are also functions to add an image as an overlay or remove one, but I've h
 
 Found [[https://emacs.stackexchange.com/a/26638/30947][on Stack Exchange]]
 
-** Automatic Image resizing
+*** Automatic Image resizing
 Same idea as "responsive design" in CSS. With this images will fill the width of the page regardless of what your page width is. This code comes from [[https://stackoverflow.com/a/73426792/13973][a Stack Overflow answer]].
 
 This will resize down whenever the window is < 80 columns
