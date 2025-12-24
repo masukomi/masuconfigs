@@ -76,7 +76,10 @@ brew tap isacikgoz/taps
 # do gum first because this script uses it.
 maybrew "charmbracelet/tap/gum"
 
-
+# A meh quality converter of ANSI Escape codes to HTML
+# Oho is better, but I still have references to aha
+# https://github.com/masukomi/oho
+maybrew "aha"
 
 # Strip or convert ANSI codes into HTML, (La)Tex, RTF, or BBCode
 # http://www.andre-simon.de/doku/ansifilter/ansifilter.html
@@ -135,6 +138,13 @@ maybrew 'bat'
 # New way to see and navigate directory trees
 # https://dystroy.org/broot/
 maybrew 'broot'
+
+# Object-file caching compiler wrapper
+# https://ccache.dev/
+# Added for espressif dev but useful for various things.
+# NOTE: ccache can prevent some software from compiling.
+# ALSO NOTE: The brew command, by design, will never use ccache.
+maybrew 'ccache'
 
 # A tool for glamorous shell scripts
 # https://charm.sh/
