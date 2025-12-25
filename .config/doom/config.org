@@ -736,6 +736,38 @@ It also supports [[https://github.com/winterTTr/ace-jump-mode][Ace-Jump]] and [[
 
 While on Ace-jump mode, you can press =?=  to display a menu showing the possible actions available.
 
+Now that we've got everything we want showing up there, let's exclude some things that we don't tend to think of as "documents" that we'd want to show up in tabs. We do this by [[https://en.wikipedia.org/wiki/Monkey_patch][monkeypatching]] the ~centaur-tabs-hide-tab~ function.
+
+#+begin_src elisp :tangle config.el
+(defun centaur-tabs-hide-tab (x)
+  "Do no to show buffer X in tabs."
+  (let ((name (format "%s" x)))
+    (or
+     ;; Current window is not dedicated window.
+     (window-dedicated-p (selected-window))
+
+     ;; Buffer name not match below blacklist.
+     (string-prefix-p "*epc" name)
+     (string-prefix-p "*helm" name)
+     (string-prefix-p "*Helm" name)
+     (string-prefix-p "*Compile-Log*" name)
+     (string-prefix-p "*lsp" name)
+     (string-prefix-p "*company" name)
+     (string-prefix-p "*Flycheck" name)
+     (string-prefix-p "*tramp" name)
+     (string-prefix-p " *Mini" name)
+     (string-prefix-p "*help" name)
+     (string-prefix-p "*straight" name)
+     (string-prefix-p " *temp" name)
+     (string-prefix-p "*Help" name)
+     (string-prefix-p "*mybuf" name)
+
+     ;; Is not magit buffer.
+     (and (string-prefix-p "magit" name)
+          (not (file-name-extension name)))
+     )))
+#+end_src
+
 *** Key bindings
 In addition to the =g t= binding to enable the ace-jump style numbers centaur-tabs has a number of built in keybindings prefixed by ~<C-c t>~
 
