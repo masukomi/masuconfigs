@@ -1,0 +1,30 @@
+# TooLoo documentation file.
+# Details: https://github.com/masukomi/TooLoo
+name="decolor"
+short_description="strips escape codes from input"
+
+description="""
+"""
+
+# usage_command=""
+
+fallback_usage="""
+decolor path/to/file
+OR
+pipe colorized output to it. For example:
+cat something_with_escape_codes.txt | decolor
+"""
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url=""
+# where you can find the repo that contains this file
+source_repo_url=""
+
+# can this be included in exports like the static blog generation
+exportable=true
+
+tags=[ "cli"  ]

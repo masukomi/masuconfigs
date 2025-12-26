@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# A simple script to remove escape codes from output.
+# USAGE:
+# decolor path/to/file
+# OR
+# pipe colorized output to it. For example:
+# cat something_with_escape_codes.txt | decolor
+
+
+gsed -E "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})*)?[m,K,H,f,J]//gm" $1 \
+  | gsed -E "s/\x1B\([A-Z]{1}(\x1B\[[m,K,H,f,J])?//gm"
