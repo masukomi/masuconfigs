@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: sterr
-# key: sterr
-# --
-
->&2 echo $0

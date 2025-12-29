@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: LiveView: def module
-# key: deflivemod
-# --
-defmodule $1.$2Live do
-  use $1, :live_view
-  $0
-end

@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: allow_receive_return
-# key: arr
-# --
-allow($1).to(
-  receive($2)
-    .and_return($3)
-)

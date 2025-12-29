@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: debug-line
-# key: debugln
-# --
-
-(displayln (format "XXX $0"))

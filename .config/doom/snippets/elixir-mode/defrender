@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: LiveView def render
-# key: defrender
-# --
-def render(assigns) do
-  ~L"""
-  $0
-  """
-end

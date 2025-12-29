@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: markua-page-break
-# key: mpb
-# --
-#+markua: {pagebreak}
