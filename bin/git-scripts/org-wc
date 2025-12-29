@@ -10,6 +10,11 @@ if [ $? -eq 0 ]; then
 		| sed -e "s/^ */         /"
 
 	printf "\n\033[1mWord Counts:\033[0m\n"
+	# list all the files
+	# pipe that list to wc, and then to numfmt
+	# This *will* error if a file has been deleted,
+	#   but making this into a loop sounds like a
+	#   pain in the arse.
 	git log --name-only -n1 --format="" \
 		| xargs wc -w \
 		| numfmt --grouping
