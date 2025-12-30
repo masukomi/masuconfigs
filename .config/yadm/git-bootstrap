@@ -53,6 +53,7 @@ ln -s ~/workspace/gpup/bin/gpud ~/bin/gpud 2&>1 > /dev/null
 mayclone ~/workspace git@github.com:masukomi/cleandiff.git
 mayclone ~/workspace git@github.com:masukomi/git-status-report.git
 mayclone ~/workspace git@github.com:masukomi/git_accessories.git
+mayclone ~/workspace git@github.com:masukomi/doom_config.git
 mayclone ~/workspace/vale git@github.com:errata-ai/proselint.git
 mayclone ~/workspace/vale git@github.com:errata-ai/Microsoft.git
 mayclone ~/workspace/reference/bash git@github.com:bigH/git-fuzzy.git
