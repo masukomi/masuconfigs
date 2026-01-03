@@ -1,0 +1,79 @@
+#!/usr/bin/env ruby
+
+require 'options_parser'
+# https://github.com/felipec/ruby-parseopt
+# because optparse is a clusterfuck
+# and "sod" is overkill
+require 'yaml'
+require 'paint' # https://github.com/janlelis/paint
+
+provided_options = {permissive: false}
+
+parser = OptionsParser::Parser.new(command: "changelog_maker", description: "creates a changelog from git-com commits")
+parser.on(short: "-f", long: "--from", value_type: :string, required: true) do |value|
+  provided_options[:from] = value
+end
+parser.on(short: "-t", long: "--to", value_type: :string) do | value |
+  provided_options[:to] = value == true ? "HEAD" : value
+end
+parser.on(short: "-p", long: "--permissive") do | value |
+  provided_options[:permissive] = true
+end
+parser.parse(ARGV)
+
+def exit_with_error(message)
+  puts(Paint[message, :red])
+  exit(1)
+end
+def exit_with_warning(message)
+  puts(Paint[message, :yellow])
+  exit(2)
+end
+
+# ask git for the root directory
+repo_root = `git rev-parse --show-toplevel`.strip
+
+exit_with_error("Not in a git repo") if repo_root == ""
+
+# figure out if it's .yaml or .yml
+git_com_config = Dir.children(repo_root).select{ |x| x.start_with?(".git-com.y")}.first
+if git_com_config.nil? || git_com_config == ""
+  exit_with_error("Couldn't find a .git-com.y[a]ml file.")
+end
+
+yaml_text = File.read(repo_root + '/' + git_com_config)
+# Parse a YAML string
+elements = YAML.load(yaml_text) #=> {foo bar}
+
+options_list = elements.dig("change-type", "options")
+changes = {}
+options_list.each do | option |
+  changes[option] = []
+end
+
+log_lines = `git log --pretty='format:%s' #{provided_options[:from]}..#{provided_options[:to]}`.split(/\n/)
+log_lines.each do | line |
+  match = /^\[(?<change_type>.+?)\]\s+(?<title>.*)$/.match(line)
+  if match
+    change_type = match[:change_type]
+    title = match[:title]
+    if changes.has_key?(change_type) or provided_options[:permissive]
+      changes[change_type] = [] unless changes.has_key?(change_type)
+      changes[change_type] << title
+    end
+  else
+    puts "XXX no match: #{line}"
+  end
+end
+
+
+puts "Changes: "
+found_changes = changes.keys
+found_changes.each do | ct |
+  next if changes[ct].size == 0
+  puts "[#{ct}]"
+  changes[ct].each do | change |
+    puts "- #{change}"
+  end
+  puts ""
+end
