@@ -4,7 +4,9 @@ require 'options_parser'
 require 'yaml'
 require 'paint' # https://github.com/janlelis/paint
 
-
+## Run with --help
+## to see usage instructions
+##
 ## Configuration
 ## git-com-changelog stores its repo specific configurations
 ## in the .git-com.yaml file
@@ -122,7 +124,7 @@ log_lines.each do | line |
 
     if changes.has_key?(adjusted_change_type) or provided_options[:permissive]
       changes[adjusted_change_type] = [] unless changes.has_key?(adjusted_change_type)
-      changes[adjusted_change_type] << title
+      changes[adjusted_change_type] << title.strip
     end
   end
 end
