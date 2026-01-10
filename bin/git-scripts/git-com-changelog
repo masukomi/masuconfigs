@@ -4,6 +4,38 @@ require 'options_parser'
 require 'yaml'
 require 'paint' # https://github.com/janlelis/paint
 
+
+## Configuration
+## git-com-changelog stores its repo specific configurations
+## in the .git-com.yaml file
+##
+## You can modify what heading a change type uses
+## via display aliases. This is a simple mapping of
+## what we'll find in the git log to what heading it should
+## be grouped under. For example, instead of an "[add]" heading
+## we might want an "[added]" heading
+##
+## display_aliases
+## ex:
+##  meta_element_changelog:
+##     display_aliases:
+##       fix: "fixed"
+##       add: "added"
+##       refactor: "refactored"
+##       clean-up: "cleaned"
+##
+## Sometimes the options we provide change over time. For example, we
+## might have used "feat" (short for feature) instead of "add"
+## If you'll be generating changelogs for timespans that involve these
+## older commits you can remap them with the retired_aliases.
+## These should map to the current equivalent, and not the display version.
+##
+## retired_aliases
+##  meta_element_changelog:
+##     retired_aliases:
+##       feat: "add"
+##       feature: "add"
+
 ## HANDLE CLI OPTIONS to know what part of the log to work with.
 provided_options = {permissive: false}
 
@@ -44,16 +76,26 @@ repo_root = `git rev-parse --show-toplevel`.strip
 exit_with_error("Not in a git repo") if repo_root == ""
 
 # figure out if it's .yaml or .yml
-git_com_config = Dir.children(repo_root).select{ |x| x.start_with?(".git-com.y")}.first
+git_com_config = Dir.children(repo_root).select{ |x| /^.git-com.ya?ml$/.match?(x)}.first
 if git_com_config.nil? || git_com_config == ""
   exit_with_error("Couldn't find a .git-com.y[a]ml file.")
 end
 
 # READ the YAML
-yaml_text = File.read(repo_root + '/' + git_com_config)
+yaml_path = repo_root + '/' + git_com_config
+yaml_text = File.read(yaml_path)
 # Parse the YAML
 elements = YAML.load(yaml_text) #=> {foo bar}
 
+# what current values should be mapped to when creating the output
+# For example "add" => "added"
+display_aliases = elements.dig('meta_element_changelog', 'display_aliases') || {}
+
+# change types that have been retired, but can still be found in the git log
+# this should be a mapping from the retired value to the current value
+# Ex. if the current config specifies "feat" and but an old one specified "feature"
+#     the mapping would be "feature" => "feat"
+retired_aliases = elements.dig('meta_element_changelog', 'retired_aliases') || {}
 # create a list of headings for our changelog
 # note "change-type" is the name of a specific
 # top-level element in my .git-com.yaml
@@ -75,27 +117,30 @@ log_lines.each do | line |
   if match
     change_type = match[:change_type]
     title = match[:title]
+    # map retired changed types to new
+    adjusted_change_type = retired_aliases.fetch(change_type, change_type)
 
-    if changes.has_key?(change_type) or provided_options[:permissive]
-      changes[change_type] = [] unless changes.has_key?(change_type)
-      changes[change_type] << title
+    if changes.has_key?(adjusted_change_type) or provided_options[:permissive]
+      changes[adjusted_change_type] = [] unless changes.has_key?(adjusted_change_type)
+      changes[adjusted_change_type] << title
     end
   end
 end
 
 # output the newly formatted changes
-# [add]
+# [added]
 # - added this
 # - added that
 # - added the other
 #
-# [fix]
+# [fixed]
 # - fixed the thing
 # - fixed the other thing
 found_changes = changes.keys
 found_changes.each do | ct |
   next if changes[ct].size == 0
-  puts "[#{ct}]"
+  display_name = display_aliases.fetch(ct, ct)
+  puts "[#{display_name}]" # eg. fix → fixed, add → added
   # reversing to show them in chronological order
   changes[ct].reverse.each do | change |
     puts "- #{change}"
