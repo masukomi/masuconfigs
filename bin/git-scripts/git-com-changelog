@@ -39,7 +39,7 @@ require 'paint' # https://github.com/janlelis/paint
 ##       feature: "add"
 
 ## HANDLE CLI OPTIONS to know what part of the log to work with.
-provided_options = {permissive: false}
+provided_options = {permissive: false, include_to: false}
 
 parser = OptionsParser::Parser.new(command: "changelog_maker", description: "creates a changelog from git-com commits")
 parser.on(short: "-f", long: "--from", value_type: :string, required: true) do |value|
@@ -47,6 +47,10 @@ parser.on(short: "-f", long: "--from", value_type: :string, required: true) do |
 end
 parser.on(short: "-t", long: "--to", value_type: :string) do | value |
   provided_options[:to] = value == true ? "HEAD" : value
+end
+
+parser.on(short: "-i", long: "--include-to", required: false) do
+  provided_options[:include_to] = true
 end
 permissive_help =<<~EOL
 Setting the permissive flag allows to
@@ -70,6 +74,10 @@ end
 def exit_with_warning(message)
   puts(Paint[message, :yellow])
   exit(2)
+end
+
+def is_to_in_tags?(to)
+  `git tag`.strip.split("\n").include?(to)
 end
 ## END HELPER METHODS
 
@@ -112,8 +120,14 @@ end
 # you could add a mapping from old to new here,
 # turn on permissive, and use it below.
 
+if ! (provided_options[:to] && is_to_in_tags?(provided_options[:to]))
+  to_for_git = 'HEAD'
+else
+  to_for_git = provided_options[:to]
+end
+
 # get the relevant log lines from git
-log_lines = `git log --pretty='format:%s' #{provided_options[:from]}..#{provided_options[:to]}`.split(/\n/)
+log_lines = `git log --pretty='format:%s' #{provided_options[:from]}..#{to_for_git}`.split(/\n/)
 log_lines.each do | line |
   match = /^\[(?<change_type>.+?)\]\s+(?<title>.*)$/.match(line)
   if match
@@ -138,6 +152,12 @@ end
 # [fixed]
 # - fixed the thing
 # - fixed the other thing
+
+# add the title line if requested
+if provided_options[:to] && provided_options[:include_to]
+  puts "#{provided_options[:to]}\n\n"
+end
+
 found_changes = changes.keys
 found_changes.each do | ct |
   next if changes[ct].size == 0
