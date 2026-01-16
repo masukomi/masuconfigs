@@ -1,5 +1,28 @@
 #!/usr/bin/env bash
 
+# USAGE: git changelog [org|md]
+# defaults to org mode format if not specified
+
+
+# DEPENDENCY NOTE: requires git-show-tag-message to be in the path
+# (found in the current folder of the original repo of this)
+
+# FORMATTING NOTE
+# Assumes the messages in your tags look like this:
+#
+#
+# v1.2.3
+#
+# [some heading]
+# - some heading specific item
+# - some other item
+#
+# [another heading]
+# - some heading specific item
+# - some other item
+
+
+
 FORMAT="$1"
 
 if [ "$FORMAT" == "" ]; then
