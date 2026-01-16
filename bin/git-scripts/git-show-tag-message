@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+git show "$1" | gsed  '/^tag /d; /^Tagger: /d; /^Date: /d; /-----BEGIN SSH SIGNATURE-----/Q;' | sed '1d'
