@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+FORMAT="$1"
+
+if [ "$FORMAT" == "" ]; then
+  FORMAT="org"
+fi
+
+for tag in $(git tag -l | sort -r); do
+  if [ "$FORMAT" == "org" ]; then
+    echo "* $(git show-tag-message $tag | sed -e 's/\[/** \[/')"
+  elif [ "$FORMAT" == "md" ]; then
+    echo "# $(git show-tag-message $tag | sed -e 's/\[/## \[/')"
+  else
+    echo "\"$FORMAT\" is not a supported format option"
+    exit 64 # EX_USAGE
+  fi
+  echo ""
+done
