@@ -46,7 +46,7 @@ parser.on(short: "-f", long: "--from", value_type: :string ) do |value|
   provided_options[:from] = value
 end
 parser.on(short: "-t", long: "--to", value_type: :string) do | value |
-  provided_options[:to] = value == true ? "HEAD" : value
+  provided_options[:to] = value
 end
 
 parser.on(short: "-m", long: "--markdown", help: "use markdown formatting (default)") do
@@ -55,6 +55,10 @@ end
 
 parser.on(short: "-o", long: "--org", help: "org-mode formatting") do
   provided_options[:format] = :org
+end
+
+parser.on(short: "-d", long: "--debug", help: "output debugging to STDERR") do
+  provided_options[:debugging] = true
 end
 
 parser.parse(ARGV)
@@ -89,10 +93,17 @@ exit_with_error("Not in a git repo") if repo_root == ""
 
 tags=`git tag -l | sort -r`.chomp.split("\n")
 
+if provided_options[:debugging]
+  STDERR.puts("found tags: #{tags.inspect}")
+end
+
 found_from = ! provided_options.has_key?(:from)
-found_to = false
+found_to = ! provided_options.has_key?(:to)
 tags.each do | tag |
   if !found_to && tag != provided_options[:to]
+    if provided_options[:debugging]
+      STDERR.puts("skipping #{tag} because haven't found to tag yet")
+    end
     next
   elsif !found_to && tag == provided_options[:to]
     found_to = true
@@ -101,6 +112,9 @@ tags.each do | tag |
   provided_options.fetch(:format, :markdown) == :markdown ? output_markdown(tag) : output_orgmode(tag)
 
   if !found_from && tag == provided_options[:from]
+    if provided_options[:debugging]
+      STDERR.puts("breaking because found from tag")
+    end
     break
   else
     puts ""
