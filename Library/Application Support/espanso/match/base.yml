@@ -9,7 +9,9 @@
 # it gets replaced by the "replace" string.
 matches:
   # Simple text replacement
-  - trigger: ":jocat"
+  - triggers:
+    - ":jocat"
+    - ":ilikegirls"
     replace: "[I Like Girls](https://youtu.be/Y2Y5KVtU810) - JoCat"
 
   - trigger: ":betalink"
@@ -18,11 +20,26 @@ matches:
   - trigger: ":warning"
     replace: "⚠️"
 
+  - trigger: ":checked"
+    replace: "✅"
+
+  - triggers:
+    - ":nocheck"
+    - ":negacheck"
+    replace: "❎"
+
+  - trigger: ":unchecked"
+    replace: "🟨"
+
   # uncommon characters
   - trigger: ":..."
     replace: "…"
   - trigger: ":?!"
     replace: "‽"
+  - triggers:
+    - ":zws"
+    - ":zero-width-space"
+    replace: "​"
 
   # Fractions
   - trigger: ":1/10"
@@ -43,6 +60,21 @@ matches:
     replace: "⅓"
   - trigger: ":1/2"
     replace: "½"
+  - trigger: ":2/3"
+    replace: "⅔"
+  - trigger: ":3/4"
+    replace: "¾"
+
+  # Ordinal Indicators
+  - trigger: ":nst"
+    replace: "ˢᵗ"
+  - trigger: ":nnd"
+    replace: "ⁿᵈ"
+  - trigger: ":nrd"
+    replace: "ʳᵈ"
+  - trigger: ":nth"
+    replace: "ᵗʰ"
+
 
   # Mathy Things
   - trigger: ":>="
@@ -55,6 +87,12 @@ matches:
     replace: "»"
   - trigger: ":left-chevron"
     replace: "«"
+  - trigger: ":>>"
+    replace: "»"
+  - trigger: ":<<"
+    replace: "«"
+  - trigger: ":deg"
+    replace: "°"
 
   # Arrow-ish things
   - trigger: ":right-angle"
@@ -65,15 +103,14 @@ matches:
     replace: "→"
   - trigger: ":<-"
     replace: "←"
-  - trigger: ":clockwise"
+  - triggers:
+    - ":clockwise"
+    - ":deosil"
     replace: "↻"
-  - trigger: ":deosil"
-    replace: "↻"
-  - trigger: ":counter-clockwise"
-    replace: "↺"
-  - trigger: ":anti-clockwise"
-    replace: "↺"
-  - trigger: ":widdershins"
+  - triggers:
+    - ":counter-clockwise"
+    - ":anti-clockwise"
+    - ":widdershins"
     replace: "↺"
 
   # Esperanto Stuff
@@ -126,4 +163,12 @@ matches:
         params:
           cmd: "echo 'Hello from your shell'"
 
+  # Random crap from writing
+  - triggers:
+    - "blaithin"
+    - "Blaithin"
+    - "blathin"
+    replace: "Bláithín"
+  - trigger: "fiance"
+    replace: "fiancé"
   # And much more! For more information, visit the docs: https://espanso.org/docs/
