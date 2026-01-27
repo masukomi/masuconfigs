@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+# USAGE: git new [dir_name]
+#     If dir_name is specified it will create new directory if needed
+#     and cd into it.
+#
+#     It will then run git init if there isn't a .git directory
+#     It will then copy over files from the
+#     ~/.config/git/default_files directory
+
+
 DIR=$1
 if [ "$DIR" != "" ]; then
   current_dir=$(basename $(pwd))
