@@ -1,0 +1,36 @@
+# TooLoo documentation file.
+# Details: https://github.com/masukomi/TooLoo
+name="git-new"
+short_description="set up new get repo with default files"
+
+description="""
+initializes a new repo and copies files into the worktree
+from ~/.config/git/default_files
+"""
+
+# usage_command=""
+
+fallback_usage="""
+USAGE: git new [dir_name]
+    If dir_name is specified it will create new directory if needed
+    and cd into it.
+
+    It will then run git init if there isn't a .git directory
+    It will then copy over files from the
+    ~/.config/git/default_files directory
+"""
+
+
+# is this an executable, function, or ???
+type="executable"
+# what language is it written in?
+language="bash"
+# where you can find this specific file in source control
+source_url="https://github.com/masukomi/masuconfigs/blob/master/bin/git-scripts/git-new"
+# where you can find the repo that contains this file
+source_repo_url="https://github.com/masukomi/masuconfigs/"
+
+# can this be included in exports like the static blog generation
+exportable=true
+
+tags=[ "git"  ]

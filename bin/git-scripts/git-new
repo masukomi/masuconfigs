@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+DIR=$1
+if [ "$DIR" != "" ]; then
+  current_dir=$(basename $(pwd))
+  if [ "$DIR" == "$current_dir" ]; then
+    echo "Um. No. Won't create $DIR inside dir of same name."
+    echo "Find someone else do your weird directory inception with."
+    exit 64 #EX_USAGE
+  fi
+
+  if [ -e "$DIR" ]; then
+    echo "There's already a $DIR dir. Will just use that."
+  else
+    echo "Creating $(pwd)/$DIR"
+    mkdir $DIR
+  fi
+  echo "Entering dir $DIR"
+  cd $DIR
+fi
+
+if [ -e .git ]; then
+  echo "This is already a git repo won't run git init"
+else
+  git init
+fi
+
+echo "Will copy files without replacing anything that's newer…"
+echo ""
+rsync -av --update ~/.config/git/default_files/.* ./
+rsync -av --update ~/.config/git/default_files/* ./
+
+echo "Done."
