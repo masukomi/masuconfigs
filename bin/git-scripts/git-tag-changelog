@@ -1,0 +1,108 @@
+#!/usr/bin/env ruby
+
+require 'options_parser'
+require 'yaml'
+require 'paint' # https://github.com/janlelis/paint
+
+## Run with --help
+## to see usage instructions
+##
+## Configuration
+## git-com-changelog stores its repo specific configurations
+## in the .git-com.yaml file
+##
+## You can modify what heading a change type uses
+## via display aliases. This is a simple mapping of
+## what we'll find in the git log to what heading it should
+## be grouped under. For example, instead of an "[add]" heading
+## we might want an "[added]" heading
+##
+## display_aliases
+## ex:
+##  meta_element_changelog:
+##     display_aliases:
+##       fix: "fixed"
+##       add: "added"
+##       refactor: "refactored"
+##       clean-up: "cleaned"
+##
+## Sometimes the options we provide change over time. For example, we
+## might have used "feat" (short for feature) instead of "add"
+## If you'll be generating changelogs for timespans that involve these
+## older commits you can remap them with the retired_aliases.
+## These should map to the current equivalent, and not the display version.
+##
+## retired_aliases
+##  meta_element_changelog:
+##     retired_aliases:
+##       feat: "add"
+##       feature: "add"
+
+## HANDLE CLI OPTIONS to know what part of the log to work with.
+provided_options = {}
+
+parser = OptionsParser::Parser.new(command: "git-com-changelog", description: "creates a changelog from commits made with git-com")
+parser.on(short: "-f", long: "--from", value_type: :string ) do |value|
+  provided_options[:from] = value
+end
+parser.on(short: "-t", long: "--to", value_type: :string) do | value |
+  provided_options[:to] = value == true ? "HEAD" : value
+end
+
+parser.on(short: "-m", long: "--markdown", help: "use markdown formatting (default)") do
+  provided_options[:format] = :markdown
+end
+
+parser.on(short: "-o", long: "--org", help: "org-mode formatting") do
+  provided_options[:format] = :org
+end
+
+parser.parse(ARGV)
+## END OPTION HANDLING
+
+## Helper methods
+def exit_with_error(message)
+  puts(Paint[message, :red])
+  exit(1)
+end
+
+def exit_with_warning(message)
+  puts(Paint[message, :yellow])
+  exit(2)
+end
+
+def output_markdown(tag)
+  tag_message = `git show-tag-message #{tag}`.strip.gsub(/^(\[.*?\])\s*$/, "## \\1\n").sub(/^(v\d+)/, "# \\1")
+  puts "#{tag_message}\n"
+end
+
+def output_orgmode(tag)
+  tag_message = `git show-tag-message #{tag}`.strip.gsub(/^\[/, "** [").sub(/^(v\d+(?:.\d+)+)\n/m, "* \\1")
+  puts "#{tag_message}\n"
+end
+
+## END HELPER METHODS
+
+# ask git for the root directory
+repo_root = `git rev-parse --show-toplevel`.strip
+exit_with_error("Not in a git repo") if repo_root == ""
+
+tags=`git tag -l | sort -r`.chomp.split("\n")
+
+found_from = ! provided_options.has_key?(:from)
+found_to = false
+tags.each do | tag |
+  if !found_to && tag != provided_options[:to]
+    next
+  elsif !found_to && tag == provided_options[:to]
+    found_to = true
+  end
+
+  provided_options.fetch(:format, :markdown) == :markdown ? output_markdown(tag) : output_orgmode(tag)
+
+  if !found_from && tag == provided_options[:from]
+    break
+  else
+    puts ""
+  end
+end
