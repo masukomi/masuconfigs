@@ -41,7 +41,7 @@ require 'paint' # https://github.com/janlelis/paint
 ## HANDLE CLI OPTIONS to know what part of the log to work with.
 provided_options = {permissive: false, include_to: false}
 
-parser = OptionsParser::Parser.new(command: "changelog_maker", description: "creates a changelog from git-com commits")
+parser = OptionsParser::Parser.new(command: "git-com-changelog", description: "creates a changelog from commits made with git-com")
 parser.on(short: "-f", long: "--from", value_type: :string, required: true) do |value|
   provided_options[:from] = value
 end
@@ -52,6 +52,7 @@ end
 parser.on(short: "-i", long: "--include-to", required: false) do
   provided_options[:include_to] = true
 end
+
 permissive_help =<<~EOL
 Setting the permissive flag allows to
 changelog generator to include
