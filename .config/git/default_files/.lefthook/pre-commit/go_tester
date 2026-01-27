@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+if test -e *.go; then
+  go test ./...
+fi

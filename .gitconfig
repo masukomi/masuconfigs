@@ -7,12 +7,14 @@
 	templatedir = ~/.git_template
 	defaultBranch = main
 [core]
-	excludesfile = ~/.gitignore_global
+	excludesfile = ~/.config/git/ignore
+	# attributesFile maps file extenion to diffing language
+	attributesfile = ~/.config/git/attributes
 	quotepath = false
 	editor = vim
-	attributesfile = ~/.gitattributes
 	# handle line endings better...
 	# https://docs.github.com/en/get-started/getting-started-with-git/configuring-git-to-handle-line-endings
+	# https://docs.github.com/en/get-started/git-basics/configuring-git-to-handle-line-endings
 	# https://stackoverflow.com/a/18875915/13973
 	autocrlf = input
 [color]
@@ -129,16 +131,8 @@
 [diff]
 	tool = Kaleidoscope
 	algorithm = patience
-#[diff]
-#	tool = cdiff
-#	algorithm = patience
-	# external = cdiff
 [difftool "cdiff"]
-	cmd = cdiff \"$LOCAL\" \"$REMOTE\"
-[difftool "cdiff-f"]
-	cmd = cdiff --format=fenestro \"$LOCAL\" \"$REMOTE\"
-[difftool "cdiff-h"]
-	cmd = cdiff --format=html \"$LOCAL\" \"$REMOTE\"
+	cmd = cdiff \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
 [difftool "diff"]
 	cmd = diff \"$LOCAL\" \"$REMOTE\"
 [difftool "Kaleidoscope"]
