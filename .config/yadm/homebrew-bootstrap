@@ -234,6 +234,10 @@ maybrew 'feedgnuplot'
 # https://github.com/sharkdp/fd
 maybrew 'fd'
 
+# Play, record, convert, and stream select audio and video codecs
+# https://ffmpeg.org/
+maybrew 'ffmpeg'
+
 # macOS CLI for managing custom icons for files and folders
 # https://github.com/mklement0/fileicon
 maybrew 'fileicon'
@@ -559,6 +563,10 @@ maybrew 'tig'
 # http://mama.indstate.edu/users/ice/tree/
 maybrew "tree"
 
+# Incremental parsing library
+# https://tree-sitter.github.io/
+# needed for many language plugins in emacs (and other things)
+maybrew "treesitter"
 
 # Maintained ctags implementation
 # https://github.com/universal-ctags/ctags
