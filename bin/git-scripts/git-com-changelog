@@ -53,6 +53,15 @@ parser.on(short: "-i", long: "--include-to", required: false) do
   provided_options[:include_to] = true
 end
 
+parser.on(short: "-m", long: "--markdown", help: "use markdown formatting (default)") do
+  provided_options[:format] = :markdown
+end
+
+parser.on(short: "-o", long: "--org", help: "org-mode formatting") do
+  provided_options[:format] = :org
+end
+
+
 permissive_help =<<~EOL
 Setting the permissive flag allows to
 changelog generator to include
@@ -154,16 +163,33 @@ end
 # - fixed the thing
 # - fixed the other thing
 
+heading_format = provided_options[:format] || :none
+
 # add the title line if requested
 if provided_options[:to] && provided_options[:include_to]
-  puts "#{provided_options[:to]}\n\n"
+  case heading_format
+  when :markdown
+    puts "# #{provided_options[:to]}\n\n"
+  when :org
+    puts "* #{provided_options[:to]}\n\n"
+  else
+    puts "#{provided_options[:to]}\n\n"
+  end
 end
 
 found_changes = changes.keys
 found_changes.each do | ct |
   next if changes[ct].size == 0
   display_name = display_aliases.fetch(ct, ct)
-  puts "[#{display_name}]" # eg. fix → fixed, add → added
+  case heading_format
+  when :markdown
+    puts "## [#{display_name}]" # eg. fix → fixed, add → added
+  when :org
+    puts "** [#{display_name}]" # eg. fix → fixed, add → added
+  else
+    puts "[#{display_name}]" # eg. fix → fixed, add → added
+  end
+
   # reversing to show them in chronological order
   changes[ct].reverse.each do | change |
     puts "- #{change}"
