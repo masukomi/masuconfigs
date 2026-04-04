@@ -116,6 +116,11 @@ display_aliases = elements.dig('meta_element_changelog', 'display_aliases') || {
 # Ex. if the current config specifies "feat" and but an old one specified "feature"
 #     the mapping would be "feature" => "feat"
 retired_aliases = elements.dig('meta_element_changelog', 'retired_aliases') || {}
+
+# change types that should be excluded from changelogs
+# useful for avoiding disclosure of sensitive things.
+exclusions = Set.new(elements.dig('meta_element_changelog', 'exclusions') || [])
+
 # create a list of headings for our changelog
 # note "change-type" is the name of a specific
 # top-level element in my .git-com.yaml
@@ -147,6 +152,8 @@ log_lines.each do | line |
     adjusted_change_type = retired_aliases.fetch(change_type, change_type)
 
     if changes.has_key?(adjusted_change_type) or provided_options[:permissive]
+      next if exclusions.include?(adjusted_change_type)
+
       changes[adjusted_change_type] = [] unless changes.has_key?(adjusted_change_type)
       changes[adjusted_change_type] << title.strip
     end
