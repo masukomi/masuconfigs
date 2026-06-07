@@ -1,20 +1,29 @@
 #!/bin/sh
 
+# can also echo "\x1b[1;37m"
+
+ESCAPE=$(printf "\033")
+RED="${ESCAPE}[91m"
+GREEN="${ESCAPE}[92m"
+YELLOW="${ESCAPE}[33m"
+WHITE="${ESCAPE}[37m"
+BOLD_WHITE="${ESCAPE}[1;37m"
+NOCOLOR="${ESCAPE}[0m"
 git status -uno
 
 ASSUMED_UNCHANGED=$( git ls-files -v \
 	| grep --color '^[[:lower:]]'\
-	| sed -e "s/^/\x1b[1;33m⇨\x1b[0m /")
+	| sed -e "s/^/$YELLOW⇨$NOCOLOR /")
 			# ^^^ insert a bold yellow arrow
 
 UNTRACKED=$(git ls-files --others -v --exclude-standard \
 	| grep --color '^? ' \
-	| sed -e "s/^? /\x1b[1;33m⇨\x1b[0m /")
+	| sed -e "s/^? /$YELLOW⇨$NOCOLOR /")
 			# ^^^ insert a bold yellow arrow
 
 if [ "$ASSUMED_UNCHANGED" != "" ]; then
 	echo ""
-	echo "\x1b[1;37mGit is assuming the following are unchanged:\x1b[0m"
+	echo $BOLD_WHITE"Git is assuming the following are unchanged:$NOCOLOR"
 	echo "$ASSUMED_UNCHANGED"
 fi
 
@@ -23,13 +32,25 @@ if [ "$UNTRACKED" != "" ]; then
 
 	UNTRACKED_COUNT=$(echo "$UNTRACKED" | wc -l | sed -e "s/^ *//")
 	if [[ $UNTRACKED_COUNT -lt 10 ]]; then
-		echo "\x1b[1;37mGit is \x1b[3mnot\x1b[0m\x1b[1;37m tracking changes to:\x1b[0m"
+		echo $BOLD_WHITE"Git is \x1b[3mnot\x1b[0m\x1b[1;37m tracking changes to:$NOCOLOR"
 		echo "$UNTRACKED"
 	else
-		echo "\x1b[1;37mGit is \x1b[3mnot\x1b[0m\x1b[1;37m tracking changes to \x1b[1;33;4m$UNTRACKED_COUNT\x1b[0m files."
+		echo $BOLD_WHITE"Git is \x1b[3mnot\x1b[0m\x1b[1;37m tracking changes to \x1b[1;33;4m$UNTRACKED_COUNT""$NOCOLOR files."
 		# echo "    For a short list run:    git status"
 		# echo "    For a detailed list run: git status --untracked-files=all"
 		# echo "    For an even MORE detailed list with the things"
 		# echo "      git typically excludes: git ls-files --others -v"
 	fi
 fi
+
+STASHED=$(git stash list | sed -E "s/stash@{([[:digit:]])}/$YELLOW\1$NOCOLOR/")
+
+if [ "$STASHED" != "" ]; then
+	NUM_STASHES=$(echo $STASHED | wc -l | sed -e "s/ *//g")
+	echo ""
+	echo $BOLD_WHITE"You have $NUM_STASHES stashes$NOCOLOR"
+	echo "\x1b[3;38;5;245m(apply with git stash apply N)$NOCOLOR"
+	#      ^^^^ dark grey and italic
+	echo "$STASHED"
+fi
+
