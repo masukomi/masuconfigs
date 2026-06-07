@@ -72,9 +72,14 @@ brew tap d12frosted/emacs-plus
 # tl;dr go client https://github.com/isacikgoz/tldr
 brew tap isacikgoz/taps
 
-
 # do gum first because this script uses it.
 maybrew "charmbracelet/tap/gum"
+#--------------------
+
+
+# Command-line interface for 1Password
+# https://developer.1password.com/docs/cli
+maybrew "1password-cli"
 
 # A meh quality converter of ANSI Escape codes to HTML
 # Oho is better, but I still have references to aha
