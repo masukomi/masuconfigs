@@ -46,7 +46,7 @@ fi
 STASHED=$(git stash list | sed -E "s/stash@{([[:digit:]])}/$YELLOW\1$NOCOLOR/")
 
 if [ "$STASHED" != "" ]; then
-	NUM_STASHES=$(echo $STASHED | wc -l | sed -e "s/ *//g")
+	NUM_STASHES=$(echo "$STASHED" | wc -l | sed -e "s/ *//g")
 	echo ""
 	echo $BOLD_WHITE"You have $NUM_STASHES stashes$NOCOLOR"
 	echo "\x1b[3;38;5;245m(apply with git stash apply N)$NOCOLOR"
