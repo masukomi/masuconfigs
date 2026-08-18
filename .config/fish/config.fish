@@ -18,6 +18,8 @@ set -x BAT_PAGER "" # no paging! Only spew!
 set -x vmm_use_secure_cookies false
 set -x HOMEBREW_PREFIX /opt/homebrew
 set -x XDG_CONFIG_HOME $HOME/.config
+set -x DYLD_LIBRARY_PATH /opt/homebrew/lib
+
 
 # NORMAL (unix) XDG DATA HOME
 set -x XDG_DATA_HOME $HOME/.local/share
@@ -56,6 +58,7 @@ abbr -a berss "bundle exec rails server -u puma -b 'ssl://0.0.0.0:9292?key=$HOME
 abbr -a brewed 'is_brewed'
 abbr -a build_tags "~/brew/bin/ctags -R --c++-kinds +p --fields +iaS --extra +q --exclude .rsync_cache ."
 abbr -a colorsave "script -q /dev/null"
+abbr -a cgr "cd ~/Documents/writings/catgirl_revolution"
 abbr -a emacsd 'cd ~/.config/emacs'
 abbr -a epochmillis "date +%s%N | cut -b1-13"
 abbr -a epochtime "date +%s"
@@ -179,6 +182,7 @@ fish_add_path -g -a /Applications
 fish_add_path -g -p $HOMEBREW_PREFIX/opt/grep/libexec/gnubin
 fish_add_path -g -p $HOMEBREW_PREFIX/opt/gnu-getopt/bin
 fish_add_path -g -p $HOMEBREW_PREFIX/opt/findutils/libexec/gnubin
+fish_add_path -g -p $HOMEBREW_PREFIX/opt/ccache/libexec
 fish_add_path -g -a $HOME/.iterm2/
 # fish_add_path -g /usr/bin
 # fish_add_path -g /bin
@@ -195,11 +199,16 @@ fish_add_path /usr/local/opt/mongodb-community@4.2/bin
 fish_add_path -g -a $HOME/Library/Python/3.9/bin
 
 fish_add_path -g -a $HOME/workspace/reference/bash/git-fuzzy/bin
+
 set -x -g IDF_PATH $HOME/esp/esp-idf
 set -x -g IDF_TOOLS_PATH $HOME/.config/espressif
+# comment out the following source line
+# when not futzing with ESP-IDF stuff
+# maybe make an alias for it to manually load it when needed
+abbr -a get_idf "source $IDF_PATH/export.fish"
+# source $IDF_PATH/export.fish
 
 abbr -a gf 'git fuzzy'
-
 set -x -g RIPGREP_CONFIG_PATH $HOME/.config/ripgrep/config
 
 set CELLAR (brew --cellar)
@@ -252,6 +261,9 @@ fish_add_path -g /Applications/Racket*/bin
 # Radicle.xyz
 # fish_add_path -g $HOME/.radicle/bin
 
+# BEGIN GOLANG
+set -x -U GOPATH $HOME/go
+# END GOLANG
 
 # BEGIN JAVA &  Antlr
 set -l ANTLRPATH $HOME/workspace/reference/java/antlr/antlr-4.10.1-complete.jar
@@ -353,3 +365,21 @@ if test -f $HOME/.config/fish/secrets.fish
 	source $HOME/.config/fish/secrets.fish
 end
 
+
+# bun
+set --export BUN_INSTALL "$HOME/.bun"
+set --export PATH $BUN_INSTALL/bin $PATH
+
+# bun
+set --export BUN_INSTALL "$HOME/.bun"
+set --export PATH $BUN_INSTALL/bin $PATH
+
+# PAI alias
+alias pai='bun /Users/masukomi/.claude/PAI/Tools/pai.ts'
+# lean-ctx shell hook — begin
+# if test -f "/Users/masukomi/.config/lean-ctx/shell-hook.fish"
+# 	set -x LEAN_CTX_SHELL_ACTIVATION agents-only
+# 	set --export LEAN_CTX_PROXY_PORT 3334
+# 	source "/Users/masukomi/.config/lean-ctx/shell-hook.fish"
+# end
+# lean-ctx shell hook — end
