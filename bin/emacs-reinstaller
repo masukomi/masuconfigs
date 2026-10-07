@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
+ESCAPE=$(printf "\033")
+RED="${ESCAPE}[91m"
+GREEN="${ESCAPE}[92m"
+YELLOW="${ESCAPE}[33m"
+WHITE="${ESCAPE}[37m"
+BOLD_WHITE="${ESCAPE}[1;37m"
+NOCOLOR="${ESCAPE}[0m"
+
+# set -e
 
 brew tap d12frosted/emacs-plus
-brew reinstall libgccjit
+# brew reinstall libgccjit
 
 # private_comment's make file uses Cask.
 # cask's brew installer has vanilla emacs as a dependency
@@ -14,52 +23,83 @@ brew reinstall libgccjit
 # cask doesn't actually _need_ vanilla emacs. it works fine with
 # emacs-plus BUT...
 
+# command -v emacs-plus
+# if [ $? -ne 0 ]; then
+# 	brew unlink gawk 2>&1 > /dev/null
+# 	rm -rf /Applications/Emacs.app > /dev/null
+# fi
+
+echo $GREEN"Uninstalling old stuff…$NOCOLOR"
 command -v emacs-plus
 if [ $? -ne 0 ]; then
-	brew unlink gawk 2>&1 > /dev/null
-	rm -rf /Applications/Emacs.app > /dev/null
+	echo $GREEN"Uninstalling old emacs-plus…$NOCOLOR"
+	brew uninstall --ignore-dependencies emacs-plus
 fi
-command -v emacs
+command -v emacs-plus-app
 if [ $? -ne 0 ]; then
-	brew uninstall --ignore-dependencies emacs
+	echo $GREEN"Uninstalling old emacs-plus-app…$NOCOLOR"
+	brew uninstall --ignore-dependencies emacs-plus-app
 fi
 # this prolly isn't necessary but who knows what state
 # the world is at this point. so, i'm just cleaning everything
 # out so that we can start fresh.
-command -v cask
-if [ $? -ne 0 ]; then
-	brew uninstall cask
-fi
+# command -v cask
+# if [ $? -ne 0 ]; then
+# 	brew uninstall cask
+# fi
+#
+#
+# brew install cask
 
-
-brew install cask
 # uninstall the vanilla emacs that came as a cask dependency
 # but don't uninstall anything that depends on it because we're
 # about to install a replacement
-brew uninstall --ignore-dependencies emacs
-
-
-
-
-brew install emacs-plus --with-imagemagick
+command -v emacs
 if [ $? -ne 0 ]; then
-	echo "problem installing emacs-plus --with-native-comp --with-imagemagic"
+	echo $GREEN"Uninstalling old emacs…$NOCOLOR"
+	brew uninstall --ignore-dependencies emacs
+fi
+
+brew install --cask emacs-plus-app
+if [ $? -ne 0 ]; then
+	echo $RED"problem installing emacs-plus-app$NOCOLOR"
 	echo "exiting"
 	exit 1
+else
+	echo $GREEN"Successfully installed emacs-plus-app$NOCOLOR"
 fi
-emacs_location=$(brew info emacs-plus | grep --color=none 'ln -s' | sed -e 's/^ *ln -s //')
+emacs_location=$(brew info emacs-plus-app | grep --color=none 'ln -s' | sed -e 's/^ *ln -s //')
 ls $emacs_location
 if [ $? -ne 0 ]; then
-	echo "Somethig's not right. Emacs isn't where brew said it would be."
+	echo $RED"Somethig's not right. Emacs isn't where brew said it would be.$NOCOLOR"
 	echo "should be at: $emacs_location"
-	echo "run `brew info emacs-plus` maybe that'll tell you something useful."
+	echo $YELLOW"run `brew info emacs-plus-app` maybe that'll tell you something useful.$NOCOLOR"
 	exit 2
 fi
 # create symlink for the Emacs.app
-eval "$(brew info emacs-plus | grep --color=none 'ln -s' | sed -e 's/^ *//')"
+LINKS=$(brew info emacs-plus-app | grep --color=none 'ln -s' | sed -e 's/^ *//')
+if [ "$LINKS" != "" ]; then
+	echo "$YELLOW
+	$LINKS
+	$NOCOLOR"
+	gum confirm "Run these linking commands?" && eval "$LINKS"
+else
+	echo $GREEN"Nothing to link."
+fi
 # start the service
-eval "$(brew info emacs-plus | grep --color=none 'services start' | sed -e 's/^ *//')"
-brew link --overwrite gawk
+if [ "$SERVICES" != "" ]; then
+	SERVICES=$(brew info emacs-plus-app | grep --color=none 'services start' | sed -e 's/^ *//')
+	echo "$YELLOW
+	$SERVICES
+	$NOCOLOR"
+	gum confirm "Run these services comands?" && eval "$SERVICES"
+else
+	echo $GREEN"No services to start."
+fi
+
+echo "$GREEN
+DONE$NOCOLOR"
+# brew link --overwrite gawk
 
 # 	--natural-title-bar option was removed from this formula, in order to
 # 	  duplicate its effect add following line to your init.el file
