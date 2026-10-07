@@ -1,0 +1,6 @@
+tool_profile = "standard"
+shell_allowlist_extra = [
+    "export",
+    "git-com",
+    "mktemp",
+]
