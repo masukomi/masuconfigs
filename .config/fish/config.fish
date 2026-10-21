@@ -256,7 +256,7 @@ fish_add_path -g -a $JAVA_HOME/bin
 # newer bash in path
 fish_add_path -g -p $HOMEBREW_PREFIX/opt/bash/bin
 ## Racket
-fish_add_path -g /Applications/Racket*/bin
+fish_add_path -g /Applications/Racket/bin
 
 # Radicle.xyz
 # fish_add_path -g $HOME/.radicle/bin
