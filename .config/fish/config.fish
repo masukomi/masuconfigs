@@ -170,7 +170,7 @@ fish_add_path -g ./bin
 fish_add_path -g -p $HOMEBREW_PREFIX/bin
 fish_add_path -g -p $HOMEBREW_PREFIX/sbin
 # (which fish | sed "s/\/fish//")
-fish_add_path -g . $HOME/bin $HOME/bin/git-scripts $HOME/bin/git-scripts/hooks /usr/local/bin $PATH
+fish_add_path -g $HOME/bin $HOME/bin/git-scripts $HOME/bin/git-scripts/hooks /usr/local/bin $PATH
 # vvv make python 3 found before macOSs python 2.7
 # macOS one is at /usr/local/bin/python
 set brewed_python_version (brew ls --versions python | sed -e "s/python@//" -e "s/ .*//")
@@ -351,7 +351,7 @@ set -x NVM_DIR "$XDG_CONFIG_HOME/nvm"
 
 # Setting PATH for Python 3.11
 # The original version is saved in /Users/masukomi/.config/fish/config.fish.pysave
-set -x PATH "/Library/Frameworks/Python.framework/Versions/3.11/bin" "$PATH"
+fish_add_path -g -a $HOME/Applications "/Library/Frameworks/Python.framework/Versions/3.11/bin"
 
 set -x KINDLE_HOME $HOME/Library/Containers/com.amazon.Kindle/Data/Library/Application\ Support/Kindle/My\ Kindle\ Content
 
@@ -368,14 +368,8 @@ end
 
 # bun
 set --export BUN_INSTALL "$HOME/.bun"
-set --export PATH $BUN_INSTALL/bin $PATH
+fish_add_path -g -a $BUN_INSTALL/bin
 
-# bun
-set --export BUN_INSTALL "$HOME/.bun"
-set --export PATH $BUN_INSTALL/bin $PATH
-
-# PAI alias
-alias pai='bun /Users/masukomi/.claude/PAI/Tools/pai.ts'
 # lean-ctx shell hook — begin
 # if test -f "/Users/masukomi/.config/lean-ctx/shell-hook.fish"
 # 	set -x LEAN_CTX_SHELL_ACTIVATION agents-only
@@ -383,3 +377,6 @@ alias pai='bun /Users/masukomi/.claude/PAI/Tools/pai.ts'
 # 	source "/Users/masukomi/.config/lean-ctx/shell-hook.fish"
 # end
 # lean-ctx shell hook — end
+
+# Paperclip
+set -x PAPERCLIP_API_URL http://localhost:3100
