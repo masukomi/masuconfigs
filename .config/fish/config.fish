@@ -17,10 +17,10 @@ set -x EDITOR doom
 set -x BAT_PAGER "" # no paging! Only spew!
 set -x vmm_use_secure_cookies false
 set -x HOMEBREW_PREFIX /opt/homebrew
+set -x DYLD_LIBRARY_PATH $HOMEBREW_PREFIX/lib
+
+
 set -x XDG_CONFIG_HOME $HOME/.config
-set -x DYLD_LIBRARY_PATH /opt/homebrew/lib
-
-
 # NORMAL (unix) XDG DATA HOME
 set -x XDG_DATA_HOME $HOME/.local/share
 # APPLE's stupid XDG DATA HOME with it's stupid space
@@ -29,6 +29,7 @@ set -x XDG_DATA_HOME $HOME/.local/share
 # to stick with apple's anyway if there's any cleanup stuff that
 # happens related to it.
 set -x XDG_CACHE_HOME $HOME/Library/Caches
+set -x XDG_STATE_HOME $HOME/.local/state
 
 set -x DOOMDIR $XDG_CONFIG_HOME/doom
 abbr -a doomd "cd $DOOMDIR"
@@ -380,3 +381,4 @@ fish_add_path -g -a $BUN_INSTALL/bin
 
 # Paperclip
 set -x PAPERCLIP_API_URL http://localhost:3100
+set -Ux CLAUDE_CODE_EXECUTABLE $HOMEBREW_PREFIX/bin/claude
